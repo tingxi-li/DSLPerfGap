@@ -29,88 +29,78 @@ _attn_block_N = _TUNED.get("block_N", 32)
 _attn_block_K = _TUNED.get("block_K", 32)
 
 
-def _make_matmul_kernel(M, N, K, block_M=_attn_block_M, block_N=_attn_block_N, block_K=_attn_block_K):
-    """
-    Create a TileLang matmul kernel: C[M,N] = A[M,K] @ B[K,N]
-    Uses element-wise multiply-accumulate for full fp32 precision.
-    """
-    @tilelang.jit
-    def kernel(M_dim, N_dim, K_dim, bM=block_M, bN=block_N, bK=block_K):
-        @T.prim_func
-        def func(
-            A_t: T.Tensor((M_dim, K_dim), "float32"),
-            B_t: T.Tensor((K_dim, N_dim), "float32"),
-            C_t: T.Tensor((M_dim, N_dim), "float32"),
-        ):
-            with T.Kernel(
-                T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM),
-                threads=_attn_threads
-            ) as (bx, by):
-                C_local = T.alloc_fragment((bM, bN), "float32")
-                A_local = T.alloc_fragment((bM,), "float32")
-                B_local = T.alloc_fragment((bN,), "float32")
+@tilelang.jit
+def _attention_matmul_kernel(M_dim, N_dim, K_dim, bM=_attn_block_M, bN=_attn_block_N, bK=_attn_block_K):
+    """TileLang matmul kernel: C[M,N] = A[M,K] @ B[K,N]
+    Uses element-wise multiply-accumulate for full fp32 precision."""
+    @T.prim_func
+    def func(
+        A_t: T.Tensor((M_dim, K_dim), "float32"),
+        B_t: T.Tensor((K_dim, N_dim), "float32"),
+        C_t: T.Tensor((M_dim, N_dim), "float32"),
+    ):
+        with T.Kernel(
+            T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM),
+            threads=_attn_threads
+        ) as (bx, by):
+            C_local = T.alloc_fragment((bM, bN), "float32")
+            A_local = T.alloc_fragment((bM,), "float32")
+            B_local = T.alloc_fragment((bN,), "float32")
 
-                T.clear(C_local)
+            T.clear(C_local)
 
-                for k_tile in range(T.ceildiv(K_dim, bK)):
-                    for kk in range(bK):
-                        k_idx = k_tile * bK + kk
-                        for i in T.Parallel(bM):
-                            A_local[i] = A_t[by * bM + i, k_idx]
-                        for j in T.Parallel(bN):
-                            B_local[j] = B_t[k_idx, bx * bN + j]
-                        for i, j in T.Parallel(bM, bN):
-                            C_local[i, j] += A_local[i] * B_local[j]
+            for k_tile in range(T.ceildiv(K_dim, bK)):
+                for kk in range(bK):
+                    k_idx = k_tile * bK + kk
+                    for i in T.Parallel(bM):
+                        A_local[i] = A_t[by * bM + i, k_idx]
+                    for j in T.Parallel(bN):
+                        B_local[j] = B_t[k_idx, bx * bN + j]
+                    for i, j in T.Parallel(bM, bN):
+                        C_local[i, j] += A_local[i] * B_local[j]
 
-                for i, j in T.Parallel(bM, bN):
-                    C_t[by * bM + i, bx * bN + j] = C_local[i, j]
+            for i, j in T.Parallel(bM, bN):
+                C_t[by * bM + i, bx * bN + j] = C_local[i, j]
 
-        return func
-
-    return kernel(M, N, K)
+    return func
 
 
-def _make_matmul_add_kernel(M, N, K, block_M=_attn_block_M, block_N=_attn_block_N, block_K=_attn_block_K):
-    """
-    Create a TileLang kernel: C[M,N] += A[M,K] @ B[K,N]
-    Reads existing C values and adds to them.
-    """
-    @tilelang.jit
-    def kernel(M_dim, N_dim, K_dim, bM=block_M, bN=block_N, bK=block_K):
-        @T.prim_func
-        def func(
-            A_t: T.Tensor((M_dim, K_dim), "float32"),
-            B_t: T.Tensor((K_dim, N_dim), "float32"),
-            C_t: T.Tensor((M_dim, N_dim), "float32"),
-        ):
-            with T.Kernel(
-                T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM),
-                threads=_attn_threads
-            ) as (bx, by):
-                C_local = T.alloc_fragment((bM, bN), "float32")
-                A_local = T.alloc_fragment((bM,), "float32")
-                B_local = T.alloc_fragment((bN,), "float32")
+@tilelang.jit
+def _attention_matmul_add_kernel(M_dim, N_dim, K_dim, bM=_attn_block_M, bN=_attn_block_N, bK=_attn_block_K):
+    """TileLang kernel: C[M,N] += A[M,K] @ B[K,N]
+    Reads existing C values and adds to them."""
+    @T.prim_func
+    def func(
+        A_t: T.Tensor((M_dim, K_dim), "float32"),
+        B_t: T.Tensor((K_dim, N_dim), "float32"),
+        C_t: T.Tensor((M_dim, N_dim), "float32"),
+    ):
+        with T.Kernel(
+            T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM),
+            threads=_attn_threads
+        ) as (bx, by):
+            C_local = T.alloc_fragment((bM, bN), "float32")
+            A_local = T.alloc_fragment((bM,), "float32")
+            B_local = T.alloc_fragment((bN,), "float32")
 
-                # Load existing C values
-                for i, j in T.Parallel(bM, bN):
-                    C_local[i, j] = C_t[by * bM + i, bx * bN + j]
+            # Load existing C values
+            for i, j in T.Parallel(bM, bN):
+                C_local[i, j] = C_t[by * bM + i, bx * bN + j]
 
-                for k_tile in range(T.ceildiv(K_dim, bK)):
-                    for kk in range(bK):
-                        k_idx = k_tile * bK + kk
-                        for i in T.Parallel(bM):
-                            A_local[i] = A_t[by * bM + i, k_idx]
-                        for j in T.Parallel(bN):
-                            B_local[j] = B_t[k_idx, bx * bN + j]
-                        for i, j in T.Parallel(bM, bN):
-                            C_local[i, j] += A_local[i] * B_local[j]
+            for k_tile in range(T.ceildiv(K_dim, bK)):
+                for kk in range(bK):
+                    k_idx = k_tile * bK + kk
+                    for i in T.Parallel(bM):
+                        A_local[i] = A_t[by * bM + i, k_idx]
+                    for j in T.Parallel(bN):
+                        B_local[j] = B_t[k_idx, bx * bN + j]
+                    for i, j in T.Parallel(bM, bN):
+                        C_local[i, j] += A_local[i] * B_local[j]
 
-                for i, j in T.Parallel(bM, bN):
-                    C_t[by * bM + i, bx * bN + j] = C_local[i, j]
+            for i, j in T.Parallel(bM, bN):
+                C_t[by * bM + i, bx * bN + j] = C_local[i, j]
 
-        return func
-
-    return kernel(M, N, K)
+    return func
 
 
 # Cache for compiled kernels keyed by (M, N, K)
@@ -120,14 +110,14 @@ _kernel_cache = {}
 def _get_matmul_kernel(M, N, K):
     key = ("matmul", M, N, K)
     if key not in _kernel_cache:
-        _kernel_cache[key] = _make_matmul_kernel(M, N, K)
+        _kernel_cache[key] = _attention_matmul_kernel(M, N, K)
     return _kernel_cache[key]
 
 
 def _get_matmul_add_kernel(M, N, K):
     key = ("matmul_add", M, N, K)
     if key not in _kernel_cache:
-        _kernel_cache[key] = _make_matmul_add_kernel(M, N, K)
+        _kernel_cache[key] = _attention_matmul_add_kernel(M, N, K)
     return _kernel_cache[key]
 
 

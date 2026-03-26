@@ -21,6 +21,38 @@ def _next_power_of_2(n):
     return p
 
 
+@tilelang.jit
+def _softmax_kernel(m, n, threads=_TUNED.get("threads", 128)):
+    @T.prim_func
+    def func(A: T.Tensor((m, n), "float32"), C: T.Tensor((m, n), "float32")):
+        with T.Kernel(m, threads=threads) as bx:
+            max_val = T.alloc_fragment((1,), "float32")
+            sum_val = T.alloc_fragment((1,), "float32")
+            row = T.alloc_fragment((n,), "float32")
+            # Load row
+            for j in T.Parallel(n):
+                row[j] = A[bx, j]
+            # Find max
+            max_val[0] = T.float32(-1e30)
+            for j in T.serial(n):
+                if row[j] > max_val[0]:
+                    max_val[0] = row[j]
+            # exp(x - max)
+            for j in T.Parallel(n):
+                row[j] = T.exp(row[j] - max_val[0])
+            # sum
+            sum_val[0] = T.float32(0)
+            for j in T.serial(n):
+                sum_val[0] = sum_val[0] + row[j]
+            # normalize
+            for j in T.Parallel(n):
+                row[j] = row[j] / sum_val[0]
+            # Store row
+            for j in T.Parallel(n):
+                C[bx, j] = row[j]
+    return func
+
+
 def softmax(x):
     """Softmax along the last dimension for any shape tensor using TileLang."""
     orig_shape = x.shape
@@ -36,37 +68,6 @@ def softmax(x):
         result = torch.softmax(x_2d.float(), dim=-1)
         return result.reshape(orig_shape).to(x.dtype)
 
-    @tilelang.jit
-    def kernel(m, n):
-        @T.prim_func
-        def func(A: T.Tensor((m, n), "float32"), C: T.Tensor((m, n), "float32")):
-            with T.Kernel(m, threads=_TUNED.get("threads", 128)) as bx:
-                max_val = T.alloc_fragment((1,), "float32")
-                sum_val = T.alloc_fragment((1,), "float32")
-                row = T.alloc_fragment((n,), "float32")
-                # Load row
-                for j in T.Parallel(n):
-                    row[j] = A[bx, j]
-                # Find max
-                max_val[0] = T.float32(-1e30)
-                for j in T.serial(n):
-                    if row[j] > max_val[0]:
-                        max_val[0] = row[j]
-                # exp(x - max)
-                for j in T.Parallel(n):
-                    row[j] = T.exp(row[j] - max_val[0])
-                # sum
-                sum_val[0] = T.float32(0)
-                for j in T.serial(n):
-                    sum_val[0] = sum_val[0] + row[j]
-                # normalize
-                for j in T.Parallel(n):
-                    row[j] = row[j] / sum_val[0]
-                # Store row
-                for j in T.Parallel(n):
-                    C[bx, j] = row[j]
-        return func
-
     # Pad input: N to N_pad (fill extra cols with -inf for softmax correctness)
     if N_pad != N:
         x_pad = torch.full((M, N_pad), float('-inf'), device=x.device, dtype=torch.float32)
@@ -75,7 +76,7 @@ def softmax(x):
         x_pad = x_2d.float().contiguous()
 
     c_pad = torch.zeros(M, N_pad, device=x.device, dtype=torch.float32)
-    func = kernel(M, N_pad)
+    func = _softmax_kernel(M, N_pad)
     func(x_pad, c_pad)
 
     result = c_pad[:, :N]

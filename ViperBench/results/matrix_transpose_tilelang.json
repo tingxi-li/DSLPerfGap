@@ -6,55 +6,55 @@
       "name": "32x32",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 45.58846200234257
+      "time_ms": 44.78774999734014
     },
     {
       "name": "128x256",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 21.31140099663753
+      "time_ms": 22.461173008196056
     },
     {
       "name": "1024x1024",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 19.56536500074435
+      "time_ms": 18.79735699912999
     },
     {
       "name": "64x512",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 18.688694995944388
+      "time_ms": 17.142169002909213
     },
     {
       "name": "1000x700",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 19.179871000233106
+      "time_ms": 15.686755010392517
     },
     {
       "name": "37x73_odd",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 19.071810005698353
+      "time_ms": 15.570012998068705
     },
     {
       "name": "1x1000_single_row",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 19.042137995711528
+      "time_ms": 14.780509998672642
     },
     {
       "name": "1000x1_single_col",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 18.272995002917014
+      "time_ms": 14.406993999728002
     },
     {
       "name": "7x13_small_odd",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 15.573365999443922
+      "time_ms": 0.1064529933501035
     }
   ]
 }

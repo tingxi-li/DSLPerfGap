@@ -11,6 +11,53 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _kernel_gemm(m, n, k, bM=_TUNED.get("block_M", 128), bN=_TUNED.get("block_N", 128), bK=_TUNED.get("block_K", 32)):
+    @T.prim_func
+    def func(
+        A: T.Tensor((m, k), "float16"),
+        B: T.Tensor((k, n), "float16"),
+        C: T.Tensor((m, n), "float16"),
+    ):
+        with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
+            A_shared = T.alloc_shared((bM, bK), "float16")
+            B_shared = T.alloc_shared((bK, bN), "float16")
+            C_local = T.alloc_fragment((bM, bN), "float32")
+            T.use_swizzle(panel_size=10)
+            T.clear(C_local)
+            for ki in T.Pipelined(T.ceildiv(k, bK), num_stages=_TUNED.get("num_stages", 3)):
+                T.copy(A[by * bM, ki * bK], A_shared)
+                T.copy(B[ki * bK, bx * bN], B_shared)
+                T.gemm(A_shared, B_shared, C_local)
+            T.copy(C_local, C[by * bM, bx * bN])
+    return func
+
+
+@tilelang.jit
+def _kernel_gemm_leaky(m, n, k, bM=_TUNED.get("block_M", 128), bN=_TUNED.get("block_N", 128), bK=_TUNED.get("block_K", 32)):
+    @T.prim_func
+    def func(
+        A: T.Tensor((m, k), "float16"),
+        B: T.Tensor((k, n), "float16"),
+        C: T.Tensor((m, n), "float16"),
+    ):
+        with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
+            A_shared = T.alloc_shared((bM, bK), "float16")
+            B_shared = T.alloc_shared((bK, bN), "float16")
+            C_local = T.alloc_fragment((bM, bN), "float32")
+            T.use_swizzle(panel_size=10)
+            T.clear(C_local)
+            for ki in T.Pipelined(T.ceildiv(k, bK), num_stages=_TUNED.get("num_stages", 3)):
+                T.copy(A[by * bM, ki * bK], A_shared)
+                T.copy(B[ki * bK, bx * bN], B_shared)
+                T.gemm(A_shared, B_shared, C_local)
+            for i, j in T.Parallel(bM, bN):
+                if C_local[i, j] < T.float32(0):
+                    C_local[i, j] = C_local[i, j] * T.float32(0.01)
+            T.copy(C_local, C[by * bM, bx * bN])
+    return func
+
+
 def leaky_relu(a, b, activation=""):
     """
     Matrix multiply with optional leaky_relu.
@@ -28,31 +75,6 @@ def leaky_relu(a, b, activation=""):
 
     do_leaky = activation == "leaky_relu"
 
-    @tilelang.jit
-    def kernel(m, n, k, bM=block_M, bN=block_N, bK=block_K):
-        @T.prim_func
-        def func(
-            A: T.Tensor((m, k), "float16"),
-            B: T.Tensor((k, n), "float16"),
-            C: T.Tensor((m, n), "float16"),
-        ):
-            with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
-                A_shared = T.alloc_shared((bM, bK), "float16")
-                B_shared = T.alloc_shared((bK, bN), "float16")
-                C_local = T.alloc_fragment((bM, bN), "float32")
-                T.use_swizzle(panel_size=10)
-                T.clear(C_local)
-                for ki in T.Pipelined(T.ceildiv(k, bK), num_stages=_TUNED.get("num_stages", 3)):
-                    T.copy(A[by * bM, ki * bK], A_shared)
-                    T.copy(B[ki * bK, bx * bN], B_shared)
-                    T.gemm(A_shared, B_shared, C_local)
-                if do_leaky:
-                    for i, j in T.Parallel(bM, bN):
-                        if C_local[i, j] < T.float32(0):
-                            C_local[i, j] = C_local[i, j] * T.float32(0.01)
-                T.copy(C_local, C[by * bM, bx * bN])
-        return func
-
     af = a.half().contiguous()
     bf = b.half().contiguous()
 
@@ -69,6 +91,9 @@ def leaky_relu(a, b, activation=""):
         b_pad = bf
 
     c_pad = torch.zeros(M_pad, N_pad, device=a.device, dtype=torch.float16)
-    func = kernel(M_pad, N_pad, K_pad)
+    if do_leaky:
+        func = _kernel_gemm_leaky(M_pad, N_pad, K_pad)
+    else:
+        func = _kernel_gemm(M_pad, N_pad, K_pad)
     func(a_pad, b_pad, c_pad)
     return c_pad[:M, :N]

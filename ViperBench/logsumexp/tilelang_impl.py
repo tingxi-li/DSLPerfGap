@@ -11,6 +11,36 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _logsumexp_kernel(m, n, bM=_TUNED.get("block_M", 32), threads=_TUNED.get("threads", 128)):
+    @T.prim_func
+    def func(A: T.Tensor((m, n), "float32"), C: T.Tensor((m,), "float32")):
+        with T.Kernel(T.ceildiv(m, bM), threads=threads) as bx:
+            row = T.alloc_fragment((bM, n), "float32")
+            max_val = T.alloc_fragment((bM,), "float32")
+            sum_val = T.alloc_fragment((bM,), "float32")
+            out_val = T.alloc_fragment((bM,), "float32")
+
+            T.copy(A[bx * bM, 0], row)
+
+            # Reduce max along dim=1 (the n dimension)
+            T.reduce_max(row, max_val, dim=1)
+
+            # Compute exp(row - max_val) in-place
+            for i, j in T.Parallel(bM, n):
+                row[i, j] = T.exp(row[i, j] - max_val[i])
+
+            # Reduce sum along dim=1
+            T.reduce_sum(row, sum_val, dim=1)
+
+            # Compute logsumexp = max + log(sum)
+            for i in T.Parallel(bM):
+                out_val[i] = max_val[i] + T.log(sum_val[i])
+
+            T.copy(out_val, C[bx * bM])
+    return func
+
+
 def logsumexp(x):
     """Logsumexp reduction along the last dimension using TileLang."""
     orig_shape = x.shape
@@ -23,35 +53,6 @@ def logsumexp(x):
     block_M = min(_TUNED.get("block_M", 32), max(2, M))
     M_pad = ((M + block_M - 1) // block_M) * block_M
 
-    @tilelang.jit
-    def kernel(m, n, bM=block_M):
-        @T.prim_func
-        def func(A: T.Tensor((m, n), "float32"), C: T.Tensor((m,), "float32")):
-            with T.Kernel(T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as bx:
-                row = T.alloc_fragment((bM, n), "float32")
-                max_val = T.alloc_fragment((bM,), "float32")
-                sum_val = T.alloc_fragment((bM,), "float32")
-                out_val = T.alloc_fragment((bM,), "float32")
-
-                T.copy(A[bx * bM, 0], row)
-
-                # Reduce max along dim=1 (the n dimension)
-                T.reduce_max(row, max_val, dim=1)
-
-                # Compute exp(row - max_val) in-place
-                for i, j in T.Parallel(bM, n):
-                    row[i, j] = T.exp(row[i, j] - max_val[i])
-
-                # Reduce sum along dim=1
-                T.reduce_sum(row, sum_val, dim=1)
-
-                # Compute logsumexp = max + log(sum)
-                for i in T.Parallel(bM):
-                    out_val[i] = max_val[i] + T.log(sum_val[i])
-
-                T.copy(out_val, C[bx * bM])
-        return func
-
     if M_pad != M:
         x_pad = torch.full((M_pad, N), float('-inf'), device=x.device, dtype=torch.float32)
         x_pad[:M, :] = x_2d
@@ -59,7 +60,7 @@ def logsumexp(x):
         x_pad = x_2d.contiguous()
 
     c_pad = torch.zeros(M_pad, device=x.device, dtype=torch.float32)
-    func = kernel(M_pad, N)
+    func = _logsumexp_kernel(M_pad, N, bM=block_M)
     func(x_pad, c_pad)
 
     result = c_pad[:M]

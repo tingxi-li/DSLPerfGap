@@ -12,6 +12,33 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _max_reduction_kernel(m, n, k, bM=_TUNED.get("block_M", 32), bK=_TUNED.get("block_K", 32), threads=_TUNED.get("threads", 128)):
+    @T.prim_func
+    def func(
+        A: T.Tensor((m, n, k), "float32"),
+        Val: T.Tensor((m, k), "float32"),
+        Idx: T.Tensor((m, k), "int32"),
+    ):
+        with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=threads) as (bx, by):
+            max_val = T.alloc_fragment((bM, bK), "float32")
+            max_idx = T.alloc_fragment((bM, bK), "int32")
+            cur_val = T.alloc_fragment((bM, bK), "float32")
+            T.clear(max_idx)
+            for i, j in T.Parallel(bM, bK):
+                max_val[i, j] = T.float32(-1e30)
+            for ni in T.serial(n):
+                for i, j in T.Parallel(bM, bK):
+                    cur_val[i, j] = A[by * bM + i, ni, bx * bK + j]
+                for i, j in T.Parallel(bM, bK):
+                    if cur_val[i, j] > max_val[i, j]:
+                        max_val[i, j] = cur_val[i, j]
+                        max_idx[i, j] = T.int32(ni)
+            T.copy(max_val, Val[by * bM, bx * bK])
+            T.copy(max_idx, Idx[by * bM, bx * bK])
+    return func
+
+
 def max_reduction(input, dim, keepdim=False):
     """Max reduction along dim, returns (values, indices) like torch.max."""
     if not isinstance(input, torch.Tensor):
@@ -41,33 +68,7 @@ def max_reduction(input, dim, keepdim=False):
         val_pad = torch.full((M, K), float('-inf'), device=x.device, dtype=torch.float32)
         idx_pad = torch.zeros(M, K, dtype=torch.int32, device=x.device)
 
-    @tilelang.jit
-    def kernel(m, n, k, bM=block_M, bK=block_K):
-        @T.prim_func
-        def func(
-            A: T.Tensor((m, n, k), "float32"),
-            Val: T.Tensor((m, k), "float32"),
-            Idx: T.Tensor((m, k), "int32"),
-        ):
-            with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
-                max_val = T.alloc_fragment((bM, bK), "float32")
-                max_idx = T.alloc_fragment((bM, bK), "int32")
-                cur_val = T.alloc_fragment((bM, bK), "float32")
-                T.clear(max_idx)
-                for i, j in T.Parallel(bM, bK):
-                    max_val[i, j] = T.float32(-1e30)
-                for ni in T.serial(n):
-                    for i, j in T.Parallel(bM, bK):
-                        cur_val[i, j] = A[by * bM + i, ni, bx * bK + j]
-                    for i, j in T.Parallel(bM, bK):
-                        if cur_val[i, j] > max_val[i, j]:
-                            max_val[i, j] = cur_val[i, j]
-                            max_idx[i, j] = T.int32(ni)
-                T.copy(max_val, Val[by * bM, bx * bK])
-                T.copy(max_idx, Idx[by * bM, bx * bK])
-        return func
-
-    func = kernel(M_pad, N, K_pad)
+    func = _max_reduction_kernel(M_pad, N, K_pad, bM=block_M, bK=block_K)
     func(x_pad, val_pad, idx_pad)
 
     vals = val_pad[:M, :K].to(x.dtype)

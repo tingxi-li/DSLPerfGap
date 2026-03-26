@@ -12,6 +12,28 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _mean_reduction_kernel(m, n, k, bM=_TUNED.get("block_M", 32), bK=_TUNED.get("block_K", 32), threads=_TUNED.get("threads", 128)):
+    @T.prim_func
+    def func(
+        A: T.Tensor((m, n, k), "float32"),
+        Out: T.Tensor((m, k), "float32"),
+    ):
+        with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=threads) as (bx, by):
+            sum_val = T.alloc_fragment((bM, bK), "float32")
+            cur_val = T.alloc_fragment((bM, bK), "float32")
+            T.clear(sum_val)
+            for ni in T.serial(n):
+                for i, j in T.Parallel(bM, bK):
+                    cur_val[i, j] = A[by * bM + i, ni, bx * bK + j]
+                for i, j in T.Parallel(bM, bK):
+                    sum_val[i, j] = sum_val[i, j] + cur_val[i, j]
+            for i, j in T.Parallel(bM, bK):
+                sum_val[i, j] = sum_val[i, j] / T.float32(n)
+            T.copy(sum_val, Out[by * bM, bx * bK])
+    return func
+
+
 def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.Tensor:
     """Mean reduction along a single dim using TileLang."""
     dim = dim % x.ndim
@@ -35,28 +57,7 @@ def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.
         x_pad = x_3d
         out_pad = torch.zeros(M, K, device=x.device, dtype=torch.float32)
 
-    @tilelang.jit
-    def kernel(m, n, k, bM=block_M, bK=block_K):
-        @T.prim_func
-        def func(
-            A: T.Tensor((m, n, k), "float32"),
-            Out: T.Tensor((m, k), "float32"),
-        ):
-            with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
-                sum_val = T.alloc_fragment((bM, bK), "float32")
-                cur_val = T.alloc_fragment((bM, bK), "float32")
-                T.clear(sum_val)
-                for ni in T.serial(n):
-                    for i, j in T.Parallel(bM, bK):
-                        cur_val[i, j] = A[by * bM + i, ni, bx * bK + j]
-                    for i, j in T.Parallel(bM, bK):
-                        sum_val[i, j] = sum_val[i, j] + cur_val[i, j]
-                for i, j in T.Parallel(bM, bK):
-                    sum_val[i, j] = sum_val[i, j] / T.float32(n)
-                T.copy(sum_val, Out[by * bM, bx * bK])
-        return func
-
-    func = kernel(M_pad, N, K_pad)
+    func = _mean_reduction_kernel(M_pad, N, K_pad, bM=block_M, bK=block_K)
     func(x_pad, out_pad)
 
     result = out_pad[:M, :K]

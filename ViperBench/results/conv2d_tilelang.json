@@ -6,25 +6,25 @@
       "name": "basic_3x3",
       "status": "PASS",
       "max_err": 0.006976127624511719,
-      "time_ms": 57.18069799331715
+      "time_ms": 57.35662499500904
     },
     {
       "name": "stride2_pad1",
       "status": "PASS",
       "max_err": 0.006635397672653198,
-      "time_ms": 25.630743002693634
+      "time_ms": 23.23017400340177
     },
     {
       "name": "5x5_kernel",
       "status": "PASS",
       "max_err": 0.012645840644836426,
-      "time_ms": 21.87030200002482
+      "time_ms": 20.387557000503875
     },
     {
       "name": "batch4_pad2",
       "status": "PASS",
       "max_err": 0.00816035270690918,
-      "time_ms": 78.80271100293612
+      "time_ms": 22.12088499800302
     }
   ]
 }

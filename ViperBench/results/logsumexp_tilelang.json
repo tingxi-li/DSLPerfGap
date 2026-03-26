@@ -6,43 +6,43 @@
       "name": "small_2d",
       "status": "PASS",
       "max_err": 4.76837158203125e-07,
-      "time_ms": 48.36463199899299
+      "time_ms": 47.267504007322714
     },
     {
       "name": "medium_2d",
       "status": "PASS",
       "max_err": 4.76837158203125e-07,
-      "time_ms": 23.398323995934334
+      "time_ms": 23.431502995663323
     },
     {
       "name": "large_2d",
       "status": "PASS",
       "max_err": 9.5367431640625e-07,
-      "time_ms": 22.817207995103672
+      "time_ms": 21.844496004632674
     },
     {
       "name": "wide_2d",
       "status": "PASS",
       "max_err": 9.5367431640625e-07,
-      "time_ms": 22.893770001246594
+      "time_ms": 20.704509995994158
     },
     {
       "name": "3d_tensor",
       "status": "PASS",
       "max_err": 4.76837158203125e-07,
-      "time_ms": 23.0731210031081
+      "time_ms": 20.97903098911047
     },
     {
       "name": "4d_tensor",
       "status": "PASS",
-      "max_err": 4.76837158203125e-07,
-      "time_ms": 72.08912299392978
+      "max_err": 2.384185791015625e-07,
+      "time_ms": 67.01932000578381
     },
     {
       "name": "1d_tensor",
       "status": "PASS",
-      "max_err": 0.0,
-      "time_ms": 22.70414200029336
+      "max_err": 4.76837158203125e-07,
+      "time_ms": 22.067170997615904
     }
   ]
 }

@@ -26,6 +26,32 @@ NUM_STAGES = _TUNED.get("NUM_STAGES", 2)
 NUM_THREADS = _TUNED.get("NUM_THREADS", 128)
 
 
+@tilelang.jit
+def _conv2d_gemm_kernel(M_dim, N_dim, K_dim, bM=BLOCK_M, bN=BLOCK_N, bK=BLOCK_K):
+    @T.prim_func
+    def func(
+        A_t: T.Tensor((M_dim, K_dim), "float16"),
+        B_t: T.Tensor((K_dim, N_dim), "float16"),
+        C_t: T.Tensor((M_dim, N_dim), "float32"),
+    ):
+        with T.Kernel(
+            T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM), threads=NUM_THREADS
+        ) as (bx, by):
+            A_shared = T.alloc_shared((bM, bK), "float16")
+            B_shared = T.alloc_shared((bK, bN), "float16")
+            C_local = T.alloc_fragment((bM, bN), "float32")
+
+            T.clear(C_local)
+            for k in T.Pipelined(T.ceildiv(K_dim, bK), num_stages=NUM_STAGES):
+                T.copy(A_t[by * bM, k * bK], A_shared)
+                T.copy(B_t[k * bK, bx * bN], B_shared)
+                T.gemm(A_shared, B_shared, C_local)
+
+            T.copy(C_local, C_t[by * bM, bx * bN])
+
+    return func
+
+
 def _tilelang_gemm(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
     """A: (M, K), B: (K, N) -> C: (M, N).
     Uses float16 inputs with float32 accumulation to leverage tensor cores.
@@ -60,32 +86,7 @@ def _tilelang_gemm(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
 
     C_pad = torch.zeros(M_pad, N_pad, device=A.device, dtype=torch.float32)
 
-    @tilelang.jit
-    def kernel(M_dim, N_dim, K_dim, bM=block_M, bN=block_N, bK=block_K):
-        @T.prim_func
-        def func(
-            A_t: T.Tensor((M_dim, K_dim), "float16"),
-            B_t: T.Tensor((K_dim, N_dim), "float16"),
-            C_t: T.Tensor((M_dim, N_dim), "float32"),
-        ):
-            with T.Kernel(
-                T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM), threads=NUM_THREADS
-            ) as (bx, by):
-                A_shared = T.alloc_shared((bM, bK), "float16")
-                B_shared = T.alloc_shared((bK, bN), "float16")
-                C_local = T.alloc_fragment((bM, bN), "float32")
-
-                T.clear(C_local)
-                for k in T.Pipelined(T.ceildiv(K_dim, bK), num_stages=NUM_STAGES):
-                    T.copy(A_t[by * bM, k * bK], A_shared)
-                    T.copy(B_t[k * bK, bx * bN], B_shared)
-                    T.gemm(A_shared, B_shared, C_local)
-
-                T.copy(C_local, C_t[by * bM, bx * bN])
-
-        return func
-
-    fn = kernel(M_pad, N_pad, K_pad)
+    fn = _conv2d_gemm_kernel(M_pad, N_pad, K_pad)
     fn(A_pad, B_pad, C_pad)
 
     return C_pad[:M, :N]

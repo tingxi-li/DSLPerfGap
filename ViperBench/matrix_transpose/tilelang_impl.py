@@ -10,6 +10,24 @@ try:
 except Exception:
     _TUNED = {}
 
+_block_M = _TUNED.get("block_M", 64)
+_block_N = _TUNED.get("block_N", 64)
+_threads = _TUNED.get("threads", 128)
+
+
+@tilelang.jit
+def _transpose_kernel(m, n, bM=_block_M, bN=_block_N, dtype_str="float16"):
+    @T.prim_func
+    def func(A: T.Tensor((m, n), dtype_str), B: T.Tensor((n, m), dtype_str)):
+        with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_threads) as (bx, by):
+            A_local = T.alloc_fragment((bM, bN), dtype_str)
+            B_local = T.alloc_fragment((bN, bM), dtype_str)
+            T.copy(A[by * bM, bx * bN], A_local)
+            for i, j in T.Parallel(bN, bM):
+                B_local[i, j] = A_local[j, i]
+            T.copy(B_local, B[bx * bN, by * bM])
+    return func
+
 
 def matrix_transpose(x):
     """Unified API: matrix_transpose(x) -> Tensor, returns x.T contiguous.
@@ -25,24 +43,11 @@ def matrix_transpose(x):
         torch.bfloat16: "bfloat16",
     }.get(x.dtype, "float32")
 
-    block_M = _TUNED.get("block_M", 64)
-    block_N = _TUNED.get("block_N", 64)
+    block_M = _block_M
+    block_N = _block_N
 
     M_pad = ((M + block_M - 1) // block_M) * block_M
     N_pad = ((N + block_N - 1) // block_N) * block_N
-
-    @tilelang.jit
-    def kernel(m, n, bM=block_M, bN=block_N):
-        @T.prim_func
-        def func(A: T.Tensor((m, n), dtype_str), B: T.Tensor((n, m), dtype_str)):
-            with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
-                A_local = T.alloc_fragment((bM, bN), dtype_str)
-                B_local = T.alloc_fragment((bN, bM), dtype_str)
-                T.copy(A[by * bM, bx * bN], A_local)
-                for i, j in T.Parallel(bN, bM):
-                    B_local[i, j] = A_local[j, i]
-                T.copy(B_local, B[bx * bN, by * bM])
-        return func
 
     if M_pad != M or N_pad != N:
         x_pad = torch.zeros(M_pad, N_pad, device=x.device, dtype=x.dtype)
@@ -51,6 +56,6 @@ def matrix_transpose(x):
         x_pad = x.contiguous()
 
     out_pad = torch.zeros(N_pad, M_pad, device=x.device, dtype=x.dtype)
-    func = kernel(M_pad, N_pad)
+    func = _transpose_kernel(M_pad, N_pad, dtype_str=dtype_str)
     func(x_pad, out_pad)
     return out_pad[:N, :M].contiguous()

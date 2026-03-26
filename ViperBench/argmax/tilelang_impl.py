@@ -12,6 +12,32 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _argmax_kernel(m_size, n_size, k_size, bM=_TUNED.get("block_M", 32), bK=_TUNED.get("block_K", 32), threads=_TUNED.get("threads", 128)):
+    @T.prim_func
+    def func(
+        A: T.Tensor((m_size, n_size, k_size), "float32"),
+        Out: T.Tensor((m_size, k_size), "int32"),
+    ):
+        with T.Kernel(T.ceildiv(k_size, bK), T.ceildiv(m_size, bM), threads=threads) as (bx, by):
+            max_val = T.alloc_fragment((bM, bK), "float32")
+            max_idx = T.alloc_fragment((bM, bK), "int32")
+            cur_val = T.alloc_fragment((bM, bK), "float32")
+            T.clear(max_idx)
+            # Initialize max_val to -inf
+            for i, j in T.Parallel(bM, bK):
+                max_val[i, j] = T.float32(-1e30)
+            for n in T.serial(n_size):
+                for i, j in T.Parallel(bM, bK):
+                    cur_val[i, j] = A[by * bM + i, n, bx * bK + j]
+                for i, j in T.Parallel(bM, bK):
+                    if cur_val[i, j] > max_val[i, j]:
+                        max_val[i, j] = cur_val[i, j]
+                        max_idx[i, j] = T.int32(n)
+            T.copy(max_idx, Out[by * bM, bx * bK])
+    return func
+
+
 def argmax(input_tensor, dim, keepdim=False):
     """
     Returns the indices of the maximum values across a specified dimension.
@@ -47,32 +73,7 @@ def argmax(input_tensor, dim, keepdim=False):
         inp_pad = inp_3d
         out_pad = torch.empty(M, K, dtype=torch.int32, device=inp.device)
 
-    @tilelang.jit
-    def argmax_kernel(m_size, n_size, k_size, bM=block_M, bK=block_K):
-        @T.prim_func
-        def func(
-            A: T.Tensor((m_size, n_size, k_size), "float32"),
-            Out: T.Tensor((m_size, k_size), "int32"),
-        ):
-            with T.Kernel(T.ceildiv(k_size, bK), T.ceildiv(m_size, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
-                max_val = T.alloc_fragment((bM, bK), "float32")
-                max_idx = T.alloc_fragment((bM, bK), "int32")
-                cur_val = T.alloc_fragment((bM, bK), "float32")
-                T.clear(max_idx)
-                # Initialize max_val to -inf
-                for i, j in T.Parallel(bM, bK):
-                    max_val[i, j] = T.float32(-1e30)
-                for n in T.serial(n_size):
-                    for i, j in T.Parallel(bM, bK):
-                        cur_val[i, j] = A[by * bM + i, n, bx * bK + j]
-                    for i, j in T.Parallel(bM, bK):
-                        if cur_val[i, j] > max_val[i, j]:
-                            max_val[i, j] = cur_val[i, j]
-                            max_idx[i, j] = T.int32(n)
-                T.copy(max_idx, Out[by * bM, bx * bK])
-        return func
-
-    kernel = argmax_kernel(M_pad, N, K_pad)
+    kernel = _argmax_kernel(M_pad, N, K_pad, bM=block_M, bK=block_K)
     kernel(inp_pad, out_pad)
 
     if M_pad != M or K_pad != K:

@@ -11,6 +11,42 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _index_select_kernel_f32(n, d, s, bN=_TUNED.get("block_N", 32)):
+    @T.prim_func
+    def func(
+        Src: T.Tensor((s, d), "float32"),
+        Idx: T.Tensor((n,), "int32"),
+        Out: T.Tensor((n, d), "float32"),
+    ):
+        with T.Kernel(T.ceildiv(n, bN), threads=_TUNED.get("threads", 128)) as bx:
+            idx_frag = T.alloc_fragment((bN,), "int32")
+            out_frag = T.alloc_fragment((bN, d), "float32")
+            T.copy(Idx[bx * bN], idx_frag)
+            for i, j in T.Parallel(bN, d):
+                out_frag[i, j] = Src[idx_frag[i], j]
+            T.copy(out_frag, Out[bx * bN, 0])
+    return func
+
+
+@tilelang.jit
+def _index_select_kernel_f16(n, d, s, bN=_TUNED.get("block_N", 32)):
+    @T.prim_func
+    def func(
+        Src: T.Tensor((s, d), "float16"),
+        Idx: T.Tensor((n,), "int32"),
+        Out: T.Tensor((n, d), "float16"),
+    ):
+        with T.Kernel(T.ceildiv(n, bN), threads=_TUNED.get("threads", 128)) as bx:
+            idx_frag = T.alloc_fragment((bN,), "int32")
+            out_frag = T.alloc_fragment((bN, d), "float16")
+            T.copy(Idx[bx * bN], idx_frag)
+            for i, j in T.Parallel(bN, d):
+                out_frag[i, j] = Src[idx_frag[i], j]
+            T.copy(out_frag, Out[bx * bN, 0])
+    return func
+
+
 def index_select(output, source, index):
     """
     Index-select rows from source by index using TileLang.
@@ -22,6 +58,8 @@ def index_select(output, source, index):
         raise ValueError(f"index must be 1D, got {index.ndim}D tensor with shape {index.shape}")
 
     orig_shape = source.shape
+    orig_dtype = source.dtype
+
     # Flatten to 2D keeping dim 0
     if source.ndim > 2:
         source_2d = source.reshape(orig_shape[0], -1).contiguous()
@@ -34,7 +72,21 @@ def index_select(output, source, index):
     D = source_2d.shape[1]      # number of columns
     S = source_2d.shape[0]      # number of source rows
 
-    src_f32 = source_2d.float()
+    # Choose kernel and working dtype based on input dtype
+    if orig_dtype == torch.float16:
+        working_dtype = torch.float16
+        kernel_fn = _index_select_kernel_f16
+        src_work = source_2d
+    elif orig_dtype == torch.float32:
+        working_dtype = torch.float32
+        kernel_fn = _index_select_kernel_f32
+        src_work = source_2d
+    else:
+        # Fallback: convert to float32 for unsupported dtypes (bf16, etc.)
+        working_dtype = torch.float32
+        kernel_fn = _index_select_kernel_f32
+        src_work = source_2d.float()
+
     idx_i32 = index.to(torch.int32).contiguous()
 
     # Pad N to multiple of block_N (minimum 32 to avoid degenerate cases)
@@ -47,10 +99,10 @@ def index_select(output, source, index):
 
     # Pad source columns if needed
     if D_pad != D:
-        src_padded = torch.zeros(S, D_pad, device=source.device, dtype=torch.float32)
-        src_padded[:, :D] = src_f32
+        src_padded = torch.zeros(S, D_pad, device=source.device, dtype=working_dtype)
+        src_padded[:, :D] = src_work
     else:
-        src_padded = src_f32
+        src_padded = src_work
 
     # Pad indices if needed
     if N_pad != N:
@@ -59,25 +111,8 @@ def index_select(output, source, index):
     else:
         idx_pad = idx_i32
 
-    @tilelang.jit
-    def kernel(n, d, s, bN=block_N):
-        @T.prim_func
-        def func(
-            Src: T.Tensor((s, d), "float32"),
-            Idx: T.Tensor((n,), "int32"),
-            Out: T.Tensor((n, d), "float32"),
-        ):
-            with T.Kernel(T.ceildiv(n, bN), threads=_TUNED.get("threads", 128)) as bx:
-                idx_frag = T.alloc_fragment((bN,), "int32")
-                out_frag = T.alloc_fragment((bN, d), "float32")
-                T.copy(Idx[bx * bN], idx_frag)
-                for i, j in T.Parallel(bN, d):
-                    out_frag[i, j] = Src[idx_frag[i], j]
-                T.copy(out_frag, Out[bx * bN, 0])
-        return func
-
-    out_pad = torch.zeros(N_pad, D_pad, device=source.device, dtype=torch.float32)
-    func = kernel(N_pad, D_pad, S)
+    out_pad = torch.zeros(N_pad, D_pad, device=source.device, dtype=working_dtype)
+    func = kernel_fn(N_pad, D_pad, S, bN=block_N)
     func(src_padded, idx_pad, out_pad)
 
     # Slice off padding, reshape, cast back
@@ -88,6 +123,7 @@ def index_select(output, source, index):
     elif source.ndim == 1:
         result = result.squeeze(1)
 
-    result = result.to(source.dtype)
+    if result.dtype != orig_dtype:
+        result = result.to(orig_dtype)
     output.copy_(result)
     return output

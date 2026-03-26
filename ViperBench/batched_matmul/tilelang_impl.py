@@ -22,6 +22,44 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _batched_kernel(M_dim, N_dim, K_dim, bN=_TUNED.get("block_N", 64), bK=_TUNED.get("block_K", 64)):
+    @T.prim_func
+    def func(
+        A_t: T.Tensor((M_dim, K_dim), "float32"),
+        B_t: T.Tensor((M_dim, N_dim, K_dim), "float32"),
+        C_t: T.Tensor((M_dim, N_dim), "float32"),
+    ):
+        # Grid: (N_blocks, M) - one thread block per (m, n_block)
+        with T.Kernel(
+            T.ceildiv(N_dim, bN), M_dim,
+            threads=_TUNED.get("threads", 128)
+        ) as (bx, by):
+            C_local = T.alloc_fragment((bN,), "float32")
+            A_local = T.alloc_fragment((bK,), "float32")
+            B_local = T.alloc_fragment((bN,), "float32")
+
+            T.clear(C_local)
+
+            for k_tile in range(T.ceildiv(K_dim, bK)):
+                # Load A tile for this m
+                for j in T.Parallel(bK):
+                    A_local[j] = A_t[by, k_tile * bK + j]
+
+                # For each k in the tile, multiply and accumulate
+                for kk in range(bK):
+                    for j in T.Parallel(bN):
+                        B_local[j] = B_t[by, bx * bN + j, k_tile * bK + kk]
+                    for j in T.Parallel(bN):
+                        C_local[j] += A_local[kk] * B_local[j]
+
+            # Store result
+            for j in T.Parallel(bN):
+                C_t[by, bx * bN + j] = C_local[j]
+
+    return func
+
+
 def batched_matmul(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
     assert A.ndim == 2 and B.ndim == 3
     orig_dtype = A.dtype
@@ -61,44 +99,7 @@ def batched_matmul(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
 
     C_pad = torch.zeros(M, N_pad, device=A.device, dtype=A.dtype)
 
-    @tilelang.jit
-    def kernel(M_dim, N_dim, K_dim, bN=block_N, bK=block_K):
-        @T.prim_func
-        def func(
-            A_t: T.Tensor((M_dim, K_dim), "float32"),
-            B_t: T.Tensor((M_dim, N_dim, K_dim), "float32"),
-            C_t: T.Tensor((M_dim, N_dim), "float32"),
-        ):
-            # Grid: (N_blocks, M) - one thread block per (m, n_block)
-            with T.Kernel(
-                T.ceildiv(N_dim, bN), M_dim,
-                threads=_TUNED.get("threads", 128)
-            ) as (bx, by):
-                C_local = T.alloc_fragment((bN,), "float32")
-                A_local = T.alloc_fragment((bK,), "float32")
-                B_local = T.alloc_fragment((bN,), "float32")
-
-                T.clear(C_local)
-
-                for k_tile in range(T.ceildiv(K_dim, bK)):
-                    # Load A tile for this m
-                    for j in T.Parallel(bK):
-                        A_local[j] = A_t[by, k_tile * bK + j]
-
-                    # For each k in the tile, multiply and accumulate
-                    for kk in range(bK):
-                        for j in T.Parallel(bN):
-                            B_local[j] = B_t[by, bx * bN + j, k_tile * bK + kk]
-                        for j in T.Parallel(bN):
-                            C_local[j] += A_local[kk] * B_local[j]
-
-                # Store result
-                for j in T.Parallel(bN):
-                    C_t[by, bx * bN + j] = C_local[j]
-
-        return func
-
-    fn = kernel(M, N_pad, K_pad)
+    fn = _batched_kernel(M, N_pad, K_pad)
     fn(A_pad, B_pad, C_pad)
 
     return C_pad[:, :N].to(orig_dtype)

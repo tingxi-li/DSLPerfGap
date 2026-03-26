@@ -11,6 +11,28 @@ except Exception:
     _TUNED = {}
 
 
+@tilelang.jit
+def _gemm_kernel(m, n, k, bM=_TUNED.get("block_M", 128), bN=_TUNED.get("block_N", 128), bK=_TUNED.get("block_K", 32)):
+    @T.prim_func
+    def func(
+        A_in: T.Tensor((m, k), "float16"),
+        B_in: T.Tensor((k, n), "float16"),
+        C_out: T.Tensor((m, n), "float16"),
+    ):
+        with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
+            A_shared = T.alloc_shared((bM, bK), "float16")
+            B_shared = T.alloc_shared((bK, bN), "float16")
+            C_local = T.alloc_fragment((bM, bN), "float32")
+            T.use_swizzle(panel_size=10)
+            T.clear(C_local)
+            for ki in T.Pipelined(T.ceildiv(k, bK), num_stages=_TUNED.get("num_stages", 3)):
+                T.copy(A_in[by * bM, ki * bK], A_shared)
+                T.copy(B_in[ki * bK, bx * bN], B_shared)
+                T.gemm(A_shared, B_shared, C_local)
+            T.copy(C_local, C_out[by * bM, bx * bN])
+    return func
+
+
 def _tilelang_gemm(A, B, M, N, K):
     """Compute C = A @ B using TileLang GEMM. A is [M,K] fp16, B is [K,N] fp16, C is [M,N] fp16."""
     block_M, block_N, block_K = _TUNED.get("block_M", 128), _TUNED.get("block_N", 128), _TUNED.get("block_K", 32)
@@ -18,27 +40,6 @@ def _tilelang_gemm(A, B, M, N, K):
     M_pad = ((M + block_M - 1) // block_M) * block_M
     N_pad = ((N + block_N - 1) // block_N) * block_N
     K_pad = ((K + block_K - 1) // block_K) * block_K
-
-    @tilelang.jit
-    def kernel(m, n, k, bM=block_M, bN=block_N, bK=block_K):
-        @T.prim_func
-        def func(
-            A_in: T.Tensor((m, k), "float16"),
-            B_in: T.Tensor((k, n), "float16"),
-            C_out: T.Tensor((m, n), "float16"),
-        ):
-            with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
-                A_shared = T.alloc_shared((bM, bK), "float16")
-                B_shared = T.alloc_shared((bK, bN), "float16")
-                C_local = T.alloc_fragment((bM, bN), "float32")
-                T.use_swizzle(panel_size=10)
-                T.clear(C_local)
-                for ki in T.Pipelined(T.ceildiv(k, bK), num_stages=_TUNED.get("num_stages", 3)):
-                    T.copy(A_in[by * bM, ki * bK], A_shared)
-                    T.copy(B_in[ki * bK, bx * bN], B_shared)
-                    T.gemm(A_shared, B_shared, C_local)
-                T.copy(C_local, C_out[by * bM, bx * bN])
-        return func
 
     # Pad inputs if needed
     if M_pad != M or K_pad != K:
@@ -54,7 +55,7 @@ def _tilelang_gemm(A, B, M, N, K):
         b_pad = B.contiguous()
 
     c_pad = torch.zeros(M_pad, N_pad, device=A.device, dtype=torch.float16)
-    func = kernel(M_pad, N_pad, K_pad)
+    func = _gemm_kernel(M_pad, N_pad, K_pad)
     func(a_pad, b_pad, c_pad)
     return c_pad[:M, :N]
 
