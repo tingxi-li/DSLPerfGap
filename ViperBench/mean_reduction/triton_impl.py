@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("mean_reduction", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 
 @triton.jit
 def mean_dim_kernel(X, Mean, M, N, BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr):
@@ -52,7 +60,7 @@ def mean_reduction(input_tensor, dim, keepdim=False, dtype=None):
     grid = lambda META: (triton.cdiv(M, META["BLOCK_M"]),)
 
     with torch.cuda.device(x.device):
-        mean_dim_kernel[grid](x, out, M, N, BLOCK_M=8, BLOCK_N=8)
+        mean_dim_kernel[grid](x, out, M, N, BLOCK_M=_TUNED.get("BLOCK_M", 8), BLOCK_N=_TUNED.get("BLOCK_N", 8))
     if not keepdim:
         out = out.squeeze(dim)
     return out

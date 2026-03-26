@@ -8,6 +8,14 @@ from torch._inductor.runtime.triton_helpers import libdevice
 empty_strided_cuda = torch._C._dynamo.guards._empty_strided_cuda
 reinterpret_tensor = torch.ops.inductor._reinterpret_tensor
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("layer_norm", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 
 @triton.autotune(
     configs=[

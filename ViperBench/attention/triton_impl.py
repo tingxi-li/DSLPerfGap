@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("attention", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 @triton.jit
 def attention_fwd_kernel(
     q,
@@ -58,10 +66,10 @@ def attention_fwd(q, k, v, store=False, ifcond=False):
     batch_size, n_heads, seq_len, d_head = q.shape
     scale = d_head ** -0.5
     BD = q.shape[-1]
-    BT = 32
+    BT = _TUNED.get("BT", 32)
     NT = triton.cdiv(seq_len, BT)
     num_stages = 3 if d_head <= 64 else 2
-    num_warps = 4
+    num_warps = _TUNED.get("num_warps", 4)
 
     h = q.new_empty(batch_size, n_heads, NT * BD, BD)
     o = torch.empty_like(q)

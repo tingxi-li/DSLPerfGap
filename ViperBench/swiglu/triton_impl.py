@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("swiglu", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 @triton.autotune(
     configs=[
         triton.Config({'BLOCK_N': 32}),

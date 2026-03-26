@@ -6,25 +6,25 @@
       "name": "small_leaky_relu",
       "status": "PASS",
       "max_err": 6.103515625e-05,
-      "time_ms": 47.84515900246333
+      "time_ms": 48.5210759943584
     },
     {
       "name": "medium_leaky_relu",
       "status": "PASS",
       "max_err": 0.015625,
-      "time_ms": 25.831254999502562
+      "time_ms": 27.296403000946157
     },
     {
       "name": "small_no_activation",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 22.424650996981654
+      "time_ms": 23.830892001569737
     },
     {
       "name": "large_leaky_relu",
       "status": "PASS",
       "max_err": 0.03125,
-      "time_ms": 22.254514995438512
+      "time_ms": 23.501404997659847
     }
   ]
 }

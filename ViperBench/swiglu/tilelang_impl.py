@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("swiglu", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def swiglu(xy, out=None):
     """
@@ -18,7 +26,7 @@ def swiglu(xy, out=None):
     x_part = xy_2d[:, :D].contiguous()
     y_part = xy_2d[:, D:].contiguous()
 
-    block_M = min(32, M)
+    block_M = min(_TUNED.get("block_M", 32), M)
     M_pad = ((M + block_M - 1) // block_M) * block_M
 
     @tilelang.jit
@@ -29,7 +37,7 @@ def swiglu(xy, out=None):
             Y: T.Tensor((m, d), "float32"),
             Out: T.Tensor((m, d), "float32"),
         ):
-            with T.Kernel(T.ceildiv(m, bM), threads=128) as bx:
+            with T.Kernel(T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as bx:
                 x_frag = T.alloc_fragment((bM, d), "float32")
                 y_frag = T.alloc_fragment((bM, d), "float32")
                 T.copy(X[bx * bM, 0], x_frag)

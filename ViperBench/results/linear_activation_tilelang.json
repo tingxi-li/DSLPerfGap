@@ -6,25 +6,25 @@
       "name": "2x4x64",
       "status": "PASS",
       "max_err": 0.125,
-      "time_ms": 71.74851400486659
+      "time_ms": 72.53136600047583
     },
     {
       "name": "3x4x64",
       "status": "PASS",
       "max_err": 0.25,
-      "time_ms": 42.17035399778979
+      "time_ms": 42.55202900094446
     },
     {
       "name": "2x8x64",
       "status": "PASS",
       "max_err": 0.25,
-      "time_ms": 37.085820993524976
+      "time_ms": 39.96945299877552
     },
     {
       "name": "1x16x128",
       "status": "PASS",
       "max_err": 0.5,
-      "time_ms": 38.78193000127794
+      "time_ms": 41.68663399468642
     }
   ]
 }

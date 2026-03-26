@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("embedding", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 @triton.jit
 def embedding_kernel(
     weight,
@@ -42,7 +50,7 @@ def embedding(input_ids, weight, vob_start_id=0, vob_end_id=None, out=None):
         vob_end_id = weight.shape[0]
     if out is None:
         out = torch.zeros(input_ids.shape[0], weight.shape[1], dtype=weight.dtype, device=weight.device)
-    BLOCK_N = 64
+    BLOCK_N = _TUNED.get("BLOCK_N", 64)
     BLOCK_NN = 1
     BLOCK_DMODEL = triton.next_power_of_2(weight.shape[1])
     n_ctx = input_ids.shape[0]
@@ -62,7 +70,7 @@ def embedding(input_ids, weight, vob_start_id=0, vob_end_id=None, out=None):
         BLOCK_DMODEL=BLOCK_DMODEL,
         BLOCK_N=BLOCK_N,
         BLOCK_NN=BLOCK_NN,
-        num_warps=1,
+        num_warps=_TUNED.get("num_warps", 1),
         num_stages=1,
     )
     return out

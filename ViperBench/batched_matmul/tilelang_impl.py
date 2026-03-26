@@ -13,6 +13,14 @@ import torch
 import tilelang
 import tilelang.language as T
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("batched_matmul", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def batched_matmul(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
     assert A.ndim == 2 and B.ndim == 3
@@ -31,8 +39,8 @@ def batched_matmul(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
     # But this requires expanding A which wastes memory.
     # Instead, use tiled approach: grid over (M, N_blocks), reduce over K.
 
-    block_N = 64
-    block_K = 64
+    block_N = _TUNED.get("block_N", 64)
+    block_K = _TUNED.get("block_K", 64)
 
     N_pad = ((N + block_N - 1) // block_N) * block_N
     K_pad = ((K + block_K - 1) // block_K) * block_K
@@ -64,7 +72,7 @@ def batched_matmul(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
             # Grid: (N_blocks, M) - one thread block per (m, n_block)
             with T.Kernel(
                 T.ceildiv(N_dim, bN), M_dim,
-                threads=128
+                threads=_TUNED.get("threads", 128)
             ) as (bx, by):
                 C_local = T.alloc_fragment((bN,), "float32")
                 A_local = T.alloc_fragment((bK,), "float32")

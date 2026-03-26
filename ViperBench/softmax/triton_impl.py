@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("softmax", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 @triton.jit
 def softmax_kernel(output_ptr, input_ptr, input_row_stride, output_row_stride, n_cols, BLOCK_SIZE: tl.constexpr):
     row_idx = tl.program_id(0)

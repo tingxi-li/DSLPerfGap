@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("batched_matmul", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 @triton.jit
 def batched_vecmat_kernel(
         A,  # shape: [dim_m, dim_k]
@@ -38,9 +46,9 @@ def batched_matmul(A, B):
     A: [M, K], B: [M, N, K]
     Output: [M, N]
     """
-    block_m = 16
-    block_n = 32
-    block_k = 64
+    block_m = _TUNED.get("block_m", 16)
+    block_n = _TUNED.get("block_n", 32)
+    block_k = _TUNED.get("block_k", 64)
     num_warps = 4
     num_stages = 1
 

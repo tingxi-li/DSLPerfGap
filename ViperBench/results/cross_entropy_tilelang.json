@@ -6,31 +6,31 @@
       "name": "no_smooth_no_split_1blk",
       "status": "PASS",
       "max_err": 4.76837158203125e-07,
-      "time_ms": 4564.5452279932215
+      "time_ms": 56.84882200148422
     },
     {
       "name": "smooth_no_split_1blk",
       "status": "PASS",
       "max_err": 4.76837158203125e-07,
-      "time_ms": 4592.3260990020935
+      "time_ms": 80.2184420026606
     },
     {
       "name": "smooth_split_1blk",
       "status": "PASS",
       "max_err": 2.384185791015625e-07,
-      "time_ms": 4524.0402549970895
+      "time_ms": 32.092024994199164
     },
     {
       "name": "no_smooth_no_split_2blk",
       "status": "PASS",
       "max_err": 2.384185791015625e-07,
-      "time_ms": 4565.579650996369
+      "time_ms": 29.27949299919419
     },
     {
       "name": "logit_scale_2blk",
       "status": "PASS",
       "max_err": 1.1920928955078125e-07,
-      "time_ms": 0.10527099948376417
+      "time_ms": 0.09300300007453188
     }
   ]
 }

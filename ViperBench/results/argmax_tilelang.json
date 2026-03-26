@@ -6,25 +6,25 @@
       "name": "2D_dim0",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 50.252993998583406
+      "time_ms": 49.75269600254251
     },
     {
       "name": "2D_dim1",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 21.36020099715097
+      "time_ms": 21.63246199779678
     },
     {
       "name": "3D_dim2",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 19.675875002576504
+      "time_ms": 20.11100600066129
     },
     {
       "name": "3D_dim1_keepdim",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 17.191746999742463
+      "time_ms": 18.567222999990918
     }
   ]
 }

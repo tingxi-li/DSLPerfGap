@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("leaky_relu", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 
 @triton.jit
 def matmul_kernel(
@@ -69,8 +77,8 @@ def leaky_relu(a, b, activation=""):
         a.stride(0), a.stride(1),
         b.stride(0), b.stride(1),
         c.stride(0), c.stride(1),
-        BLOCK_SIZE_M=32, BLOCK_SIZE_N=32, BLOCK_SIZE_K=32,
-        GROUP_SIZE_M=4,
+        BLOCK_SIZE_M=_TUNED.get("BLOCK_SIZE_M", 32), BLOCK_SIZE_N=_TUNED.get("BLOCK_SIZE_N", 32), BLOCK_SIZE_K=_TUNED.get("BLOCK_SIZE_K", 32),
+        GROUP_SIZE_M=_TUNED.get("GROUP_SIZE_M", 4),
         ACTIVATION=activation
     )
     return c

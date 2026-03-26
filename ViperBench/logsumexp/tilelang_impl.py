@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("logsumexp", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def logsumexp(x):
     """Logsumexp reduction along the last dimension using TileLang."""
@@ -12,14 +20,14 @@ def logsumexp(x):
     x_2d = x.contiguous().view(M, N).float()
 
     # block_M must be >= 2 to avoid degenerate T.Parallel loops
-    block_M = min(32, max(2, M))
+    block_M = min(_TUNED.get("block_M", 32), max(2, M))
     M_pad = ((M + block_M - 1) // block_M) * block_M
 
     @tilelang.jit
     def kernel(m, n, bM=block_M):
         @T.prim_func
         def func(A: T.Tensor((m, n), "float32"), C: T.Tensor((m,), "float32")):
-            with T.Kernel(T.ceildiv(m, bM), threads=128) as bx:
+            with T.Kernel(T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as bx:
                 row = T.alloc_fragment((bM, n), "float32")
                 max_val = T.alloc_fragment((bM,), "float32")
                 sum_val = T.alloc_fragment((bM,), "float32")

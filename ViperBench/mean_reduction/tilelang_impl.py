@@ -3,6 +3,14 @@ import tilelang.language as T
 import torch
 import math
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("mean_reduction", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.Tensor:
     """Mean reduction along a single dim using TileLang."""
@@ -14,8 +22,8 @@ def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.
 
     x_3d = x.contiguous().float().view(M, N, K)
 
-    block_M = min(32, M)
-    block_K = min(32, K)
+    block_M = min(_TUNED.get("block_M", 32), M)
+    block_K = min(_TUNED.get("block_K", 32), K)
     M_pad = ((M + block_M - 1) // block_M) * block_M
     K_pad = ((K + block_K - 1) // block_K) * block_K
 
@@ -34,7 +42,7 @@ def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.
             A: T.Tensor((m, n, k), "float32"),
             Out: T.Tensor((m, k), "float32"),
         ):
-            with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=128) as (bx, by):
+            with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
                 sum_val = T.alloc_fragment((bM, bK), "float32")
                 cur_val = T.alloc_fragment((bM, bK), "float32")
                 T.clear(sum_val)

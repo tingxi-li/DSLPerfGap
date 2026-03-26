@@ -6,25 +6,25 @@
       "name": "small",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 46.92889800207922
+      "time_ms": 49.03689400089206
     },
     {
       "name": "medium",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 23.2745649991557
+      "time_ms": 24.79442799813114
     },
     {
       "name": "large",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 21.399488003225997
+      "time_ms": 24.016580995521508
     },
     {
       "name": "partial_vocab",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 20.456673002627213
+      "time_ms": 25.942418003978673
     }
   ]
 }

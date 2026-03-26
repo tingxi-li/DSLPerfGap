@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("matrix_transpose", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 
 @triton.jit
 def transpose_kernel(
@@ -42,8 +50,8 @@ def matrix_transpose(x):
     M, N = x.shape
     out = torch.empty((N, M), device=x.device, dtype=x.dtype)
 
-    BLOCK_ROWS = 32
-    BLOCK_COLS = 32
+    BLOCK_ROWS = _TUNED.get("BLOCK_ROWS", 32)
+    BLOCK_COLS = _TUNED.get("BLOCK_COLS", 32)
 
     grid = (triton.cdiv(M, BLOCK_ROWS), triton.cdiv(N, BLOCK_COLS))
     transpose_kernel[grid](

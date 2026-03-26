@@ -2,10 +2,18 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("linear_activation", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def _tilelang_gemm(A, B, M, N, K):
     """Compute C = A @ B using TileLang GEMM. A is [M,K] fp16, B is [K,N] fp16, C is [M,N] fp16."""
-    block_M, block_N, block_K = 128, 128, 32
+    block_M, block_N, block_K = _TUNED.get("block_M", 128), _TUNED.get("block_N", 128), _TUNED.get("block_K", 32)
 
     M_pad = ((M + block_M - 1) // block_M) * block_M
     N_pad = ((N + block_N - 1) // block_N) * block_N
@@ -19,13 +27,13 @@ def _tilelang_gemm(A, B, M, N, K):
             B_in: T.Tensor((k, n), "float16"),
             C_out: T.Tensor((m, n), "float16"),
         ):
-            with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=128) as (bx, by):
+            with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
                 A_shared = T.alloc_shared((bM, bK), "float16")
                 B_shared = T.alloc_shared((bK, bN), "float16")
                 C_local = T.alloc_fragment((bM, bN), "float32")
                 T.use_swizzle(panel_size=10)
                 T.clear(C_local)
-                for ki in T.Pipelined(T.ceildiv(k, bK), num_stages=3):
+                for ki in T.Pipelined(T.ceildiv(k, bK), num_stages=_TUNED.get("num_stages", 3)):
                     T.copy(A_in[by * bM, ki * bK], A_shared)
                     T.copy(B_in[ki * bK, bx * bN], B_shared)
                     T.gemm(A_shared, B_shared, C_local)

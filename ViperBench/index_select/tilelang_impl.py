@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("index_select", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def index_select(output, source, index):
     """
@@ -30,7 +38,7 @@ def index_select(output, source, index):
     idx_i32 = index.to(torch.int32).contiguous()
 
     # Pad N to multiple of block_N (minimum 32 to avoid degenerate cases)
-    block_N = 32
+    block_N = _TUNED.get("block_N", 32)
     N_pad = ((N + block_N - 1) // block_N) * block_N
 
     # Pad D to multiple of 128 to avoid layout inference issues
@@ -59,7 +67,7 @@ def index_select(output, source, index):
             Idx: T.Tensor((n,), "int32"),
             Out: T.Tensor((n, d), "float32"),
         ):
-            with T.Kernel(T.ceildiv(n, bN), threads=128) as bx:
+            with T.Kernel(T.ceildiv(n, bN), threads=_TUNED.get("threads", 128)) as bx:
                 idx_frag = T.alloc_fragment((bN,), "int32")
                 out_frag = T.alloc_fragment((bN, d), "float32")
                 T.copy(Idx[bx * bN], idx_frag)

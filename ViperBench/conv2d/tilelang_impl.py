@@ -11,11 +11,19 @@ import torch.nn.functional as F
 import tilelang
 import tilelang.language as T
 
-BLOCK_M = 64
-BLOCK_N = 64
-BLOCK_K = 32
-NUM_STAGES = 2
-NUM_THREADS = 128
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("conv2d", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
+BLOCK_M = _TUNED.get("BLOCK_M", 64)
+BLOCK_N = _TUNED.get("BLOCK_N", 64)
+BLOCK_K = _TUNED.get("BLOCK_K", 32)
+NUM_STAGES = _TUNED.get("NUM_STAGES", 2)
+NUM_THREADS = _TUNED.get("NUM_THREADS", 128)
 
 
 def _tilelang_gemm(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:

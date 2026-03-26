@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("mul", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def mul(x: torch.Tensor) -> torch.Tensor:
     """Multiply input tensor by 2 using TileLang."""
@@ -10,7 +18,7 @@ def mul(x: torch.Tensor) -> torch.Tensor:
         return torch.zeros_like(x)
 
     original_shape = x.shape
-    block_N = 1024
+    block_N = _TUNED.get("block_N", 1024)
     dtype_str = {
         torch.float32: "float32",
         torch.float16: "float16",
@@ -24,7 +32,7 @@ def mul(x: torch.Tensor) -> torch.Tensor:
             A: T.Tensor((n,), dtype_str),
             C: T.Tensor((n,), dtype_str),
         ):
-            with T.Kernel(T.ceildiv(n, block_size), threads=128) as bx:
+            with T.Kernel(T.ceildiv(n, block_size), threads=_TUNED.get("threads", 128)) as bx:
                 A_local = T.alloc_fragment((block_size,), dtype_str)
                 T.copy(A[bx * block_size], A_local)
                 for i in T.Parallel(block_size):

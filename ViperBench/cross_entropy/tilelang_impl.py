@@ -6,6 +6,16 @@ import torch
 import tilelang
 import tilelang.language as T
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("cross_entropy", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
+_threads = _TUNED.get("threads", 32)
+
 
 def _make_fwd_kernel():
     @tilelang.jit
@@ -22,7 +32,7 @@ def _make_fwd_kernel():
             lse_out: T.Tensor((_out_size,), "float32"),
             z_loss_out: T.Tensor((_out_size,), "float32"),
         ):
-            with T.Kernel(_n_rows, _num_col_blocks, threads=32) as (row_idx, col_block_idx):
+            with T.Kernel(_n_rows, _num_col_blocks, threads=_threads) as (row_idx, col_block_idx):
                 local_max = T.alloc_local((1,), "float32")
                 local_sum = T.alloc_local((1,), "float32")
                 local_sum_logits = T.alloc_local((1,), "float32")
@@ -138,7 +148,7 @@ def _make_bwd_kernel():
             params: T.Tensor((3,), "float32"),
             dlogits: T.Tensor((_n_rows, _n_cols), "float32"),
         ):
-            with T.Kernel(_n_rows, _num_col_blocks, threads=32) as (row_idx, col_block_idx):
+            with T.Kernel(_n_rows, _num_col_blocks, threads=_threads) as (row_idx, col_block_idx):
                 col_start = col_block_idx * _BLOCK_SIZE
 
                 smoothing_f = params[0]

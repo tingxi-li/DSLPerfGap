@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("log_softmax", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def log_softmax(x, dim=-1, dtype=None):
     """Log-softmax along the given dimension using TileLang."""
@@ -21,7 +29,7 @@ def log_softmax(x, dim=-1, dtype=None):
     def kernel(m, n):
         @T.prim_func
         def func(A: T.Tensor((m, n), "float32"), C: T.Tensor((m, n), "float32")):
-            with T.Kernel(m, threads=128) as bx:
+            with T.Kernel(m, threads=_TUNED.get("threads", 128)) as bx:
                 row = T.alloc_fragment((n,), "float32")
                 row_max = T.alloc_fragment((1,), "float32")
                 row_sum = T.alloc_fragment((1,), "float32")

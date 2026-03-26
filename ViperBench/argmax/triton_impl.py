@@ -3,6 +3,14 @@ import triton
 import triton.language as tl
 import math
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("argmax", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 
 def can_use_int32_index(tensor):
     return tensor.numel() < 2**31
@@ -66,8 +74,8 @@ def argmax(input_tensor, dim, keepdim=False):
     if not keepdim:
         out_index = torch.squeeze(out_index, dim)
 
-    BLOCK_M = 128
-    BLOCK_N = 128
+    BLOCK_M = _TUNED.get("BLOCK_M", 128)
+    BLOCK_N = _TUNED.get("BLOCK_N", 128)
 
     grid = lambda meta: (
         triton.cdiv(M, meta["BLOCK_M"]),

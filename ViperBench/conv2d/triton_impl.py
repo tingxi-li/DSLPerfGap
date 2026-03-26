@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("conv2d", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 
 @triton.jit
 def conv2d_forward_kernel(
@@ -119,9 +127,9 @@ def conv2d(input, weight, bias=None, stride=1, padding=0, groups=1):
     weight_out_feat_stride, weight_in_feat_stride, weight_height_stride, weight_width_stride = weight.stride()
     output_batch_stride, output_out_feat_stride, output_height_stride, output_width_stride = output.stride()
 
-    BLOCK_SIZE_BATCH_HEIGHT_WIDTH = 128
-    BLOCK_SIZE_IN_FEAT = 32
-    BLOCK_SIZE_OUT_FEAT = 32
+    BLOCK_SIZE_BATCH_HEIGHT_WIDTH = _TUNED.get("BLOCK_SIZE_BATCH_HEIGHT_WIDTH", 128)
+    BLOCK_SIZE_IN_FEAT = _TUNED.get("BLOCK_SIZE_IN_FEAT", 32)
+    BLOCK_SIZE_OUT_FEAT = _TUNED.get("BLOCK_SIZE_OUT_FEAT", 32)
 
     grid = (triton.cdiv(batch_dim * out_height * out_width, BLOCK_SIZE_BATCH_HEIGHT_WIDTH),
             triton.cdiv(out_feat_dim // groups, BLOCK_SIZE_OUT_FEAT),

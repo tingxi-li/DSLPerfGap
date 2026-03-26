@@ -2,6 +2,14 @@ import triton
 import triton.language as tl
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("relu", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 @triton.jit
 def relu_kernel(x_ptr, out_ptr, N: tl.constexpr, block_size: tl.constexpr):
     pid = tl.program_id(0)
@@ -17,7 +25,7 @@ def relu(x):
     """Element-wise ReLU activation using Triton."""
     out = torch.empty_like(x)
     N = x.numel()
-    BLOCK_SIZE = 1024
+    BLOCK_SIZE = _TUNED.get("BLOCK_SIZE", 1024)
     grid = lambda meta: (triton.cdiv(N, BLOCK_SIZE), )
     relu_kernel[grid](x, out, N, BLOCK_SIZE)
     return out

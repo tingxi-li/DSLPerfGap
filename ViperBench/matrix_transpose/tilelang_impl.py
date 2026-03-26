@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("matrix_transpose", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def matrix_transpose(x):
     """Unified API: matrix_transpose(x) -> Tensor, returns x.T contiguous.
@@ -17,8 +25,8 @@ def matrix_transpose(x):
         torch.bfloat16: "bfloat16",
     }.get(x.dtype, "float32")
 
-    block_M = 64
-    block_N = 64
+    block_M = _TUNED.get("block_M", 64)
+    block_N = _TUNED.get("block_N", 64)
 
     M_pad = ((M + block_M - 1) // block_M) * block_M
     N_pad = ((N + block_N - 1) // block_N) * block_N
@@ -27,7 +35,7 @@ def matrix_transpose(x):
     def kernel(m, n, bM=block_M, bN=block_N):
         @T.prim_func
         def func(A: T.Tensor((m, n), dtype_str), B: T.Tensor((n, m), dtype_str)):
-            with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=128) as (bx, by):
+            with T.Kernel(T.ceildiv(n, bN), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
                 A_local = T.alloc_fragment((bM, bN), dtype_str)
                 B_local = T.alloc_fragment((bN, bM), dtype_str)
                 T.copy(A[by * bM, bx * bN], A_local)

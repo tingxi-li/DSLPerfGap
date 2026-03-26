@@ -2,6 +2,14 @@ import triton
 import triton.language as tl
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("matmul", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 
 @triton.jit
 def matmul_kernel(
@@ -49,9 +57,9 @@ def matmul(a, b):
 
     c = torch.empty((M, N), device=a.device, dtype=a.dtype)
 
-    BLOCK_SIZE_M = 64
-    BLOCK_SIZE_N = 64
-    BLOCK_SIZE_K = 64
+    BLOCK_SIZE_M = _TUNED.get("BLOCK_SIZE_M", 64)
+    BLOCK_SIZE_N = _TUNED.get("BLOCK_SIZE_N", 64)
+    BLOCK_SIZE_K = _TUNED.get("BLOCK_SIZE_K", 64)
 
     grid = (triton.cdiv(M, BLOCK_SIZE_M), triton.cdiv(N, BLOCK_SIZE_N))
     matmul_kernel[grid](

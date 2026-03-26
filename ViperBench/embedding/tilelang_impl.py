@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("embedding", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def embedding(input_ids, weight, vob_start_id=0, vob_end_id=None, out=None):
     """
@@ -24,8 +32,8 @@ def embedding(input_ids, weight, vob_start_id=0, vob_end_id=None, out=None):
     valid_mask = valid.float()
     weight = weight.float()
 
-    block_N = 4
-    block_D = min(128, D)
+    block_N = _TUNED.get("block_N", 4)
+    block_D = min(_TUNED.get("block_D", 128), D)
 
     # Pad D to multiple of block_D
     D_pad = ((D + block_D - 1) // block_D) * block_D
@@ -60,7 +68,7 @@ def embedding(input_ids, weight, vob_start_id=0, vob_end_id=None, out=None):
             W: T.Tensor((v_size, d_size), "float32"),
             Out: T.Tensor((n_size, d_size), "float32"),
         ):
-            with T.Kernel(T.ceildiv(d_size, bD), T.ceildiv(n_size, bN), threads=128) as (bx, by):
+            with T.Kernel(T.ceildiv(d_size, bD), T.ceildiv(n_size, bN), threads=_TUNED.get("threads", 128)) as (bx, by):
                 out_local = T.alloc_fragment((bN, bD), "float32")
                 T.clear(out_local)
                 for i, j in T.Parallel(bN, bD):

@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("softmax", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def _next_power_of_2(n):
     """Return the smallest power of 2 >= n."""
@@ -32,7 +40,7 @@ def softmax(x):
     def kernel(m, n):
         @T.prim_func
         def func(A: T.Tensor((m, n), "float32"), C: T.Tensor((m, n), "float32")):
-            with T.Kernel(m, threads=128) as bx:
+            with T.Kernel(m, threads=_TUNED.get("threads", 128)) as bx:
                 max_val = T.alloc_fragment((1,), "float32")
                 sum_val = T.alloc_fragment((1,), "float32")
                 row = T.alloc_fragment((n,), "float32")

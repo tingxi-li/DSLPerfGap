@@ -3,6 +3,14 @@ import tilelang.language as T
 import torch
 import math
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("max_reduction", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def max_reduction(input, dim, keepdim=False):
     """Max reduction along dim, returns (values, indices) like torch.max."""
@@ -18,8 +26,8 @@ def max_reduction(input, dim, keepdim=False):
 
     x_3d = x.contiguous().float().view(M, N, K)
 
-    block_M = min(32, M)
-    block_K = min(32, K)
+    block_M = min(_TUNED.get("block_M", 32), M)
+    block_K = min(_TUNED.get("block_K", 32), K)
     M_pad = ((M + block_M - 1) // block_M) * block_M
     K_pad = ((K + block_K - 1) // block_K) * block_K
 
@@ -41,7 +49,7 @@ def max_reduction(input, dim, keepdim=False):
             Val: T.Tensor((m, k), "float32"),
             Idx: T.Tensor((m, k), "int32"),
         ):
-            with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=128) as (bx, by):
+            with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=_TUNED.get("threads", 128)) as (bx, by):
                 max_val = T.alloc_fragment((bM, bK), "float32")
                 max_idx = T.alloc_fragment((bM, bK), "int32")
                 cur_val = T.alloc_fragment((bM, bK), "float32")

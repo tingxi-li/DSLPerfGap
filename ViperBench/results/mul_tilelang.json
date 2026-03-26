@@ -6,25 +6,25 @@
       "name": "small_1d",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 42.00527699867962
+      "time_ms": 42.69821400521323
     },
     {
       "name": "medium_1d",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 20.831208996241912
+      "time_ms": 21.034712000982836
     },
     {
       "name": "2d",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 18.03803000075277
+      "time_ms": 19.932600000174716
     },
     {
       "name": "fp16",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 16.57338500081096
+      "time_ms": 18.83980799902929
     }
   ]
 }

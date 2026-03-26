@@ -2,6 +2,14 @@ import tilelang
 import tilelang.language as T
 import torch
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("layer_norm", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
 
 def layer_norm(x, weight, bias, eps=1e-5):
     """TileLang layer norm: y = (x - mean) / sqrt(var + eps) * weight + bias
@@ -24,7 +32,7 @@ def layer_norm(x, weight, bias, eps=1e-5):
             B: T.Tensor((n,), "float32"),
             Y: T.Tensor((m, n), "float32"),
         ):
-            with T.Kernel(m, threads=128) as bx:
+            with T.Kernel(m, threads=_TUNED.get("threads", 128)) as bx:
                 row = T.alloc_fragment((n,), "float32")
                 mean_val = T.alloc_fragment((1,), "float32")
                 var_val = T.alloc_fragment((1,), "float32")

@@ -2,6 +2,14 @@ import torch
 import triton
 import triton.language as tl
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("linear_activation", "triton") or {}
+except Exception:
+    _TUNED = {}
+
 @triton.jit
 def ff_llama(
     a_ptr, w1_ptr, w3_ptr, out_ptr, rms_w_ptr,
@@ -98,7 +106,7 @@ def kernel_ff(x: torch.Tensor, w1: torch.Tensor, w3: torch.Tensor, rms_w: torch.
         *rms_w.stride(),
         USE_FP8=w1_t.dtype != torch.float16,
         EPS=1e-6,
-        BLOCK_SIZE_M=16, BLOCK_SIZE_N=16, BLOCK_SIZE_K=64,
+        BLOCK_SIZE_M=_TUNED.get("BLOCK_SIZE_M", 16), BLOCK_SIZE_N=_TUNED.get("BLOCK_SIZE_N", 16), BLOCK_SIZE_K=_TUNED.get("BLOCK_SIZE_K", 64),
         num_stages=2, num_warps=4
     )
     out = out.view(batch, seq_len, -1)

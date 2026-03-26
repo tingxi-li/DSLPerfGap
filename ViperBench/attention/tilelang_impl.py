@@ -15,8 +15,21 @@ import torch
 import tilelang
 import tilelang.language as T
 
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("attention", "tilelang") or {}
+except Exception:
+    _TUNED = {}
 
-def _make_matmul_kernel(M, N, K, block_M=32, block_N=32, block_K=32):
+_attn_threads = _TUNED.get("threads", 128)
+_attn_block_M = _TUNED.get("block_M", 32)
+_attn_block_N = _TUNED.get("block_N", 32)
+_attn_block_K = _TUNED.get("block_K", 32)
+
+
+def _make_matmul_kernel(M, N, K, block_M=_attn_block_M, block_N=_attn_block_N, block_K=_attn_block_K):
     """
     Create a TileLang matmul kernel: C[M,N] = A[M,K] @ B[K,N]
     Uses element-wise multiply-accumulate for full fp32 precision.
@@ -31,7 +44,7 @@ def _make_matmul_kernel(M, N, K, block_M=32, block_N=32, block_K=32):
         ):
             with T.Kernel(
                 T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM),
-                threads=128
+                threads=_attn_threads
             ) as (bx, by):
                 C_local = T.alloc_fragment((bM, bN), "float32")
                 A_local = T.alloc_fragment((bM,), "float32")
@@ -57,7 +70,7 @@ def _make_matmul_kernel(M, N, K, block_M=32, block_N=32, block_K=32):
     return kernel(M, N, K)
 
 
-def _make_matmul_add_kernel(M, N, K, block_M=32, block_N=32, block_K=32):
+def _make_matmul_add_kernel(M, N, K, block_M=_attn_block_M, block_N=_attn_block_N, block_K=_attn_block_K):
     """
     Create a TileLang kernel: C[M,N] += A[M,K] @ B[K,N]
     Reads existing C values and adds to them.
@@ -72,7 +85,7 @@ def _make_matmul_add_kernel(M, N, K, block_M=32, block_N=32, block_K=32):
         ):
             with T.Kernel(
                 T.ceildiv(N_dim, bN), T.ceildiv(M_dim, bM),
-                threads=128
+                threads=_attn_threads
             ) as (bx, by):
                 C_local = T.alloc_fragment((bM, bN), "float32")
                 A_local = T.alloc_fragment((bM,), "float32")
