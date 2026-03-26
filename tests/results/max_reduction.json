@@ -1,0 +1,30 @@
+{
+  "kernel": "max_reduction",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 32, 'N': 64, 'dim': 1}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 903.6724840116221
+    },
+    {
+      "shape": "{'M': 128, 'N': 128, 'dim': 0}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 19.350034999661148
+    },
+    {
+      "shape": "{'M': 256, 'N': 512, 'dim': 1}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.929552006535232
+    },
+    {
+      "shape": "{'M': 64, 'N': 1024, 'dim': 1}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 18.049184000119567
+    }
+  ]
+}

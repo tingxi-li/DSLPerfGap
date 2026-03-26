@@ -1,0 +1,30 @@
+{
+  "kernel": "embedding",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'N': 32, 'V': 1000, 'D': 128}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 881.5122880041599
+    },
+    {
+      "shape": "{'N': 128, 'V': 5000, 'D': 256}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 13.119607989210635
+    },
+    {
+      "shape": "{'N': 64, 'V': 500, 'D': 64}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 11.770832003094256
+    },
+    {
+      "shape": "{'N': 16, 'V': 100, 'D': 32}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 12.199916003737599
+    }
+  ]
+}

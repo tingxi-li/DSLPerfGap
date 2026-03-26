@@ -1,0 +1,48 @@
+{
+  "kernel": "logsumexp_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_2d",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 49.36711600021226
+    },
+    {
+      "name": "medium_2d",
+      "status": "PASS",
+      "max_err": 4.76837158203125e-07,
+      "time_ms": 23.87942199857207
+    },
+    {
+      "name": "large_2d",
+      "status": "PASS",
+      "max_err": 9.5367431640625e-07,
+      "time_ms": 22.11639500455931
+    },
+    {
+      "name": "wide_2d",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 20.75398499437142
+    },
+    {
+      "name": "3d_tensor",
+      "status": "PASS",
+      "max_err": 4.76837158203125e-07,
+      "time_ms": 19.900066996342503
+    },
+    {
+      "name": "4d_tensor",
+      "status": "PASS",
+      "max_err": 4.76837158203125e-07,
+      "time_ms": 71.66007000341779
+    },
+    {
+      "name": "1d_tensor",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 22.206970999832265
+    }
+  ]
+}

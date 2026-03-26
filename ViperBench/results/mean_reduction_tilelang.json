@@ -1,0 +1,30 @@
+{
+  "kernel": "mean_reduction_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "2D_dim0",
+      "status": "PASS",
+      "max_err": 5.960464477539063e-08,
+      "time_ms": 44.741393998265266
+    },
+    {
+      "name": "2D_dim1_keepdim",
+      "status": "PASS",
+      "max_err": 8.940696716308594e-08,
+      "time_ms": 22.495045996038243
+    },
+    {
+      "name": "4D_multi_dim",
+      "status": "PASS",
+      "max_err": 2.9802322387695312e-08,
+      "time_ms": 38.45729900058359
+    },
+    {
+      "name": "3D_dim2",
+      "status": "PASS",
+      "max_err": 5.960464477539063e-08,
+      "time_ms": 19.009439005458262
+    }
+  ]
+}

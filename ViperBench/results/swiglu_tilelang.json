@@ -1,0 +1,36 @@
+{
+  "kernel": "swiglu_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_fp32",
+      "status": "PASS",
+      "max_err": 1.1920928955078125e-07,
+      "time_ms": 52.84387800202239
+    },
+    {
+      "name": "medium_fp32",
+      "status": "PASS",
+      "max_err": 4.76837158203125e-07,
+      "time_ms": 22.7883359984844
+    },
+    {
+      "name": "large_fp32",
+      "status": "PASS",
+      "max_err": 9.5367431640625e-07,
+      "time_ms": 22.727121999196243
+    },
+    {
+      "name": "edge_fp32",
+      "status": "PASS",
+      "max_err": 2.9802322387695312e-08,
+      "time_ms": 19.292306998977438
+    },
+    {
+      "name": "small_fp16",
+      "status": "PASS",
+      "max_err": 0.00390625,
+      "time_ms": 18.354477993852925
+    }
+  ]
+}

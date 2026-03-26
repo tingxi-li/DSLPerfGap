@@ -1,0 +1,60 @@
+{
+  "kernel": "matrix_transpose_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "32x32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 44.53786700469209
+    },
+    {
+      "name": "128x256",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 22.904580997419544
+    },
+    {
+      "name": "1024x1024",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 18.795577001583297
+    },
+    {
+      "name": "64x512",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.928822002431843
+    },
+    {
+      "name": "1000x700",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 16.612133003945928
+    },
+    {
+      "name": "37x73_odd",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 16.262353005004115
+    },
+    {
+      "name": "1x1000_single_row",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 16.659136999805924
+    },
+    {
+      "name": "1000x1_single_col",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 16.73565700184554
+    },
+    {
+      "name": "7x13_small_odd",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 13.84081800642889
+    }
+  ]
+}

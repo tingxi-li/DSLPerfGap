@@ -1,0 +1,30 @@
+{
+  "kernel": "embedding_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 46.92889800207922
+    },
+    {
+      "name": "medium",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 23.2745649991557
+    },
+    {
+      "name": "large",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 21.399488003225997
+    },
+    {
+      "name": "partial_vocab",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 20.456673002627213
+    }
+  ]
+}

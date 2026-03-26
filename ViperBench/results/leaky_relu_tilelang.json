@@ -1,0 +1,30 @@
+{
+  "kernel": "leaky_relu_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_leaky_relu",
+      "status": "PASS",
+      "max_err": 6.103515625e-05,
+      "time_ms": 47.84515900246333
+    },
+    {
+      "name": "medium_leaky_relu",
+      "status": "PASS",
+      "max_err": 0.015625,
+      "time_ms": 25.831254999502562
+    },
+    {
+      "name": "small_no_activation",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 22.424650996981654
+    },
+    {
+      "name": "large_leaky_relu",
+      "status": "PASS",
+      "max_err": 0.03125,
+      "time_ms": 22.254514995438512
+    }
+  ]
+}

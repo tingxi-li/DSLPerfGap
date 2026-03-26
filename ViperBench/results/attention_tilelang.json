@@ -1,0 +1,36 @@
+{
+  "kernel": "attention_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "basic_no_flags",
+      "status": "PASS",
+      "max_err": 9.5367431640625e-06,
+      "time_ms": 9225.983884003654
+    },
+    {
+      "name": "medium_no_flags",
+      "status": "PASS",
+      "max_err": 1.52587890625e-05,
+      "time_ms": 17956.947261001915
+    },
+    {
+      "name": "ifcond_true",
+      "status": "PASS",
+      "max_err": 7.62939453125e-06,
+      "time_ms": 0.4734739995910786
+    },
+    {
+      "name": "small_seq",
+      "status": "PASS",
+      "max_err": 3.814697265625e-06,
+      "time_ms": 0.20313199638621882
+    },
+    {
+      "name": "store_true",
+      "status": "PASS",
+      "max_err": 1.1444091796875e-05,
+      "time_ms": 0.4134959963266738
+    }
+  ]
+}

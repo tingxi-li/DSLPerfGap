@@ -1,0 +1,42 @@
+{
+  "kernel": "add_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 43.684741998731624
+    },
+    {
+      "name": "medium_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 18.565368998679332
+    },
+    {
+      "name": "large_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 18.884443001297768
+    },
+    {
+      "name": "2d_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 16.476769997098017
+    },
+    {
+      "name": "small_f16",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 15.931713001918979
+    },
+    {
+      "name": "large_f16",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.69534200138878
+    }
+  ]
+}

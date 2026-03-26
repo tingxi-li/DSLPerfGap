@@ -1,0 +1,36 @@
+{
+  "kernel": "rms_norm_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 48.57665400049882
+    },
+    {
+      "name": "medium_fp32",
+      "status": "PASS",
+      "max_err": 9.5367431640625e-07,
+      "time_ms": 25.218069000402465
+    },
+    {
+      "name": "large_fp32",
+      "status": "PASS",
+      "max_err": 2.384185791015625e-06,
+      "time_ms": 25.805936005781405
+    },
+    {
+      "name": "edge_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 20.695767998404335
+    },
+    {
+      "name": "small_fp16",
+      "status": "PASS",
+      "max_err": 0.000244140625,
+      "time_ms": 18.651495993253775
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "kernel": "relu_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 42.87672600185033
+    },
+    {
+      "name": "medium_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 19.968159002019092
+    },
+    {
+      "name": "large_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.905609995068517
+    },
+    {
+      "name": "2d_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.213623999850824
+    },
+    {
+      "name": "small_f16",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 16.231371999310795
+    },
+    {
+      "name": "large_f16",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.452307998610195
+    },
+    {
+      "name": "negatives_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 14.532241999404505
+    },
+    {
+      "name": "mixed_f32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 12.845080993429292
+    }
+  ]
+}

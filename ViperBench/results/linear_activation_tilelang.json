@@ -1,0 +1,30 @@
+{
+  "kernel": "linear_activation_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "2x4x64",
+      "status": "PASS",
+      "max_err": 0.125,
+      "time_ms": 71.74851400486659
+    },
+    {
+      "name": "3x4x64",
+      "status": "PASS",
+      "max_err": 0.25,
+      "time_ms": 42.17035399778979
+    },
+    {
+      "name": "2x8x64",
+      "status": "PASS",
+      "max_err": 0.25,
+      "time_ms": 37.085820993524976
+    },
+    {
+      "name": "1x16x128",
+      "status": "PASS",
+      "max_err": 0.5,
+      "time_ms": 38.78193000127794
+    }
+  ]
+}

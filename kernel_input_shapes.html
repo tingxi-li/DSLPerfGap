@@ -1,0 +1,374 @@
+
+<style>
+.wrap { padding: 1rem 0; font-family: var(--font-sans); }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th { text-align: left; font-weight: 500; font-size: 11px; color: var(--color-text-secondary); border-bottom: 1.5px solid var(--color-border-secondary); padding: 6px 8px; white-space: nowrap; }
+td { padding: 5px 8px; border-bottom: 0.5px solid var(--color-border-tertiary); vertical-align: top; color: var(--color-text-primary); }
+tr:last-child td { border-bottom: none; }
+.kname { font-weight: 500; font-family: var(--font-mono); font-size: 12px; }
+.impl-a { background: color-mix(in srgb, #3B8BD4 8%, transparent); }
+.impl-b { background: color-mix(in srgb, #1D9E75 8%, transparent); }
+code { font-family: var(--font-mono); font-size: 11.5px; background: var(--color-background-secondary); padding: 1px 5px; border-radius: 4px; }
+.dtype { display: inline-block; font-size: 10px; font-weight: 500; padding: 1px 6px; border-radius: 4px; background: var(--color-background-warning); color: var(--color-text-warning); border: 0.5px solid var(--color-border-warning); white-space: nowrap; }
+.dtype-int { background: var(--color-background-danger); color: var(--color-text-danger); border-color: var(--color-border-danger); }
+.dtype-f32 { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+.note { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+.tag { font-size: 10px; font-weight: 500; padding: 1px 5px; border-radius: 4px; background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-tertiary); }
+.row-small { }
+.row-large { }
+thead th:first-child { width: 140px; }
+</style>
+<div class="wrap">
+<table>
+<thead>
+  <tr>
+    <th>kernel</th>
+    <th>size</th>
+    <th>input shapes</th>
+    <th>dtype</th>
+    <th>notes</th>
+  </tr>
+</thead>
+<tbody>
+
+<!-- add -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">add</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (4096,)</code> <code>y: (4096,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Cache-resident elementwise</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (64M,)</code> <code>y: (64M,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Peak BW, 512 MB total</div></td>
+</tr>
+
+<!-- argmax -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">argmax</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (1024, 1024)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Reduce over dim=1</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (8192, 32768)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Large vocab softmax-style reduction, ~512 MB</div></td>
+</tr>
+
+<!-- attention -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">attention</td>
+  <td><span class="tag">small</span></td>
+  <td><code>Q/K/V: (8, 16, 512, 64)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">(batch, heads, seq, head_dim)</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>Q/K/V: (32, 32, 4096, 128)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~6.4 GB total; stresses FlashAttn tiling</div></td>
+</tr>
+
+<!-- batched_matmul -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">batched_matmul</td>
+  <td><span class="tag">small</span></td>
+  <td><code>A: (64, 128, 128)</code> <code>B: (64, 128, 128)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Small attention heads</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>A: (128, 2048, 2048)</code> <code>B: (128, 2048, 2048)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~4 GB total</div></td>
+</tr>
+
+<!-- conv2d -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">conv2d</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (8, 64, 56, 56)</code> <code>w: (64, 64, 3, 3)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">ResNet mid-layer</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (32, 256, 128, 128)</code> <code>w: (256, 256, 3, 3)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~1.6 GB total</div></td>
+</tr>
+
+<!-- cross_entropy -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">cross_entropy</td>
+  <td><span class="tag">small</span></td>
+  <td><code>logits: (256, 1024)</code> <code>labels: (256,)</code></td>
+  <td><span class="dtype">fp16</span> <span class="dtype dtype-int">int64</span></td>
+  <td><div class="note">Small vocab</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>logits: (4096, 32768)</code> <code>labels: (4096,)</code></td>
+  <td><span class="dtype">fp16</span> <span class="dtype dtype-int">int64</span></td>
+  <td><div class="note">LLM vocab size; ~512 MB logits</div></td>
+</tr>
+
+<!-- embedding -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">embedding</td>
+  <td><span class="tag">small</span></td>
+  <td><code>weight: (8192, 256)</code> <code>idx: (32, 64)</code></td>
+  <td><span class="dtype">fp16</span> <span class="dtype dtype-int">int64</span></td>
+  <td><div class="note">Gather kernel pattern</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>weight: (131072, 1024)</code> <code>idx: (256, 512)</code></td>
+  <td><span class="dtype">fp16</span> <span class="dtype dtype-int">int64</span></td>
+  <td><div class="note">~512 MB table; LLM tokenizer scale</div></td>
+</tr>
+
+<!-- index_select -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">index_select</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (4096, 512)</code> <code>idx: (256,)</code></td>
+  <td><span class="dtype">fp16</span> <span class="dtype dtype-int">int64</span></td>
+  <td><div class="note">Irregular gather, dim=0</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (65536, 2048)</code> <code>idx: (4096,)</code></td>
+  <td><span class="dtype">fp16</span> <span class="dtype dtype-int">int64</span></td>
+  <td><div class="note">~1.6 GB table</div></td>
+</tr>
+
+<!-- layer_norm -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">layer_norm</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (512, 1024)</code> <code>w/b: (1024,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Reduce over last dim</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (8192, 8192)</code> <code>w/b: (8192,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~1 GB; stresses warp reduction</div></td>
+</tr>
+
+<!-- leaky_relu -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">leaky_relu</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (4096, 4096)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Pointwise, 32 MB</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (32768, 32768)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~2 GB, peak BW</div></td>
+</tr>
+
+<!-- linear_activation -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">linear_activation</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (256, 1024)</code> <code>W: (4096, 1024)</code> <code>b: (4096,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">GEMM + activation fused</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (2048, 4096)</code> <code>W: (16384, 4096)</code> <code>b: (16384,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~2 GB; FFN projection scale</div></td>
+</tr>
+
+<!-- log_softmax -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">log_softmax</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (512, 1024)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Numerically stable, dim=1</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (4096, 32768)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~512 MB; LLM vocab size</div></td>
+</tr>
+
+<!-- logsumexp -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">logsumexp</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (512, 1024)</code></td>
+  <td><span class="dtype dtype-f32">fp32</span></td>
+  <td><div class="note">fp32 needed for numerical stability</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (8192, 16384)</code></td>
+  <td><span class="dtype dtype-f32">fp32</span></td>
+  <td><div class="note">~1.6 GB</div></td>
+</tr>
+
+<!-- matmul -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">matmul</td>
+  <td><span class="tag">small</span></td>
+  <td><code>A: (512, 512)</code> <code>B: (512, 512)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Latency-bound, small tiles</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>A: (16384, 16384)</code> <code>B: (16384, 16384)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~2 GB; compute-bound</div></td>
+</tr>
+
+<!-- matrix_transpose -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">matrix_transpose</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (1024, 1024)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Cache-tile behavior</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (16384, 16384)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~512 MB; coalescing critical</div></td>
+</tr>
+
+<!-- max_reduction -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">max_reduction</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (1024, 1024)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Reduce dim=1</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (8192, 32768)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~512 MB</div></td>
+</tr>
+
+<!-- mean_reduction -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">mean_reduction</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (1024, 1024)</code></td>
+  <td><span class="dtype dtype-f32">fp32</span></td>
+  <td><div class="note">fp32 to avoid accumulation error</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (8192, 32768)</code></td>
+  <td><span class="dtype dtype-f32">fp32</span></td>
+  <td><div class="note">~1 GB</div></td>
+</tr>
+
+<!-- mul -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">mul</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (4096,)</code> <code>y: (4096,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Elementwise Hadamard</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (64M,)</code> <code>y: (64M,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~512 MB total</div></td>
+</tr>
+
+<!-- relu -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">relu</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (4096, 4096)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Pointwise, 32 MB</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (32768, 32768)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~2 GB peak BW</div></td>
+</tr>
+
+<!-- rms_norm -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">rms_norm</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (512, 1024)</code> <code>w: (1024,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">LLaMA-style norm</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (8192, 8192)</code> <code>w: (8192,)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~1 GB</div></td>
+</tr>
+
+<!-- softmax -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">softmax</td>
+  <td><span class="tag">small</span></td>
+  <td><code>x: (512, 1024)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">Safe softmax, dim=1</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>x: (4096, 32768)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~512 MB; LLM vocab scale</div></td>
+</tr>
+
+<!-- swiglu -->
+<tr class="impl-a row-small">
+  <td class="kname" rowspan="2">swiglu</td>
+  <td><span class="tag">small</span></td>
+  <td><code>gate: (512, 4096)</code> <code>up: (512, 4096)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">SwiGLU = silu(gate) * up</div></td>
+</tr>
+<tr class="impl-b row-large">
+  <td><span class="tag">large</span></td>
+  <td><code>gate: (4096, 16384)</code> <code>up: (4096, 16384)</code></td>
+  <td><span class="dtype">fp16</span></td>
+  <td><div class="note">~2 GB total; LLaMA FFN scale</div></td>
+</tr>
+
+</tbody>
+</table>
+
+<div style="margin-top:14px;padding:10px 14px;border-left:3px solid var(--color-border-secondary);background:var(--color-background-secondary);border-radius:0 8px 8px 0;font-size:12px;color:var(--color-text-secondary)">
+  <strong style="color:var(--color-text-primary);font-weight:500">dtype legend:</strong>
+  &nbsp;<span class="dtype">fp16</span> = torch.float16 &nbsp;
+  <span class="dtype dtype-f32">fp32</span> = torch.float32 &nbsp;
+  <span class="dtype dtype-int">int64</span> = torch.int64 (index tensors) &nbsp;—&nbsp;
+  All fp16 kernels should also be tested with bf16 where supported. Reduction kernels (logsumexp, mean_reduction) use fp32 to avoid accumulation error at large sizes.
+</div>
+</div>

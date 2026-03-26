@@ -1,0 +1,48 @@
+{
+  "kernel": "index_select_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 52.17668300610967
+    },
+    {
+      "name": "medium_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 22.730188000423368
+    },
+    {
+      "name": "large_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 20.29879399924539
+    },
+    {
+      "name": "single_index_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 18.84662499651313
+    },
+    {
+      "name": "small_fp16",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 15.565188994514756
+    },
+    {
+      "name": "3d_source_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.156368005089462
+    },
+    {
+      "name": "odd_shape_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 17.106218001572415
+    }
+  ]
+}

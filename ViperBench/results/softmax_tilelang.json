@@ -1,0 +1,54 @@
+{
+  "kernel": "softmax_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_2d",
+      "status": "PASS",
+      "max_err": 2.9802322387695312e-08,
+      "time_ms": 56.91797599865822
+    },
+    {
+      "name": "medium_2d",
+      "status": "PASS",
+      "max_err": 5.21540641784668e-08,
+      "time_ms": 26.64924100099597
+    },
+    {
+      "name": "large_cols",
+      "status": "PASS",
+      "max_err": 1.955777406692505e-08,
+      "time_ms": 30.62633400259074
+    },
+    {
+      "name": "wide",
+      "status": "PASS",
+      "max_err": 1.6763806343078613e-08,
+      "time_ms": 23.24039400264155
+    },
+    {
+      "name": "square",
+      "status": "PASS",
+      "max_err": 3.725290298461914e-08,
+      "time_ms": 21.120838006027043
+    },
+    {
+      "name": "3d_tensor",
+      "status": "PASS",
+      "max_err": 2.9802322387695312e-08,
+      "time_ms": 19.877614999131765
+    },
+    {
+      "name": "4d_tensor",
+      "status": "PASS",
+      "max_err": 5.960464477539063e-08,
+      "time_ms": 19.430925000051502
+    },
+    {
+      "name": "1d_tensor",
+      "status": "PASS",
+      "max_err": 3.725290298461914e-09,
+      "time_ms": 20.484850996581372
+    }
+  ]
+}

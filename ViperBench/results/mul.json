@@ -1,0 +1,30 @@
+{
+  "kernel": "mul",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_1d",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 289.50363300100435
+    },
+    {
+      "name": "medium_1d",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.13714800297748297
+    },
+    {
+      "name": "2d",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.06707800275762565
+    },
+    {
+      "name": "fp16",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 1.1697520021698438
+    }
+  ]
+}

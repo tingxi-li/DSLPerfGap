@@ -1,0 +1,30 @@
+{
+  "kernel": "leaky_relu",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 64, 'K': 64, 'N': 64, 'act': 'leaky_relu'}",
+      "status": "PASS",
+      "max_err": 0.000244140625,
+      "time_ms": 893.2612520002294
+    },
+    {
+      "shape": "{'M': 128, 'K': 64, 'N': 128, 'act': 'leaky_relu'}",
+      "status": "PASS",
+      "max_err": 0.00048828125,
+      "time_ms": 16.283820004900917
+    },
+    {
+      "shape": "{'M': 256, 'K': 128, 'N': 256, 'act': ''}",
+      "status": "PASS",
+      "max_err": 0.015625,
+      "time_ms": 15.090894012246281
+    },
+    {
+      "shape": "{'M': 128, 'K': 256, 'N': 64, 'act': 'leaky_relu'}",
+      "status": "PASS",
+      "max_err": 0.0078125,
+      "time_ms": 15.113307017600164
+    }
+  ]
+}

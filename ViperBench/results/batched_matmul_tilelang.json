@@ -1,0 +1,30 @@
+{
+  "kernel": "batched_matmul_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_128",
+      "status": "PASS",
+      "max_err": 2.288818359375e-05,
+      "time_ms": 49.96134899556637
+    },
+    {
+      "name": "medium_256",
+      "status": "PASS",
+      "max_err": 4.57763671875e-05,
+      "time_ms": 24.200491003284696
+    },
+    {
+      "name": "rect_64x32x128",
+      "status": "PASS",
+      "max_err": 1.33514404296875e-05,
+      "time_ms": 27.896335996047128
+    },
+    {
+      "name": "large_512",
+      "status": "PASS",
+      "max_err": 3.814697265625e-05,
+      "time_ms": 20.655417996749748
+    }
+  ]
+}

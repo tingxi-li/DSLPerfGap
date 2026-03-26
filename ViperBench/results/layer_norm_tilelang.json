@@ -1,0 +1,42 @@
+{
+  "kernel": "layer_norm_tilelang",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "128x1024_bf16",
+      "status": "PASS",
+      "max_err": 0.00390625,
+      "time_ms": 62.47377299587242
+    },
+    {
+      "name": "256x2048_bf16",
+      "status": "PASS",
+      "max_err": 0.015625,
+      "time_ms": 41.76727300364291
+    },
+    {
+      "name": "64x4096_bf16",
+      "status": "PASS",
+      "max_err": 0.015625,
+      "time_ms": 34.92403899872443
+    },
+    {
+      "name": "512x1024_bf16",
+      "status": "PASS",
+      "max_err": 0.015625,
+      "time_ms": 34.93985900422558
+    },
+    {
+      "name": "3d_4x32x1024_bf16",
+      "status": "PASS",
+      "max_err": 0.0078125,
+      "time_ms": 23.013568003079854
+    },
+    {
+      "name": "3d_2x8x2048_bf16",
+      "status": "PASS",
+      "max_err": 0.0009765625,
+      "time_ms": 24.663144002261106
+    }
+  ]
+}

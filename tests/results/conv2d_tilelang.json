@@ -1,0 +1,26 @@
+{
+  "kernel": "conv2d_tilelang",
+  "overall": "FAIL",
+  "shapes": [
+    {
+      "shape": "{'N': 1, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 1, 'padding': 0, 'dilation': 1, 'label': 'basic'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/conv2d/test_kernel.py\", line 47, in make_inputs\n    inp = torch.randn(N, C, H, W, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    },
+    {
+      "shape": "{'N': 2, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 2, 'padding': 0, 'dilation': 1, 'label': 'stride=2'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/conv2d/test_kernel.py\", line 47, in make_inputs\n    inp = torch.randn(N, C, H, W, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    },
+    {
+      "shape": "{'N': 1, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 1, 'padding': 1, 'dilation': 1, 'label': 'padding=1'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/conv2d/test_kernel.py\", line 47, in make_inputs\n    inp = torch.randn(N, C, H, W, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    },
+    {
+      "shape": "{'N': 1, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 1, 'padding': 0, 'dilation': 2, 'label': 'dilation=2'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/conv2d/test_kernel.py\", line 47, in make_inputs\n    inp = torch.randn(N, C, H, W, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    }
+  ]
+}
