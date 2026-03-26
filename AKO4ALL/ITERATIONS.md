@@ -13,6 +13,9 @@
 | 6 | Split-K strategy | 1.02x | 1.73 ms | regression |
 | 7 | Persistent kernel | 1.06x | 1.66 ms | regression |
 | 8 | Best config set (iter-1 style) | 1.09x | 1.63 ms | confirmed best |
+| 9 | Eviction policy hints | 1.08x | 1.63 ms | no improvement |
+| 10 | max_num_imprecise_acc | 1.08x | 1.63 ms | no improvement |
+| 11 | Final clean version | 1.09x | 1.63 ms | FINAL |
 
 ---
 
