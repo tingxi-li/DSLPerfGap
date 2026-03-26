@@ -22,7 +22,7 @@ else
     TRAJ_DIR="trajectory/${TIMESTAMP}"
 fi
 mkdir -p "$TRAJ_DIR"
-cp -r solution/* "$TRAJ_DIR/"
+cp -r ../solution/* "$TRAJ_DIR/"
 [ -f _bench_output.txt ] && mv _bench_output.txt "$TRAJ_DIR/output.txt"
 echo "Trajectory saved to: $TRAJ_DIR"
 

@@ -5,17 +5,9 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
-
-def conv2d(input, weight, bias=None, stride=1, padding=0, groups=1):
-    """
-    Applies a 2D convolution over an input image.
-    Note: dilation is not supported (always 1).
-    """
-    if isinstance(padding, int):
-        padding = (padding, padding)
-    if isinstance(stride, int):
-        stride = (stride, stride)
-    return F.conv2d(input, weight, bias, stride, padding, (1, 1), groups)
+def softmax(x):
+    """Softmax along the last dimension for any shape tensor."""
+    return F.softmax(x, dim=-1)
 
 # --- End original implementation ---
 
@@ -25,13 +17,11 @@ class Model(nn.Module):
         super().__init__()
 
     def forward(self, *args):
-        return conv2d(*args)
+        return softmax(*args)
 
 
 def get_inputs():
-    x = torch.randn(32, 256, 128, 128, device='cuda', dtype=torch.float16)
-    w = torch.randn(256, 256, 3, 3, device='cuda', dtype=torch.float16)
-    return [x, w]
+    return [torch.randn(4096, 32768, device='cuda', dtype=torch.float16)]
 
 def get_init_inputs():
     return []

@@ -1,8 +1,4 @@
 import torch
-import torch.nn as nn
-
-# --- Original implementation inlined below ---
-import torch
 import triton
 import triton.language as tl
 
@@ -49,20 +45,3 @@ def softmax(x):
         num_warps=num_warps, BLOCK_SIZE=BLOCK_SIZE,
     )
     return y.reshape(orig_shape)
-
-# --- End original implementation ---
-
-
-class Model(nn.Module):
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, *args):
-        return softmax(*args)
-
-
-def get_inputs():
-    return [torch.randn(4096, 32768, device='cuda', dtype=torch.float16)]
-
-def get_init_inputs():
-    return []
