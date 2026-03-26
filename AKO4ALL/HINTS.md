@@ -6,4 +6,4 @@
 - For Triton kernels: tune block sizes, num_warps, num_stages. Try autotuning with @triton.autotune.
 - For TileLang kernels: use T.Pipelined with num_stages for memory latency hiding, T.use_swizzle for L2 locality, T.gemm for matmul-heavy ops. Avoid T.serial loops for reductions — use T.reduce instead.
 - Do not install any packages.
-- You may rewrite the kernel in a different language (e.g., Triton → CUDA, TileLang → Triton) if it achieves better performance.
+- **Do NOT rewrite the kernel in a different language.** TileLang kernels must stay in TileLang. Triton kernels must stay in Triton. Do not fall back to cuDNN, PyTorch, or any other framework. The goal is to optimize within the DSL itself.
