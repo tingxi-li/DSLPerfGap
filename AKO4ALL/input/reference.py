@@ -3,11 +3,11 @@ import torch.nn as nn
 
 # --- Original implementation inlined below ---
 import torch
-import torch.nn.functional as F
 
-def softmax(x):
-    """Softmax along the last dimension for any shape tensor."""
-    return F.softmax(x, dim=-1)
+
+def matmul(a, b):
+    """Unified API: matmul(a, b) -> Tensor for 2D float16 matrices."""
+    return torch.matmul(a, b)
 
 # --- End original implementation ---
 
@@ -17,11 +17,13 @@ class Model(nn.Module):
         super().__init__()
 
     def forward(self, *args):
-        return softmax(*args)
+        return matmul(*args)
 
 
 def get_inputs():
-    return [torch.randn(4096, 32768, device='cuda', dtype=torch.float16)]
+    a = torch.randn(4096, 4096, device='cuda', dtype=torch.float16)
+    b = torch.randn(4096, 4096, device='cuda', dtype=torch.float16)
+    return [a, b]
 
 def get_init_inputs():
     return []
