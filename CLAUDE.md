@@ -111,6 +111,20 @@ When a TileLang kernel fails:
 
 Reductions (softmax, layernorm) may use slightly looser tolerances (2× above) due to order-of-operations differences.
 
+## Auto-Compact Rules
+When context is compacted, the summary MUST preserve:
+- **Current kernel name** and which step of the porting workflow you are on
+- **Retry count** for the current kernel (e.g., "attempt 5/20")
+- **Last error message/traceback** if currently debugging a failing kernel
+- **List of completed kernels** and their PASS/FAIL status
+- **Any non-obvious findings** about TileLang behavior discovered during porting
+
+The summary may discard:
+- Full file contents already written to disk (re-read as needed)
+- Intermediate debugging attempts that were superseded by later fixes
+- Verbose tool output from successful operations
+- Redundant shape/dtype details that can be re-read from source files
+
 ## Common TileLang Pitfalls
 - Always call `T.clear(C_local)` before accumulation
 - Block tile sizes must divide evenly into tensor dims, or use padding
