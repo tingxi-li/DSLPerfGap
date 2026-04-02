@@ -6,30 +6,90 @@ Each kernel must produce **numerically identical outputs** across all three impl
 
 ## Directory Structure
 ```
-newBench/
-  <kernel_name>/
-    *.py                # PyTorch reference implementation (non-triton file)
-    triton*.py          # Triton implementation (filename starts with "triton")
-    tilelang_impl.py    # TileLang implementation — YOU CREATE THIS
-    test_kernel.py      # Unified test harness — YOU CREATE THIS
-tests/
-  results/              # JSON test result logs
-run_all.py              # Runs all kernels sequentially (project root)
-test_harness.py         # Shared test utilities (project root)
+KernelBench_dedup/
+  level1/                   # 100 primitive ops (matmul, relu, conv, etc.)
+    <kernel_name>/
+      pytorch_impl.py       # PyTorch reference + unified harness
+  level2/                   # 99 fused operation chains (conv+relu+bn, etc.)
+    <kernel_name>/
+      pytorch_impl.py
+  level3/                   # 50 complete models (ResNet, VGG, LSTM, etc.)
+    <kernel_name>/
+      pytorch_impl.py
+  tritonbench/              # 48 optimized Triton operator benchmarks
+    <kernel_name>/
+      operator.py           # Original tritonbench operator (read-only reference)
+      pytorch_impl.py       # Standalone PyTorch adapter with unified harness
+  categories/               # Kernel categorization (22 categories)
+    categories.json         # Master category mapping
+    by_category/            # Per-category kernel lists
+    CHANGES.md              # Corrections from original categorization
+  eval_all.py               # Unified eval harness for all 297 kernels
+  scripts/
+    add_unified_interface.py  # Automation script (appends harness to level1/2/3)
+  results/                  # JSON eval output
 ```
+
+## Unified Kernel Interface
+
+Every `pytorch_impl.py` exposes the same interface:
+
+```python
+class Model(nn.Module):
+    def __init__(self, ...):    # Constructor (args from get_init_inputs())
+        ...
+    def forward(self, ...):     # The kernel computation
+        ...
+
+def get_inputs():               # Hardcoded test inputs (CPU tensors)
+    return [tensor1, tensor2, ...]
+
+def get_init_inputs():           # Model constructor arguments
+    return [arg1, arg2, ...]
+
+def get_test_inputs():           # CUDA-ready inputs
+    return [x.cuda() if isinstance(x, torch.Tensor) else x for x in get_inputs()]
+
+def run(*args):                  # One-call entry point
+    if args:
+        inputs = args
+    else:
+        inputs = get_test_inputs()
+    model = Model(*get_init_inputs()).cuda().eval()
+    with torch.no_grad():
+        return model(*inputs)
+```
+
+**To run any kernel:** `import pytorch_impl; output = pytorch_impl.run()`
 
 ## Kernel Discovery
-Run this to find all kernels before starting:
 ```bash
-ls newBench/
-```
-For each subdirectory in `newBench/`:
-- The **PyTorch reference** = the `.py` file whose name does NOT start with `triton`
-- The **Triton implementation** = the `.py` file whose name starts with `triton`
-- You must create `newBench/<name>/tilelang_impl.py`
-- You must create `newBench/<name>/test_kernel.py`
+# List all 297 kernels
+python KernelBench_dedup/eval_all.py --list
 
-When importing in `test_kernel.py`, use relative imports or `sys.path.insert(0, os.path.dirname(__file__))` to load siblings from the same `newBench/<name>/` directory. Also add the project root to sys.path to import `test_harness`.
+# Run all kernels
+python KernelBench_dedup/eval_all.py
+
+# Filter by level or kernel name
+python KernelBench_dedup/eval_all.py --level level1
+python KernelBench_dedup/eval_all.py --kernel softmax
+python KernelBench_dedup/eval_all.py --level tritonbench --kernel gemm
+```
+
+## Kernel Categories (22 total, 297 kernels)
+
+**Primitive Operations (level1 + tritonbench):**
+matmul (21), conv (35), activation (17), normalization (11), pooling (6),
+reduction (7), loss (11), attention (10), cumulative (5), embedding (2),
+dropout (1), quantization (10), elementwise (3), specialized (9)
+
+**Fused Operations (level2):**
+fused_conv (33), fused_convtranspose (30), fused_gemm (26), fused_matmul (10)
+
+**Complete Models (level3):**
+model_cnn (25), model_transformer (8), model_rnn (10), model_other (7)
+
+See `KernelBench_dedup/categories/categories.json` for the full mapping.
 
 ## TileLang Reference
 
@@ -73,20 +133,13 @@ def my_kernel(M, N, ...):
 ## Kernel Porting Workflow
 
 ### Per-Kernel Process
-1. `ls newBench/<n>/` to identify the pytorch ref file and triton file
-2. Read both files fully to understand the algorithm, shapes, and dtypes used
-3. Create `newBench/<n>/tilelang_impl.py`
-4. Create `newBench/<n>/test_kernel.py` (import test_harness from project root)
-5. Run: `python newBench/<n>/test_kernel.py`
+1. Pick a kernel from `KernelBench_dedup/` (any level)
+2. Read `pytorch_impl.py` to understand the algorithm, shapes, and dtypes
+3. Create `tilelang_impl.py` in the same directory
+4. Create `test_kernel.py` that compares PyTorch vs TileLang outputs
+5. Run: `python KernelBench_dedup/<level>/<kernel>/test_kernel.py`
 6. If test fails, read the full error, fix `tilelang_impl.py`, retry (up to **20 attempts**)
-7. On pass: log result to `tests/results/<kernel_name>.json`, move to next kernel
-
-### Test Harness Template (`test_kernel.py`)
-Each test file must:
-- Test at least **4 shapes** (small, medium, large, edge-case)
-- Use `torch.allclose(atol=1e-3, rtol=1e-3)` for fp16; `atol=1e-5` for fp32
-- Print PASS/FAIL per shape with max absolute error
-- Exit with code 0 on all-pass, 1 on any failure
+7. On pass: log result, move to next kernel
 
 ### Retry Strategy
 When a TileLang kernel fails:
@@ -100,7 +153,7 @@ When a TileLang kernel fails:
 - **Always allowed**: read/write files in `./`, run `python`, `grep`, `nvidia-smi`, `pip install`
 - **Blocked**: `sudo`, network calls outside pip installs
 - Work sequentially through kernels; do not skip ahead unless a kernel exceeds 20 retries
-- After all kernels: run `python run_all.py` for a final summary report
+- After all kernels: run `python KernelBench_dedup/eval_all.py` for a final summary report
 
 ## Numerical Correctness Criteria
 | dtype   | atol   | rtol   |
@@ -109,7 +162,7 @@ When a TileLang kernel fails:
 | float16 | 1e-3   | 1e-3   |
 | bfloat16| 1e-2   | 1e-2   |
 
-Reductions (softmax, layernorm) may use slightly looser tolerances (2× above) due to order-of-operations differences.
+Reductions (softmax, layernorm) may use slightly looser tolerances (2x above) due to order-of-operations differences.
 
 ## Auto-Compact Rules
 When context is compacted, the summary MUST preserve:
