@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-04-01T17:19:31.272712",
+  "source": "/home/lxt230026/ase26/KernelBench",
+  "destination": "/home/lxt230026/ase26/KernelBench_dedup",
+  "total_source_kernels": 299,
+  "total_output_kernels": 297,
+  "removed_count": 2,
+  "counts_by_level": {
+    "level1": 100,
+    "level2": 99,
+    "level3": 50,
+    "tritonbench": 48
+  },
+  "removals": [
+    {
+      "removed": "level2/39_gemm_scale_batchnorm",
+      "reason": "Identical forward() to 33_gemm_scale_batchnorm \u2014 differs only in input shapes (batch_size=16384,in=4096,out=4096 vs batch_size=1024,in=8192,out=8192)",
+      "kept_instead": "level2/33_gemm_scale_batchnorm"
+    },
+    {
+      "removed": "tritonbench/softmax",
+      "reason": "Cross-level duplicate of level1/23_softmax \u2014 same softmax operation",
+      "kept_instead": "level1/23_softmax"
+    }
+  ]
+}

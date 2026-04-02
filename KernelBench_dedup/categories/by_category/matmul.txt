@@ -1,0 +1,23 @@
+# matmul (21 kernels)
+
+level1/1_square_matrix_multiplication
+level1/2_standard_matrix_multiplication
+level1/3_batched_matrix_multiplication
+level1/4_matrix_vector_multiplication
+level1/6_matmul_with_large_k_dimension
+level1/7_matmul_with_small_k_dimension
+level1/8_matmul_with_irregular_shapes
+level1/9_tall_skinny_matrix_multiplication
+level1/10_3d_tensor_matrix_multiplication
+level1/11_4d_tensor_matrix_multiplication
+level1/12_matmul_with_diagonal_matrices
+level1/13_matmul_for_symmetric_matrices
+level1/14_matmul_for_upper_triangular_matrices
+level1/15_matmul_for_lower_triangular_matrices
+level1/16_matmul_with_transposed_a
+level1/17_matmul_with_transposed_b
+level1/18_matmul_with_transposed_both
+tritonbench/addmm
+tritonbench/gather_gemv
+tritonbench/gemm
+tritonbench/grouped_gemm

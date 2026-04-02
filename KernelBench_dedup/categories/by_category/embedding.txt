@@ -1,0 +1,4 @@
+# embedding (2 kernels)
+
+tritonbench/embedding
+tritonbench/rope

@@ -1,0 +1,12 @@
+# fused_matmul (10 kernels)
+
+level2/14_gemm_divide_sum_scaling
+level2/22_matmul_scale_residualadd_clamp_logsumexp_mish
+level2/37_matmul_swish_sum_groupnorm
+level2/40_matmul_scaling_residualadd
+level2/55_matmul_maxpool_sum_scale
+level2/59_matmul_swish_scaling
+level2/66_matmul_dropout_softmax
+level2/95_matmul_add_swish_tanh_gelu_hardtanh
+level2/97_matmul_batchnorm_biasadd_divide_swish
+level2/98_matmul_avgpool_gelu_scale_max

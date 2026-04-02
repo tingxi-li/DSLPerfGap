@@ -1,0 +1,11 @@
+# specialized (9 kernels)
+
+tritonbench/gdn_fwd_h
+tritonbench/jagged_layer_norm
+tritonbench/jagged_mean
+tritonbench/jagged_softmax
+tritonbench/jagged_sum
+tritonbench/launch_latency
+tritonbench/mamba2_chunk_scan
+tritonbench/mamba2_chunk_state
+tritonbench/mixed_gemm

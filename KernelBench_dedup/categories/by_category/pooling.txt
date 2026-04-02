@@ -1,0 +1,8 @@
+# pooling (6 kernels)
+
+level1/41_max_pooling_1d
+level1/42_max_pooling_2d
+level1/43_max_pooling_3d
+level1/44_average_pooling_1d
+level1/45_average_pooling_2d
+level1/46_average_pooling_3d

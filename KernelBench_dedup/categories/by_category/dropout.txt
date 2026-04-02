@@ -1,0 +1,3 @@
+# dropout (1 kernels)
+
+tritonbench/low_mem_dropout

@@ -1,0 +1,10 @@
+# model_transformer (8 kernels)
+
+level3/28_visiontransformer
+level3/29_swinmlp
+level3/30_swintransformerv2
+level3/31_visionattention
+level3/32_convolutionalvisiontransformer
+level3/43_mingptcausalattention
+level3/44_minigptblock
+level3/50_reluselfattention

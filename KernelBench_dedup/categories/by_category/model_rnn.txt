@@ -1,0 +1,12 @@
+# model_rnn (10 kernels)
+
+level3/33_vanillarnn
+level3/34_vanillarnnhidden
+level3/35_lstm
+level3/36_lstmhn
+level3/37_lstmcn
+level3/38_lstmbidirectional
+level3/39_gru
+level3/40_gruhidden
+level3/41_grubidirectional
+level3/42_grubidirectionalhidden

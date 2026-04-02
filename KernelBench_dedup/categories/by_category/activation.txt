@@ -1,0 +1,19 @@
+# activation (17 kernels)
+
+level1/19_relu
+level1/20_leakyrelu
+level1/21_sigmoid
+level1/22_tanh
+level1/23_softmax
+level1/24_logsoftmax
+level1/25_swish
+level1/26_gelu
+level1/27_selu
+level1/28_hardsigmoid
+level1/29_softplus
+level1/30_softsign
+level1/31_elu
+level1/32_hardtanh
+level1/88_mingptnewgelu
+tritonbench/geglu
+tritonbench/swiglu

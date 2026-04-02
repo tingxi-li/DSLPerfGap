@@ -1,0 +1,13 @@
+# normalization (11 kernels)
+
+level1/33_batchnorm
+level1/34_instancenorm
+level1/35_groupnorm
+level1/36_rmsnorm
+level1/37_frobeniusnorm
+level1/38_l1norm
+level1/39_l2norm
+level1/40_layernorm
+tritonbench/layer_norm
+tritonbench/rms_norm
+tritonbench/welford

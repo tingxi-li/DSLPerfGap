@@ -1,0 +1,5 @@
+# elementwise (3 kernels)
+
+level1/5_matrix_scalar_multiplication
+tritonbench/vector_add
+tritonbench/vector_exp

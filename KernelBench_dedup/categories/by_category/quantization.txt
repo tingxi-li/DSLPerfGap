@@ -1,0 +1,12 @@
+# quantization (10 kernels)
+
+tritonbench/bf16xint16_gemm
+tritonbench/fp32_to_mx4
+tritonbench/fp8_fused_quant_gemm_rowwise
+tritonbench/fp8_gemm
+tritonbench/fp8_gemm_blockwise
+tritonbench/fp8_gemm_rowwise
+tritonbench/fp8_gemm_rowwise_grouped
+tritonbench/int4_gemm
+tritonbench/mx4_to_fp32
+tritonbench/nvfp4_gemm

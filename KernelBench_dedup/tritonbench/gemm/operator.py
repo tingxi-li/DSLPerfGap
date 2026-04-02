@@ -1,0 +1,899 @@
+import argparse
+import contextlib
+import csv
+import itertools
+import os
+from typing import Any, Callable, Generator, List, Optional, Tuple
+
+import torch
+import torch._inductor.config as inductor_config
+import triton
+from tritonbench.operators.gemm.kernels import matmul as kernels
+from tritonbench.operators.gemm.partition_k import (
+    matmul_partition_k as matmul_partition_k_kernel,
+)
+from tritonbench.operators.gemm.stream_k import streamk_amd_matmul, streamk_cuda_matmul
+from tritonbench.operators.gemm.warp_spec_persistent_matmul import (
+    blackwell_matmul_descriptor_persistent,
+    blackwell_matmul_tma,
+    blackwell_matmul_tma_persistent,
+)
+from tritonbench.utils.triton_utils import has_tlx
+
+if has_tlx():
+    from triton.language.extra.tlx.tutorials.blackwell_gemm_2cta import (
+        matmul as _tlx_matmul_2cta,
+    )
+    from triton.language.extra.tlx.tutorials.blackwell_gemm_clc import (
+        matmul as _tlx_matmul_clc,
+    )
+    from triton.language.extra.tlx.tutorials.blackwell_gemm_pipelined import (
+        matmul as _tlx_matmul_pipelined,
+    )
+    from triton.language.extra.tlx.tutorials.blackwell_gemm_ws import (
+        matmul as _tlx_matmul_ws,
+    )
+
+    try:
+        from triton.language.extra.tlx.tutorials.hopper_gemm_ws import (
+            matmul as _hopper_tlx_matmul_ws,
+        )
+    except (ImportError, ModuleNotFoundError):
+        _hopper_tlx_matmul_ws = None
+else:
+
+    def _tlx_matmul_2cta(*args, **kwargs):
+        raise RuntimeError("TLX not available in this Triton version")
+
+    def _tlx_matmul_clc(*args, **kwargs):
+        raise RuntimeError("TLX not available in this Triton version")
+
+    def _tlx_matmul_pipelined(*args, **kwargs):
+        raise RuntimeError("TLX not available in this Triton version")
+
+    def _tlx_matmul_ws(*args, **kwargs):
+        raise RuntimeError("TLX not available in this Triton version")
+
+
+from tritonbench.utils.python_utils import try_import
+
+with try_import("HAS_TILELANG"):
+    from .tilelang import tilelang_matmul_func
+
+
+from tritonbench.data.llama import llama_shapes
+from tritonbench.utils.data_utils import get_production_shapes
+from tritonbench.utils.env_utils import (
+    get_logger,
+    IS_BLACKWELL,
+    is_cu130,
+    is_cuda,
+    is_fbcode,
+    IS_HOPPER,
+    supports_tma,
+)
+from tritonbench.utils.path_utils import REPO_PATH
+from tritonbench.utils.triton_op import (
+    BenchmarkOperator,
+    BenchmarkOperatorMetrics,
+    register_benchmark,
+    register_metric,
+    register_x_val,
+)
+
+try:
+    from tritonbench.operators.gemm.persistent_matmul import (
+        matmul_persistent,
+        matmul_tma_persistent,
+        matmul_tma_persistent_cached,
+    )
+
+    HAS_PERSISTENT = True
+except ModuleNotFoundError:
+    HAS_PERSISTENT = False
+
+from tritonbench.operators.gemm.triton_matmul import (
+    matmul as triton_tutorial_matmul_kernel,
+)
+
+HAS_HAMMER = False
+if is_fbcode():
+    try:
+        import generative_recommenders.ops.triton.triton_addmm as hstu_triton_addmm
+
+        # without this set we can only pick a single config for AMD, Nvidia has 8
+        # with this set AMD will pick from 256 different configs (not the actual full
+        # tuning space, so some perf may be left on the table)
+        hstu_triton_addmm.ENABLE_FULL_TURNING_SPACE = True
+        from hammer.ops.triton.triton_matmul import (
+            triton_matmul as hstu_triton_matmul_kernel,
+        )
+
+        HAS_HAMMER = True
+    except ImportError:
+        pass
+
+with try_import("HAS_CUTLASS_API"):
+    import cutlass_api
+
+    from .cutlass_api_helpers import (
+        get_best_cutlass_api_kernel,
+        get_best_heuristic_kernel,
+    )
+
+BUILDIN_SHAPES = [
+    # (8192, 8192, 1024, None),
+    # (8192, 8192, 2048, None),
+    (8192, 8192, 4096, None),
+    (8192, 8192, 8192, None),
+    (8192, 8192, 16384, None),
+    # (1000000, 512, 512, None),
+    # (1000000, 768, 512, None),
+    # (1000000, 768, 256, None),
+    # (2000000, 512, 512, None),
+    # (2000000, 768, 512, None),
+    # (2000000, 768, 256, None),
+]
+
+SPLIT_K_SHAPES = [
+    (m, m, k, None)
+    for m in [16 * i for i in range(1, 5)]
+    for k in [4096 * i for i in range(1, 9)]
+]
+
+LARGE_M_SHAPES = [
+    (m, x, x, None)
+    for m in [4096 * i for i in range(1, 4)]
+    for x in [1024 * i for i in range(1, 3)]
+]
+
+LARGE_N_SHAPES = [
+    (x, n, x, None)
+    for n in [4096 * i for i in range(1, 4)]
+    for x in [1024 * i for i in range(1, 3)]
+]
+
+
+NON_SQUARE = [
+    shape
+    for sublist in itertools.zip_longest(LARGE_M_SHAPES, LARGE_N_SHAPES)
+    for shape in sublist
+    if shape is not None
+]
+
+PERSISTENT_TUTORIAL_SHAPES = [(8192, 8192, 1 << k, None) for k in range(9, 15)]
+
+logger = get_logger(__name__)
+
+
+@contextlib.contextmanager
+def set_env_variable(key, value):
+    """Context manager to temporarily set an environment variable."""
+    original = os.environ.get(key)
+    os.environ[key] = value
+    try:
+        yield
+    finally:
+        if original is not None:
+            os.environ[key] = original
+        else:
+            del os.environ[key]
+
+
+def parse_shapes(shapes_str: str) -> List[Tuple[int, int, int, Optional[int]]]:
+    """Parse shapes string in format 'MxNxK,MxNxK,...' or 'M_N_K,M_N_K,...'"""
+    shapes = []
+    # Split by comma to get individual shapes
+    for shape_str in shapes_str.split(","):
+        shape_str = shape_str.strip()
+        if not shape_str:
+            continue
+        # Try different separators: 'x', 'X', '_'
+        if "x" in shape_str.lower():
+            parts = shape_str.lower().split("x")
+        elif "_" in shape_str:
+            parts = shape_str.split("_")
+        else:
+            continue
+        if len(parts) == 3:
+            m, n, k = int(parts[0]), int(parts[1]), int(parts[2])
+            shapes.append((m, n, k, None))
+    return shapes
+
+
+def parse_args(args: List[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="TritonBench Gemm operator Benchmark")
+    parser.add_argument("--m", type=int)
+    parser.add_argument("--k", type=int)
+    parser.add_argument("--n", type=int)
+    parser.add_argument("--bias", type=int)
+    parser.add_argument("--input", type=str)
+    parser.add_argument(
+        "--shapes",
+        type=str,
+        default=None,
+        help="Comma or semicolon separated shapes in MxNxK format, e.g., '1024_2048_512,2048x4096x1024'",
+    )
+    parser.add_argument("--splitk", action="store_true", default=False)
+    parser.add_argument("--non-square", action="store_true", default=False)
+    parser.add_argument(
+        "--persistent-tutorial-shapes", action="store_true", default=False
+    )
+    parser.add_argument("--llama", action="store_true", default=False)
+    parser.add_argument("--buffer-ops", action="store_true", default=False)
+    parser.add_argument("--layout", type=str, default="tn")
+    parser.add_argument(
+        "--template-filter-regex",
+        type=str,
+        default=None,
+        help="Regex filter for PT2 Templates",
+    )
+    parser.add_argument(
+        "--verbose-autotune",
+        action="store_true",
+        help="Being verbose with autotuning results",
+    )
+    args = parser.parse_args(args)
+    return args
+
+
+def read_shapes_from_csv(csv_path: str) -> List[List[int]]:
+    input_file_path = os.path.join(
+        REPO_PATH, "tritonbench", "operators", "gemm", csv_path
+    )
+    shapes = []
+    with open(input_file_path, "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            shape = [
+                int(row.get(f)) if row.get(f) else None for f in ("M", "N", "K", "Bias")
+            ]
+            shapes.append(shape)
+    return shapes
+
+
+class Operator(BenchmarkOperator):
+    DEFAULT_METRICS = ["latency", "speedup", "tflops"]
+    DEFAULT_PRECISION = "fp16"
+
+    def __init__(
+        self, tb_args: argparse.Namespace, extra_args: Optional[List[str]] = None
+    ):
+        super().__init__(tb_args, extra_args)
+        gemm_args = parse_args(self.extra_args)
+        self.layout = gemm_args.layout
+        self.inductor_autotune_num_choices_displayed = (
+            None
+            if gemm_args.verbose_autotune
+            else inductor_config.autotune_num_choices_displayed
+        )
+        if gemm_args.input:
+            self.shapes = read_shapes_from_csv(gemm_args.input)
+        elif gemm_args.shapes:
+            self.shapes = parse_shapes(gemm_args.shapes)
+        elif gemm_args.splitk:
+            self.shapes = SPLIT_K_SHAPES
+        elif gemm_args.non_square:
+            self.shapes = NON_SQUARE
+        elif gemm_args.persistent_tutorial_shapes:
+            self.shapes = PERSISTENT_TUTORIAL_SHAPES
+        elif gemm_args.llama:
+            self.shapes = llama_shapes()
+        elif gemm_args.m and gemm_args.k and gemm_args.n:
+            self.shapes = [(gemm_args.m, gemm_args.n, gemm_args.k, gemm_args.bias)]
+        else:
+            self.shapes = BUILDIN_SHAPES
+
+        if is_fbcode() and tb_args.production_shapes:
+            additional_shapes = get_production_shapes(
+                self.name, f"{tb_args.precision}_gemm", self.tb_args.shuffle_shapes
+            )
+            if len(additional_shapes):  # only append if not empty
+                self.shapes.append(
+                    get_production_shapes(
+                        self.name,
+                        f"{tb_args.precision}_gemm",
+                        self.tb_args.shuffle_shapes,
+                    )
+                )
+
+        self.use_buffer_ops = gemm_args.buffer_ops
+        self.template_filter_regex = gemm_args.template_filter_regex
+
+        if self.use_buffer_ops and torch.version.hip is None:
+            raise ValueError("Buffer ops are only supported on AMD GPUs.")
+
+        # Set dtype-aware default tolerances for accuracy checking
+        # fp16/bf16 have larger machine epsilon and accumulate more error in GEMMs
+        if self.tb_args.rtol is None:
+            self.tb_args.rtol = (
+                1e-1 if self.dtype in [torch.float16, torch.bfloat16] else 1e-3
+            )
+        if self.tb_args.atol is None:
+            self.tb_args.atol = (
+                1e-2 if self.dtype in [torch.float16, torch.bfloat16] else 1e-5
+            )
+
+    @register_benchmark()
+    def triton_tutorial_matmul(self, a, b, bias) -> Callable:
+        if bias is not None:
+            return lambda: triton_tutorial_matmul_kernel(a, b) + bias
+        else:
+            return lambda: triton_tutorial_matmul_kernel(a, b)
+
+    @register_benchmark()
+    def matmul_partition_k(self, a, b, bias) -> Callable:
+        bt = b.contiguous()
+        if bias is not None:
+            return lambda: matmul_partition_k_kernel(a, bt) + bias
+        else:
+            return lambda: matmul_partition_k_kernel(a, bt)
+
+    @register_benchmark(enabled=HAS_PERSISTENT, fwd_only=True)
+    def triton_persistent_matmul(self, a, b, bias) -> Callable:
+        if bias is not None:
+            return lambda: matmul_persistent(a, b) + bias
+        else:
+            return lambda: matmul_persistent(a, b)
+
+    @register_benchmark(
+        enabled=not is_fbcode() and HAS_PERSISTENT and supports_tma(), fwd_only=True
+    )
+    def triton_tma_persistent_matmul(self, a, b, bias) -> Callable:
+        b = b.T.contiguous()
+        if bias is not None:
+            return lambda: matmul_tma_persistent(a, b) + bias
+        else:
+            return lambda: matmul_tma_persistent(a, b)
+
+    # TODO fix cached TMA backend
+    @register_benchmark(enabled=False, fwd_only=True)
+    def triton_tma_persistent_cached_matmul(self, a, b, bias) -> Callable:
+        b = b.T.contiguous()
+        if bias is not None:
+            return lambda: matmul_tma_persistent_cached(a, b) + bias
+        else:
+            return lambda: matmul_tma_persistent_cached(a, b)
+
+    @register_benchmark(enabled=is_cuda())
+    def triton_ops_matmul(self, a, b, bias) -> Callable:
+        # kwargs are not allowed in torch autograd functions, so passing
+        # in as parameter is messy. Instead, we set env var and extract
+        # it in the triton kernel call
+
+        def func():
+            with set_env_variable(
+                "AMDGCN_USE_BUFFER_OPS", "1" if self.use_buffer_ops else "0"
+            ):
+                if bias is not None:
+                    return kernels.matmul(a, b) + bias
+                else:
+                    return kernels.matmul(a, b)
+
+        return func
+
+    @register_benchmark(baseline=True)
+    def aten_matmul(self, a, b, bias) -> Callable:
+        if bias is not None:
+            return lambda: torch.matmul(a, b) + bias
+        else:
+            return lambda: torch.matmul(a, b)
+
+    @register_benchmark()
+    def aten_tunableop_matmul(self, a, b, bias) -> Callable:
+        is_enabled = torch.cuda.tunable.is_enabled()
+
+        def op():
+            torch.cuda.tunable.enable(True)
+            output = (
+                torch.matmul(a, b) + bias if bias is not None else torch.matmul(a, b)
+            )
+            torch.cuda.tunable.enable(is_enabled)
+            return output
+
+        torch.cuda.tunable.enable(True)
+
+        # trigger tuning
+        op()
+
+        return op
+
+    @register_benchmark(enabled=HAS_HAMMER, fwd_only=True)
+    def hstu_triton_matmul(self, a, b, bias) -> Callable:
+        if bias is not None:
+            return lambda: hstu_triton_matmul_kernel(a, b) + bias
+        else:
+            return lambda: hstu_triton_matmul_kernel(a, b)
+
+    @register_benchmark()
+    def pt2_triton_matmul(self, a, b, bias) -> Callable:
+        torch._dynamo.reset()
+        inductor_config_patch = {
+            "max_autotune": True,
+            "max_autotune_gemm_backends": "TRITON",
+            "autotune_fallback_to_aten": False,
+            "autotune_num_choices_displayed": self.inductor_autotune_num_choices_displayed,
+        }
+        if self.template_filter_regex is not None:
+            inductor_config_patch["test_configs.autotune_choice_name_regex"] = (
+                self.template_filter_regex
+            )
+        with inductor_config.patch(inductor_config_patch):
+            if bias is not None:
+                f = lambda a, b: a.matmul(b) + bias
+            else:
+                f = lambda a, b: a.matmul(b)
+            compiled = torch.compile(f, dynamic=False)
+            compiled(a, b)
+
+        return lambda: compiled(a, b)
+
+    if IS_BLACKWELL:
+
+        @register_benchmark(enabled=has_tlx())
+        def torch_tlx_mm(self, a, b, bias) -> Callable:
+            torch._dynamo.reset()
+            inductor_config_patch = {
+                "max_autotune": True,
+                "max_autotune_gemm_backends": "TRITON",
+                "autotune_fallback_to_aten": False,
+                "autotune_num_choices_displayed": self.inductor_autotune_num_choices_displayed,
+                "force_disable_caches": True,
+            }
+            from torch._inductor.fb.tlx_templates import tlx_config
+
+            with (
+                tlx_config.patch(tlx_mode="force"),
+                inductor_config.patch(inductor_config_patch),
+            ):
+                if bias is not None:
+                    f = lambda a, b: a.contiguous().matmul(b.contiguous()) + bias
+                else:
+                    f = lambda a, b: a.contiguous().matmul(b.contiguous())
+                compiled = torch.compile(f, dynamic=False)
+                compiled(a, b)
+
+            return lambda: compiled(a, b)
+
+    @register_benchmark(enabled=False)
+    def pt2_matmul_maxautotune(self, a, b, bias) -> Callable:
+        torch._dynamo.reset()
+        with inductor_config.patch(
+            max_autotune=True,
+            max_autotune_gemm_backends="ATEN,TRITON",
+            autotune_num_choices_displayed=self.inductor_autotune_num_choices_displayed,
+        ):
+            if bias is not None:
+                f = lambda a, b: a.matmul(b) + bias
+            else:
+                f = lambda a, b: a.matmul(b)
+            compiled = torch.compile(f, dynamic=False)
+            compiled(a, b)
+
+        return lambda: compiled(a, b)
+
+    @register_benchmark(enabled=supports_tma())
+    def pt2_matmul_maxautotune_tma_only(self, a, b, bias) -> Callable:
+        from torch._inductor.template_heuristics.triton import (
+            CUDAMMTemplateConfigHeuristic,
+        )
+
+        torch._dynamo.reset()
+
+        mm_heuristic = CUDAMMTemplateConfigHeuristic()
+
+        original_mm_configs = mm_heuristic.mm_configs
+        mm_heuristic.mm_configs = []
+
+        try:
+            with inductor_config.patch(
+                max_autotune=True,
+                max_autotune_gemm_backends="TRITON",
+                autotune_num_choices_displayed=self.inductor_autotune_num_choices_displayed,
+            ):
+                if bias is not None:
+                    f = lambda a, b: a.matmul(b) + bias
+                else:
+                    f = lambda a, b: a.matmul(b)
+                compiled = torch.compile(f, dynamic=False)
+                compiled(a, b)
+        finally:
+            mm_heuristic.mm_configs = original_mm_configs
+
+        return lambda: compiled(a, b)
+
+    @register_benchmark(enabled=is_fbcode())
+    def pt2_matmul_maxautotune_diode(self, a, b, bias) -> Callable:
+        torch._dynamo.reset()
+        logger.info("[DIODE][TritonBench] Run PT2 gemm Max-Autotune Diode benchmark")
+        with inductor_config.patch(
+            max_autotune=True,
+            max_autotune_gemm_backends="ATEN,TRITON",
+            autotune_num_choices_displayed=self.inductor_autotune_num_choices_displayed,
+        ):
+            if bias is not None:
+                f = lambda a, b: a.matmul(b) + bias
+            else:
+                f = lambda a, b: a.matmul(b)
+            compiled = torch.compile(f, dynamic=False)
+            compiled(a, b)
+        return lambda: compiled(a, b)
+
+    @register_benchmark(enabled=not is_cuda())
+    def streamk_matmul(self, a, b, bias) -> Callable:
+        return lambda: (
+            streamk_amd_matmul(a, b, bias) if bias else streamk_amd_matmul(a, b)
+        )
+
+    @register_benchmark(enabled=is_cuda(), fwd_only=True)
+    def streamk_matmul(self, a, b, bias) -> Callable:
+        print(f"Testing shape: {a.shape} x {b.shape}...")
+        streamk = torch.matmul(a, b)
+        b = b.T.contiguous()
+        baseline = streamk_cuda_matmul(a, b)
+        if not torch.allclose(streamk, baseline):
+            print(
+                f"StreamK matmul on {a.shape} x {b.shape} result does not match baseline matmul result. Max abs(streamk/baseline - 1):  {torch.max(torch.abs(streamk / baseline - 1))}"
+            )
+        return lambda: (
+            streamk_cuda_matmul(a, b) + bias if bias else streamk_cuda_matmul(a, b)
+        )
+
+    # TODO: pt2 cutlass backend is broken
+    @register_benchmark(enabled=False)
+    def pt2_cutlass_matmul(self, a, b, bias) -> Callable:
+        torch._dynamo.reset()
+        with inductor_config.patch(
+            max_autotune=True,
+            max_autotune_gemm_backends="CUTLASS",
+            autotune_fallback_to_aten=False,
+        ):
+            if bias is not None:
+                f = lambda a, b: a.matmul(b) + bias
+            else:
+                f = lambda a, b: a.matmul(b)
+            # cutlass needs to know the static shape, so set dynamic to False
+            compiled = torch.compile(f, dynamic=False)
+            compiled(a, b)
+        return lambda: compiled(a, b)
+
+    @register_benchmark(enabled=False)
+    def matmul_decompose_k(self, a, b, bias) -> Callable:
+        def decompose_func(a_in, b_in):
+            M, K = a_in.shape
+            K, N = b_in.shape
+
+            # TODO: Ideally we want to autotune over this parameter
+            kPartitions = 256
+            assert K % kPartitions == 0, "K must be divisible by Kmini"
+            B = K // kPartitions
+
+            a_reshaped = a.reshape(M, B, kPartitions).transpose(
+                0, 1
+            )  # Shape: (B, M, kPartitions)
+            b_reshaped = b.reshape(B, kPartitions, N)  # Shape: (B, kPartitions, N)
+            result = torch.bmm(a_reshaped, b_reshaped).to(
+                torch.float32
+            )  # Shape: (B, M, N)
+            return result.sum(dim=0)  # Sum over B dimension, Shape: (M, N)
+
+        compiled_decompose_k = torch.compile(decompose_func)
+        compiled_decompose_k(a, b)
+        if bias is not None:
+            return lambda: compiled_decompose_k(a, b) + bias
+        else:
+            return lambda: compiled_decompose_k(a, b)
+
+    @register_benchmark(
+        enabled=has_tlx() and (IS_HOPPER or IS_BLACKWELL), fwd_only=True
+    )
+    def tlx_matmul_ws(self, a, b, bias) -> Callable:
+        target_dtype = a.dtype
+
+        # Reject unaligned strides: TMA TensorDescriptor requires 16-byte alignment.
+        # The loop checks non-unit input strides, which depend on layout:
+        #   row-major a → checks K,  column-major a → checks M
+        #   row-major b → checks N,  column-major b → checks K
+        elem_bytes = a.element_size()
+        for name, t in [("a", a), ("b", b)]:
+            for s in t.stride():
+                if s > 1 and (s * elem_bytes) % 16 != 0:
+                    import warnings
+
+                    warnings.warn(
+                        f"tlx_matmul_ws: skipping input with non-16-byte-aligned "
+                        f"stride ({name}.stride()={t.stride()}, "
+                        f"stride {s} * {elem_bytes} = {s * elem_bytes} "
+                        f"is not divisible by 16)"
+                    )
+                    return None
+
+        # Choose the appropriate implementation based on architecture
+        if IS_HOPPER:
+            matmul_func = _hopper_tlx_matmul_ws
+        else:  # IS_BLACKWELL
+            matmul_func = _tlx_matmul_ws
+
+        if bias is not None:
+            return lambda: matmul_func(a, b).to(target_dtype) + bias
+        else:
+            return lambda: matmul_func(a, b).to(target_dtype)
+
+    @register_benchmark(enabled=has_tlx() and IS_BLACKWELL)
+    def tlx_matmul_clc(self, a, b, bias) -> Callable:
+        # TLX matmul requires contiguous inputs with 16-byte aligned strides
+        a_contig = a.contiguous()
+        b_contig = b.contiguous()
+        target_dtype = a.dtype
+        if bias is not None:
+            return lambda: _tlx_matmul_clc(a_contig, b_contig).to(target_dtype) + bias
+        else:
+            return lambda: _tlx_matmul_clc(a_contig, b_contig).to(target_dtype)
+
+    @register_benchmark(enabled=has_tlx() and IS_BLACKWELL)
+    def tlx_matmul_pipelined(self, a, b, bias) -> Callable:
+        # TLX matmul requires contiguous inputs with 16-byte aligned strides
+        a_contig = a.contiguous()
+        b_contig = b.contiguous()
+        target_dtype = a.dtype
+        if bias is not None:
+            return (
+                lambda: _tlx_matmul_pipelined(a_contig, b_contig).to(target_dtype)
+                + bias
+            )
+        else:
+            return lambda: _tlx_matmul_pipelined(a_contig, b_contig).to(target_dtype)
+
+    @register_benchmark(enabled=has_tlx() and IS_BLACKWELL)
+    def tlx_matmul_2cta(self, a, b, bias) -> Callable:
+        # TLX matmul requires contiguous inputs with 16-byte aligned strides
+        a_contig = a.contiguous()
+        b_contig = b.contiguous()
+        target_dtype = a.dtype
+        if bias is not None:
+            return lambda: _tlx_matmul_2cta(a_contig, b_contig).to(target_dtype) + bias
+        else:
+            return lambda: _tlx_matmul_2cta(a_contig, b_contig).to(target_dtype)
+
+    if IS_BLACKWELL:
+
+        @register_benchmark(enabled=False)
+        def triton_blackwell_warpspec_persistent_matmul(self, a, b, bias) -> Callable:
+            if bias is not None:
+                return (
+                    lambda: blackwell_matmul_tma_persistent(a, b, warp_specialize=True)
+                    + bias
+                )
+            else:
+                return lambda: blackwell_matmul_tma_persistent(
+                    a, b, warp_specialize=True
+                )
+
+        @register_benchmark(enabled=False)
+        def triton_blackwell_persistent_matmul(self, a, b, bias) -> Callable:
+            if bias is not None:
+                return (
+                    lambda: blackwell_matmul_tma_persistent(a, b, warp_specialize=False)
+                    + bias
+                )
+            else:
+                return lambda: blackwell_matmul_tma_persistent(
+                    a, b, warp_specialize=False
+                )
+
+        @register_benchmark(enabled=False)
+        def triton_blackwell_warpspec_tma_matmul(self, a, b, bias) -> Callable:
+            if bias is not None:
+                return lambda: blackwell_matmul_tma(a, b, warp_specialize=True) + bias
+            else:
+                return lambda: blackwell_matmul_tma(a, b, warp_specialize=True)
+
+        @register_benchmark(enabled=False)
+        def triton_blackwell_tma_matmul(self, a, b, bias) -> Callable:
+            if bias is not None:
+                return lambda: blackwell_matmul_tma(a, b, warp_specialize=False) + bias
+            else:
+                return lambda: blackwell_matmul_tma(a, b, warp_specialize=False)
+
+        @register_benchmark(enabled=False)
+        def triton_blackwell_warpspec_descriptor_matmul(self, a, b, bias) -> Callable:
+            if bias is not None:
+                return (
+                    lambda: blackwell_matmul_descriptor_persistent(
+                        a, b, warp_specialize=True
+                    )
+                    + bias
+                )
+            else:
+                return lambda: blackwell_matmul_descriptor_persistent(
+                    a, b, warp_specialize=True
+                )
+
+        @register_benchmark(enabled=False)
+        def triton_blackwell_descriptor_matmul(self, a, b, bias) -> Callable:
+            if bias is not None:
+                return (
+                    lambda: blackwell_matmul_descriptor_persistent(
+                        a, b, warp_specialize=False
+                    )
+                    + bias
+                )
+            else:
+                return lambda: blackwell_matmul_descriptor_persistent(
+                    a, b, warp_specialize=False
+                )
+
+        @register_benchmark(enabled=HAS_TILELANG and is_cu130())
+        def tilelang_blackwell_matmul(self, a, b, bias) -> Callable:
+            assert bias is None, "Tilelang does not support bias"
+            assert a.dtype == torch.bfloat16, "Tilelang only supports bf16"
+            return tilelang_matmul_func(a, b)
+
+        @register_benchmark(enabled=HAS_CUTLASS_API)
+        def cutlass_api_matmul(self, a, b, bias) -> Callable:
+            assert bias is None, "Cutlass API gemm does not currently support bias"
+            M, _ = a.shape
+            _, N = b.shape
+
+            c = torch.empty((M, N), device=a.device, dtype=a.dtype)
+            args = cutlass_api.arguments.GemmArguments(
+                a, b, c, accumulator_type=torch.float32
+            )
+            kernel = cutlass_api.get_kernels(args, cc=100)[71]
+            compiled_artifact = kernel.compile(args)
+
+            def out():
+                kernel.run(args, compiled_artifact, assume_supported_args=True)
+                return c
+
+            return out
+
+        @register_benchmark(enabled=False)
+        def cutlass_api_matmul_exhaustive_autotune(self, a, b, bias) -> Callable:
+            assert bias is None, "Cutlass API gemm does not currently support bias"
+            M, _ = a.shape
+            _, N = b.shape
+
+            c = torch.empty((M, N), device=a.device, dtype=a.dtype)
+            args = cutlass_api.arguments.GemmArguments(
+                a, b, c, accumulator_type=torch.float32
+            )
+            kernel, compiled_artifact = get_best_cutlass_api_kernel(args)
+
+            def out():
+                kernel.run(args, compiled_artifact, assume_supported_args=True)
+                return c
+
+            return out
+
+        @register_benchmark(enabled=False)
+        def cutlass_api_matmul_heuristic(self, a, b, bias) -> Callable:
+            """Use nvMatmulHeuristic to narrow down kernel choices before autotuning."""
+            assert bias is None, "Cutlass API gemm does not currently support bias"
+            M, K = a.shape
+            _, N = b.shape
+
+            c = torch.empty((M, N), device=a.device, dtype=a.dtype)
+            args = cutlass_api.arguments.GemmArguments(
+                a, b, c, accumulator_type=torch.float32
+            )
+            kernel, compiled_artifact = get_best_heuristic_kernel(
+                args,
+                m=M,
+                n=N,
+                k=K,
+                dtype_a=a.dtype,
+                dtype_b=b.dtype,
+                layout_a="row" if a.stride(1) == 1 else "col",
+                layout_b="row" if b.stride(1) == 1 else "col",
+                heuristic_count=5,
+            )
+
+            def out():
+                kernel.run(
+                    args,
+                    compiled_artifact,
+                    stream=torch.cuda.current_stream(),
+                    assume_supported_args=True,
+                )
+                return c
+
+            return out
+
+        @register_benchmark(enabled=False)
+        def pt2_nvgemm_matmul(self, a, b, bias) -> Callable:
+            assert bias is None, "Cutlass API gemm does not currently support bias"
+            torch._dynamo.reset()
+            with inductor_config.patch(
+                max_autotune=True,
+                max_autotune_gemm_backends="NVGEMM",
+                autotune_fallback_to_aten=False,
+                autotune_num_choices_displayed=self.inductor_autotune_num_choices_displayed,
+            ):
+                f = lambda a, b: a.matmul(b)
+                compiled = torch.compile(f, dynamic=False)
+                compiled(a, b)
+
+            return lambda: compiled(a, b)
+
+    @register_x_val(label="(M, N, K)")
+    def get_x_val(self, example_inputs) -> Tuple[int, int, int]:
+        # x-value: computation intensity
+        a, w, bias = example_inputs
+        m, k = a.size()
+        k, n = w.size()
+        return (m, n, k)
+
+    @register_metric()
+    def gbps(
+        self, fn_name: str, example_inputs: Any, metrics: BenchmarkOperatorMetrics
+    ) -> float:
+        a, w, bias = example_inputs
+        numel = a.numel() + w.numel() + (torch.mm(a, w).numel())
+        numel = numel * a.element_size() / 1e9
+        return numel / metrics.latency * 1e3
+
+    @register_metric()
+    def flops(
+        self, fn_name: str, example_inputs: Any, metrics: BenchmarkOperatorMetrics
+    ) -> float:
+        a, w, bias = example_inputs
+        m, k = a.size()
+        k, n = w.size()
+        if bias is not None:
+            flops = m * k * 2 * n + 2 * m * n
+        else:
+            flops = m * k * 2 * n
+        return flops
+
+    @staticmethod
+    def _scaled_randn(*args, scale: float, **kwargs) -> torch.Tensor:
+        """
+        This provides more numerically stable inputs for GEMMs. The +1
+        eliminates very small values that could result in denormals, and the
+        scale (which should be set to K in an M*N*K GEMM) reduces the size of
+        the absolute error.
+
+        In particular, for a given element in the output tensor, the cumulative
+        error is eps * 2 * K, where eps is the smallest precision representable
+        in the dtype. By scaling the element by K, we avoid the error growing
+        with the size of the tensor.
+        """
+        return (torch.randn(*args, **kwargs) + 1) / scale
+
+    def get_input_iter(self) -> Generator:
+        requires_grad = self.requires_grad
+        for shape_id, shape in enumerate(self.shapes):
+            if len(shape) == 4:
+                m, n, k, bias = shape
+            elif len(shape) == 3:
+                m, n, k = shape
+                bias = None
+            else:
+                raise ValueError(f"Invalid shape {shape}")
+            a = self._scaled_randn(
+                (m, k), scale=k, device=self.device, dtype=self.dtype
+            ).requires_grad_(requires_grad)
+            w = self._scaled_randn(
+                (k, n), scale=k, device=self.device, dtype=self.dtype
+            ).requires_grad_(requires_grad)
+            # Convert inputs to column-major if layout is "n" (non-transposed)
+            if self.layout[0] == "n":
+                a = a.T.contiguous().T.requires_grad_(requires_grad)
+            if self.layout[1] == "n":
+                w = w.T.contiguous().T.requires_grad_(requires_grad)
+            if not bias == None:
+                bias = torch.randn(
+                    (bias), device=self.device, dtype=self.dtype
+                ).requires_grad_(requires_grad)
+
+            yield a, w, bias
+
+    def _get_accuracy(self, fn: Callable, baseline_fn: Callable) -> bool:
+        output = fn()
+        baseline_output = baseline_fn()
+        # Float atomics introduce non-determinism for some GEMMs (e.g., Stream-K)
+        # So we use a slightly larger tolerance here.
+        atol = self.tb_args.atol if self.tb_args.atol is not None else 1e-5
+        rtol = self.tb_args.rtol if self.tb_args.rtol is not None else 0.5
+        return torch.allclose(output, baseline_output, atol=atol, rtol=rtol)

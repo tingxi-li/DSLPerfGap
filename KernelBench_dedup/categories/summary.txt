@@ -1,0 +1,33 @@
+KernelBench_dedup Kernel Categories Summary
+==================================================
+
+Total kernels: 297
+Total categories: 22
+
+--- Primitive Operations ---
+  matmul                     21
+  conv                       35
+  activation                 17
+  normalization              11
+  pooling                     6
+  reduction                   7
+  loss                       11
+  attention                  10
+  cumulative                  5
+  embedding                   2
+  dropout                     1
+  quantization               10
+  elementwise                 3
+  specialized                 9
+
+--- Fused Operations (Level 2) ---
+  fused_conv                 33
+  fused_convtranspose        30
+  fused_gemm                 26
+  fused_matmul               10
+
+--- Complete Models (Level 3) ---
+  model_cnn                  25
+  model_transformer           8
+  model_rnn                  10
+  model_other                 7

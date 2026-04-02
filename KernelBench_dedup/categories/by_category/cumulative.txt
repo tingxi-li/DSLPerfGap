@@ -1,0 +1,7 @@
+# cumulative (5 kernels)
+
+level1/89_cumsum
+level1/90_cumprod
+level1/91_cumsum_reverse
+level1/92_cumsum_exclusive
+level1/93_masked_cumsum

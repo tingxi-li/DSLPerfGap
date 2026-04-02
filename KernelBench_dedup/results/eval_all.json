@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-04-02T00:44:51.169964",
+  "summary": {
+    "total": 4,
+    "pass": 4,
+    "fail": 0,
+    "error": 0,
+    "oom": 0,
+    "timeout": 0,
+    "import_error": 0
+  },
+  "results": [
+    {
+      "level": "level3",
+      "kernel": "48_mamba2returny",
+      "status": "PASS",
+      "time_ms": 1198.03,
+      "output_info": "shape=[2048, 128, 8, 64], dtype=torch.float32",
+      "error": null
+    },
+    {
+      "level": "level3",
+      "kernel": "49_mamba2returnfinalstate",
+      "status": "PASS",
+      "time_ms": 800.02,
+      "output_info": "shape=[2048, 8, 64, 16], dtype=torch.float32",
+      "error": null
+    },
+    {
+      "level": "tritonbench",
+      "kernel": "mamba2_chunk_scan",
+      "status": "PASS",
+      "time_ms": 211.29,
+      "output_info": "shape=[1, 1024, 64, 64], dtype=torch.float16",
+      "error": null
+    },
+    {
+      "level": "tritonbench",
+      "kernel": "mamba2_chunk_state",
+      "status": "PASS",
+      "time_ms": 17.75,
+      "output_info": "shape=[1, 4, 64, 64, 128], dtype=torch.float16",
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# reduction (7 kernels)
+
+level1/47_sum_reduction_over_a_dimension
+level1/48_mean_reduction_over_a_dimension
+level1/49_max_reduction_over_a_dimension
+level1/51_argmax_over_a_dimension
+level1/52_argmin_over_a_dimension
+level1/53_min_reduction_over_a_dimension
+tritonbench/sum

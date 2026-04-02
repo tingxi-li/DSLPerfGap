@@ -1,0 +1,13 @@
+# loss (11 kernels)
+
+level1/94_mseloss
+level1/95_crossentropyloss
+level1/96_huberloss
+level1/98_kldivloss
+level1/99_tripletmarginloss
+level1/100_hingeloss
+tritonbench/cross_entropy
+tritonbench/jsd
+tritonbench/kl_div
+tritonbench/fused_linear_cross_entropy
+tritonbench/fused_linear_jsd

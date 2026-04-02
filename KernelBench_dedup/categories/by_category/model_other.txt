@@ -1,0 +1,9 @@
+# model_other (7 kernels)
+
+level3/1_mlp
+level3/2_shallowwidemlp
+level3/3_deepnarrowmlp
+level3/46_netvladwithghostclusters
+level3/47_netvladnoghostclusters
+level3/48_mamba2returny
+level3/49_mamba2returnfinalstate

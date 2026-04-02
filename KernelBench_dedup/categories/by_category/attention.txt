@@ -1,0 +1,12 @@
+# attention (10 kernels)
+
+level1/97_scaleddotproductattention
+tritonbench/blackwell_attentions
+tritonbench/custom_shape_attentions
+tritonbench/decoding_attention
+tritonbench/flash_attention
+tritonbench/flex_attention
+tritonbench/fp8_attention
+tritonbench/gdpa
+tritonbench/ragged_attention
+tritonbench/template_attention

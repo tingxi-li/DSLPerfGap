@@ -1,0 +1,27 @@
+# model_cnn (25 kernels)
+
+level3/4_lenet5
+level3/5_alexnet
+level3/6_googlenetinceptionmodule
+level3/7_googlenetinceptionv1
+level3/8_resnetbasicblock
+level3/9_resnet18
+level3/10_resnet101
+level3/11_vgg16
+level3/12_vgg19
+level3/13_densenet121transitionlayer
+level3/14_densenet121denseblock
+level3/15_densenet121
+level3/16_densenet201
+level3/17_squeezenetfiremodule
+level3/18_squeezenet
+level3/19_mobilenetv1
+level3/20_mobilenetv2
+level3/21_efficientnetmbconv
+level3/22_efficientnetb0
+level3/23_efficientnetb1
+level3/24_efficientnetb2
+level3/25_shufflenetunit
+level3/26_shufflenet
+level3/27_regnet
+level3/45_unetsoftmax
