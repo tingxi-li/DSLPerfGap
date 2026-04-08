@@ -307,7 +307,9 @@
     "level3/25_shufflenetunit",
     "level3/26_shufflenet",
     "level3/27_regnet",
-    "level3/45_unetsoftmax"
+    "level3/45_unetsoftmax",
+    "level3/51_resnet50",
+    "level3/52_convnext"
   ],
   "model_transformer": [
     "level3/28_visiontransformer",
@@ -317,7 +319,10 @@
     "level3/32_convolutionalvisiontransformer",
     "level3/43_mingptcausalattention",
     "level3/44_minigptblock",
-    "level3/50_reluselfattention"
+    "level3/50_reluselfattention",
+    "level3/53_llama_decoder_block",
+    "level3/54_siglip_encoder",
+    "level3/55_mixtral_moe_block"
   ],
   "model_rnn": [
     "level3/33_vanillarnn",
