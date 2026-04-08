@@ -28,12 +28,12 @@ level1/32_hardtanh,no,,yes,any shape float tensor,activation,nonlinearity,easy,y
 level1/33_batchnorm,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,float only; BatchNorm running stats require fp32
 level1/34_instancenorm,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,float only; InstanceNorm running stats may need fp32
 level1/35_groupnorm,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
-level1/36_rmsnorm,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
-level1/37_frobeniusnorm,no,,yes,any shape float tensor,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64)
-level1/38_l1norm,no,,partial,2D+ tensor; reduces along dim=1,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64)
-level1/39_l2norm,no,,partial,2D+ tensor; reduces along dim=1,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64)
+level1/36_rmsnorm,no,,partial,trailing dims match normalized_shape from init; leading dims (batch/seq) free,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
+level1/37_frobeniusnorm,no,,yes,any shape float tensor; computes global Frobenius norm,reduction,norm_aggregation,easy,partial,any float (fp16/bf16/fp32/fp64)
+level1/38_l1norm,no,,partial,2D+ tensor; L1 norm reduction along dim=1,reduction,norm_aggregation,easy,partial,any float (fp16/bf16/fp32/fp64)
+level1/39_l2norm,no,,partial,2D+ tensor; L2 norm reduction along dim=1,reduction,norm_aggregation,easy,partial,any float (fp16/bf16/fp32/fp64)
 level1/3_batched_matrix_multiplication,no,,yes,2D+ with matching inner dim,matmul,linear_algebra,easy,yes,any float (fp16/bf16/fp32/fp64)
-level1/40_layernorm,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
+level1/40_layernorm,no,,partial,trailing dims match normalized_shape from init; leading dims (batch/seq) free,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
 level1/41_max_pooling_1d,no,,no,NCHW/NCDHW,pooling,spatial,medium,yes,any float (fp16/bf16/fp32/fp64)
 level1/42_max_pooling_2d,no,,no,NCHW/NCDHW,pooling,spatial,medium,yes,any float (fp16/bf16/fp32/fp64)
 level1/43_max_pooling_3d,no,,no,NCHW/NCDHW,pooling,spatial,medium,yes,any float (fp16/bf16/fp32/fp64)
@@ -248,7 +248,7 @@ level3/52_convnext,yes,ConvNeXt-Tiny,no,"(B,3,224,224) NCHW",model_cnn,vision_mo
 level3/53_llama_decoder_block,yes,Llama-3-8B,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/54_siglip_encoder,yes,SigLIP-Base,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/55_mixtral_moe_block,yes,Mixtral-8x7B,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/56_deepseek_v3_decoder_block,yes,DeepSeek-V3,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
+level3/56_deepseek_v3_decoder_block,yes,DeepSeek-V3 (HF impl; simplified MLA),no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/57_qwen3_decoder_block,yes,Qwen3-8B,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/58_qwen3_moe_decoder_block,yes,Qwen3-MoE,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/59_llama4_decoder_block,yes,Llama-4,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
@@ -289,7 +289,7 @@ tritonbench/jagged_sum,no,,no,kernel-specific,specialized,misc,hard,no,kernel-sp
 tritonbench/jsd,no,,yes,matching prediction/target pair,loss,objective,medium,partial,float only; some require fp32 for stability
 tritonbench/kl_div,no,,yes,matching prediction/target pair,loss,objective,medium,partial,float only; some require fp32 for stability
 tritonbench/launch_latency,no,,no,kernel-specific,specialized,misc,hard,no,kernel-specific
-tritonbench/layer_norm,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
+tritonbench/layer_norm,no,,partial,trailing dims match normalized_shape from init; leading dims (batch/seq) free,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
 tritonbench/low_mem_dropout,no,,yes,any shape float tensor,dropout,regularization,easy,yes,any float (fp16/bf16/fp32/fp64)
 tritonbench/mamba2_chunk_scan,no,,no,kernel-specific,specialized,misc,hard,no,kernel-specific
 tritonbench/mamba2_chunk_state,no,,no,kernel-specific,specialized,misc,hard,no,kernel-specific
@@ -297,11 +297,11 @@ tritonbench/mixed_gemm,no,,no,kernel-specific,specialized,misc,hard,no,kernel-sp
 tritonbench/mx4_to_fp32,no,,no,specific dtype (fp8/int4/int8/bf16),quantization,precision,hard,no,mx4 packed as uint8
 tritonbench/nvfp4_gemm,no,,no,specific dtype (fp8/int4/int8/bf16),quantization,precision,hard,no,nvfp4 quantized format
 tritonbench/ragged_attention,no,,no,"4D (B,H,S,D)",attention,sequence,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-tritonbench/rms_norm,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
-tritonbench/rope,no,,no,"float Q/K tensors (B,H,S,D); head_dim/seq_len match init",embedding,positional_encoding,medium,yes,float Q/K tensors (fp16/bf16/fp32/fp64)
+tritonbench/rms_norm,no,,partial,trailing dims match normalized_shape from init; leading dims (batch/seq) free,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
+tritonbench/rope,no,,no,"float Q/K tensors (B,H,S,D); head_dim/seq_len match init",positional_encoding,rotary,medium,yes,float Q/K tensors (fp16/bf16/fp32/fp64)
 tritonbench/sum,no,,yes,"any shape, configurable dim",reduction,aggregation,easy,yes,any float (fp16/bf16/fp32/fp64)
 tritonbench/swiglu,no,,no,"(..., hidden_size); hidden_size/intermediate_size fixed by nn.Linear in init",activation,nonlinearity,medium,yes,any float (fp16/bf16/fp32/fp64)
 tritonbench/template_attention,no,,no,"4D (B,H,S,D)",attention,sequence,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 tritonbench/vector_add,no,,yes,"any shape, broadcastable",elementwise,arithmetic,easy,yes,any float (fp16/bf16/fp32/fp64)
 tritonbench/vector_exp,no,,yes,"any shape, broadcastable",elementwise,arithmetic,easy,yes,any float (fp16/bf16/fp32/fp64)
-tritonbench/welford,no,,no,"ndim matches norm type, features match init",normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats
+tritonbench/welford,no,,partial,trailing dims match normalized_shape from init; leading dims (batch/seq) free,normalization,normalization,medium,partial,any float (fp16/bf16/fp32/fp64); no running stats

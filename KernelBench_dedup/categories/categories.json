@@ -83,9 +83,6 @@
     "level1/34_instancenorm",
     "level1/35_groupnorm",
     "level1/36_rmsnorm",
-    "level1/37_frobeniusnorm",
-    "level1/38_l1norm",
-    "level1/39_l2norm",
     "level1/40_layernorm",
     "tritonbench/layer_norm",
     "tritonbench/rms_norm",
@@ -106,7 +103,10 @@
     "level1/51_argmax_over_a_dimension",
     "level1/52_argmin_over_a_dimension",
     "level1/53_min_reduction_over_a_dimension",
-    "tritonbench/sum"
+    "tritonbench/sum",
+    "level1/37_frobeniusnorm",
+    "level1/38_l1norm",
+    "level1/39_l2norm"
   ],
   "loss": [
     "level1/94_mseloss",
@@ -141,7 +141,9 @@
     "level1/93_masked_cumsum"
   ],
   "embedding": [
-    "tritonbench/embedding",
+    "tritonbench/embedding"
+  ],
+  "positional_encoding": [
     "tritonbench/rope"
   ],
   "dropout": [
