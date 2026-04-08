@@ -59,10 +59,10 @@ level1/60_conv_standard_3d_square_input_asymmetric_kernel,no,,no,"NCHW/NCDHW, C 
 level1/61_conv_transposed_3d_square_input_square_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/62_conv_standard_2d_square_input_asymmetric_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/63_conv_standard_2d_square_input_square_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
-level1/64_conv_transposed_1d,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
+level1/64_conv_transposed_1d,no,,no,"NCL (3D), C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/65_conv_transposed_2d_square_input_asymmetric_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/66_conv_standard_3d_asymmetric_input_asymmetric_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
-level1/67_conv_standard_1d,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
+level1/67_conv_standard_1d,no,,no,"NCL (3D), C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/68_conv_transposed_3d_square_input_asymmetric_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/69_conv_transposed_2d_asymmetric_input_asymmetric_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/6_matmul_with_large_k_dimension,no,,yes,2D+ with matching inner dim,matmul,linear_algebra,easy,yes,any float (fp16/bf16/fp32/fp64)
@@ -70,12 +70,12 @@ level1/70_conv_transposed_3d_asymmetric_input_square_kernel,no,,no,"NCHW/NCDHW, 
 level1/71_conv_transposed_2d_asymmetric_input_square_kernel,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/72_conv_transposed_3d_asymmetric_input_asymmetric_kernel_strided_padded_grouped,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/73_conv_transposed_3d_asymmetric_input_square_kernel_strided_padded_grouped,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
-level1/74_conv_transposed_1d_dilated,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
+level1/74_conv_transposed_1d_dilated,no,,no,"NCL (3D), C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/75_conv_transposed_2d_asymmetric_input_asymmetric_kernel_strided_grouped_padded_dilated,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
-level1/76_conv_standard_1d_dilated_strided,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
+level1/76_conv_standard_1d_dilated_strided,no,,no,"NCL (3D), C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/77_conv_transposed_3d_square_input_square_kernel_padded_dilated_strided,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/78_conv_transposed_2d_asymmetric_input_asymmetric_kernel_padded,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
-level1/79_conv_transposed_1d_asymmetric_input_square_kernel_padded_strided_dilated,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
+level1/79_conv_transposed_1d_asymmetric_input_square_kernel_padded_strided_dilated,no,,no,"NCL (3D), C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/7_matmul_with_small_k_dimension,no,,yes,2D+ with matching inner dim,matmul,linear_algebra,easy,yes,any float (fp16/bf16/fp32/fp64)
 level1/80_conv_standard_2d_square_input_asymmetric_kernel_dilated_padded,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
 level1/81_conv_transposed_2d_asymmetric_input_square_kernel_dilated_padded_strided,no,,no,"NCHW/NCDHW, C matches init",conv,convolution,medium,partial,fp16/bf16/fp32; cuDNN must support dtype
@@ -102,13 +102,13 @@ level1/9_tall_skinny_matrix_multiplication,no,,yes,2D+ with matching inner dim,m
 level2/100_convtranspose3d_clamp_min_divide,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/10_convtranspose2d_maxpool_hardtanh_mean_tanh,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/11_convtranspose2d_batchnorm_tanh_maxpool_groupnorm,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/12_gemm_multiply_leakyrelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/12_gemm_multiply_leakyrelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/13_convtranspose3d_mean_add_softmax_tanh_scaling,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/14_gemm_divide_sum_scaling,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
 level2/15_convtranspose3d_batchnorm_subtract,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/16_convtranspose2d_mish_add_hardtanh_scaling,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/17_conv2d_instancenorm_divide,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/18_matmul_sum_max_avgpool_logsumexp_logsumexp,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/18_matmul_sum_max_avgpool_logsumexp_logsumexp,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/19_convtranspose2d_gelu_groupnorm,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/1_conv2d_relu_biasadd,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/20_convtranspose3d_sum_residualadd_multiply_residualadd,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
@@ -120,36 +120,36 @@ level2/25_conv2d_min_tanh_tanh,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fu
 level2/26_convtranspose3d_add_hardswish,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/27_conv3d_hardswish_groupnorm_mean,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/28_bmm_instancenorm_sum_residualadd_multiply,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
-level2/29_matmul_mish_mish,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/29_matmul_mish_mish,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/2_convtranspose2d_biasadd_clamp_scaling_clamp_divide,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/30_gemm_groupnorm_hardtanh,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
 level2/31_conv2d_min_add_multiply,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/32_conv2d_scaling_min,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/33_gemm_scale_batchnorm,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
-level2/34_convtranspose3d_layernorm_gelu_scaling,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
+level2/34_convtranspose3d_layernorm_gelu_scaling,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; LayerNorm may need fp32 for stability
 level2/35_conv2d_subtract_hardswish_maxpool_mish,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/36_convtranspose2d_min_sum_gelu_add,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/37_matmul_swish_sum_groupnorm,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
 level2/38_convtranspose3d_avgpool_clamp_softmax_multiply,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/3_convtranspose3d_sum_layernorm_avgpool_gelu,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
+level2/3_convtranspose3d_sum_layernorm_avgpool_gelu,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; LayerNorm may need fp32 for stability
 level2/40_matmul_scaling_residualadd,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
 level2/41_gemm_batchnorm_gelu_relu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
 level2/42_convtranspose2d_globalavgpool_biasadd_logsumexp_sum_multiply,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/43_conv3d_max_logsumexp_relu,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/44_convtranspose2d_multiply_globalavgpool_globalavgpool_mean,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/45_gemm_sigmoid_logsumexp,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/45_gemm_sigmoid_logsumexp,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/46_conv2d_subtract_tanh_subtract_avgpool,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/47_conv3d_mish_tanh,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/48_conv3d_scaling_tanh_multiply_sigmoid,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/49_convtranspose3d_softmax_sigmoid,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/4_conv2d_mish_mish,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/50_convtranspose3d_scaling_avgpool_biasadd_scaling,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/51_gemm_subtract_globalavgpool_logsumexp_gelu_residualadd,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/51_gemm_subtract_globalavgpool_logsumexp_gelu_residualadd,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/52_conv2d_activation_batchnorm,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/53_gemm_scaling_hardtanh_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/53_gemm_scaling_hardtanh_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/54_conv2d_multiply_leakyrelu_gelu,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/55_matmul_maxpool_sum_scale,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
-level2/56_matmul_sigmoid_sum,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/56_matmul_sigmoid_sum,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/57_conv2d_relu_hardswish,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/58_convtranspose3d_logsumexp_hardswish_subtract_clamp,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/59_matmul_swish_scaling,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
@@ -157,32 +157,32 @@ level2/5_convtranspose2d_subtract_tanh,no,,no,"NCHW/NCDHW, C matches init",fused
 level2/60_convtranspose3d_swish_groupnorm_hardswish,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/61_convtranspose3d_relu_groupnorm,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/62_matmul_groupnorm_leakyrelu_sum,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
-level2/63_gemm_relu_divide,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
-level2/64_gemm_logsumexp_leakyrelu_leakyrelu_gelu_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/63_gemm_relu_divide,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
+level2/64_gemm_logsumexp_leakyrelu_leakyrelu_gelu_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/65_conv2d_avgpool_sigmoid_sum,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/66_matmul_dropout_softmax,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
 level2/67_conv2d_gelu_globalavgpool,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/68_matmul_min_subtract,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/68_matmul_min_subtract,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/69_conv2d_hardswish_relu,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/6_conv3d_softmax_maxpool_maxpool,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/70_gemm_sigmoid_scaling_residualadd,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/70_gemm_sigmoid_scaling_residualadd,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/71_conv2d_divide_leakyrelu,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/72_convtranspose3d_batchnorm_avgpool_avgpool,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/73_conv2d_batchnorm_scaling,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/74_convtranspose3d_leakyrelu_multiply_leakyrelu_max,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/75_gemm_groupnorm_min_biasadd,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
-level2/76_gemm_add_relu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/76_gemm_add_relu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/77_convtranspose3d_scale_batchnorm_globalavgpool,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/78_convtranspose3d_max_max_sum,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/79_conv3d_multiply_instancenorm_clamp_multiply_max,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/7_conv3d_relu_leakyrelu_gelu_sigmoid_biasadd,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/80_gemm_max_subtract_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
-level2/81_gemm_swish_divide_clamp_tanh_clamp,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/80_gemm_max_subtract_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
+level2/81_gemm_swish_divide_clamp_tanh_clamp,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/82_conv2d_tanh_scaling_biasadd_max,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/83_conv3d_groupnorm_min_clamp_dropout,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/84_gemm_batchnorm_scaling_softmax,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
 level2/85_conv2d_groupnorm_scale_maxpool_clamp,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
-level2/86_matmul_divide_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/86_matmul_divide_gelu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level2/87_conv2d_subtract_subtract_mish,no,,no,"NCHW/NCDHW, C matches init",fused_conv,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/88_gemm_groupnorm_swish_multiply_swish,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
 level2/89_convtranspose3d_maxpool_softmax_subtract_swish_max,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
@@ -196,53 +196,53 @@ level2/95_matmul_add_swish_tanh_gelu_hardtanh,no,,yes,2D+ with matching inner di
 level2/96_convtranspose3d_multiply_max_globalavgpool_clamp,no,,no,"NCHW/NCDHW, C matches init",fused_convtranspose,fused_convolution,medium,partial,fp16/bf16/fp32; BatchNorm needs fp32 stats
 level2/97_matmul_batchnorm_biasadd_divide_swish,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
 level2/98_matmul_avgpool_gelu_scale_max,no,,yes,2D+ with matching inner dim,fused_matmul,fused_linear,medium,yes,any float (fp16/bf16/fp32/fp64)
-level2/99_matmul_gelu_softmax,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
-level2/9_matmul_subtract_multiply_relu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32; BatchNorm/GroupNorm may need fp32
+level2/99_matmul_gelu_softmax,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
+level2/9_matmul_subtract_multiply_relu,no,,no,"2D, in_features matches init",fused_gemm,fused_linear,medium,partial,fp16/bf16/fp32
 level3/10_resnet101,yes,ResNet-101,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
 level3/11_vgg16,yes,VGG-16,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
 level3/12_vgg19,yes,VGG-19,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/13_densenet121transitionlayer,yes,densenet121transitionlayer,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/14_densenet121denseblock,yes,densenet121denseblock,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/15_densenet121,yes,densenet121,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/16_densenet201,yes,densenet201,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/17_squeezenetfiremodule,yes,squeezenetfiremodule,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/18_squeezenet,yes,squeezenet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/19_mobilenetv1,yes,mobilenetv1,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/1_mlp,yes,mlp,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
-level3/20_mobilenetv2,yes,mobilenetv2,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/21_efficientnetmbconv,yes,efficientnetmbconv,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/22_efficientnetb0,yes,efficientnetb0,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/23_efficientnetb1,yes,efficientnetb1,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/24_efficientnetb2,yes,efficientnetb2,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/25_shufflenetunit,yes,shufflenetunit,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/26_shufflenet,yes,shufflenet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/27_regnet,yes,regnet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/13_densenet121transitionlayer,yes,DenseNet-121 Transition Layer,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/14_densenet121denseblock,yes,DenseNet-121 Dense Block,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/15_densenet121,yes,DenseNet-121,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/16_densenet201,yes,DenseNet-201,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/17_squeezenetfiremodule,yes,SqueezeNet Fire Module,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/18_squeezenet,yes,SqueezeNet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/19_mobilenetv1,yes,MobileNet-V1,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/1_mlp,yes,MLP,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
+level3/20_mobilenetv2,yes,MobileNet-V2,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/21_efficientnetmbconv,yes,EfficientNet MBConv,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/22_efficientnetb0,yes,EfficientNet-B0,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/23_efficientnetb1,yes,EfficientNet-B1,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/24_efficientnetb2,yes,EfficientNet-B2,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/25_shufflenetunit,yes,ShuffleNet Unit,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/26_shufflenet,yes,ShuffleNet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/27_regnet,yes,RegNet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
 level3/28_visiontransformer,yes,ViT,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/29_swinmlp,yes,swinmlp,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/2_shallowwidemlp,yes,shallowwidemlp,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
+level3/29_swinmlp,yes,Swin MLP,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
+level3/2_shallowwidemlp,yes,Shallow Wide MLP,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
 level3/30_swintransformerv2,yes,Swin-V2,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/31_visionattention,yes,visionattention,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/32_convolutionalvisiontransformer,yes,convolutionalvisiontransformer,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/33_vanillarnn,yes,vanillarnn,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/34_vanillarnnhidden,yes,vanillarnnhidden,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/35_lstm,yes,lstm,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/36_lstmhn,yes,lstmhn,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/37_lstmcn,yes,lstmcn,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/38_lstmbidirectional,yes,lstmbidirectional,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/39_gru,yes,gru,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/3_deepnarrowmlp,yes,deepnarrowmlp,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
-level3/40_gruhidden,yes,gruhidden,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/41_grubidirectional,yes,grubidirectional,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/42_grubidirectionalhidden,yes,grubidirectionalhidden,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
-level3/43_mingptcausalattention,yes,mingptcausalattention,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/44_minigptblock,yes,minigptblock,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/45_unetsoftmax,yes,unetsoftmax,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/46_netvladwithghostclusters,yes,netvladwithghostclusters,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
-level3/47_netvladnoghostclusters,yes,netvladnoghostclusters,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
-level3/48_mamba2returny,yes,mamba2returny,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
-level3/49_mamba2returnfinalstate,yes,mamba2returnfinalstate,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
-level3/4_lenet5,yes,lenet5,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/50_reluselfattention,yes,reluselfattention,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
+level3/31_visionattention,yes,Vision Attention,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
+level3/32_convolutionalvisiontransformer,yes,Convolutional ViT,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
+level3/33_vanillarnn,yes,Vanilla RNN,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/34_vanillarnnhidden,yes,Vanilla RNN (Hidden),no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/35_lstm,yes,LSTM,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/36_lstmhn,yes,LSTM (Hidden),no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/37_lstmcn,yes,LSTM (Cell),no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/38_lstmbidirectional,yes,LSTM Bidirectional,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/39_gru,yes,GRU,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/3_deepnarrowmlp,yes,Deep Narrow MLP,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
+level3/40_gruhidden,yes,GRU (Hidden),no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/41_grubidirectional,yes,GRU Bidirectional,no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/42_grubidirectionalhidden,yes,GRU Bidirectional (Hidden),no,"(B,seq_len,input_size)",model_rnn,sequence_model,hard,partial,fp16/bf16/fp32; cuDNN RNN needs matching dtype
+level3/43_mingptcausalattention,yes,MinGPT Causal Attention,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
+level3/44_minigptblock,yes,MinGPT Block,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
+level3/45_unetsoftmax,yes,U-Net,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/46_netvladwithghostclusters,yes,NetVLAD (Ghost Clusters),no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
+level3/47_netvladnoghostclusters,yes,NetVLAD,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
+level3/48_mamba2returny,yes,Mamba-2,no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
+level3/49_mamba2returnfinalstate,yes,Mamba-2 (Final State),no,model-specific fixed shape,model_other,other_model,hard,partial,fp16/bf16/fp32; depends on internal ops
+level3/4_lenet5,yes,LeNet-5,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/50_reluselfattention,yes,ReLU Self-Attention,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/51_resnet50,yes,ResNet-50,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
 level3/52_convnext,yes,ConvNeXt-Tiny,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
 level3/53_llama_decoder_block,yes,Llama-3-8B,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
@@ -252,10 +252,10 @@ level3/56_deepseek_v3_decoder_block,yes,DeepSeek-V3 (HF impl; simplified MLA),no
 level3/57_qwen3_decoder_block,yes,Qwen3-8B,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/58_qwen3_moe_decoder_block,yes,Qwen3-MoE,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
 level3/59_llama4_decoder_block,yes,Llama-4,no,model-specific fixed shape,model_transformer,transformer_model,hard,partial,fp16/bf16/fp32; fp64 unsupported by SDPA
-level3/5_alexnet,yes,alexnet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/6_googlenetinceptionmodule,yes,googlenetinceptionmodule,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/7_googlenetinceptionv1,yes,googlenetinceptionv1,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
-level3/8_resnetbasicblock,yes,resnetbasicblock,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/5_alexnet,yes,AlexNet,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/6_googlenetinceptionmodule,yes,GoogLeNet Inception Module,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/7_googlenetinceptionv1,yes,GoogLeNet Inception V1,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
+level3/8_resnetbasicblock,yes,ResNet Basic Block,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
 level3/9_resnet18,yes,ResNet-18,no,"(B,3,224,224) NCHW",model_cnn,vision_model,hard,partial,fp16/bf16/fp32; BatchNorm needs fp32 running stats
 tritonbench/addmm,no,,yes,2D+ with matching inner dim,matmul,linear_algebra,easy,yes,any float (fp16/bf16/fp32/fp64)
 tritonbench/bf16xint16_gemm,no,,no,specific dtype (fp8/int4/int8/bf16),quantization,precision,hard,no,"bf16 activations, int16 weights"
