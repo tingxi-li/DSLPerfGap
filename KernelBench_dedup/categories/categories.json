@@ -117,18 +117,14 @@
     "level1/100_hingeloss",
     "tritonbench/cross_entropy",
     "tritonbench/jsd",
-    "tritonbench/kl_div",
-    "tritonbench/fused_linear_cross_entropy",
-    "tritonbench/fused_linear_jsd"
+    "tritonbench/kl_div"
   ],
   "attention": [
     "level1/97_scaleddotproductattention",
-    "tritonbench/blackwell_attentions",
     "tritonbench/custom_shape_attentions",
     "tritonbench/decoding_attention",
     "tritonbench/flash_attention",
     "tritonbench/flex_attention",
-    "tritonbench/fp8_attention",
     "tritonbench/gdpa",
     "tritonbench/ragged_attention",
     "tritonbench/template_attention"
@@ -149,18 +145,6 @@
   "dropout": [
     "tritonbench/low_mem_dropout"
   ],
-  "quantization": [
-    "tritonbench/bf16xint16_gemm",
-    "tritonbench/fp32_to_mx4",
-    "tritonbench/fp8_fused_quant_gemm_rowwise",
-    "tritonbench/fp8_gemm",
-    "tritonbench/fp8_gemm_blockwise",
-    "tritonbench/fp8_gemm_rowwise",
-    "tritonbench/fp8_gemm_rowwise_grouped",
-    "tritonbench/int4_gemm",
-    "tritonbench/mx4_to_fp32",
-    "tritonbench/nvfp4_gemm"
-  ],
   "elementwise": [
     "level1/5_matrix_scalar_multiplication",
     "tritonbench/vector_add",
@@ -174,8 +158,7 @@
     "tritonbench/jagged_sum",
     "tritonbench/launch_latency",
     "tritonbench/mamba2_chunk_scan",
-    "tritonbench/mamba2_chunk_state",
-    "tritonbench/mixed_gemm"
+    "tritonbench/mamba2_chunk_state"
   ],
   "fused_conv": [
     "level2/1_conv2d_relu_biasadd",
@@ -282,7 +265,10 @@
     "level2/66_matmul_dropout_softmax",
     "level2/95_matmul_add_swish_tanh_gelu_hardtanh",
     "level2/97_matmul_batchnorm_biasadd_divide_swish",
-    "level2/98_matmul_avgpool_gelu_scale_max"
+    "level2/98_matmul_avgpool_gelu_scale_max",
+    "tritonbench/fp8_fused_quant_gemm_rowwise",
+    "tritonbench/fused_linear_cross_entropy",
+    "tritonbench/fused_linear_jsd"
   ],
   "model_cnn": [
     "level3/4_lenet5",

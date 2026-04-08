@@ -1,0 +1,57 @@
+{
+  "environment": {
+    "device": "NVIDIA RTX 4000 Ada Generation",
+    "driver_version": "12.6",
+    "pytorch_version": "2.8.0+cu126",
+    "os": "Linux-5.14.0-611.38.1.el9_7.x86_64-x86_64-with-glibc2.34",
+    "cpu_model": "x86_64",
+    "seed": 42,
+    "deterministic_mode": true,
+    "git_commit": "de6cc77cac26d71f5064c05b0d69d31d3c344fa5"
+  },
+  "summary": {
+    "total": 1,
+    "pass": 1,
+    "fail_correctness": 0,
+    "fail_runtime_error": 0,
+    "oom": 0,
+    "not_supported": 0,
+    "timeout": 0,
+    "skipped": 0
+  },
+  "results": [
+    {
+      "op_name": "level1/19_relu",
+      "backend": "pytorch",
+      "reference_backend": "pytorch_fp32",
+      "device": "NVIDIA RTX 4000 Ada Generation",
+      "dtype_in": "float32",
+      "dtype_out": "float32",
+      "dtype_accum": "float32",
+      "shape": [
+        [
+          134217728
+        ]
+      ],
+      "layout": "contiguous",
+      "input_bytes_total": 536870912,
+      "output_bytes_total": 536870912,
+      "theoretical_io_bytes": 1073741824,
+      "warmup_runs": 2,
+      "timed_runs": 3,
+      "latency_ms_mean": 3.55174132467558,
+      "latency_ms_median": 3.545402898453176,
+      "latency_ms_std": 0.01650036559921537,
+      "latency_ms_p95": 3.567964257672429,
+      "latency_ms_min": 3.5393500002101064,
+      "bandwidth_gbps": 302.85466976643556,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "max_rel_error": 0.0,
+      "bad_elem_ratio": 0.0,
+      "correctness_pass": true,
+      "status": "PASS",
+      "notes": ""
+    }
+  ]
+}

@@ -24,7 +24,8 @@ from .config import (
     ShapeFamily,
     ValueDist,
 )
-from .reporter import print_console_summary, save_results_json
+from .case_generator import load_categories
+from .reporter import print_console_summary, save_results_csv, save_results_json, save_results_jsonl
 from .runner import collect_environment, discover_kernels, run_all
 
 
@@ -246,9 +247,23 @@ def main():
     # Summary
     print_console_summary(results)
 
-    # Save
+    # Save JSON
     save_results_json(results, env, args.output)
     print(f"\nResults saved to {args.output}")
+
+    # Save JSONL (same base name with .jsonl extension)
+    jsonl_path = args.output.rsplit(".", 1)[0] + ".jsonl"
+    save_results_jsonl(results, jsonl_path)
+    print(f"JSONL saved to {jsonl_path}")
+
+    # Save CSV (with category lookup)
+    csv_path = args.output.rsplit(".", 1)[0] + ".csv"
+    try:
+        cats = load_categories()
+    except Exception:
+        cats = None
+    save_results_csv(results, csv_path, categories=cats)
+    print(f"CSV saved to {csv_path}")
 
 
 if __name__ == "__main__":

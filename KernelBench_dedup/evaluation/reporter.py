@@ -3,6 +3,7 @@ JSON output and console reporting for the evaluation system.
 Implements EVALUATION_SPEC.md Sections 10 and 11.
 """
 
+import csv
 import dataclasses
 import json
 import math
@@ -481,3 +482,92 @@ def generate_summary_stats(results: List[TestCaseResult]) -> dict:
         "per_dtype": dict(per_dtype),
         "per_size_bucket": dict(per_size_bucket),
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 7. JSONL output
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def save_results_jsonl(
+    results: List[TestCaseResult],
+    output_path: str,
+) -> None:
+    """Write one JSON object per line (JSONL format)."""
+    parent = os.path.dirname(output_path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+    with open(output_path, "w") as f:
+        for r in results:
+            rd = result_to_dict(r)
+            f.write(json.dumps(rd, default=str) + "\n")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 8. CSV output
+# ═══════════════════════════════════════════════════════════════════════════════
+
+CSV_COLUMNS = [
+    "kernel", "category", "dtype", "shape", "layout", "size_bucket",
+    "status", "latency_ms_mean", "latency_ms_median", "latency_ms_std",
+    "latency_ms_p95", "latency_ms_min", "bandwidth_gbps",
+    "max_abs_error", "bad_elem_ratio", "correctness_pass",
+    "input_bytes_total", "theoretical_io_bytes", "notes",
+]
+
+
+def save_results_csv(
+    results: List[TestCaseResult],
+    output_path: str,
+    categories: Optional[Dict[str, List[str]]] = None,
+) -> None:
+    """Write a CSV with key columns for quick analysis."""
+    parent = os.path.dirname(output_path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+    # Build reverse lookup: kernel_path -> category
+    cat_lookup = {}
+    if categories:
+        for cat, paths in categories.items():
+            for p in paths:
+                cat_lookup[p] = cat
+
+    with open(output_path, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(CSV_COLUMNS)
+        for r in results:
+            cat = cat_lookup.get(r.op_name, r.op_name.split("/")[0])
+            shape_str = str(r.shape)
+            bucket = _bytes_to_bucket(r.input_bytes_total + r.output_bytes_total)
+
+            row = [
+                r.op_name,
+                cat,
+                r.dtype_in,
+                shape_str,
+                r.layout,
+                bucket,
+                r.status.value,
+                _csv_float(r.latency_ms_mean),
+                _csv_float(r.latency_ms_median),
+                _csv_float(r.latency_ms_std),
+                _csv_float(r.latency_ms_p95),
+                _csv_float(r.latency_ms_min),
+                _csv_float(r.bandwidth_gbps),
+                _csv_float(r.max_abs_error),
+                _csv_float(r.bad_elem_ratio),
+                r.correctness_pass if r.correctness_pass is not None else "",
+                r.input_bytes_total,
+                r.theoretical_io_bytes,
+                r.notes,
+            ]
+            writer.writerow(row)
+
+
+def _csv_float(v) -> str:
+    if v is None:
+        return ""
+    if isinstance(v, float) and (math.isinf(v) or math.isnan(v)):
+        return str(v)
+    return f"{v:.6f}"
