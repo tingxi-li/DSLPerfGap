@@ -1,31 +1,29 @@
 import torch
 import torch.nn as nn
-from transformers.models.mixtral.modeling_mixtral import (
-    MixtralDecoderLayer,
-    MixtralConfig,
-    MixtralRotaryEmbedding,
+from transformers.models.qwen3.modeling_qwen3 import (
+    Qwen3DecoderLayer,
+    Qwen3Config,
+    Qwen3RotaryEmbedding,
 )
 
 
 class Model(nn.Module):
-    def __init__(self, hidden_size=4096, intermediate_size=14336,
-                 num_attention_heads=32, num_key_value_heads=8,
-                 num_local_experts=8, num_experts_per_tok=2,
-                 max_position_embeddings=32768):
+    def __init__(self, hidden_size=4096, intermediate_size=22016,
+                 num_attention_heads=32, num_key_value_heads=32,
+                 head_dim=128, max_position_embeddings=8192):
         super().__init__()
-        self.config = MixtralConfig(
+        self.config = Qwen3Config(
             hidden_size=hidden_size,
             intermediate_size=intermediate_size,
             num_attention_heads=num_attention_heads,
             num_key_value_heads=num_key_value_heads,
-            num_local_experts=num_local_experts,
-            num_experts_per_tok=num_experts_per_tok,
+            head_dim=head_dim,
             max_position_embeddings=max_position_embeddings,
             attn_implementation='sdpa',
-            rms_norm_eps=1e-5,
+            rms_norm_eps=1e-6,
         )
-        self.layer = MixtralDecoderLayer(self.config, layer_idx=0)
-        self.rotary_emb = MixtralRotaryEmbedding(self.config)
+        self.layer = Qwen3DecoderLayer(self.config, layer_idx=0)
+        self.rotary_emb = Qwen3RotaryEmbedding(self.config)
 
     def forward(self, hidden_states, position_ids):
         position_embeddings = self.rotary_emb(hidden_states, position_ids)
@@ -40,12 +38,11 @@ class Model(nn.Module):
 batch_size = 2
 seq_len = 512
 hidden_size = 4096
-intermediate_size = 14336
+intermediate_size = 22016
 num_attention_heads = 32
-num_key_value_heads = 8
-num_local_experts = 8
-num_experts_per_tok = 2
-max_position_embeddings = 32768
+num_key_value_heads = 32
+head_dim = 128
+max_position_embeddings = 8192
 
 
 def get_inputs():
@@ -56,8 +53,7 @@ def get_inputs():
 
 def get_init_inputs():
     return [hidden_size, intermediate_size, num_attention_heads,
-            num_key_value_heads, num_local_experts, num_experts_per_tok,
-            max_position_embeddings]
+            num_key_value_heads, head_dim, max_position_embeddings]
 
 
 def get_test_inputs():

@@ -1,19 +1,19 @@
 import torch
 import torch.nn as nn
-from transformers.models.mixtral.modeling_mixtral import (
-    MixtralDecoderLayer,
-    MixtralConfig,
-    MixtralRotaryEmbedding,
+from transformers.models.llama4.modeling_llama4 import (
+    Llama4TextDecoderLayer,
+    Llama4TextConfig,
+    Llama4TextRotaryEmbedding,
 )
 
 
 class Model(nn.Module):
-    def __init__(self, hidden_size=4096, intermediate_size=14336,
-                 num_attention_heads=32, num_key_value_heads=8,
-                 num_local_experts=8, num_experts_per_tok=2,
-                 max_position_embeddings=32768):
+    def __init__(self, hidden_size=5120, intermediate_size=8192,
+                 num_attention_heads=40, num_key_value_heads=8,
+                 num_local_experts=16, num_experts_per_tok=1,
+                 max_position_embeddings=8192):
         super().__init__()
-        self.config = MixtralConfig(
+        self.config = Llama4TextConfig(
             hidden_size=hidden_size,
             intermediate_size=intermediate_size,
             num_attention_heads=num_attention_heads,
@@ -23,9 +23,11 @@ class Model(nn.Module):
             max_position_embeddings=max_position_embeddings,
             attn_implementation='sdpa',
             rms_norm_eps=1e-5,
+            interleave_moe_layer_step=1,
+            num_hidden_layers=2,
         )
-        self.layer = MixtralDecoderLayer(self.config, layer_idx=0)
-        self.rotary_emb = MixtralRotaryEmbedding(self.config)
+        self.layer = Llama4TextDecoderLayer(self.config, layer_idx=0)
+        self.rotary_emb = Llama4TextRotaryEmbedding(self.config)
 
     def forward(self, hidden_states, position_ids):
         position_embeddings = self.rotary_emb(hidden_states, position_ids)
@@ -39,13 +41,13 @@ class Model(nn.Module):
 
 batch_size = 2
 seq_len = 512
-hidden_size = 4096
-intermediate_size = 14336
-num_attention_heads = 32
+hidden_size = 5120
+intermediate_size = 8192
+num_attention_heads = 40
 num_key_value_heads = 8
-num_local_experts = 8
-num_experts_per_tok = 2
-max_position_embeddings = 32768
+num_local_experts = 16
+num_experts_per_tok = 1
+max_position_embeddings = 8192
 
 
 def get_inputs():

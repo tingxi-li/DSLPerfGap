@@ -1,31 +1,34 @@
 import torch
 import torch.nn as nn
-from transformers.models.mixtral.modeling_mixtral import (
-    MixtralDecoderLayer,
-    MixtralConfig,
-    MixtralRotaryEmbedding,
+from transformers.models.qwen3_moe.modeling_qwen3_moe import (
+    Qwen3MoeDecoderLayer,
+    Qwen3MoeConfig,
+    Qwen3MoeRotaryEmbedding,
 )
 
 
 class Model(nn.Module):
-    def __init__(self, hidden_size=4096, intermediate_size=14336,
-                 num_attention_heads=32, num_key_value_heads=8,
-                 num_local_experts=8, num_experts_per_tok=2,
-                 max_position_embeddings=32768):
+    def __init__(self, hidden_size=2048, intermediate_size=1408,
+                 moe_intermediate_size=1408,
+                 num_attention_heads=16, num_key_value_heads=16,
+                 num_experts=16, num_experts_per_tok=4,
+                 max_position_embeddings=4096):
         super().__init__()
-        self.config = MixtralConfig(
+        self.config = Qwen3MoeConfig(
             hidden_size=hidden_size,
             intermediate_size=intermediate_size,
+            moe_intermediate_size=moe_intermediate_size,
             num_attention_heads=num_attention_heads,
             num_key_value_heads=num_key_value_heads,
-            num_local_experts=num_local_experts,
+            num_experts=num_experts,
             num_experts_per_tok=num_experts_per_tok,
             max_position_embeddings=max_position_embeddings,
             attn_implementation='sdpa',
-            rms_norm_eps=1e-5,
+            rms_norm_eps=1e-6,
+            num_hidden_layers=2,
         )
-        self.layer = MixtralDecoderLayer(self.config, layer_idx=0)
-        self.rotary_emb = MixtralRotaryEmbedding(self.config)
+        self.layer = Qwen3MoeDecoderLayer(self.config, layer_idx=0)
+        self.rotary_emb = Qwen3MoeRotaryEmbedding(self.config)
 
     def forward(self, hidden_states, position_ids):
         position_embeddings = self.rotary_emb(hidden_states, position_ids)
@@ -39,13 +42,14 @@ class Model(nn.Module):
 
 batch_size = 2
 seq_len = 512
-hidden_size = 4096
-intermediate_size = 14336
-num_attention_heads = 32
-num_key_value_heads = 8
-num_local_experts = 8
-num_experts_per_tok = 2
-max_position_embeddings = 32768
+hidden_size = 2048
+intermediate_size = 1408
+moe_intermediate_size = 1408
+num_attention_heads = 16
+num_key_value_heads = 16
+num_experts = 16
+num_experts_per_tok = 4
+max_position_embeddings = 4096
 
 
 def get_inputs():
@@ -55,9 +59,9 @@ def get_inputs():
 
 
 def get_init_inputs():
-    return [hidden_size, intermediate_size, num_attention_heads,
-            num_key_value_heads, num_local_experts, num_experts_per_tok,
-            max_position_embeddings]
+    return [hidden_size, intermediate_size, moe_intermediate_size,
+            num_attention_heads, num_key_value_heads,
+            num_experts, num_experts_per_tok, max_position_embeddings]
 
 
 def get_test_inputs():

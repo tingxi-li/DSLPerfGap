@@ -322,7 +322,11 @@
     "level3/50_reluselfattention",
     "level3/53_llama_decoder_block",
     "level3/54_siglip_encoder",
-    "level3/55_mixtral_moe_block"
+    "level3/55_mixtral_moe_block",
+    "level3/56_deepseek_v3_decoder_block",
+    "level3/57_qwen3_decoder_block",
+    "level3/58_qwen3_moe_decoder_block",
+    "level3/59_llama4_decoder_block"
   ],
   "model_rnn": [
     "level3/33_vanillarnn",

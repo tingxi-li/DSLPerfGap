@@ -18,6 +18,7 @@ class Model(nn.Module):
             num_hidden_layers=num_hidden_layers,
             num_attention_heads=num_attention_heads,
             intermediate_size=intermediate_size,
+            attn_implementation='sdpa',
         )
         self.encoder = SiglipVisionTransformer(config)
 

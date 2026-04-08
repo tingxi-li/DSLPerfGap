@@ -1,6 +1,10 @@
 import torch
 import torch.nn as nn
-from transformers.models.llama.modeling_llama import LlamaDecoderLayer, LlamaConfig
+from transformers.models.llama.modeling_llama import (
+    LlamaDecoderLayer,
+    LlamaConfig,
+    LlamaRotaryEmbedding,
+)
 
 
 class Model(nn.Module):
@@ -8,22 +12,28 @@ class Model(nn.Module):
                  num_attention_heads=32, num_key_value_heads=8,
                  max_position_embeddings=8192):
         super().__init__()
-        config = LlamaConfig(
+        self.config = LlamaConfig(
             hidden_size=hidden_size,
             intermediate_size=intermediate_size,
             num_attention_heads=num_attention_heads,
             num_key_value_heads=num_key_value_heads,
             max_position_embeddings=max_position_embeddings,
+            attn_implementation='sdpa',
             rms_norm_eps=1e-5,
         )
-        self.layer = LlamaDecoderLayer(config, layer_idx=0)
+        self.layer = LlamaDecoderLayer(self.config, layer_idx=0)
+        self.rotary_emb = LlamaRotaryEmbedding(self.config)
 
     def forward(self, hidden_states, position_ids):
-        output = self.layer(hidden_states, position_ids=position_ids)
+        position_embeddings = self.rotary_emb(hidden_states, position_ids)
+        output = self.layer(
+            hidden_states,
+            position_ids=position_ids,
+            position_embeddings=position_embeddings,
+        )
         return output[0]
 
 
-# Llama-3-8B shapes
 batch_size = 2
 seq_len = 512
 hidden_size = 4096
@@ -44,14 +54,11 @@ def get_init_inputs():
             num_key_value_heads, max_position_embeddings]
 
 
-# ── Unified interface for eval harness ──────────────────────────────────────
 def get_test_inputs():
-    """Return ready-to-use CUDA inputs for testing."""
     return [x.cuda() if isinstance(x, torch.Tensor) else x for x in get_inputs()]
 
 
 def run(*args):
-    """Unified interface: instantiate Model, move to CUDA, run forward."""
     if args:
         inputs = args
     else:
