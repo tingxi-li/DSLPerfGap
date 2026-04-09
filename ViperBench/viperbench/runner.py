@@ -46,6 +46,8 @@ def _deep_copy_inputs(inputs):
     for k, v in inputs.items():
         if isinstance(v, torch.Tensor):
             copied[k] = v.clone()
+        elif isinstance(v, list):
+            copied[k] = [x.clone() if isinstance(x, torch.Tensor) else x for x in v]
         else:
             copied[k] = v
     return copied

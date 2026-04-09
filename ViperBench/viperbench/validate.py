@@ -304,8 +304,25 @@ def check_correctness(
     all_passed = True
 
     for name in sorted(ref_dict.keys()):
-        ref_t = ref_dict[name].detach().cpu()
-        test_t = test_dict[name].detach().cpu()
+        ref_val = ref_dict[name]
+        test_val = test_dict[name]
+
+        # Handle list-of-tensors outputs (e.g. grouped_gemm C_list)
+        if isinstance(ref_val, (list, tuple)):
+            for i, (r, t) in enumerate(zip(ref_val, test_val)):
+                sub_name = "%s[%d]" % (name, i)
+                r_t = r.detach().cpu() if isinstance(r, torch.Tensor) else r
+                t_t = t.detach().cpu() if isinstance(t, torch.Tensor) else t
+                comparison, detail = _compare_tensor(sub_name, r_t, t_t, atol, rtol)
+                per_tensor[sub_name] = comparison
+                if not comparison.passed:
+                    all_passed = False
+                    if detail is not None:
+                        error_details.append(detail)
+            continue
+
+        ref_t = ref_val.detach().cpu()
+        test_t = test_val.detach().cpu()
         comparison, detail = _compare_tensor(name, ref_t, test_t, atol, rtol)
         per_tensor[name] = comparison
         if not comparison.passed:

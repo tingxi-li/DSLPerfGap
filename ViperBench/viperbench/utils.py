@@ -26,6 +26,9 @@ DTYPE_MAP: Dict[str, torch.dtype] = {
     "bf16": torch.bfloat16,
     "fp32": torch.float32,
     "fp64": torch.float64,
+    "fp8_e4m3": torch.float8_e4m3fn,
+    "fp8_e5m2": torch.float8_e5m2,
+    "int4": torch.int8,  # no native int4 dtype; use int8 storage, kernels handle packing
     "int8": torch.int8,
     "int16": torch.int16,
     "int32": torch.int32,
@@ -37,6 +40,9 @@ BYTES_PER_ELEMENT: Dict[str, int] = {
     "bf16": 2,
     "fp32": 4,
     "fp64": 8,
+    "fp8_e4m3": 1,
+    "fp8_e5m2": 1,
+    "int4": 1,  # packed 4-bit uses 1 byte per 2 elements, but stored as int8
     "int8": 1,
     "int16": 2,
     "int32": 4,
