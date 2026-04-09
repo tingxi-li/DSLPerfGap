@@ -1,0 +1,10 @@
+{
+  "name": "fused_linear_cross_entropy",
+  "category": "loss",
+  "subcategory": "fused",
+  "difficulty": "hard",
+  "description": "Fused linear layer + cross-entropy loss",
+  "provenance": "TritonBench",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

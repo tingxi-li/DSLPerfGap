@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_5",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_subtract_tanh",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, subtracts a bias term, and applies tanh activation.",
+  "provenance": "KernelBench L2 (5_convtranspose2d_subtract_tanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

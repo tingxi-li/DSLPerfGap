@@ -1,0 +1,10 @@
+{
+  "name": "sigmoid",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Sigmoid: 1 / (1 + exp(-x))",
+  "provenance": "KernelBench L1 (21_sigmoid)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

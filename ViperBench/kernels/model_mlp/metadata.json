@@ -1,0 +1,10 @@
+{
+  "name": "model_mlp",
+  "category": "model_cnn",
+  "subcategory": "mlp",
+  "difficulty": "hard",
+  "description": ":param input_size: The number of input features",
+  "provenance": "KernelBench L3 (1_mlp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

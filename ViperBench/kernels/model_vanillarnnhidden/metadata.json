@@ -1,0 +1,10 @@
+{
+  "name": "model_vanillarnnhidden",
+  "category": "model_rnn",
+  "subcategory": "vanillarnnhidden",
+  "difficulty": "hard",
+  "description": "Initialize the Vanilla RNN model.",
+  "provenance": "KernelBench L3 (34_vanillarnnhidden)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

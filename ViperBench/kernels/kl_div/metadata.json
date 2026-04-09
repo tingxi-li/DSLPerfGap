@@ -1,0 +1,10 @@
+{
+  "name": "kl_div",
+  "category": "loss",
+  "subcategory": "divergence",
+  "difficulty": "easy",
+  "description": "KL divergence loss",
+  "provenance": "KernelBench L1 (98) + TritonBench",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

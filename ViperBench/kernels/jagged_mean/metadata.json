@@ -1,0 +1,10 @@
+{
+  "name": "jagged_mean",
+  "category": "specialized",
+  "subcategory": "jagged",
+  "difficulty": "hard",
+  "description": "Jagged Mean on variable-length sequences",
+  "provenance": "TritonBench (jagged_mean)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

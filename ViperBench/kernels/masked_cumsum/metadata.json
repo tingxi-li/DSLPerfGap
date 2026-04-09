@@ -1,0 +1,10 @@
+{
+  "name": "masked_cumsum",
+  "category": "cumulative",
+  "subcategory": "scan",
+  "difficulty": "medium",
+  "description": "Masked cumulative sum",
+  "provenance": "KernelBench L1 (93)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

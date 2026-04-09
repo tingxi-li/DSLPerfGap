@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_84",
+  "category": "fused_gemm",
+  "subcategory": "gemm_batchnorm_scaling_softmax",
+  "difficulty": "medium",
+  "description": "Model that performs a matrix multiplication (Gemm), Batch Normalization, scaling, and Softmax.",
+  "provenance": "KernelBench L2 (84_gemm_batchnorm_scaling_softmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

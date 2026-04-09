@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_6",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_softmax_maxpool_maxpool",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D convolution, applies Softmax, and performs two max pooling operations.",
+  "provenance": "KernelBench L2 (6_conv3d_softmax_maxpool_maxpool)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

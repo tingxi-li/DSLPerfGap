@@ -1,0 +1,10 @@
+{
+  "name": "jagged_sum",
+  "category": "specialized",
+  "subcategory": "jagged",
+  "difficulty": "hard",
+  "description": "Jagged Sum on variable-length sequences",
+  "provenance": "TritonBench (jagged_sum)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

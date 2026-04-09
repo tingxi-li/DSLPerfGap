@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_26",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_add_hardswish",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, adds an input tensor, and applies HardSwish activation.",
+  "provenance": "KernelBench L2 (26_convtranspose3d_add_hardswish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

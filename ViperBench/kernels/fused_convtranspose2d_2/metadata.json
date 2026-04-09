@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_2",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_biasadd_clamp_scaling_clamp_divide",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, adds a bias term, clamps, scales, clamps, and divides.",
+  "provenance": "KernelBench L2 (2_convtranspose2d_biasadd_clamp_scaling_clamp_divide)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

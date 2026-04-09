@@ -1,0 +1,10 @@
+{
+  "name": "elu",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "ELU activation",
+  "provenance": "KernelBench L1 (31_elu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

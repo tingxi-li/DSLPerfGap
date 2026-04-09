@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_36",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_min_sum_gelu_add",
+  "difficulty": "medium",
+  "description": "A model that performs a convolution transpose, minimum operation, sum operation, GELU activation and addition.",
+  "provenance": "KernelBench L2 (36_convtranspose2d_min_sum_gelu_add)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

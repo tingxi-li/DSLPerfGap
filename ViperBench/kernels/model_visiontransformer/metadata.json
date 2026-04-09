@@ -1,0 +1,10 @@
+{
+  "name": "model_visiontransformer",
+  "category": "model_transformer",
+  "subcategory": "visiontransformer",
+  "difficulty": "hard",
+  "description": "Vision Transformer (ViT) model.",
+  "provenance": "KernelBench L3 (28_visiontransformer)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

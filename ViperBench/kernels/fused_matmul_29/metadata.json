@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_29",
+  "category": "fused_matmul",
+  "subcategory": "matmul_mish_mish",
+  "difficulty": "medium",
+  "description": "Simple model that performs a matrix multiplication, applies Mish, and applies Mish again.",
+  "provenance": "KernelBench L2 (29_matmul_mish_mish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

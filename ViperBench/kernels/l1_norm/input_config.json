@@ -1,0 +1,76 @@
+{
+  "kernel": "l1_norm",
+  "params": {
+    "shape": [
+      {
+        "name": "small_hidden",
+        "B": 8,
+        "S": 128,
+        "D": 768
+      },
+      {
+        "name": "llama_8b",
+        "B": 8,
+        "S": 2048,
+        "D": 4096
+      },
+      {
+        "name": "llama_70b",
+        "B": 4,
+        "S": 2048,
+        "D": 8192
+      },
+      {
+        "name": "wide_mlp",
+        "B": 4,
+        "S": 2048,
+        "D": 14336
+      },
+      {
+        "name": "vit",
+        "B": 8,
+        "S": 197,
+        "D": 768
+      },
+      {
+        "name": "irregular",
+        "B": 7,
+        "S": 1337,
+        "D": 4093
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

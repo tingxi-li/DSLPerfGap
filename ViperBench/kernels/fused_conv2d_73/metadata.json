@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_73",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_batchnorm_scaling",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, applies Batch Normalization, and scales the output.",
+  "provenance": "KernelBench L2 (73_conv2d_batchnorm_scaling)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

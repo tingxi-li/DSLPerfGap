@@ -1,0 +1,46 @@
+{
+  "kernel": "mamba2_chunk_scan",
+  "params": {
+    "shape": [
+      {
+        "name": "default",
+        "B": 1,
+        "S": 4096,
+        "D": 2048
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

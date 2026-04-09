@@ -1,0 +1,10 @@
+{
+  "name": "model_llama_decoder_block",
+  "category": "model_transformer",
+  "subcategory": "llama_decoder_block",
+  "difficulty": "hard",
+  "description": "Llama Decoder Block",
+  "provenance": "KernelBench L3 (53_llama_decoder_block)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "layer_norm",
+  "category": "normalization",
+  "subcategory": "layer_norm",
+  "difficulty": "medium",
+  "description": "Layer normalization",
+  "provenance": "KernelBench L1 (40) + TritonBench",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_60",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_swish_groupnorm_hardswish",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, applies Swish activation,",
+  "provenance": "KernelBench L2 (60_convtranspose3d_swish_groupnorm_hardswish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

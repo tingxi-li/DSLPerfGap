@@ -1,0 +1,102 @@
+{
+  "kernel": "conv1d",
+  "params": {
+    "shape": [
+      {
+        "name": "short",
+        "B": 1,
+        "C_in": 64,
+        "L": 128,
+        "C_out": 64,
+        "K": 3
+      },
+      {
+        "name": "medium",
+        "B": 8,
+        "C_in": 64,
+        "L": 1024,
+        "C_out": 64,
+        "K": 3
+      },
+      {
+        "name": "long",
+        "B": 8,
+        "C_in": 64,
+        "L": 4096,
+        "C_out": 64,
+        "K": 3
+      },
+      {
+        "name": "dilated",
+        "B": 8,
+        "C_in": 64,
+        "L": 1024,
+        "C_out": 64,
+        "K": 3
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ],
+    "stride": [
+      1,
+      2
+    ],
+    "padding": [
+      0,
+      1
+    ],
+    "dilation": [
+      1
+    ],
+    "groups": [
+      1
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all",
+    "stride": [
+      1
+    ],
+    "padding": [
+      1
+    ],
+    "dilation": [
+      1
+    ],
+    "groups": [
+      1
+    ]
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all",
+    "stride": "all",
+    "padding": "all",
+    "dilation": "all",
+    "groups": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

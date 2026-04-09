@@ -1,0 +1,10 @@
+{
+  "name": "model_resnet50",
+  "category": "model_cnn",
+  "subcategory": "resnet50",
+  "difficulty": "hard",
+  "description": "Return ready-to-use CUDA inputs for testing.",
+  "provenance": "KernelBench L3 (51_resnet50)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

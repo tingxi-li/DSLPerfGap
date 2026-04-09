@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_66",
+  "category": "fused_matmul",
+  "subcategory": "matmul_dropout_softmax",
+  "difficulty": "medium",
+  "description": "A model that performs matrix multiplication, applies dropout, and then applies softmax.",
+  "provenance": "KernelBench L2 (66_matmul_dropout_softmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

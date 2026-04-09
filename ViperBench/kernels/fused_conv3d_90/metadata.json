@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_90",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_leakyrelu_sum_clamp_gelu",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D convolution, applies LeakyReLU, sums with a tensor, clamps, and applies GELU activation.",
+  "provenance": "KernelBench L2 (90_conv3d_leakyrelu_sum_clamp_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

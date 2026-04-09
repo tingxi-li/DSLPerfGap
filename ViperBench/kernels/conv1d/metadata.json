@@ -1,0 +1,10 @@
+{
+  "name": "conv1d",
+  "category": "conv",
+  "subcategory": "conv1d",
+  "difficulty": "medium",
+  "description": "1D convolution",
+  "provenance": "KernelBench L1 (kernels 67, 76)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

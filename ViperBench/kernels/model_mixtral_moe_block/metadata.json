@@ -1,0 +1,10 @@
+{
+  "name": "model_mixtral_moe_block",
+  "category": "model_transformer",
+  "subcategory": "mixtral_moe_block",
+  "difficulty": "hard",
+  "description": "Mixtral Moe Block",
+  "provenance": "KernelBench L3 (55_mixtral_moe_block)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

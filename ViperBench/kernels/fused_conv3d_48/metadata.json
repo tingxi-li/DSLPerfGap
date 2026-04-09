@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_48",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_scaling_tanh_multiply_sigmoid",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D convolution, scales the output, applies tanh, multiplies by a scaling factor, and applies sigmoid.",
+  "provenance": "KernelBench L2 (48_conv3d_scaling_tanh_multiply_sigmoid)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

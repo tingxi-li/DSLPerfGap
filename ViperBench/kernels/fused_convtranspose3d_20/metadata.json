@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_20",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_sum_residualadd_multiply_residualadd",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, followed by a sum,",
+  "provenance": "KernelBench L2 (20_convtranspose3d_sum_residualadd_multiply_residualadd)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

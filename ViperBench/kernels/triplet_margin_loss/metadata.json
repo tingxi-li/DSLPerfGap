@@ -1,0 +1,10 @@
+{
+  "name": "triplet_margin_loss",
+  "category": "loss",
+  "subcategory": "metric",
+  "difficulty": "easy",
+  "description": "Triplet margin loss",
+  "provenance": "KernelBench L1 (99)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

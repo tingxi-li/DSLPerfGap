@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_44",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_multiply_globalavgpool_globalavgpool_mean",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, multiplies by a scalar, applies global average pooling,",
+  "provenance": "KernelBench L2 (44_convtranspose2d_multiply_globalavgpool_globalavgpool_mean)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

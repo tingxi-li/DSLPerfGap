@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_57",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_relu_hardswish",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, applies ReLU, and applies HardSwish activation.",
+  "provenance": "KernelBench L2 (57_conv2d_relu_hardswish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

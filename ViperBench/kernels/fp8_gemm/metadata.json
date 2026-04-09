@@ -1,0 +1,10 @@
+{
+  "name": "fp8_gemm",
+  "category": "quantization",
+  "subcategory": "fp8_gemm",
+  "difficulty": "hard",
+  "description": "FP8 precision GEMM (blockwise, rowwise, fused-quant variants)",
+  "provenance": "TritonBench (fp8_gemm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

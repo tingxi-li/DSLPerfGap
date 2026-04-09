@@ -1,0 +1,10 @@
+{
+  "name": "model_deepseek_v3_decoder_block",
+  "category": "model_transformer",
+  "subcategory": "deepseek_v3_decoder_block",
+  "difficulty": "hard",
+  "description": "Deepseek V3 Decoder Block",
+  "provenance": "KernelBench L3 (56_deepseek_v3_decoder_block)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

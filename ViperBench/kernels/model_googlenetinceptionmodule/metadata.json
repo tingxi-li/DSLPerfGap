@@ -1,0 +1,10 @@
+{
+  "name": "model_googlenetinceptionmodule",
+  "category": "model_cnn",
+  "subcategory": "googlenetinceptionmodule",
+  "difficulty": "hard",
+  "description": ":param in_channels: Number of input channels",
+  "provenance": "KernelBench L3 (6_googlenetinceptionmodule)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

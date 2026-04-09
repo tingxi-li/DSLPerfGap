@@ -1,0 +1,10 @@
+{
+  "name": "model_googlenetinceptionv1",
+  "category": "model_cnn",
+  "subcategory": "googlenetinceptionv1",
+  "difficulty": "hard",
+  "description": ":param num_classes: Number of output classes",
+  "provenance": "KernelBench L3 (7_googlenetinceptionv1)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

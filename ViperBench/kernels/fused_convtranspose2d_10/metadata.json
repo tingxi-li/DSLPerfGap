@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_10",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_maxpool_hardtanh_mean_tanh",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, followed by max pooling, hardtanh activation, mean operation, and tanh activation.",
+  "provenance": "KernelBench L2 (10_convtranspose2d_maxpool_hardtanh_mean_tanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

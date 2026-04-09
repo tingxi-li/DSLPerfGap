@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_25",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_min_tanh_tanh",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, applies minimum operation, Tanh, and another Tanh.",
+  "provenance": "KernelBench L2 (25_conv2d_min_tanh_tanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

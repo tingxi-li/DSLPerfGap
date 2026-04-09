@@ -1,0 +1,10 @@
+{
+  "name": "log_softmax",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Log-softmax along last dim",
+  "provenance": "KernelBench L1 (24_logsoftmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

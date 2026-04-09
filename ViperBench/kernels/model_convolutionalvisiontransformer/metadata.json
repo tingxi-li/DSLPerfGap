@@ -1,0 +1,10 @@
+{
+  "name": "model_convolutionalvisiontransformer",
+  "category": "model_transformer",
+  "subcategory": "convolutionalvisiontransformer",
+  "difficulty": "hard",
+  "description": "Convolutional Vision Transformer (CViT) implementation.",
+  "provenance": "KernelBench L3 (32_convolutionalvisiontransformer)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "hard_tanh",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Hard tanh (clamp to [-1, 1])",
+  "provenance": "KernelBench L1 (32_hardtanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

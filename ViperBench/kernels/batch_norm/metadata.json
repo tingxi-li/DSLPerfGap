@@ -1,0 +1,10 @@
+{
+  "name": "batch_norm",
+  "category": "normalization",
+  "subcategory": "batch_norm",
+  "difficulty": "medium",
+  "description": "Batch normalization (2D)",
+  "provenance": "KernelBench L1 (33)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

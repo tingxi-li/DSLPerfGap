@@ -1,0 +1,61 @@
+{
+  "kernel": "grouped_gemm",
+  "params": {
+    "shape": [
+      {
+        "name": "small",
+        "M": 256,
+        "N": 256,
+        "K": 256,
+        "num_groups": 4
+      },
+      {
+        "name": "medium",
+        "M": 1024,
+        "N": 1024,
+        "K": 1024,
+        "num_groups": 8
+      },
+      {
+        "name": "large",
+        "M": 4096,
+        "N": 4096,
+        "K": 4096,
+        "num_groups": 4
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

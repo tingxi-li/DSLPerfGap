@@ -1,0 +1,10 @@
+{
+  "name": "jagged_layer_norm",
+  "category": "specialized",
+  "subcategory": "jagged",
+  "difficulty": "hard",
+  "description": "Jagged Layer Norm on variable-length sequences",
+  "provenance": "TritonBench (jagged_layer_norm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

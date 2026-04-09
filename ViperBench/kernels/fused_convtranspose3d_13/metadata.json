@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_13",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_mean_add_softmax_tanh_scaling",
+  "difficulty": "medium",
+  "description": "Model that performs a series of operations:",
+  "provenance": "KernelBench L2 (13_convtranspose3d_mean_add_softmax_tanh_scaling)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

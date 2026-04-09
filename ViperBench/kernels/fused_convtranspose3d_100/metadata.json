@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_100",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_clamp_min_divide",
+  "difficulty": "medium",
+  "description": "A model that performs a transposed 3D convolution, clamps the output to a minimum value,",
+  "provenance": "KernelBench L2 (100_convtranspose3d_clamp_min_divide)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

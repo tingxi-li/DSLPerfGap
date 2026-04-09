@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_19",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_gelu_groupnorm",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, applies GELU, and normalizes with GroupNorm.",
+  "provenance": "KernelBench L2 (19_convtranspose2d_gelu_groupnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

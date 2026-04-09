@@ -1,0 +1,10 @@
+{
+  "name": "model_minigptblock",
+  "category": "model_transformer",
+  "subcategory": "minigptblock",
+  "difficulty": "hard",
+  "description": "an unassuming Transformer block",
+  "provenance": "KernelBench L3 (44_minigptblock)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

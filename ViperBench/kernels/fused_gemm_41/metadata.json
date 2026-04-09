@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_41",
+  "category": "fused_gemm",
+  "subcategory": "gemm_batchnorm_gelu_relu",
+  "difficulty": "medium",
+  "description": "Model that performs a GEMM, BatchNorm, GELU, and ReLU in sequence.",
+  "provenance": "KernelBench L2 (41_gemm_batchnorm_gelu_relu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

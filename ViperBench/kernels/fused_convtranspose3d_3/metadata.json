@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_3",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_sum_layernorm_avgpool_gelu",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, followed by a sum, layer normalization, average pooling, and GELU activation.",
+  "provenance": "KernelBench L2 (3_convtranspose3d_sum_layernorm_avgpool_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

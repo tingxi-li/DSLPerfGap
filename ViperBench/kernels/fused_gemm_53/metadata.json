@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_53",
+  "category": "fused_gemm",
+  "subcategory": "gemm_scaling_hardtanh_gelu",
+  "difficulty": "medium",
+  "description": "Model that performs a GEMM, scaling, hardtanh, and GELU activation.",
+  "provenance": "KernelBench L2 (53_gemm_scaling_hardtanh_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

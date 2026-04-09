@@ -1,0 +1,10 @@
+{
+  "name": "low_mem_dropout",
+  "category": "dropout",
+  "subcategory": "memory_efficient",
+  "difficulty": "medium",
+  "description": "Memory-efficient dropout",
+  "provenance": "TritonBench (low_mem_dropout)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

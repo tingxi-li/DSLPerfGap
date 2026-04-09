@@ -1,0 +1,10 @@
+{
+  "name": "model_shufflenet",
+  "category": "model_cnn",
+  "subcategory": "shufflenet",
+  "difficulty": "hard",
+  "description": "ShuffleNet architecture.",
+  "provenance": "KernelBench L3 (26_shufflenet)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

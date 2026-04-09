@@ -1,0 +1,50 @@
+{
+  "name": "NVIDIA H100 SXM5 80GB",
+  "form_factor": "SXM5",
+  "compute_capability": "sm_90",
+
+  "memory_hierarchy": {
+    "global_memory_bandwidth_gb_s": 3350,
+    "memory_type": "HBM3",
+    "memory_capacity_gb": 80,
+    "l2_cache_mb": 50,
+    "l1_shared_memory_per_sm_kb": 256,
+    "max_shared_memory_per_sm_configurable_kb": 228,
+    "shared_mem_banks_x_width": "32 banks x 4 B",
+    "cache_line_size_bytes": 128
+  },
+
+  "compute_characteristics": {
+    "sm_count": 132,
+    "peak_fp32_tflops": 67.0,
+    "peak_fp16_tensor_tflops": 1979,
+    "peak_bf16_tensor_tflops": 1979,
+    "peak_tf32_tensor_tflops": 989,
+    "peak_int8_tops": 3958,
+    "warp_size": 32,
+    "max_threads_per_sm": 1536,
+    "max_warps_per_sm": 48,
+    "max_threads_per_block": 1024,
+    "registers_per_sm": "65536 x 32-bit"
+  },
+
+  "tensor_cores": {
+    "generation": "4th",
+    "wmma_tile_shape_mxnxk": "16x8x16",
+    "supported_precisions": ["FP8", "BF16", "FP16", "TF32", "FP64", "INT8"],
+    "fp8_support": true,
+    "hopper_specific_features": ["TMA", "wgmma"]
+  },
+
+  "latency_hiding": {
+    "fp32_arithmetic_latency_cycles": 4,
+    "global_mem_latency_cycles": "~600-800",
+    "warp_schedulers_per_sm": 4
+  },
+
+  "derived_roofline_thresholds": {
+    "fp32_arithmetic_intensity_ridge_flop_per_byte": 20,
+    "fp16_tensor_ridge_flop_per_byte": 591,
+    "gemm_bound": "Compute-bound"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "model_convnext",
+  "category": "model_cnn",
+  "subcategory": "convnext",
+  "difficulty": "hard",
+  "description": "Return ready-to-use CUDA inputs for testing.",
+  "provenance": "KernelBench L3 (52_convnext)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "min_reduction",
+  "category": "reduction",
+  "subcategory": "min_reduction",
+  "difficulty": "easy",
+  "description": "Min Reduction",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

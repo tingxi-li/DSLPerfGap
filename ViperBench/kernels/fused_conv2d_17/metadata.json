@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_17",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_instancenorm_divide",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, applies Instance Normalization, and divides by a constant.",
+  "provenance": "KernelBench L2 (17_conv2d_instancenorm_divide)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

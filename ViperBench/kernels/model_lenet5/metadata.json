@@ -1,0 +1,10 @@
+{
+  "name": "model_lenet5",
+  "category": "model_cnn",
+  "subcategory": "lenet5",
+  "difficulty": "hard",
+  "description": "LeNet-5 architecture implementation in PyTorch.",
+  "provenance": "KernelBench L3 (4_lenet5)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

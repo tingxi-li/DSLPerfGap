@@ -1,0 +1,10 @@
+{
+  "name": "jagged_softmax",
+  "category": "specialized",
+  "subcategory": "jagged",
+  "difficulty": "hard",
+  "description": "Jagged Softmax on variable-length sequences",
+  "provenance": "TritonBench (jagged_softmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

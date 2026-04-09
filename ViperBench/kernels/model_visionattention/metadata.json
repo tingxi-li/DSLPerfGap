@@ -1,0 +1,10 @@
+{
+  "name": "model_visionattention",
+  "category": "model_transformer",
+  "subcategory": "visionattention",
+  "difficulty": "hard",
+  "description": "Attention Block using Multihead Self-Attention.",
+  "provenance": "KernelBench L3 (31_visionattention)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

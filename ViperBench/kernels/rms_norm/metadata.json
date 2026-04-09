@@ -1,0 +1,10 @@
+{
+  "name": "rms_norm",
+  "category": "normalization",
+  "subcategory": "rms_norm",
+  "difficulty": "medium",
+  "description": "RMS normalization",
+  "provenance": "KernelBench L1 (36) + TritonBench",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

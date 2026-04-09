@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_4",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_mish_mish",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, applies Mish, and another Mish.",
+  "provenance": "KernelBench L2 (4_conv2d_mish_mish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

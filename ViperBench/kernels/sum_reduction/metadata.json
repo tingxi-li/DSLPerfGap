@@ -1,0 +1,10 @@
+{
+  "name": "sum_reduction",
+  "category": "reduction",
+  "subcategory": "sum_reduction",
+  "difficulty": "easy",
+  "description": "Sum Reduction",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

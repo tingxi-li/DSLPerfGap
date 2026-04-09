@@ -1,0 +1,10 @@
+{
+  "name": "gather_gemv",
+  "category": "matmul",
+  "subcategory": "gather_matvec",
+  "difficulty": "hard",
+  "description": "Gather rows then matrix-vector multiply",
+  "provenance": "TritonBench (gather_gemv)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

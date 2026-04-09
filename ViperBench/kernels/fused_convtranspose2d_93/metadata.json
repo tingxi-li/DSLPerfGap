@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_93",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_add_min_gelu_multiply",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, adds a value, takes the minimum, applies GELU, and multiplies by a value.",
+  "provenance": "KernelBench L2 (93_convtranspose2d_add_min_gelu_multiply)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

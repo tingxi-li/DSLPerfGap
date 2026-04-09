@@ -1,0 +1,10 @@
+{
+  "name": "gelu",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "GELU activation",
+  "provenance": "KernelBench L1 (26_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

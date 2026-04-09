@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_97",
+  "category": "fused_matmul",
+  "subcategory": "matmul_batchnorm_biasadd_divide_swish",
+  "difficulty": "medium",
+  "description": "Model that performs a matrix multiplication, batch normalization, bias addition, division, and Swish activation.",
+  "provenance": "KernelBench L2 (97_matmul_batchnorm_biasadd_divide_swish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

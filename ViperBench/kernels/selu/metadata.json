@@ -1,0 +1,10 @@
+{
+  "name": "selu",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "SELU activation",
+  "provenance": "KernelBench L1 (27_selu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

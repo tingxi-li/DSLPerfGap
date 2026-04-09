@@ -1,0 +1,10 @@
+{
+  "name": "model_deepnarrowmlp",
+  "category": "model_cnn",
+  "subcategory": "deepnarrowmlp",
+  "difficulty": "hard",
+  "description": ":param input_size: The number of input features",
+  "provenance": "KernelBench L3 (3_deepnarrowmlp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

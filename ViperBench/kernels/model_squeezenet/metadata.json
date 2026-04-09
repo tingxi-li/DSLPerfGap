@@ -1,0 +1,10 @@
+{
+  "name": "model_squeezenet",
+  "category": "model_cnn",
+  "subcategory": "squeezenet",
+  "difficulty": "hard",
+  "description": ":param num_classes: Number of output classes",
+  "provenance": "KernelBench L3 (18_squeezenet)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

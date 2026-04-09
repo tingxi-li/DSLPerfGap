@@ -1,0 +1,10 @@
+{
+  "name": "model_mamba2returnfinalstate",
+  "category": "model_other",
+  "subcategory": "mamba2returnfinalstate",
+  "difficulty": "hard",
+  "description": "Mamba Structured State Space model implementation for benchmarking.",
+  "provenance": "KernelBench L3 (49_mamba2returnfinalstate)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

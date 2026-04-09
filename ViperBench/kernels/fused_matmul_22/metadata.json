@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_22",
+  "category": "fused_matmul",
+  "subcategory": "matmul_scale_residualadd_clamp_logsumexp_mish",
+  "difficulty": "medium",
+  "description": "Model that performs a matrix multiplication, scales the result, adds a residual connection, clamps the output,",
+  "provenance": "KernelBench L2 (22_matmul_scale_residualadd_clamp_logsumexp_mish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

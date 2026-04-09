@@ -1,0 +1,10 @@
+{
+  "name": "model_gru",
+  "category": "model_rnn",
+  "subcategory": "gru",
+  "difficulty": "hard",
+  "description": ":param input_size: The number of expected features in the input x",
+  "provenance": "KernelBench L3 (39_gru)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_85",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_groupnorm_scale_maxpool_clamp",
+  "difficulty": "medium",
+  "description": "Model that performs convolution, group normalization, scaling, max pooling, and clamping.",
+  "provenance": "KernelBench L2 (85_conv2d_groupnorm_scale_maxpool_clamp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_74",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_leakyrelu_multiply_leakyrelu_max",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, applies LeakyReLU, multiplies by a learnable parameter,",
+  "provenance": "KernelBench L2 (74_convtranspose3d_leakyrelu_multiply_leakyrelu_max)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

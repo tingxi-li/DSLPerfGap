@@ -1,0 +1,10 @@
+{
+  "name": "jsd",
+  "category": "loss",
+  "subcategory": "divergence",
+  "difficulty": "medium",
+  "description": "Jensen-Shannon divergence",
+  "provenance": "TritonBench (jsd)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

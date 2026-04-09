@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_64",
+  "category": "fused_gemm",
+  "subcategory": "gemm_logsumexp_leakyrelu_leakyrelu_gelu_gelu",
+  "difficulty": "medium",
+  "description": "Model that performs a matrix multiplication (Gemm), followed by LogSumExp, LeakyReLU,",
+  "provenance": "KernelBench L2 (64_gemm_logsumexp_leakyrelu_leakyrelu_gelu_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

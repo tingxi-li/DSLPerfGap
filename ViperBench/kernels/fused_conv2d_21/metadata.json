@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_21",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_add_scale_sigmoid_groupnorm",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, adds a bias term, scales, applies sigmoid, and performs group normalization.",
+  "provenance": "KernelBench L2 (21_conv2d_add_scale_sigmoid_groupnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

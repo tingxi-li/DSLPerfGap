@@ -1,0 +1,10 @@
+{
+  "name": "int4_gemm",
+  "category": "quantization",
+  "subcategory": "int4_gemm",
+  "difficulty": "hard",
+  "description": "INT4 weight-only quantized GEMM",
+  "provenance": "TritonBench (int4_gemm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

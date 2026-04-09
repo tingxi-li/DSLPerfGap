@@ -1,0 +1,10 @@
+{
+  "name": "model_vgg19",
+  "category": "model_cnn",
+  "subcategory": "vgg19",
+  "difficulty": "hard",
+  "description": "Initialize the VGG19 model.",
+  "provenance": "KernelBench L3 (12_vgg19)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

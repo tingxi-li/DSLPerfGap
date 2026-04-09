@@ -1,0 +1,10 @@
+{
+  "name": "nvfp4_gemm",
+  "category": "quantization",
+  "subcategory": "nvfp4_gemm",
+  "difficulty": "hard",
+  "description": "NV FP4 precision GEMM",
+  "provenance": "TritonBench (nvfp4_gemm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

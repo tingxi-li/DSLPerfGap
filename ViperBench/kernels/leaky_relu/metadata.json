@@ -1,0 +1,10 @@
+{
+  "name": "leaky_relu",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Leaky ReLU: max(0.01x, x)",
+  "provenance": "KernelBench L1 (20_leakyrelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

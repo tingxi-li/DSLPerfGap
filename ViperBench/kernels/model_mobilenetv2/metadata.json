@@ -1,0 +1,10 @@
+{
+  "name": "model_mobilenetv2",
+  "category": "model_cnn",
+  "subcategory": "mobilenetv2",
+  "difficulty": "hard",
+  "description": "MobileNetV2 architecture implementation in PyTorch.",
+  "provenance": "KernelBench L3 (20_mobilenetv2)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

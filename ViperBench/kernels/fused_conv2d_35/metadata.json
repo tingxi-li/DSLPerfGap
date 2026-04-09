@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_35",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_subtract_hardswish_maxpool_mish",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, subtracts a value, applies HardSwish, MaxPool, and Mish activation functions.",
+  "provenance": "KernelBench L2 (35_conv2d_subtract_hardswish_maxpool_mish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

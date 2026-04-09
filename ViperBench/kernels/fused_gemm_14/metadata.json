@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_14",
+  "category": "fused_gemm",
+  "subcategory": "gemm_divide_sum_scaling",
+  "difficulty": "medium",
+  "description": "Model that performs a matrix multiplication, division, summation, and scaling.",
+  "provenance": "KernelBench L2 (14_gemm_divide_sum_scaling)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

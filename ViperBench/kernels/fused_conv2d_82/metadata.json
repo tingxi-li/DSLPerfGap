@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_82",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_tanh_scaling_biasadd_max",
+  "difficulty": "medium",
+  "description": "A model that performs a convolution, applies tanh, scaling, adds a bias term, and then max-pools.",
+  "provenance": "KernelBench L2 (82_conv2d_tanh_scaling_biasadd_max)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

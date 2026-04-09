@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_61",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_relu_groupnorm",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed 3D convolution, applies ReLU, and then applies group normalization.",
+  "provenance": "KernelBench L2 (61_convtranspose3d_relu_groupnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

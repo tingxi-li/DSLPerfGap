@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_49",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_softmax_sigmoid",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, applies Softmax and Sigmoid.",
+  "provenance": "KernelBench L2 (49_convtranspose3d_softmax_sigmoid)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

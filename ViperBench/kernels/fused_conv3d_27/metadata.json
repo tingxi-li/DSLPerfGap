@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_27",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_hardswish_groupnorm_mean",
+  "difficulty": "medium",
+  "description": "Model that performs:",
+  "provenance": "KernelBench L2 (27_conv3d_hardswish_groupnorm_mean)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

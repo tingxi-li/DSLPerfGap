@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_37",
+  "category": "fused_matmul",
+  "subcategory": "matmul_swish_sum_groupnorm",
+  "difficulty": "medium",
+  "description": "A model that performs a matrix multiplication, applies Swish activation, sums with a bias term, and normalizes with GroupNorm.",
+  "provenance": "KernelBench L2 (37_matmul_swish_sum_groupnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

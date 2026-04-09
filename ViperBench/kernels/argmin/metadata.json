@@ -1,0 +1,10 @@
+{
+  "name": "argmin",
+  "category": "reduction",
+  "subcategory": "argmin",
+  "difficulty": "easy",
+  "description": "Argmin",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

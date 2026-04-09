@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_63",
+  "category": "fused_gemm",
+  "subcategory": "gemm_relu_divide",
+  "difficulty": "medium",
+  "description": "Simple model that performs a matrix multiplication, applies ReLU, and divides by a constant.",
+  "provenance": "KernelBench L2 (63_gemm_relu_divide)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

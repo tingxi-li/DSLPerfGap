@@ -1,0 +1,10 @@
+{
+  "name": "model_reluselfattention",
+  "category": "model_transformer",
+  "subcategory": "reluselfattention",
+  "difficulty": "hard",
+  "description": "A multi-head masked self-attention layer with a projection at the end that uses ReLU instead of Softmax.",
+  "provenance": "KernelBench L3 (50_reluselfattention)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

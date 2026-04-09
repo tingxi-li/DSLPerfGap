@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_45",
+  "category": "fused_gemm",
+  "subcategory": "gemm_sigmoid_logsumexp",
+  "difficulty": "medium",
+  "description": "Model that performs a matrix multiplication (Gemm), applies Sigmoid,",
+  "provenance": "KernelBench L2 (45_gemm_sigmoid_logsumexp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

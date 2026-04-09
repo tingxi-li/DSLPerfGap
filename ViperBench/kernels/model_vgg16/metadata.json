@@ -1,0 +1,10 @@
+{
+  "name": "model_vgg16",
+  "category": "model_cnn",
+  "subcategory": "vgg16",
+  "difficulty": "hard",
+  "description": "Initialize the VGG16 model.",
+  "provenance": "KernelBench L3 (11_vgg16)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

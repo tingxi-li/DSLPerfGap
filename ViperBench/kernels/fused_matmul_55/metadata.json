@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_55",
+  "category": "fused_matmul",
+  "subcategory": "matmul_maxpool_sum_scale",
+  "difficulty": "medium",
+  "description": "Model that performs matrix multiplication, max pooling, sum, and scaling.",
+  "provenance": "KernelBench L2 (55_matmul_maxpool_sum_scale)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

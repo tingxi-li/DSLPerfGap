@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_68",
+  "category": "fused_matmul",
+  "subcategory": "matmul_min_subtract",
+  "difficulty": "medium",
+  "description": "Simple model that performs a matrix multiplication, applies minimum, and subtracts a constant.",
+  "provenance": "KernelBench L2 (68_matmul_min_subtract)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

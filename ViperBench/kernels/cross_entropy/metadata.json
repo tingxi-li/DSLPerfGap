@@ -1,0 +1,10 @@
+{
+  "name": "cross_entropy",
+  "category": "loss",
+  "subcategory": "classification",
+  "difficulty": "easy",
+  "description": "Cross-entropy loss",
+  "provenance": "KernelBench L1 (95) + TritonBench",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

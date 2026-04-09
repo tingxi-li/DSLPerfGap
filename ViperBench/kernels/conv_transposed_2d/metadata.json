@@ -1,0 +1,10 @@
+{
+  "name": "conv_transposed_2d",
+  "category": "conv",
+  "subcategory": "conv_transposed_2d",
+  "difficulty": "medium",
+  "description": "2D transposed convolution",
+  "provenance": "KernelBench L1 (kernels 57, 65, 69, 71, 75, 78, 81)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

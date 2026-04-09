@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_92",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_groupnorm_tanh_hardswish_residualadd_logsumexp",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, applies Group Normalization, Tanh, HardSwish,",
+  "provenance": "KernelBench L2 (92_conv2d_groupnorm_tanh_hardswish_residualadd_logsumexp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

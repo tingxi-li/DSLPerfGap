@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_51",
+  "category": "fused_gemm",
+  "subcategory": "gemm_subtract_globalavgpool_logsumexp_gelu_residualadd",
+  "difficulty": "medium",
+  "description": "Model that performs a series of operations: Gemm, Subtract, GlobalAvgPool, LogSumExp, GELU, and ResidualAdd.",
+  "provenance": "KernelBench L2 (51_gemm_subtract_globalavgpool_logsumexp_gelu_residualadd)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

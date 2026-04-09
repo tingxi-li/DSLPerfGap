@@ -1,0 +1,10 @@
+{
+  "name": "model_siglip_encoder",
+  "category": "model_transformer",
+  "subcategory": "siglip_encoder",
+  "difficulty": "hard",
+  "description": "Return ready-to-use CUDA inputs for testing.",
+  "provenance": "KernelBench L3 (54_siglip_encoder)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cumprod",
+  "category": "cumulative",
+  "subcategory": "scan",
+  "difficulty": "medium",
+  "description": "Cumulative product",
+  "provenance": "KernelBench L1 (90)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

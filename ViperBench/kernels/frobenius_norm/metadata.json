@@ -1,0 +1,10 @@
+{
+  "name": "frobenius_norm",
+  "category": "normalization",
+  "subcategory": "frobenius_norm",
+  "difficulty": "medium",
+  "description": "Frobenius norm: x / ||x||_F",
+  "provenance": "KernelBench L1 (37)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

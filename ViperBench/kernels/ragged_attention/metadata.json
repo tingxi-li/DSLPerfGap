@@ -1,0 +1,10 @@
+{
+  "name": "ragged_attention",
+  "category": "attention",
+  "subcategory": "ragged_attention",
+  "difficulty": "hard",
+  "description": "Attention on variable-length (ragged) sequences",
+  "provenance": "TritonBench (ragged_attention)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

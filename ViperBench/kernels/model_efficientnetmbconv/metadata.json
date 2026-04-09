@@ -1,0 +1,10 @@
+{
+  "name": "model_efficientnetmbconv",
+  "category": "model_cnn",
+  "subcategory": "efficientnetmbconv",
+  "difficulty": "hard",
+  "description": "MBConv block implementation.",
+  "provenance": "KernelBench L3 (21_efficientnetmbconv)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

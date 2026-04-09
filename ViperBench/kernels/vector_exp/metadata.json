@@ -1,0 +1,10 @@
+{
+  "name": "vector_exp",
+  "category": "elementwise",
+  "subcategory": "unary",
+  "difficulty": "easy",
+  "description": "Element-wise exponential",
+  "provenance": "TritonBench (vector_exp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

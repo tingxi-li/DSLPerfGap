@@ -1,0 +1,10 @@
+{
+  "name": "model_densenet121denseblock",
+  "category": "model_cnn",
+  "subcategory": "densenet121denseblock",
+  "difficulty": "hard",
+  "description": ":param num_layers: The number of layers in the dense block",
+  "provenance": "KernelBench L3 (14_densenet121denseblock)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

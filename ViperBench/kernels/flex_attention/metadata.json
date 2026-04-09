@@ -1,0 +1,10 @@
+{
+  "name": "flex_attention",
+  "category": "attention",
+  "subcategory": "flex_attention",
+  "difficulty": "hard",
+  "description": "Flexible attention with custom score modification",
+  "provenance": "TritonBench (flex_attention)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

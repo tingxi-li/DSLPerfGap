@@ -1,0 +1,10 @@
+{
+  "name": "softsign",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Softsign: x / (1 + |x|)",
+  "provenance": "KernelBench L1 (30_softsign)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

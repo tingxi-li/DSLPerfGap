@@ -1,0 +1,10 @@
+{
+  "name": "conv_transposed_3d",
+  "category": "conv",
+  "subcategory": "conv_transposed_3d",
+  "difficulty": "medium",
+  "description": "3D transposed convolution",
+  "provenance": "KernelBench L1 (kernels 58, 61, 68, 70, 72, 73, 77)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

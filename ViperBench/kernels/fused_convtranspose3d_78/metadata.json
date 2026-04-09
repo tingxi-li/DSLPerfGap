@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_78",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_max_max_sum",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, followed by two max pooling layers and a sum operation.",
+  "provenance": "KernelBench L2 (78_convtranspose3d_max_max_sum)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

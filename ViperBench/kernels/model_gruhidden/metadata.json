@@ -1,0 +1,10 @@
+{
+  "name": "model_gruhidden",
+  "category": "model_rnn",
+  "subcategory": "gruhidden",
+  "difficulty": "hard",
+  "description": ":param input_size: The number of expected features in the input x",
+  "provenance": "KernelBench L3 (40_gruhidden)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

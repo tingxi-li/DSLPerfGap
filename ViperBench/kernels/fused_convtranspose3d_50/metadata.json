@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_50",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_scaling_avgpool_biasadd_scaling",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, scaling, average pooling, bias addition, and scaling.",
+  "provenance": "KernelBench L2 (50_convtranspose3d_scaling_avgpool_biasadd_scaling)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_62",
+  "category": "fused_matmul",
+  "subcategory": "matmul_groupnorm_leakyrelu_sum",
+  "difficulty": "medium",
+  "description": "A model that performs a matrix multiplication, group normalization, leaky ReLU activation, and element-wise sum.",
+  "provenance": "KernelBench L2 (62_matmul_groupnorm_leakyrelu_sum)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

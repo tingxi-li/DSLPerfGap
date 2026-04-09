@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_89",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_maxpool_softmax_subtract_swish_max",
+  "difficulty": "medium",
+  "description": "A model that performs a sequence of operations:",
+  "provenance": "KernelBench L2 (89_convtranspose3d_maxpool_softmax_subtract_swish_max)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

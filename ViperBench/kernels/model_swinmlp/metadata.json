@@ -1,0 +1,10 @@
+{
+  "name": "model_swinmlp",
+  "category": "model_transformer",
+  "subcategory": "swinmlp",
+  "difficulty": "hard",
+  "description": "Swin MLP",
+  "provenance": "KernelBench L3 (29_swinmlp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "rope",
+  "category": "specialized",
+  "subcategory": "positional_encoding",
+  "difficulty": "medium",
+  "description": "Rotary positional embeddings",
+  "provenance": "TritonBench (rope)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "embedding",
+  "category": "embedding",
+  "subcategory": "lookup",
+  "difficulty": "easy",
+  "description": "Embedding table lookup",
+  "provenance": "TritonBench (embedding)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

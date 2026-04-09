@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_16",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_mish_add_hardtanh_scaling",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, applies Mish activation, adds a value,",
+  "provenance": "KernelBench L2 (16_convtranspose2d_mish_add_hardtanh_scaling)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "mamba2_chunk_state",
+  "category": "specialized",
+  "subcategory": "ssm",
+  "difficulty": "hard",
+  "description": "Mamba2 chunk_state",
+  "provenance": "TritonBench (mamba2_chunk_state)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

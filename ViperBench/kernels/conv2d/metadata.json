@@ -1,0 +1,10 @@
+{
+  "name": "conv2d",
+  "category": "conv",
+  "subcategory": "conv2d",
+  "difficulty": "medium",
+  "description": "2D convolution with stride/padding/dilation axes",
+  "provenance": "KernelBench L1 (kernels 50, 55, 56, 62, 63, 80)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

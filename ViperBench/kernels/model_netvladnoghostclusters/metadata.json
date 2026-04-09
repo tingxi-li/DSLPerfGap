@@ -1,0 +1,10 @@
+{
+  "name": "model_netvladnoghostclusters",
+  "category": "model_other",
+  "subcategory": "netvladnoghostclusters",
+  "difficulty": "hard",
+  "description": "Aggregates feature maps into a fixed size representation.  In the following",
+  "provenance": "KernelBench L3 (47_netvladnoghostclusters)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

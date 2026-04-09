@@ -1,0 +1,10 @@
+{
+  "name": "decoding_attention",
+  "category": "attention",
+  "subcategory": "decoding_attention",
+  "difficulty": "hard",
+  "description": "Attention optimized for autoregressive decoding",
+  "provenance": "TritonBench (decoding_attention)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

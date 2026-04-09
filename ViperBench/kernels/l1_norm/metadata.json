@@ -1,0 +1,10 @@
+{
+  "name": "l1_norm",
+  "category": "normalization",
+  "subcategory": "l1_norm",
+  "difficulty": "medium",
+  "description": "L1 normalization along dim",
+  "provenance": "KernelBench L1 (38)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

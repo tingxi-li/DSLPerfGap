@@ -1,0 +1,10 @@
+{
+  "name": "vector_add",
+  "category": "elementwise",
+  "subcategory": "binary",
+  "difficulty": "easy",
+  "description": "Element-wise vector addition",
+  "provenance": "TritonBench (vector_add)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

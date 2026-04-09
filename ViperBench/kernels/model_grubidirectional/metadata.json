@@ -1,0 +1,10 @@
+{
+  "name": "model_grubidirectional",
+  "category": "model_rnn",
+  "subcategory": "grubidirectional",
+  "difficulty": "hard",
+  "description": ":param input_size: The number of expected features in the input x",
+  "provenance": "KernelBench L3 (41_grubidirectional)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

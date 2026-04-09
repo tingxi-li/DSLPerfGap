@@ -1,0 +1,10 @@
+{
+  "name": "argmax",
+  "category": "reduction",
+  "subcategory": "argmax",
+  "difficulty": "easy",
+  "description": "Argmax",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

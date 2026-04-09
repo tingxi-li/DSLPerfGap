@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_98",
+  "category": "fused_matmul",
+  "subcategory": "matmul_avgpool_gelu_scale_max",
+  "difficulty": "medium",
+  "description": "A model implementing the pattern \"Matmul_AvgPool_GELU_Scale_Max\".",
+  "provenance": "KernelBench L2 (98_matmul_avgpool_gelu_scale_max)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

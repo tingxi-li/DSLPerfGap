@@ -1,0 +1,10 @@
+{
+  "name": "mingpt_gelu",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "MinGPT GELU approximation",
+  "provenance": "KernelBench L1 (88_mingptnewgelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

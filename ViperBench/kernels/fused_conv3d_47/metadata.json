@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_47",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_mish_tanh",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D convolution, applies Mish activation, and then applies Tanh activation.",
+  "provenance": "KernelBench L2 (47_conv3d_mish_tanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

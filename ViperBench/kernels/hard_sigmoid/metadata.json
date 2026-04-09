@@ -1,0 +1,10 @@
+{
+  "name": "hard_sigmoid",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Hard sigmoid",
+  "provenance": "KernelBench L1 (28_hardsigmoid)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

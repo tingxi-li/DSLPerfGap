@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_31",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_min_add_multiply",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, takes the minimum with a constant, adds a bias term, and multiplies by a scaling factor.",
+  "provenance": "KernelBench L2 (31_conv2d_min_add_multiply)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

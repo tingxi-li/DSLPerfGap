@@ -1,0 +1,180 @@
+{
+  "kernel": "matmul",
+  "params": {
+    "shape": [
+      {
+        "name": "xs_square",
+        "M": 64,
+        "N": 64,
+        "K": 64,
+        "batch": 1
+      },
+      {
+        "name": "s_square",
+        "M": 512,
+        "N": 512,
+        "K": 512,
+        "batch": 1
+      },
+      {
+        "name": "m_square",
+        "M": 2048,
+        "N": 2048,
+        "K": 2048,
+        "batch": 1
+      },
+      {
+        "name": "l_square",
+        "M": 4096,
+        "N": 4096,
+        "K": 4096,
+        "batch": 1
+      },
+      {
+        "name": "xl_square",
+        "M": 8192,
+        "N": 8192,
+        "K": 8192,
+        "batch": 1
+      },
+      {
+        "name": "decode",
+        "M": 1,
+        "N": 4096,
+        "K": 4096,
+        "batch": 1
+      },
+      {
+        "name": "small_batch",
+        "M": 32,
+        "N": 4096,
+        "K": 4096,
+        "batch": 1
+      },
+      {
+        "name": "prefill",
+        "M": 2048,
+        "N": 4096,
+        "K": 4096,
+        "batch": 1
+      },
+      {
+        "name": "mlp_up_8B",
+        "M": 2048,
+        "N": 14336,
+        "K": 4096,
+        "batch": 1
+      },
+      {
+        "name": "mlp_down_8B",
+        "M": 2048,
+        "N": 4096,
+        "K": 14336,
+        "batch": 1
+      },
+      {
+        "name": "mlp_up_70B",
+        "M": 2048,
+        "N": 28672,
+        "K": 8192,
+        "batch": 1
+      },
+      {
+        "name": "moe_gate",
+        "M": 2048,
+        "N": 128,
+        "K": 4096,
+        "batch": 1
+      },
+      {
+        "name": "moe_expert",
+        "M": 256,
+        "N": 14336,
+        "K": 4096,
+        "batch": 1
+      },
+      {
+        "name": "batched_heads",
+        "M": 64,
+        "N": 128,
+        "K": 128,
+        "batch": 32
+      },
+      {
+        "name": "large_k",
+        "M": 2048,
+        "N": 4096,
+        "K": 32768,
+        "batch": 1
+      },
+      {
+        "name": "small_k",
+        "M": 2048,
+        "N": 4096,
+        "K": 64,
+        "batch": 1
+      },
+      {
+        "name": "irregular",
+        "M": 1337,
+        "N": 4093,
+        "K": 4097,
+        "batch": 1
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ],
+    "transpose": [
+      "NN",
+      "NT",
+      "TN",
+      "TT"
+    ],
+    "structure": [
+      "dense",
+      "diagonal",
+      "upper_triangular",
+      "lower_triangular",
+      "symmetric"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all",
+    "transpose": [
+      "NN"
+    ],
+    "structure": [
+      "dense"
+    ]
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all",
+    "transpose": "all",
+    "structure": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

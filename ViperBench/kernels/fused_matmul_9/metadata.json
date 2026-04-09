@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_9",
+  "category": "fused_matmul",
+  "subcategory": "matmul_subtract_multiply_relu",
+  "difficulty": "medium",
+  "description": "Model that performs a matrix multiplication, subtraction, multiplication, and ReLU activation.",
+  "provenance": "KernelBench L2 (9_matmul_subtract_multiply_relu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

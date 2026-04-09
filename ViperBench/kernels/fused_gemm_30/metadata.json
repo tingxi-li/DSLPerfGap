@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_30",
+  "category": "fused_gemm",
+  "subcategory": "gemm_groupnorm_hardtanh",
+  "difficulty": "medium",
+  "description": "Simple model that performs a GEMM, applies Group Normalization, and then HardTanh.",
+  "provenance": "KernelBench L2 (30_gemm_groupnorm_hardtanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

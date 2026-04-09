@@ -1,0 +1,48 @@
+{
+  "name": "NVIDIA RTX 4000 Ada Generation",
+  "compute_capability": "sm_89",
+
+  "memory_hierarchy": {
+    "global_memory_bandwidth_gb_s": 272,
+    "memory_type": "GDDR6",
+    "memory_capacity_gb": 20,
+    "l2_cache_mb": 32,
+    "l1_shared_memory_per_sm_kb": 128,
+    "max_shared_memory_per_sm_configurable_kb": 100,
+    "shared_mem_banks_x_width": "32 banks x 4 B",
+    "cache_line_size_bytes": 128
+  },
+
+  "compute_characteristics": {
+    "sm_count": 48,
+    "peak_fp32_tflops": 19.2,
+    "peak_fp16_tensor_tflops": 38.4,
+    "peak_bf16_tensor_tflops": 38.4,
+    "peak_tf32_tensor_tflops": 19.2,
+    "peak_int8_tops": 153,
+    "warp_size": 32,
+    "max_threads_per_sm": 1536,
+    "max_warps_per_sm": 48,
+    "max_threads_per_block": 1024,
+    "registers_per_sm": "65536 x 32-bit"
+  },
+
+  "tensor_cores": {
+    "generation": "4th",
+    "wmma_tile_shape_mxnxk": "16x8x16",
+    "supported_precisions": ["FP8", "BF16", "TF32", "FP16", "INT8", "INT4"],
+    "fp8_support": true
+  },
+
+  "latency_hiding": {
+    "fp32_arithmetic_latency_cycles": 4,
+    "global_mem_latency_cycles": "~600-800",
+    "warp_schedulers_per_sm": 4
+  },
+
+  "derived_roofline_thresholds": {
+    "fp32_arithmetic_intensity_ridge_flop_per_byte": 71,
+    "fp16_tensor_ridge_flop_per_byte": 141,
+    "gemm_bound": "BW-limited"
+  }
+}

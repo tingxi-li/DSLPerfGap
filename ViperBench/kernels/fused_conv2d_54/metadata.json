@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_54",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_multiply_leakyrelu_gelu",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, multiplies by a learnable scalar, applies LeakyReLU, and then GELU.",
+  "provenance": "KernelBench L2 (54_conv2d_multiply_leakyrelu_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

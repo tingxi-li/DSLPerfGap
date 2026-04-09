@@ -1,0 +1,10 @@
+{
+  "name": "mx4_to_fp32",
+  "category": "quantization",
+  "subcategory": "format_conversion",
+  "difficulty": "medium",
+  "description": "MX4 to FP32 dequantization",
+  "provenance": "TritonBench (mx4_to_fp32)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

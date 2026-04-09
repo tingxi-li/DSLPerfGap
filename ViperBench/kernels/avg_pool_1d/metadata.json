@@ -1,0 +1,10 @@
+{
+  "name": "avg_pool_1d",
+  "category": "pooling",
+  "subcategory": "avg_pool_1d",
+  "difficulty": "easy",
+  "description": "Avg Pool 1D",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

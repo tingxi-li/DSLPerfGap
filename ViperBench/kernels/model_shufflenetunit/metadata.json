@@ -1,0 +1,10 @@
+{
+  "name": "model_shufflenetunit",
+  "category": "model_cnn",
+  "subcategory": "shufflenetunit",
+  "difficulty": "hard",
+  "description": "ShuffleNet unit implementation.",
+  "provenance": "KernelBench L3 (25_shufflenetunit)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

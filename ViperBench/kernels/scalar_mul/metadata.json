@@ -1,0 +1,10 @@
+{
+  "name": "scalar_mul",
+  "category": "elementwise",
+  "subcategory": "scalar",
+  "difficulty": "easy",
+  "description": "Element-wise scalar multiplication A * s",
+  "provenance": "KernelBench L1 (kernel 5)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

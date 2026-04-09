@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_32",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_scaling_min",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, scales the output, and then applies a minimum operation.",
+  "provenance": "KernelBench L2 (32_conv2d_scaling_min)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

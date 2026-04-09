@@ -1,0 +1,4 @@
+results/
+kernels/*/results/
+__pycache__/
+*.pyc

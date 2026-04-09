@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_24",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_min_softmax",
+  "difficulty": "medium",
+  "description": "Simple model that performs a 3D convolution, applies minimum operation along a specific dimension,",
+  "provenance": "KernelBench L2 (24_conv3d_min_softmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

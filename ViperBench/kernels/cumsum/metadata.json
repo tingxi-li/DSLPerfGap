@@ -1,0 +1,10 @@
+{
+  "name": "cumsum",
+  "category": "cumulative",
+  "subcategory": "scan",
+  "difficulty": "medium",
+  "description": "Cumulative sum (forward, reverse, exclusive modes)",
+  "provenance": "KernelBench L1 (89, 91, 92)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

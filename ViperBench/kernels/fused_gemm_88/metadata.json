@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_88",
+  "category": "fused_gemm",
+  "subcategory": "gemm_groupnorm_swish_multiply_swish",
+  "difficulty": "medium",
+  "description": "Model that performs a GEMM, GroupNorm, Swish, Multiply, and Swish operations.",
+  "provenance": "KernelBench L2 (88_gemm_groupnorm_swish_multiply_swish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

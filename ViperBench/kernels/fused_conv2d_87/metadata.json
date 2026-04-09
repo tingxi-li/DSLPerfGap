@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_87",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_subtract_subtract_mish",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, subtracts two values, applies Mish activation.",
+  "provenance": "KernelBench L2 (87_conv2d_subtract_subtract_mish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

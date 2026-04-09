@@ -1,0 +1,10 @@
+{
+  "name": "model_unetsoftmax",
+  "category": "model_other",
+  "subcategory": "unetsoftmax",
+  "difficulty": "hard",
+  "description": ":param in_channels: Number of input channels",
+  "provenance": "KernelBench L3 (45_unetsoftmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

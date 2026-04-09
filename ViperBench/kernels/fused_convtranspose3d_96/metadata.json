@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_96",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_multiply_max_globalavgpool_clamp",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed 3D convolution, multiplies by a scalar, applies max pooling,",
+  "provenance": "KernelBench L2 (96_convtranspose3d_multiply_max_globalavgpool_clamp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

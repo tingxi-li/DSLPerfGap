@@ -1,0 +1,10 @@
+{
+  "name": "model_regnet",
+  "category": "model_cnn",
+  "subcategory": "regnet",
+  "difficulty": "hard",
+  "description": ":param input_channels: int, Number of input channels for the first layer",
+  "provenance": "KernelBench L3 (27_regnet)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

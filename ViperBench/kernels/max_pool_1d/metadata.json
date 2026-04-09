@@ -1,0 +1,10 @@
+{
+  "name": "max_pool_1d",
+  "category": "pooling",
+  "subcategory": "max_pool_1d",
+  "difficulty": "easy",
+  "description": "Max Pool 1D",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

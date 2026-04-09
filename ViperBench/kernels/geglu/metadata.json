@@ -1,0 +1,10 @@
+{
+  "name": "geglu",
+  "category": "activation",
+  "subcategory": "gated",
+  "difficulty": "medium",
+  "description": "GEGLU: x1 * GELU(x2) where [x1, x2] = split(input)",
+  "provenance": "TritonBench (geglu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_58",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_logsumexp_hardswish_subtract_clamp",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, LogSumExp, HardSwish, subtraction, clamp operations.",
+  "provenance": "KernelBench L2 (58_convtranspose3d_logsumexp_hardswish_subtract_clamp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

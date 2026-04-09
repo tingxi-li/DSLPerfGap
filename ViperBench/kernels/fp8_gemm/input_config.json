@@ -1,0 +1,64 @@
+{
+  "kernel": "fp8_gemm",
+  "params": {
+    "shape": [
+      {
+        "name": "decode",
+        "M": 1,
+        "N": 4096,
+        "K": 4096
+      },
+      {
+        "name": "prefill",
+        "M": 2048,
+        "N": 4096,
+        "K": 4096
+      },
+      {
+        "name": "mlp",
+        "M": 2048,
+        "N": 14336,
+        "K": 4096
+      }
+    ],
+    "dtype": [
+      "fp8_e4m3",
+      "fp8_e5m2"
+    ],
+    "quantization_mode": [
+      "tensorwise",
+      "blockwise",
+      "rowwise",
+      "rowwise_grouped",
+      "fused_quant_rowwise"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

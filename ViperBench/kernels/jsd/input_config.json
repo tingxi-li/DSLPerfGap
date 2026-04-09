@@ -1,0 +1,60 @@
+{
+  "kernel": "jsd",
+  "params": {
+    "shape": [
+      {
+        "name": "small_cls",
+        "B": 32,
+        "C": 100
+      },
+      {
+        "name": "imagenet",
+        "B": 32,
+        "C": 1000
+      },
+      {
+        "name": "llm_token",
+        "B": 32,
+        "C": 32000
+      },
+      {
+        "name": "irregular",
+        "B": 7,
+        "C": 31999
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

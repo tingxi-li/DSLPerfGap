@@ -1,0 +1,10 @@
+{
+  "name": "model_mingptcausalattention",
+  "category": "model_transformer",
+  "subcategory": "mingptcausalattention",
+  "difficulty": "hard",
+  "description": "A vanilla multi-head masked self-attention layer with a projection at the end.",
+  "provenance": "KernelBench L3 (43_mingptcausalattention)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

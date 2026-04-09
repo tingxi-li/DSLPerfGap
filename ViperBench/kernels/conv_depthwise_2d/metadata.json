@@ -1,0 +1,10 @@
+{
+  "name": "conv_depthwise_2d",
+  "category": "conv",
+  "subcategory": "conv_depthwise_2d",
+  "difficulty": "medium",
+  "description": "2D depthwise + separable + pointwise convolution",
+  "provenance": "KernelBench L1 (kernels 82, 83, 84, 85, 86, 87)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

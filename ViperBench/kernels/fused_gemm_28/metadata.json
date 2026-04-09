@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_28",
+  "category": "fused_gemm",
+  "subcategory": "bmm_instancenorm_sum_residualadd_multiply",
+  "difficulty": "medium",
+  "description": "Model that performs a batch matrix multiplication, instance normalization, summation, residual addition, and multiplication.",
+  "provenance": "KernelBench L2 (28_bmm_instancenorm_sum_residualadd_multiply)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_15",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_batchnorm_subtract",
+  "difficulty": "medium",
+  "description": "A 3D convolutional transpose layer followed by Batch Normalization and subtraction.",
+  "provenance": "KernelBench L2 (15_convtranspose3d_batchnorm_subtract)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

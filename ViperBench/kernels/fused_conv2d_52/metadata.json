@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_52",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_activation_batchnorm",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, applies activation, and then applies Batch Normalization.",
+  "provenance": "KernelBench L2 (52_conv2d_activation_batchnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

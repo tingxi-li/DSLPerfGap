@@ -1,0 +1,10 @@
+{
+  "name": "tanh",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Tanh activation",
+  "provenance": "KernelBench L1 (22_tanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "model_qwen3_moe_decoder_block",
+  "category": "model_transformer",
+  "subcategory": "qwen3_moe_decoder_block",
+  "difficulty": "hard",
+  "description": "Qwen3 Moe Decoder Block",
+  "provenance": "KernelBench L3 (58_qwen3_moe_decoder_block)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

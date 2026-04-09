@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_76",
+  "category": "fused_gemm",
+  "subcategory": "gemm_add_relu",
+  "difficulty": "medium",
+  "description": "Simple model that performs a matrix multiplication, adds a bias term, and applies ReLU.",
+  "provenance": "KernelBench L2 (76_gemm_add_relu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

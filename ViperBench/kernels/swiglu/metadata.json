@@ -1,0 +1,10 @@
+{
+  "name": "swiglu",
+  "category": "activation",
+  "subcategory": "gated",
+  "difficulty": "medium",
+  "description": "SwiGLU: x1 * SiLU(x2) where [x1, x2] = split(input)",
+  "provenance": "TritonBench (swiglu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

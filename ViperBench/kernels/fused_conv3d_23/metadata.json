@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_23",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_groupnorm_mean",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D convolution, applies Group Normalization, computes the mean",
+  "provenance": "KernelBench L2 (23_conv3d_groupnorm_mean)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

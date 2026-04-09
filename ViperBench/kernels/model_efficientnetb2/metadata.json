@@ -1,0 +1,10 @@
+{
+  "name": "model_efficientnetb2",
+  "category": "model_cnn",
+  "subcategory": "efficientnetb2",
+  "difficulty": "hard",
+  "description": "EfficientNetB2 architecture implementation.",
+  "provenance": "KernelBench L3 (24_efficientnetb2)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

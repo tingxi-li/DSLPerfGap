@@ -1,0 +1,88 @@
+"""
+Reference implementation for: model_grubidirectionalhidden
+Source: KernelBench
+"""
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+# ── Original KernelBench source ──
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Model(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers=3, bias=True, batch_first=False):
+        """
+        :param input_size: The number of expected features in the input x
+        :param hidden_size: The number of features in the hidden state h
+        :param num_layers: Number of recurrent layers (default: 1)
+        :param bias: If False, then the layer does not use bias weights b_ih and b_hh (default: True)
+        :param batch_first: If True, then the input and output tensors are provided as (batch, seq, feature) (default: False)
+        """
+        super(Model, self).__init__()
+        
+        self.gru = nn.GRU(input_size, hidden_size, num_layers, bias, batch_first, dropout=0, bidirectional=True)
+    
+    def forward(self, x,h0):
+        """
+        :param x: The input tensor, shape (seq_len, batch_size, input_size) if batch_first=False, otherwise (batch_size, seq_len, input_size)
+        :param h_0: The initial hidden state for the input sequence, shape (num_layers * num_directions, batch_size, hidden_size) (default: None)
+        :return: output, h_n
+            - output: The output features (h_t) from the last layer of the GRU, for each t, shape (seq_len, batch_size, num_directions * hidden_size) if batch_first=False, otherwise (batch_size, seq_len, num_directions * hidden_size)
+            - h_n: The hidden state for t = seq_len, shape (num_layers * num_directions, batch_size, hidden_size)
+        """
+        output, h_n = self.gru(x, h0)
+        return h_n
+
+# Test code
+batch_size = 10
+seq_len = 512
+input_size = 128
+hidden_size = 256
+num_layers = 6
+
+def get_inputs():
+    return [torch.rand(seq_len, batch_size, input_size),torch.rand((num_layers*2, batch_size, hidden_size))]
+
+def get_init_inputs():
+    return [input_size, hidden_size, num_layers]
+
+# ── Unified interface for eval harness ──────────────────────────────────────
+def get_test_inputs():
+    """Return ready-to-use CUDA inputs for testing."""
+    return [x.cuda() if isinstance(x, torch.Tensor) else x for x in get_inputs()]
+
+
+def run(*args):
+    """Unified interface: instantiate Model, move to CUDA, run forward."""
+    if args:
+        inputs = args
+    else:
+        inputs = get_test_inputs()
+    model = Model(*get_init_inputs()).cuda().eval()
+    with torch.no_grad():
+        return model(*inputs)
+
+# ── End original source ──
+
+# ── ViperBench reference interface ──
+_MODEL_CACHE = {}
+
+def _get_model():
+    key = "default"
+    if key not in _MODEL_CACHE:
+        init_args = get_init_inputs()
+        model = Model(*init_args).cuda().eval()
+        _MODEL_CACHE[key] = model
+    return _MODEL_CACHE[key]
+
+
+def reference(inputs: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
+    model = _get_model()
+    input_tensors = [inputs["input"]]
+    with torch.no_grad():
+        result = model(*input_tensors)
+    if isinstance(result, tuple):
+        return {"output_" + str(i): v for i, v in enumerate(result)}
+    return {"output": result}

@@ -1,0 +1,68 @@
+{
+  "kernel": "fused_conv3d_48",
+  "params": {
+    "shape": [
+      {
+        "name": "resnet_early",
+        "B": 8,
+        "C_in": 64,
+        "H": 56,
+        "W": 56
+      },
+      {
+        "name": "resnet_deep",
+        "B": 8,
+        "C_in": 512,
+        "H": 7,
+        "W": 7
+      },
+      {
+        "name": "large_spatial",
+        "B": 1,
+        "C_in": 64,
+        "H": 512,
+        "W": 512
+      },
+      {
+        "name": "irregular",
+        "B": 8,
+        "C_in": 64,
+        "H": 53,
+        "W": 53
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

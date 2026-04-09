@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_46",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_subtract_tanh_subtract_avgpool",
+  "difficulty": "medium",
+  "description": "Model that performs a convolution, subtraction, tanh activation, subtraction and average pooling.",
+  "provenance": "KernelBench L2 (46_conv2d_subtract_tanh_subtract_avgpool)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "conv3d",
+  "category": "conv",
+  "subcategory": "conv3d",
+  "difficulty": "medium",
+  "description": "3D convolution",
+  "provenance": "KernelBench L1 (kernels 54, 59, 60, 66)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

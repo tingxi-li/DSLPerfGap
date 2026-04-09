@@ -1,0 +1,76 @@
+{
+  "kernel": "avg_pool_2d",
+  "params": {
+    "shape": [
+      {
+        "name": "resnet_maxpool",
+        "B": 8,
+        "C": 64,
+        "H": 112,
+        "W": 112,
+        "kernel_size": 3,
+        "stride": 2
+      },
+      {
+        "name": "resnet_gap",
+        "B": 8,
+        "C": 2048,
+        "H": 7,
+        "W": 7,
+        "kernel_size": 7,
+        "stride": 1
+      },
+      {
+        "name": "large_spatial",
+        "B": 1,
+        "C": 64,
+        "H": 256,
+        "W": 256,
+        "kernel_size": 3,
+        "stride": 2
+      },
+      {
+        "name": "irregular",
+        "B": 8,
+        "C": 64,
+        "H": 53,
+        "W": 53,
+        "kernel_size": 3,
+        "stride": 2
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16",
+      "fp32"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01,
+      "fp32": 1e-05
+    },
+    "reference_dtype": "fp32"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

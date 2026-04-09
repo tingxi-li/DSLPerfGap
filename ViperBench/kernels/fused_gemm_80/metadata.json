@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_80",
+  "category": "fused_gemm",
+  "subcategory": "gemm_max_subtract_gelu",
+  "difficulty": "medium",
+  "description": "Model that performs a GEMM, followed by a max operation, subtraction, and GELU activation.",
+  "provenance": "KernelBench L2 (80_gemm_max_subtract_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

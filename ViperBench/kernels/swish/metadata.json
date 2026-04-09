@@ -1,0 +1,10 @@
+{
+  "name": "swish",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Swish/SiLU: x * sigmoid(x)",
+  "provenance": "KernelBench L1 (25_swish)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

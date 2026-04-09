@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_71",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_divide_leakyrelu",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, divides by a constant, and applies LeakyReLU.",
+  "provenance": "KernelBench L2 (71_conv2d_divide_leakyrelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

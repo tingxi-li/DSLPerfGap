@@ -1,0 +1,10 @@
+{
+  "name": "softmax",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Softmax along last dim",
+  "provenance": "KernelBench L1 (23_softmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

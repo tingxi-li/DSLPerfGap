@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_99",
+  "category": "fused_matmul",
+  "subcategory": "matmul_gelu_softmax",
+  "difficulty": "medium",
+  "description": "Simple model that performs a matrix multiplication, applies GELU, and then applies Softmax.",
+  "provenance": "KernelBench L2 (99_matmul_gelu_softmax)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

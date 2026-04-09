@@ -1,0 +1,10 @@
+{
+  "name": "model_densenet121transitionlayer",
+  "category": "model_cnn",
+  "subcategory": "densenet121transitionlayer",
+  "difficulty": "hard",
+  "description": ":param num_input_features: The number of input feature maps",
+  "provenance": "KernelBench L3 (13_densenet121transitionlayer)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

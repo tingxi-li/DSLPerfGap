@@ -1,0 +1,10 @@
+{
+  "name": "model_efficientnetb0",
+  "category": "model_cnn",
+  "subcategory": "efficientnetb0",
+  "difficulty": "hard",
+  "description": "EfficientNetB0 architecture implementation in PyTorch.",
+  "provenance": "KernelBench L3 (22_efficientnetb0)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

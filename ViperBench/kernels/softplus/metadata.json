@@ -1,0 +1,10 @@
+{
+  "name": "softplus",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "Softplus: log(1 + exp(x))",
+  "provenance": "KernelBench L1 (29_softplus)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

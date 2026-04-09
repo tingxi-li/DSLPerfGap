@@ -1,0 +1,19 @@
+{
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "clear_l2_cache": true,
+    "timeout_seconds": 60,
+    "compile_warmup_iters": 3
+  },
+  "correctness": {
+    "default_atol": {"fp16": 1e-2, "bf16": 1e-2, "fp32": 1e-5},
+    "default_rtol": {"fp16": 1e-2, "bf16": 1e-2, "fp32": 1e-5},
+    "reference_dtype": "fp32"
+  },
+  "runner": {
+    "default_sweep_mode": "prioritized",
+    "max_configs_per_kernel": 1000,
+    "log_level": "INFO"
+  }
+}

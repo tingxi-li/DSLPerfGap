@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_65",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_avgpool_sigmoid_sum",
+  "difficulty": "medium",
+  "description": "This model performs a convolution, average pooling, applies sigmoid, and sums the result.",
+  "provenance": "KernelBench L2 (65_conv2d_avgpool_sigmoid_sum)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

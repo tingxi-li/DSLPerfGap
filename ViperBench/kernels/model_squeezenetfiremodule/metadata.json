@@ -1,0 +1,10 @@
+{
+  "name": "model_squeezenetfiremodule",
+  "category": "model_cnn",
+  "subcategory": "squeezenetfiremodule",
+  "difficulty": "hard",
+  "description": ":param in_channels: Number of input channels",
+  "provenance": "KernelBench L3 (17_squeezenetfiremodule)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_95",
+  "category": "fused_matmul",
+  "subcategory": "matmul_add_swish_tanh_gelu_hardtanh",
+  "difficulty": "medium",
+  "description": "Simple model that performs a matrix multiplication, adds a value, applies Swish, Tanh, GELU, and Hardtanh activation functions.",
+  "provenance": "KernelBench L2 (95_matmul_add_swish_tanh_gelu_hardtanh)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

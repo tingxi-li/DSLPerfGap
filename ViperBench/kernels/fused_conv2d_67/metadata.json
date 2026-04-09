@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv2d_67",
+  "category": "fused_conv2d",
+  "subcategory": "conv2d_gelu_globalavgpool",
+  "difficulty": "medium",
+  "description": "Simple model that performs a convolution, applies GELU, and then performs global average pooling.",
+  "provenance": "KernelBench L2 (67_conv2d_gelu_globalavgpool)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

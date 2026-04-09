@@ -1,0 +1,10 @@
+{
+  "name": "avg_pool_2d",
+  "category": "pooling",
+  "subcategory": "avg_pool_2d",
+  "difficulty": "easy",
+  "description": "Avg Pool 2D",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

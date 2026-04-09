@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_43",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_max_logsumexp_relu",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D convolution, max pooling, log sum exp, and ReLU activation.",
+  "provenance": "KernelBench L2 (43_conv3d_max_logsumexp_relu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

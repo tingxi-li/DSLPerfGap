@@ -1,0 +1,10 @@
+{
+  "name": "relu",
+  "category": "activation",
+  "subcategory": "pointwise",
+  "difficulty": "easy",
+  "description": "ReLU activation: max(0, x)",
+  "provenance": "KernelBench L1 (19_relu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

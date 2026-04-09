@@ -1,0 +1,10 @@
+{
+  "name": "welford",
+  "category": "specialized",
+  "subcategory": "statistics",
+  "difficulty": "medium",
+  "description": "Welford's online variance algorithm",
+  "provenance": "TritonBench (welford)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

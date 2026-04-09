@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_72",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_batchnorm_avgpool_avgpool",
+  "difficulty": "medium",
+  "description": "A model that performs a 3D transposed convolution, followed by batch normalization,",
+  "provenance": "KernelBench L2 (72_convtranspose3d_batchnorm_avgpool_avgpool)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

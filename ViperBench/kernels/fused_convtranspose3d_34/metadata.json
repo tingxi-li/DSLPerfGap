@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_34",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_layernorm_gelu_scaling",
+  "difficulty": "medium",
+  "description": "Model that performs a 3D transposed convolution, layer normalization, GELU activation, and scaling.",
+  "provenance": "KernelBench L2 (34_convtranspose3d_layernorm_gelu_scaling)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

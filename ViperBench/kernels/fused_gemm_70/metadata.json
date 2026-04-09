@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_70",
+  "category": "fused_gemm",
+  "subcategory": "gemm_sigmoid_scaling_residualadd",
+  "difficulty": "medium",
+  "description": "Model implementing the pattern \"Gemm_Sigmoid_Scaling_ResidualAdd\".",
+  "provenance": "KernelBench L2 (70_gemm_sigmoid_scaling_residualadd)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

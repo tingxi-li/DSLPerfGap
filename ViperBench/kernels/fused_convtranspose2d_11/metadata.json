@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_11",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_batchnorm_tanh_maxpool_groupnorm",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, batch normalization, tanh activation, max pooling, and group normalization.",
+  "provenance": "KernelBench L2 (11_convtranspose2d_batchnorm_tanh_maxpool_groupnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

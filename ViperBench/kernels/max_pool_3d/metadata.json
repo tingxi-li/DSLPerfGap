@@ -1,0 +1,10 @@
+{
+  "name": "max_pool_3d",
+  "category": "pooling",
+  "subcategory": "max_pool_3d",
+  "difficulty": "easy",
+  "description": "Max Pool 3D",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_59",
+  "category": "fused_matmul",
+  "subcategory": "matmul_swish_scaling",
+  "difficulty": "medium",
+  "description": "Simple model that performs a matrix multiplication, applies Swish activation, and scales the result.",
+  "provenance": "KernelBench L2 (59_matmul_swish_scaling)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

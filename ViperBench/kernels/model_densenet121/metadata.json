@@ -1,0 +1,10 @@
+{
+  "name": "model_densenet121",
+  "category": "model_cnn",
+  "subcategory": "densenet121",
+  "difficulty": "hard",
+  "description": ":param growth_rate: The growth rate of the DenseNet (new features added per layer)",
+  "provenance": "KernelBench L3 (15_densenet121)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

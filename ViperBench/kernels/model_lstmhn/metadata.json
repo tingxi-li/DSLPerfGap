@@ -1,0 +1,10 @@
+{
+  "name": "model_lstmhn",
+  "category": "model_rnn",
+  "subcategory": "lstmhn",
+  "difficulty": "hard",
+  "description": "Initialize the LSTM model.",
+  "provenance": "KernelBench L3 (36_lstmhn)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "mse_loss",
+  "category": "loss",
+  "subcategory": "regression",
+  "difficulty": "easy",
+  "description": "Mean squared error loss",
+  "provenance": "KernelBench L1 (94)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_94",
+  "category": "fused_gemm",
+  "subcategory": "gemm_biasadd_hardtanh_mish_groupnorm",
+  "difficulty": "medium",
+  "description": "A model that performs a GEMM, BiasAdd, Hardtanh, Mish, and GroupNorm operations in sequence.",
+  "provenance": "KernelBench L2 (94_gemm_biasadd_hardtanh_mish_groupnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

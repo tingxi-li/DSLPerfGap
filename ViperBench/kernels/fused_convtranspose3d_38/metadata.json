@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose3d_38",
+  "category": "fused_convtranspose3d",
+  "subcategory": "convtranspose3d_avgpool_clamp_softmax_multiply",
+  "difficulty": "medium",
+  "description": "Model that performs average pooling, 3D transposed convolution, clamping,",
+  "provenance": "KernelBench L2 (38_convtranspose3d_avgpool_clamp_softmax_multiply)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

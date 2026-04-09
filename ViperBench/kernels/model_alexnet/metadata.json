@@ -1,0 +1,10 @@
+{
+  "name": "model_alexnet",
+  "category": "model_cnn",
+  "subcategory": "alexnet",
+  "difficulty": "hard",
+  "description": ":param num_classes: The number of output classes (default is 1000 for ImageNet)",
+  "provenance": "KernelBench L3 (5_alexnet)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

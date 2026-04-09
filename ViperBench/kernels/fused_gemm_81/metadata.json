@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_81",
+  "category": "fused_gemm",
+  "subcategory": "gemm_swish_divide_clamp_tanh_clamp",
+  "difficulty": "medium",
+  "description": "Simple model that performs a gemm, swish, divide, clamp, tanh, and clamp operations.",
+  "provenance": "KernelBench L2 (81_gemm_swish_divide_clamp_tanh_clamp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

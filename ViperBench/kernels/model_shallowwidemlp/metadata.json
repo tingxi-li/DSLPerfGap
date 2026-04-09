@@ -1,0 +1,10 @@
+{
+  "name": "model_shallowwidemlp",
+  "category": "model_cnn",
+  "subcategory": "shallowwidemlp",
+  "difficulty": "hard",
+  "description": ":param input_size: The number of input features",
+  "provenance": "KernelBench L3 (2_shallowwidemlp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

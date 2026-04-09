@@ -1,0 +1,10 @@
+{
+  "name": "fused_conv3d_79",
+  "category": "fused_conv3d",
+  "subcategory": "conv3d_multiply_instancenorm_clamp_multiply_max",
+  "difficulty": "medium",
+  "description": "A 3D convolutional layer followed by multiplication, instance normalization, clamping, multiplication, and a max operation.",
+  "provenance": "KernelBench L2 (79_conv3d_multiply_instancenorm_clamp_multiply_max)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

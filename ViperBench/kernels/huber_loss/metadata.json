@@ -1,0 +1,10 @@
+{
+  "name": "huber_loss",
+  "category": "loss",
+  "subcategory": "regression",
+  "difficulty": "easy",
+  "description": "Huber (smooth L1) loss",
+  "provenance": "KernelBench L1 (96)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

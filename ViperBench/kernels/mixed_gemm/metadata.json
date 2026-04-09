@@ -1,0 +1,10 @@
+{
+  "name": "mixed_gemm",
+  "category": "quantization",
+  "subcategory": "mixed_gemm",
+  "difficulty": "hard",
+  "description": "Mixed-precision GEMM (bf16 \u00d7 int16)",
+  "provenance": "TritonBench (mixed_gemm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

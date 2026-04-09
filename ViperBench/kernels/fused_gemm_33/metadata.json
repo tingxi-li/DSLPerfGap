@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_33",
+  "category": "fused_gemm",
+  "subcategory": "gemm_scale_batchnorm",
+  "difficulty": "medium",
+  "description": "Simple model that performs a GEMM (general matrix multiplication), applies scaling,",
+  "provenance": "KernelBench L2 (33_gemm_scale_batchnorm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

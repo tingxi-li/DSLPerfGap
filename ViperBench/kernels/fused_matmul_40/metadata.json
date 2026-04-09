@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_40",
+  "category": "fused_matmul",
+  "subcategory": "matmul_scaling_residualadd",
+  "difficulty": "medium",
+  "description": "A model that performs a matrix multiplication, scaling, and residual addition.",
+  "provenance": "KernelBench L2 (40_matmul_scaling_residualadd)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

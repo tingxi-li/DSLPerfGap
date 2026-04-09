@@ -1,0 +1,10 @@
+{
+  "name": "model_resnet101",
+  "category": "model_cnn",
+  "subcategory": "resnet101",
+  "difficulty": "hard",
+  "description": ":param block: Type of block to use (BasicBlock or Bottleneck)",
+  "provenance": "KernelBench L3 (10_resnet101)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

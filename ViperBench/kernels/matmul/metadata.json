@@ -1,0 +1,10 @@
+{
+  "name": "matmul",
+  "category": "matmul",
+  "subcategory": "linear_algebra",
+  "difficulty": "medium",
+  "description": "General matrix multiplication C = A @ B with transpose/structure/batch variants",
+  "provenance": "KernelBench L1 (kernels 1-4, 6-18) + TritonBench (gemm, addmm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

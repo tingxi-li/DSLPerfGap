@@ -1,0 +1,10 @@
+{
+  "name": "max_reduction",
+  "category": "reduction",
+  "subcategory": "max_reduction",
+  "difficulty": "easy",
+  "description": "Max Reduction",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

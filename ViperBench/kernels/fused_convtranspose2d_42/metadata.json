@@ -1,0 +1,10 @@
+{
+  "name": "fused_convtranspose2d_42",
+  "category": "fused_convtranspose2d",
+  "subcategory": "convtranspose2d_globalavgpool_biasadd_logsumexp_sum_multiply",
+  "difficulty": "medium",
+  "description": "Model that performs a transposed convolution, global average pooling, adds a bias, applies log-sum-exp, sum, and multiplication.",
+  "provenance": "KernelBench L2 (42_convtranspose2d_globalavgpool_biasadd_logsumexp_sum_multiply)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

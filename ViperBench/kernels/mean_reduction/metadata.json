@@ -1,0 +1,10 @@
+{
+  "name": "mean_reduction",
+  "category": "reduction",
+  "subcategory": "mean_reduction",
+  "difficulty": "easy",
+  "description": "Mean Reduction",
+  "provenance": "KernelBench L1",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

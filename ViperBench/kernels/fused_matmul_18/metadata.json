@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_18",
+  "category": "fused_matmul",
+  "subcategory": "matmul_sum_max_avgpool_logsumexp_logsumexp",
+  "difficulty": "medium",
+  "description": "Model that performs a sequence of operations:",
+  "provenance": "KernelBench L2 (18_matmul_sum_max_avgpool_logsumexp_logsumexp)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

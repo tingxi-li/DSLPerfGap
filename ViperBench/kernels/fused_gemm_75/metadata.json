@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_75",
+  "category": "fused_gemm",
+  "subcategory": "gemm_groupnorm_min_biasadd",
+  "difficulty": "medium",
+  "description": "Model that performs a GEMM, Group Normalization, Minimum operation, and Bias addition.",
+  "provenance": "KernelBench L2 (75_gemm_groupnorm_min_biasadd)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

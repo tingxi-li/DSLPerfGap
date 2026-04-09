@@ -1,0 +1,10 @@
+{
+  "name": "sdpa",
+  "category": "attention",
+  "subcategory": "sdpa",
+  "difficulty": "hard",
+  "description": "Scaled dot-product attention (flash attention, GQA, causal)",
+  "provenance": "KernelBench L1 (97) + TritonBench (flash_attention, template_attention, gdpa)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

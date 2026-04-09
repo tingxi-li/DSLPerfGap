@@ -1,0 +1,10 @@
+{
+  "name": "model_netvladwithghostclusters",
+  "category": "model_other",
+  "subcategory": "netvladwithghostclusters",
+  "difficulty": "hard",
+  "description": "Aggregates feature maps into a fixed size representation.  In the following",
+  "provenance": "KernelBench L3 (46_netvladwithghostclusters)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

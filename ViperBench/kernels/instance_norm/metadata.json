@@ -1,0 +1,10 @@
+{
+  "name": "instance_norm",
+  "category": "normalization",
+  "subcategory": "instance_norm",
+  "difficulty": "medium",
+  "description": "Instance normalization",
+  "provenance": "KernelBench L1 (34)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

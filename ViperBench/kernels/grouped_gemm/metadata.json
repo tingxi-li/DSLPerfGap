@@ -1,0 +1,10 @@
+{
+  "name": "grouped_gemm",
+  "category": "matmul",
+  "subcategory": "grouped",
+  "difficulty": "hard",
+  "description": "Multiple independent GEMMs batched together",
+  "provenance": "TritonBench (grouped_gemm)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

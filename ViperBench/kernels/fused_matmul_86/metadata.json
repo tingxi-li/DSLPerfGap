@@ -1,0 +1,10 @@
+{
+  "name": "fused_matmul_86",
+  "category": "fused_matmul",
+  "subcategory": "matmul_divide_gelu",
+  "difficulty": "medium",
+  "description": "A model that performs a matrix multiplication, divides by a scalar, and applies GELU activation.",
+  "provenance": "KernelBench L2 (86_matmul_divide_gelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}

@@ -1,0 +1,10 @@
+{
+  "name": "fused_gemm_12",
+  "category": "fused_gemm",
+  "subcategory": "gemm_multiply_leakyrelu",
+  "difficulty": "medium",
+  "description": "Simple model that performs a Gemm, multiplies the result, and applies LeakyReLU.",
+  "provenance": "KernelBench L2 (12_gemm_multiply_leakyrelu)",
+  "benchmark_tier": "portable",
+  "hardware_notes": ""
+}
