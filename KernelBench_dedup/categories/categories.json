@@ -1,81 +1,30 @@
 {
-  "matmul": [
-    "level1/1_square_matrix_multiplication",
-    "level1/2_standard_matrix_multiplication",
-    "level1/3_batched_matrix_multiplication",
-    "level1/4_matrix_vector_multiplication",
-    "level1/6_matmul_with_large_k_dimension",
-    "level1/7_matmul_with_small_k_dimension",
-    "level1/8_matmul_with_irregular_shapes",
-    "level1/9_tall_skinny_matrix_multiplication",
-    "level1/10_3d_tensor_matrix_multiplication",
-    "level1/11_4d_tensor_matrix_multiplication",
-    "level1/12_matmul_with_diagonal_matrices",
-    "level1/13_matmul_for_symmetric_matrices",
-    "level1/14_matmul_for_upper_triangular_matrices",
-    "level1/15_matmul_for_lower_triangular_matrices",
-    "level1/16_matmul_with_transposed_a",
-    "level1/17_matmul_with_transposed_b",
-    "level1/18_matmul_with_transposed_both",
-    "tritonbench/addmm",
-    "tritonbench/gather_gemv",
-    "tritonbench/gemm",
-    "tritonbench/grouped_gemm"
-  ],
   "conv": [
-    "level1/50_conv_standard_2d_square_input_square_kernel",
-    "level1/54_conv_standard_3d_square_input_square_kernel",
-    "level1/55_conv_standard_2d_asymmetric_input_square_kernel",
-    "level1/56_conv_standard_2d_asymmetric_input_asymmetric_kernel",
-    "level1/57_conv_transposed_2d_square_input_square_kernel",
-    "level1/58_conv_transposed_3d_asymmetric_input_asymmetric_kernel",
-    "level1/59_conv_standard_3d_asymmetric_input_square_kernel",
-    "level1/60_conv_standard_3d_square_input_asymmetric_kernel",
-    "level1/61_conv_transposed_3d_square_input_square_kernel",
-    "level1/62_conv_standard_2d_square_input_asymmetric_kernel",
-    "level1/63_conv_standard_2d_square_input_square_kernel",
-    "level1/64_conv_transposed_1d",
-    "level1/65_conv_transposed_2d_square_input_asymmetric_kernel",
-    "level1/66_conv_standard_3d_asymmetric_input_asymmetric_kernel",
-    "level1/67_conv_standard_1d",
-    "level1/68_conv_transposed_3d_square_input_asymmetric_kernel",
-    "level1/69_conv_transposed_2d_asymmetric_input_asymmetric_kernel",
-    "level1/70_conv_transposed_3d_asymmetric_input_square_kernel",
-    "level1/71_conv_transposed_2d_asymmetric_input_square_kernel",
-    "level1/72_conv_transposed_3d_asymmetric_input_asymmetric_kernel_strided_padded_grouped",
-    "level1/73_conv_transposed_3d_asymmetric_input_square_kernel_strided_padded_grouped",
-    "level1/74_conv_transposed_1d_dilated",
-    "level1/75_conv_transposed_2d_asymmetric_input_asymmetric_kernel_strided_grouped_padded_dilated",
-    "level1/76_conv_standard_1d_dilated_strided",
-    "level1/77_conv_transposed_3d_square_input_square_kernel_padded_dilated_strided",
-    "level1/78_conv_transposed_2d_asymmetric_input_asymmetric_kernel_padded",
-    "level1/79_conv_transposed_1d_asymmetric_input_square_kernel_padded_strided_dilated",
-    "level1/80_conv_standard_2d_square_input_asymmetric_kernel_dilated_padded",
-    "level1/81_conv_transposed_2d_asymmetric_input_square_kernel_dilated_padded_strided",
-    "level1/82_conv_depthwise_2d_square_input_square_kernel",
-    "level1/83_conv_depthwise_2d_square_input_asymmetric_kernel",
-    "level1/84_conv_depthwise_2d_asymmetric_input_square_kernel",
-    "level1/85_conv_depthwise_2d_asymmetric_input_asymmetric_kernel",
-    "level1/86_conv_depthwise_separable_2d",
-    "level1/87_conv_pointwise_2d"
+    "conv_depthwise_2d",
+    "conv_depthwise_separable_2d",
+    "conv_pointwise_2d",
+    "conv_standard_1d",
+    "conv_standard_2d",
+    "conv_standard_3d",
+    "conv_transposed_1d",
+    "conv_transposed_2d",
+    "conv_transposed_3d"
+  ],
+  "cumulative": [
+    "cumulative_sum",
+    "level1/90_cumprod",
+    "level1/93_masked_cumsum"
+  ],
+  "matmul": [
+    "matmul",
+    "tritonbench/gather_gemv",
+    "tritonbench/grouped_gemm"
   ],
   "activation": [
     "level1/19_relu",
-    "level1/20_leakyrelu",
-    "level1/21_sigmoid",
-    "level1/22_tanh",
     "level1/23_softmax",
-    "level1/24_logsoftmax",
     "level1/25_swish",
     "level1/26_gelu",
-    "level1/27_selu",
-    "level1/28_hardsigmoid",
-    "level1/29_softplus",
-    "level1/30_softsign",
-    "level1/31_elu",
-    "level1/32_hardtanh",
-    "level1/88_mingptnewgelu",
-    "tritonbench/geglu",
     "tritonbench/swiglu"
   ],
   "normalization": [
@@ -84,40 +33,26 @@
     "level1/35_groupnorm",
     "level1/36_rmsnorm",
     "level1/40_layernorm",
-    "tritonbench/layer_norm",
-    "tritonbench/rms_norm",
     "tritonbench/welford"
   ],
-  "pooling": [
-    "level1/41_max_pooling_1d",
-    "level1/42_max_pooling_2d",
-    "level1/43_max_pooling_3d",
-    "level1/44_average_pooling_1d",
-    "level1/45_average_pooling_2d",
-    "level1/46_average_pooling_3d"
-  ],
   "reduction": [
+    "level1/39_l2norm",
     "level1/47_sum_reduction_over_a_dimension",
-    "level1/48_mean_reduction_over_a_dimension",
-    "level1/49_max_reduction_over_a_dimension",
-    "level1/51_argmax_over_a_dimension",
-    "level1/52_argmin_over_a_dimension",
-    "level1/53_min_reduction_over_a_dimension",
-    "tritonbench/sum",
-    "level1/37_frobeniusnorm",
-    "level1/38_l1norm",
-    "level1/39_l2norm"
+    "level1/51_argmax_over_a_dimension"
+  ],
+  "pooling": [
+    "level1/42_max_pooling_2d",
+    "level1/45_average_pooling_2d"
+  ],
+  "elementwise": [
+    "level1/5_matrix_scalar_multiplication",
+    "tritonbench/vector_add",
+    "tritonbench/vector_exp"
   ],
   "loss": [
     "level1/94_mseloss",
     "level1/95_crossentropyloss",
-    "level1/96_huberloss",
-    "level1/98_kldivloss",
-    "level1/99_tripletmarginloss",
-    "level1/100_hingeloss",
-    "tritonbench/cross_entropy",
-    "tritonbench/jsd",
-    "tritonbench/kl_div"
+    "level1/98_kldivloss"
   ],
   "attention": [
     "level1/97_scaleddotproductattention",
@@ -129,76 +64,8 @@
     "tritonbench/ragged_attention",
     "tritonbench/template_attention"
   ],
-  "cumulative": [
-    "level1/89_cumsum",
-    "level1/90_cumprod",
-    "level1/91_cumsum_reverse",
-    "level1/92_cumsum_exclusive",
-    "level1/93_masked_cumsum"
-  ],
-  "embedding": [
-    "tritonbench/embedding"
-  ],
-  "positional_encoding": [
-    "tritonbench/rope"
-  ],
-  "dropout": [
-    "tritonbench/low_mem_dropout"
-  ],
-  "elementwise": [
-    "level1/5_matrix_scalar_multiplication",
-    "tritonbench/vector_add",
-    "tritonbench/vector_exp"
-  ],
-  "specialized": [
-    "tritonbench/gdn_fwd_h",
-    "tritonbench/jagged_layer_norm",
-    "tritonbench/jagged_mean",
-    "tritonbench/jagged_softmax",
-    "tritonbench/jagged_sum",
-    "tritonbench/launch_latency",
-    "tritonbench/mamba2_chunk_scan",
-    "tritonbench/mamba2_chunk_state"
-  ],
-  "fused_conv": [
-    "level2/1_conv2d_relu_biasadd",
-    "level2/4_conv2d_mish_mish",
-    "level2/6_conv3d_softmax_maxpool_maxpool",
-    "level2/7_conv3d_relu_leakyrelu_gelu_sigmoid_biasadd",
-    "level2/8_conv3d_divide_max_globalavgpool_biasadd_sum",
-    "level2/17_conv2d_instancenorm_divide",
-    "level2/21_conv2d_add_scale_sigmoid_groupnorm",
-    "level2/23_conv3d_groupnorm_mean",
-    "level2/24_conv3d_min_softmax",
-    "level2/25_conv2d_min_tanh_tanh",
-    "level2/27_conv3d_hardswish_groupnorm_mean",
-    "level2/31_conv2d_min_add_multiply",
-    "level2/32_conv2d_scaling_min",
-    "level2/35_conv2d_subtract_hardswish_maxpool_mish",
-    "level2/43_conv3d_max_logsumexp_relu",
-    "level2/46_conv2d_subtract_tanh_subtract_avgpool",
-    "level2/47_conv3d_mish_tanh",
-    "level2/48_conv3d_scaling_tanh_multiply_sigmoid",
-    "level2/52_conv2d_activation_batchnorm",
-    "level2/54_conv2d_multiply_leakyrelu_gelu",
-    "level2/57_conv2d_relu_hardswish",
-    "level2/65_conv2d_avgpool_sigmoid_sum",
-    "level2/67_conv2d_gelu_globalavgpool",
-    "level2/69_conv2d_hardswish_relu",
-    "level2/71_conv2d_divide_leakyrelu",
-    "level2/73_conv2d_batchnorm_scaling",
-    "level2/79_conv3d_multiply_instancenorm_clamp_multiply_max",
-    "level2/82_conv2d_tanh_scaling_biasadd_max",
-    "level2/83_conv3d_groupnorm_min_clamp_dropout",
-    "level2/85_conv2d_groupnorm_scale_maxpool_clamp",
-    "level2/87_conv2d_subtract_subtract_mish",
-    "level2/90_conv3d_leakyrelu_sum_clamp_gelu",
-    "level2/92_conv2d_groupnorm_tanh_hardswish_residualadd_logsumexp"
-  ],
   "fused_convtranspose": [
-    "level2/2_convtranspose2d_biasadd_clamp_scaling_clamp_divide",
-    "level2/3_convtranspose3d_sum_layernorm_avgpool_gelu",
-    "level2/5_convtranspose2d_subtract_tanh",
+    "level2/100_convtranspose3d_clamp_min_divide",
     "level2/10_convtranspose2d_maxpool_hardtanh_mean_tanh",
     "level2/11_convtranspose2d_batchnorm_tanh_maxpool_groupnorm",
     "level2/13_convtranspose3d_mean_add_softmax_tanh_scaling",
@@ -207,14 +74,17 @@
     "level2/19_convtranspose2d_gelu_groupnorm",
     "level2/20_convtranspose3d_sum_residualadd_multiply_residualadd",
     "level2/26_convtranspose3d_add_hardswish",
+    "level2/2_convtranspose2d_biasadd_clamp_scaling_clamp_divide",
     "level2/34_convtranspose3d_layernorm_gelu_scaling",
     "level2/36_convtranspose2d_min_sum_gelu_add",
     "level2/38_convtranspose3d_avgpool_clamp_softmax_multiply",
+    "level2/3_convtranspose3d_sum_layernorm_avgpool_gelu",
     "level2/42_convtranspose2d_globalavgpool_biasadd_logsumexp_sum_multiply",
     "level2/44_convtranspose2d_multiply_globalavgpool_globalavgpool_mean",
     "level2/49_convtranspose3d_softmax_sigmoid",
     "level2/50_convtranspose3d_scaling_avgpool_biasadd_scaling",
     "level2/58_convtranspose3d_logsumexp_hardswish_subtract_clamp",
+    "level2/5_convtranspose2d_subtract_tanh",
     "level2/60_convtranspose3d_swish_groupnorm_hardswish",
     "level2/61_convtranspose3d_relu_groupnorm",
     "level2/72_convtranspose3d_batchnorm_avgpool_avgpool",
@@ -224,11 +94,9 @@
     "level2/89_convtranspose3d_maxpool_softmax_subtract_swish_max",
     "level2/91_convtranspose2d_softmax_biasadd_scaling_sigmoid",
     "level2/93_convtranspose2d_add_min_gelu_multiply",
-    "level2/96_convtranspose3d_multiply_max_globalavgpool_clamp",
-    "level2/100_convtranspose3d_clamp_min_divide"
+    "level2/96_convtranspose3d_multiply_max_globalavgpool_clamp"
   ],
   "fused_gemm": [
-    "level2/9_matmul_subtract_multiply_relu",
     "level2/12_gemm_multiply_leakyrelu",
     "level2/18_matmul_sum_max_avgpool_logsumexp_logsumexp",
     "level2/28_bmm_instancenorm_sum_residualadd_multiply",
@@ -253,7 +121,8 @@
     "level2/86_matmul_divide_gelu",
     "level2/88_gemm_groupnorm_swish_multiply_swish",
     "level2/94_gemm_biasadd_hardtanh_mish_groupnorm",
-    "level2/99_matmul_gelu_softmax"
+    "level2/99_matmul_gelu_softmax",
+    "level2/9_matmul_subtract_multiply_relu"
   ],
   "fused_matmul": [
     "level2/14_gemm_divide_sum_scaling",
@@ -270,44 +139,56 @@
     "tritonbench/fused_linear_cross_entropy",
     "tritonbench/fused_linear_jsd"
   ],
+  "fused_conv": [
+    "level2/17_conv2d_instancenorm_divide",
+    "level2/1_conv2d_relu_biasadd",
+    "level2/21_conv2d_add_scale_sigmoid_groupnorm",
+    "level2/23_conv3d_groupnorm_mean",
+    "level2/24_conv3d_min_softmax",
+    "level2/25_conv2d_min_tanh_tanh",
+    "level2/27_conv3d_hardswish_groupnorm_mean",
+    "level2/31_conv2d_min_add_multiply",
+    "level2/32_conv2d_scaling_min",
+    "level2/35_conv2d_subtract_hardswish_maxpool_mish",
+    "level2/43_conv3d_max_logsumexp_relu",
+    "level2/46_conv2d_subtract_tanh_subtract_avgpool",
+    "level2/47_conv3d_mish_tanh",
+    "level2/48_conv3d_scaling_tanh_multiply_sigmoid",
+    "level2/4_conv2d_mish_mish",
+    "level2/52_conv2d_activation_batchnorm",
+    "level2/54_conv2d_multiply_leakyrelu_gelu",
+    "level2/57_conv2d_relu_hardswish",
+    "level2/65_conv2d_avgpool_sigmoid_sum",
+    "level2/67_conv2d_gelu_globalavgpool",
+    "level2/69_conv2d_hardswish_relu",
+    "level2/6_conv3d_softmax_maxpool_maxpool",
+    "level2/71_conv2d_divide_leakyrelu",
+    "level2/73_conv2d_batchnorm_scaling",
+    "level2/79_conv3d_multiply_instancenorm_clamp_multiply_max",
+    "level2/7_conv3d_relu_leakyrelu_gelu_sigmoid_biasadd",
+    "level2/82_conv2d_tanh_scaling_biasadd_max",
+    "level2/83_conv3d_groupnorm_min_clamp_dropout",
+    "level2/85_conv2d_groupnorm_scale_maxpool_clamp",
+    "level2/87_conv2d_subtract_subtract_mish",
+    "level2/8_conv3d_divide_max_globalavgpool_biasadd_sum",
+    "level2/90_conv3d_leakyrelu_sum_clamp_gelu",
+    "level2/92_conv2d_groupnorm_tanh_hardswish_residualadd_logsumexp"
+  ],
   "model_cnn": [
-    "level3/4_lenet5",
-    "level3/5_alexnet",
-    "level3/6_googlenetinceptionmodule",
-    "level3/7_googlenetinceptionv1",
-    "level3/8_resnetbasicblock",
-    "level3/9_resnet18",
-    "level3/10_resnet101",
     "level3/11_vgg16",
-    "level3/12_vgg19",
-    "level3/13_densenet121transitionlayer",
-    "level3/14_densenet121denseblock",
     "level3/15_densenet121",
-    "level3/16_densenet201",
     "level3/17_squeezenetfiremodule",
     "level3/18_squeezenet",
     "level3/19_mobilenetv1",
     "level3/20_mobilenetv2",
-    "level3/21_efficientnetmbconv",
     "level3/22_efficientnetb0",
-    "level3/23_efficientnetb1",
-    "level3/24_efficientnetb2",
-    "level3/25_shufflenetunit",
     "level3/26_shufflenet",
-    "level3/27_regnet",
-    "level3/45_unetsoftmax",
     "level3/51_resnet50",
     "level3/52_convnext"
   ],
   "model_transformer": [
     "level3/28_visiontransformer",
-    "level3/29_swinmlp",
     "level3/30_swintransformerv2",
-    "level3/31_visionattention",
-    "level3/32_convolutionalvisiontransformer",
-    "level3/43_mingptcausalattention",
-    "level3/44_minigptblock",
-    "level3/50_reluselfattention",
     "level3/53_llama_decoder_block",
     "level3/54_siglip_encoder",
     "level3/55_mixtral_moe_block",
@@ -317,24 +198,26 @@
     "level3/59_llama4_decoder_block"
   ],
   "model_rnn": [
-    "level3/33_vanillarnn",
-    "level3/34_vanillarnnhidden",
     "level3/35_lstm",
-    "level3/36_lstmhn",
-    "level3/37_lstmcn",
-    "level3/38_lstmbidirectional",
-    "level3/39_gru",
-    "level3/40_gruhidden",
-    "level3/41_grubidirectional",
-    "level3/42_grubidirectionalhidden"
+    "level3/39_gru"
   ],
-  "model_other": [
-    "level3/1_mlp",
-    "level3/2_shallowwidemlp",
-    "level3/3_deepnarrowmlp",
-    "level3/46_netvladwithghostclusters",
-    "level3/47_netvladnoghostclusters",
-    "level3/48_mamba2returny",
-    "level3/49_mamba2returnfinalstate"
+  "embedding": [
+    "tritonbench/embedding"
+  ],
+  "specialized": [
+    "tritonbench/gdn_fwd_h",
+    "tritonbench/jagged_layer_norm",
+    "tritonbench/jagged_mean",
+    "tritonbench/jagged_softmax",
+    "tritonbench/jagged_sum",
+    "tritonbench/launch_latency",
+    "tritonbench/mamba2_chunk_scan",
+    "tritonbench/mamba2_chunk_state"
+  ],
+  "dropout": [
+    "tritonbench/low_mem_dropout"
+  ],
+  "positional_encoding": [
+    "tritonbench/rope"
   ]
 }
