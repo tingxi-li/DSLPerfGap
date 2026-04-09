@@ -1,2 +1,0 @@
-kernel,category,dtype,shape,layout,size_bucket,status,latency_ms_mean,latency_ms_median,latency_ms_std,latency_ms_p95,latency_ms_min,bandwidth_gbps,max_abs_error,bad_elem_ratio,correctness_pass,input_bytes_total,theoretical_io_bytes,notes
-level1/19_relu,activation,float32,[[134217728]],contiguous,2GB,PASS,3.551741,3.545403,0.016500,3.567964,3.539350,302.854670,0.000000,0.000000,True,536870912,1073741824,
