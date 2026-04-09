@@ -245,7 +245,10 @@ _gen_cumulative = _gen_activation
 def _gen_reduction(config: Dict[str, Any], dtype_str: str, device: str) -> Dict[str, Any]:
     dt = _get_dtype(dtype_str)
     dims: List[int] = config["dims"]
-    return {"input": torch.randn(*dims, dtype=dt, device=device)}
+    result: Dict[str, Any] = {"input": torch.randn(*dims, dtype=dt, device=device)}
+    if "reduce_dim" in config:
+        result["reduce_dim"] = config["reduce_dim"]
+    return result
 
 
 # -- loss ------------------------------------------------------------------
