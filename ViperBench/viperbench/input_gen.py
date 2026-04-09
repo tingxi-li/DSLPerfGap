@@ -58,21 +58,33 @@ def _gen_matmul(config: Dict[str, Any], dtype_str: str, device: str) -> Dict[str
     A = _make(shape_a)
     B = _make(shape_b)
 
-    # Apply structure modifiers to A
+    # Apply structure modifiers to A (shape-preserving)
     if structure == "dense":
         pass
     elif structure == "diagonal":
-        diag_len = min(shape_a)
-        raw = torch.randn(diag_len, dtype=dt, device=device)
-        A = torch.diag(raw)
+        # Zero out off-diagonal elements to create a rectangular diagonal mask
+        # Works for any (rows, cols) shape — preserves original dimensions
+        rows, cols = shape_a[-2], shape_a[-1]
+        mask = torch.zeros(rows, cols, dtype=dt, device=device)
+        diag_len = min(rows, cols)
+        diag_vals = torch.randn(diag_len, dtype=dt, device=device)
+        mask[:diag_len, :diag_len] = torch.diag(diag_vals)
         if batch > 1:
-            A = A.unsqueeze(0).expand(batch, -1, -1).clone()
+            A = mask.unsqueeze(0).expand(batch, -1, -1).clone()
+        else:
+            A = mask
     elif structure == "upper_triangular":
         A = torch.triu(A)
     elif structure == "lower_triangular":
         A = torch.tril(A)
     elif structure == "symmetric":
-        # Symmetrise along the last two dims
+        # Symmetric requires square matrix (M == K for NN/NT transpose)
+        rows, cols = shape_a[-2], shape_a[-1]
+        if rows != cols:
+            raise ValueError(
+                "symmetric structure requires square A (%d != %d); "
+                "skip this config" % (rows, cols)
+            )
         A = (A + A.transpose(-1, -2)) / 2.0
     else:
         pass  # default to dense

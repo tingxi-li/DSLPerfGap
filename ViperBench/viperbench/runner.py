@@ -189,6 +189,15 @@ def _generate_sweep_configs(input_config: dict, sweep_mode: str,
                 cfg["dtype"] = dtype_str
                 for k, v in zip(extra_keys, extra_combo):
                     cfg[k] = v
+
+                # Filter invalid (shape, structure) combos for matmul
+                struct = cfg.get("structure")
+                if struct == "symmetric":
+                    M = cfg.get("M")
+                    K = cfg.get("K")
+                    if M is not None and K is not None and M != K:
+                        continue  # symmetric requires square A
+
                 configs.append(cfg)
 
     return configs
