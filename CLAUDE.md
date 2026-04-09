@@ -77,6 +77,9 @@ def reference(inputs: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
 ## Evaluation Runner
 
 ```bash
+# All commands run from ViperBench/ directory
+cd ViperBench
+
 # List all 240 kernels and implementation status
 python -m viperbench.runner --list
 
@@ -120,6 +123,7 @@ Current status: **240/240 eager, 239/240 compile** (batch_norm compile fails due
 ## Analysis
 
 ```bash
+cd ViperBench
 python -m viperbench.analyze --summary        # Per-kernel speedup table
 python -m viperbench.analyze --coverage        # Implementation coverage matrix
 python -m viperbench.analyze --speedups        # Geometric mean speedups vs eager
@@ -206,7 +210,7 @@ def my_kernel(M, N, ...):
 2. Read `reference.py` to understand the algorithm, shapes, and dtypes
 3. Read `input_config.json` for shape variants and tolerances
 4. Write `tilelang_impl.py` (or `triton_impl.py`) in the same directory
-5. Test: `python -m viperbench.runner --kernel <name> --correctness-only`
+5. Test: `cd ViperBench && python -m viperbench.runner --kernel <name> --correctness-only`
 6. If test fails, read the full error, fix the impl, retry (up to **20 attempts**)
 7. On pass: run with profiling to get latency/SOL metrics
 
@@ -236,7 +240,7 @@ Nonstandard kernel (needs custom input/metrics):
 1-6. Same as above
 7. Write kernels/<name>/input_gen.py with generate(config, dtype) -> tensors
 8. Write kernels/<name>/metrics.py with compute_flops(config) and compute_bytes(config, dtype)
-9. Test: python -m viperbench.runner --kernel <name> --correctness-only
+9. Test: cd ViperBench && python -m viperbench.runner --kernel <name> --correctness-only
 ```
 
 ## Autonomy Rules

@@ -38,6 +38,17 @@ from .metrics import compute_flops, compute_bytes, compute_sol, resolve_metrics,
 from .input_gen import generate, resolve_input_gen
 
 KERNELS_DIR = Path(__file__).resolve().parent.parent / "kernels"
+
+
+def _deep_copy_inputs(inputs):
+    """Deep-copy input dict so implementations can't mutate shared tensors."""
+    copied = {}
+    for k, v in inputs.items():
+        if isinstance(v, torch.Tensor):
+            copied[k] = v.clone()
+        else:
+            copied[k] = v
+    return copied
 CONFIGS_DIR = Path(__file__).resolve().parent.parent / "configs"
 
 # Implementation file patterns
@@ -582,7 +593,7 @@ def run_kernel(
             # Run reference at the config dtype (not necessarily fp32)
             # The golden outputs are used as-is for comparison
             with torch.no_grad():
-                golden_outputs = ref_fn(inputs)
+                golden_outputs = ref_fn(_deep_copy_inputs(inputs))
         except Exception as e:
             logger.error("    Reference run failed: %s: %s",
                          type(e).__name__, e)
@@ -625,7 +636,7 @@ def run_kernel(
                 impl_name=impl_name,
                 fn=fn,
                 golden_outputs=golden_outputs,
-                inputs=inputs,
+                inputs=_deep_copy_inputs(inputs),
                 input_config=input_config,
                 hardware=hardware,
                 category=category,
