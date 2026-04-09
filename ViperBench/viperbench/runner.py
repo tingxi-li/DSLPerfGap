@@ -583,20 +583,28 @@ def run_kernel(
             logger.error("    Input generation failed: %s", e)
             continue
 
-        # Reference run (golden outputs at fp32)
+        # Reference run — use reference_dtype (default fp32) for higher precision
         ref_path = kernel_dir / "reference.py"
         if not ref_path.exists():
             logger.error("    No reference.py found")
             continue
 
+        correctness_cfg = input_config.get("correctness", {})
+        ref_dtype_str = correctness_cfg.get("reference_dtype", "fp32")
+        ref_dtype = get_torch_dtype(ref_dtype_str)
+
         try:
             ref_module = import_module_from_path(ref_path)
             ref_fn = ref_module.reference
 
-            # Run reference at the config dtype (not necessarily fp32)
-            # The golden outputs are used as-is for comparison
+            # Cast inputs to reference dtype for golden run
+            ref_inputs = _deep_copy_inputs(inputs)
+            for k, v in ref_inputs.items():
+                if isinstance(v, torch.Tensor) and v.is_floating_point():
+                    ref_inputs[k] = v.to(ref_dtype)
+
             with torch.no_grad():
-                golden_outputs = ref_fn(_deep_copy_inputs(inputs))
+                golden_outputs = ref_fn(ref_inputs)
         except Exception as e:
             logger.error("    Reference run failed: %s: %s",
                          type(e).__name__, e)
