@@ -560,6 +560,9 @@ def run_kernel(
         logger.error("  %s", e)
         return []
 
+    # Load existing results for resumption
+    existing = _load_existing_results(RESULTS_DIR / kernel_name) if not force else {}
+
     all_results = []
 
     for ci, config in enumerate(configs):
@@ -601,6 +604,12 @@ def run_kernel(
 
         # Evaluate each implementation
         for impl_name, impl_path in sorted(impls.items()):
+            # Skip if result already exists (resumption)
+            if _result_exists(existing, kernel_name, config_name,
+                              impl_name, dtype_str):
+                logger.info("    %s: cached (use --force to re-run)", impl_name)
+                continue
+
             try:
                 fn, not_impl, module = _load_impl_callable(impl_name, impl_path)
             except Exception as e:
