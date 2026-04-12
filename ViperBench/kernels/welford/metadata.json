@@ -1,6 +1,6 @@
 {
   "name": "welford",
-  "category": "specialized",
+  "category": "reduction",
   "subcategory": "statistics",
   "difficulty": "medium",
   "description": "Welford's online variance algorithm",

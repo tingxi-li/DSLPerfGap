@@ -1,7 +1,7 @@
 {
   "name": "rope",
-  "category": "specialized",
-  "subcategory": "positional_encoding",
+  "category": "positional_encoding",
+  "subcategory": "rope",
   "difficulty": "medium",
   "description": "Rotary positional embeddings",
   "provenance": "TritonBench (rope)",
