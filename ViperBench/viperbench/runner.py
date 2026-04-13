@@ -416,12 +416,22 @@ def _result_exists(existing: dict, kernel: str, config_name: str,
 
 def _save_results(kernel_name: str, results: List[EvalResult],
                   hardware: dict, results_dir: Path):
-    """Write timing.json and append to summary.csv."""
+    """Write timing.json (merging with existing) and append to summary.csv."""
     kernel_results_dir = results_dir / kernel_name
     kernel_results_dir.mkdir(parents=True, exist_ok=True)
 
-    # Group results by config
+    # Load existing results to merge with
+    timing_path = kernel_results_dir / "timing.json"
     by_config = {}  # type: Dict[str, Dict[str, Any]]
+    if timing_path.exists():
+        with open(timing_path) as f:
+            existing = json.load(f)
+        for entry in existing.get("results", []):
+            cfg = entry.get("config", {})
+            key = "%s_%s" % (cfg.get("name", ""), cfg.get("dtype", ""))
+            by_config[key] = entry
+
+    # Overlay new results (replace matching config+impl entries)
     for r in results:
         key = "%s_%s" % (r.config_name, r.dtype)
         if key not in by_config:
@@ -440,7 +450,6 @@ def _save_results(kernel_name: str, results: List[EvalResult],
         "results": list(by_config.values()),
     }
 
-    timing_path = kernel_results_dir / "timing.json"
     with open(timing_path, "w") as f:
         json.dump(timing, f, indent=2, default=str)
 

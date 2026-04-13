@@ -338,11 +338,18 @@ def compute_bytes(category: str, config: Dict[str, Any], dtype: str) -> Optional
     if cat == "attention":
         B = int(config.get("B", config.get("batch", 1)))
         H = int(config.get("H", config.get("num_heads", 1)))
-        S = int(config.get("S", config.get("seq_q", 0)))
+        S = int(config.get("S", 0))
+        seq_q = int(config.get("seq_q", S))
+        seq_kv = int(config.get("seq_kv", seq_q))
+        kv_heads = int(config.get("kv_heads", H))
         D = int(config.get("D", config.get("head_dim", config.get("d_model", 0))))
-        if S == 0 or D == 0:
+        if seq_q == 0 or D == 0:
             return None
-        return 4 * B * H * S * D * bpe
+        # Q: (B, H, seq_q, D), K: (B, kv_heads, seq_kv, D), V: same, O: (B, H, seq_q, D)
+        q_bytes = B * H * seq_q * D * bpe
+        kv_bytes = 2 * B * kv_heads * seq_kv * D * bpe
+        o_bytes = B * H * seq_q * D * bpe
+        return q_bytes + kv_bytes + o_bytes
 
     # ------------------------------------------------------------------
     # Loss (read predictions + targets, write scalar)
