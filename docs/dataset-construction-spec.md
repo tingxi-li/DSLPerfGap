@@ -1,15 +1,20 @@
 # ViperBench Dataset Construction Specification
 
-This document describes how to transform the raw `KernelBench_dedup/` kernel
-collection into the `ViperBench/kernels/` directory structure defined in
-`docs/SPEC.md`.
+This document describes how the raw kernel collection was transformed into
+the `ViperBench/kernels/` directory structure defined in `docs/SPEC.md`.
+
+> **Note:** The original `KernelBench_dedup/` directory has been removed and
+> superseded by `kernel_samples/`, which contains the consolidated source
+> kernels organized by category.
 
 -----
 
 ## 1. Source Material
 
-| Source | Path | Count | Format |
-|--------|------|-------|--------|
+The original sources (now in `kernel_samples/`) were:
+
+| Source | Original Path | Count | Format |
+|--------|---------------|-------|--------|
 | KernelBench L1 | `KernelBench_dedup/level1/` | 100 | `Model` class + `get_inputs()` + `get_init_inputs()` |
 | KernelBench L2 | `KernelBench_dedup/level2/` | 99 | Same |
 | KernelBench L3 | `KernelBench_dedup/level3/` | 59 | Same |

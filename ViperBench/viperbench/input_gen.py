@@ -172,10 +172,9 @@ def _gen_attention(config: Dict[str, Any], dtype_str: str, device: str) -> Dict[
     B: int = config["B"]
     H: int = config["H"]
     D: int = config["D"]
-    seq_q: int = config.get("seq_q", config.get("S", 128))
-    seq_kv: int = config.get("seq_kv", seq_q)
-    kv_heads: int = config.get("kv_heads", H)
-    mask_mode: str = config.get("mask", "none")
+    seq_q: int = config.get("Sq", config.get("seq_q", config.get("S", 128)))
+    seq_kv: int = config.get("Skv", config.get("seq_kv", seq_q))
+    kv_heads: int = config.get("KVH", config.get("kv_heads", H))
 
     Q = torch.randn(B, H, seq_q, D, dtype=dt, device=device)
     K = torch.randn(B, kv_heads, seq_kv, D, dtype=dt, device=device)
@@ -183,20 +182,20 @@ def _gen_attention(config: Dict[str, Any], dtype_str: str, device: str) -> Dict[
 
     out: Dict[str, Any] = {"Q": Q, "K": K, "V": V}
 
-    if mask_mode == "causal":
-        mask = torch.tril(
-            torch.ones(seq_q, seq_kv, dtype=torch.bool, device=device)
-        )
-        out["mask"] = mask
+    # Support both bool causal flag and string mask mode
+    causal = config.get("causal", None)
+    mask_mode: str = config.get("mask", "none")
+    if causal is True:
+        out["is_causal"] = True
+    elif mask_mode == "causal":
+        out["is_causal"] = True
     elif mask_mode.startswith("sparse_"):
-        # "sparse_X" where X is a sparsity percentage (e.g. sparse_50)
         try:
             sparsity = int(mask_mode.split("_", 1)[1]) / 100.0
         except (ValueError, IndexError):
             sparsity = 0.5
         mask = torch.rand(seq_q, seq_kv, device=device) >= sparsity
         out["mask"] = mask
-    # mask_mode == "none" -> no mask key
 
     return out
 

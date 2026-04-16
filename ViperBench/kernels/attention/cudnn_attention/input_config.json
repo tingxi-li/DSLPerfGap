@@ -1,0 +1,117 @@
+{
+  "kernel": "cudnn_attention",
+  "params": {
+    "shape": [
+      {
+        "name": "short",
+        "B": 4,
+        "H": 32,
+        "Sq": 128,
+        "Skv": 128,
+        "D": 128,
+        "KVH": 32,
+        "causal": false
+      },
+      {
+        "name": "medium_gqa",
+        "B": 4,
+        "H": 32,
+        "Sq": 1024,
+        "Skv": 1024,
+        "D": 128,
+        "KVH": 8,
+        "causal": true
+      },
+      {
+        "name": "long_gqa",
+        "B": 1,
+        "H": 32,
+        "Sq": 4096,
+        "Skv": 4096,
+        "D": 128,
+        "KVH": 8,
+        "causal": true
+      },
+      {
+        "name": "very_long",
+        "B": 1,
+        "H": 32,
+        "Sq": 16384,
+        "Skv": 16384,
+        "D": 128,
+        "KVH": 8,
+        "causal": true
+      },
+      {
+        "name": "decode",
+        "B": 4,
+        "H": 32,
+        "Sq": 1,
+        "Skv": 2048,
+        "D": 128,
+        "KVH": 8,
+        "causal": true
+      },
+      {
+        "name": "cross_attn",
+        "B": 4,
+        "H": 32,
+        "Sq": 512,
+        "Skv": 2048,
+        "D": 128,
+        "KVH": 32,
+        "causal": false
+      },
+      {
+        "name": "vit",
+        "B": 8,
+        "H": 12,
+        "Sq": 197,
+        "Skv": 197,
+        "D": 64,
+        "KVH": 12,
+        "causal": false
+      },
+      {
+        "name": "irregular",
+        "B": 4,
+        "H": 32,
+        "Sq": 1337,
+        "Skv": 1337,
+        "D": 128,
+        "KVH": 8,
+        "causal": true
+      }
+    ],
+    "dtype": [
+      "fp16",
+      "bf16"
+    ]
+  },
+  "sweep_mode": "prioritized",
+  "priority_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "full_sweep": {
+    "shape": "all",
+    "dtype": "all"
+  },
+  "correctness": {
+    "atol": {
+      "fp16": 0.01,
+      "bf16": 0.01
+    },
+    "rtol": {
+      "fp16": 0.01,
+      "bf16": 0.01
+    },
+    "reference_dtype": "fp16"
+  },
+  "profiling": {
+    "warmup_iters": 10,
+    "timed_iters": 100,
+    "metric": "median",
+    "clear_l2_cache": true
+  }
+}

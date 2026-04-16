@@ -35,13 +35,10 @@ ViperBench/
     smoke_test.py             # Quick eager+compile smoke test for all 240 kernels
   results/                    # JSON + CSV eval output (per-kernel subdirs)
 
-KernelBench_dedup/            # Original source kernels (read-only reference)
-  level1/                     # 100 primitive ops
-  level2/                     # 99 fused operation chains
-  level3/                     # 50 complete models
-  tritonbench/                # 48 optimized Triton operator benchmarks
-  categories/                 # Kernel categorization (22 categories)
-  evaluation/                 # Legacy eval harness (case_generator, etc.)
+kernel_samples/               # Consolidated source kernels (supersedes KernelBench_dedup/)
+  activation/                 # Activation op sources
+  normalization/              # Normalization op sources
+  ...                         # One subdir per category
 
 docs/
   evaluation-contruction-sepc.md  # Full evaluation infrastructure specification

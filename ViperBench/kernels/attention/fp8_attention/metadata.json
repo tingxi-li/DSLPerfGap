@@ -1,0 +1,10 @@
+{
+  "name": "fp8_attention",
+  "category": "attention",
+  "subcategory": "fp8_attention",
+  "difficulty": "hard",
+  "description": "FP8 precision attention",
+  "provenance": "TritonBench (fp8_attention)",
+  "benchmark_tier": "portable",
+  "hardware_notes": "requires Hopper architecture on NVIDIA GPUs"
+}

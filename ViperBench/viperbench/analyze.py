@@ -23,6 +23,21 @@ RESULTS_DIR = Path(__file__).resolve().parent.parent / "results"
 KERNELS_DIR = Path(__file__).resolve().parent.parent / "kernels"
 
 
+def _iter_kernel_dirs() -> List[Tuple[str, Path]]:
+    """Yield (kernel_name, kernel_path) for all kernels, supporting grouped subdirs."""
+    results = []
+    for entry in sorted(KERNELS_DIR.iterdir()):
+        if not entry.is_dir():
+            continue
+        if (entry / "reference.py").exists():
+            results.append((entry.name, entry))
+        else:
+            for sub in sorted(entry.iterdir()):
+                if sub.is_dir() and (sub / "reference.py").exists():
+                    results.append((sub.name, sub))
+    return results
+
+
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
@@ -148,13 +163,13 @@ def generate_category_breakdown(category: str,
 
     # Load metadata to filter by category
     cat_kernels = set()
-    for kdir in KERNELS_DIR.iterdir():
+    for kname, kdir in _iter_kernel_dirs():
         meta = kdir / "metadata.json"
         if meta.exists():
             with open(meta) as f:
                 m = json.load(f)
             if m.get("category") == category:
-                cat_kernels.add(kdir.name)
+                cat_kernels.add(kname)
 
     filtered = [r for r in rows if r["kernel"] in cat_kernels]
     if not filtered:
@@ -200,9 +215,7 @@ def generate_coverage_matrix(results_dir: Optional[Path] = None) -> str:
     lines.append(header)
     lines.append("-" * len(header))
 
-    for kdir in sorted(KERNELS_DIR.iterdir()):
-        if not kdir.is_dir():
-            continue
+    for kname, kdir in _iter_kernel_dirs():
         ref = "yes" if (kdir / "reference.py").exists() else "-"
         compile_ = ref  # compile uses reference.py
         triton = "-"
@@ -229,7 +242,7 @@ def generate_coverage_matrix(results_dir: Optional[Path] = None) -> str:
                 pass
 
         lines.append("%-35s  %-8s  %-8s  %-8s  %-10s" % (
-            kdir.name, ref, compile_, triton, tilelang))
+            kname, ref, compile_, triton, tilelang))
 
     return "\n".join(lines)
 

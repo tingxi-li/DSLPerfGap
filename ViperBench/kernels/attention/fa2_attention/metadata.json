@@ -1,0 +1,8 @@
+{
+  "name": "fa2_attention",
+  "category": "attention",
+  "subcategory": "flash_attention_2",
+  "difficulty": "medium",
+  "description": "Flash Attention 2 via PyTorch SDPA backend selection, supports MHA/GQA/MQA with causal masking",
+  "provenance": "PyTorch SDPA (SDPBackend.FLASH_ATTENTION)"
+}

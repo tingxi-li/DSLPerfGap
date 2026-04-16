@@ -1,0 +1,8 @@
+{
+  "name": "cudnn_attention",
+  "category": "attention",
+  "subcategory": "cudnn",
+  "difficulty": "medium",
+  "description": "cuDNN attention via PyTorch SDPA backend selection, supports MHA/GQA/MQA with causal masking",
+  "provenance": "PyTorch SDPA (SDPBackend.CUDNN_ATTENTION)"
+}

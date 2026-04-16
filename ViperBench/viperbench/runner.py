@@ -40,6 +40,34 @@ from .input_gen import generate, resolve_input_gen
 KERNELS_DIR = Path(__file__).resolve().parent.parent / "kernels"
 
 
+def _find_kernel_dir(kernel_name: str) -> Optional[Path]:
+    """Locate a kernel directory, searching one level of subdirectories."""
+    direct = KERNELS_DIR / kernel_name
+    if direct.is_dir() and (direct / "reference.py").exists():
+        return direct
+    for subdir in sorted(KERNELS_DIR.iterdir()):
+        if subdir.is_dir():
+            candidate = subdir / kernel_name
+            if candidate.is_dir() and (candidate / "reference.py").exists():
+                return candidate
+    return None
+
+
+def _iter_kernel_dirs() -> List[Tuple[str, Path]]:
+    """Yield (kernel_name, kernel_path) for all kernels, supporting grouped subdirs."""
+    results = []
+    for entry in sorted(KERNELS_DIR.iterdir()):
+        if not entry.is_dir():
+            continue
+        if (entry / "reference.py").exists():
+            results.append((entry.name, entry))
+        else:
+            for sub in sorted(entry.iterdir()):
+                if sub.is_dir() and (sub / "reference.py").exists():
+                    results.append((sub.name, sub))
+    return results
+
+
 def _deep_copy_inputs(inputs):
     """Deep-copy input dict so implementations can't mutate shared tensors."""
     copied = {}
@@ -489,9 +517,7 @@ def list_kernels():
         "kernel", "ref", "triton", "tilelang", "category"))
     print("-" * 80)
 
-    for kdir in sorted(KERNELS_DIR.iterdir()):
-        if not kdir.is_dir():
-            continue
+    for kname, kdir in _iter_kernel_dirs():
         meta_path = kdir / "metadata.json"
         category = ""
         if meta_path.exists():
@@ -519,7 +545,7 @@ def list_kernels():
                     pass
 
         print("%-40s  %-8s %-8s %-8s %-8s" % (
-            kdir.name, ref, triton, tilelang, category))
+            kname, ref, triton, tilelang, category))
 
 
 # ---------------------------------------------------------------------------
@@ -537,8 +563,8 @@ def run_kernel(
     force: bool = False,
 ):
     """Run evaluation for a single kernel."""
-    kernel_dir = KERNELS_DIR / kernel_name
-    if not kernel_dir.is_dir():
+    kernel_dir = _find_kernel_dir(kernel_name)
+    if kernel_dir is None:
         print("Kernel not found: %s" % kernel_name)
         return []
 
@@ -742,7 +768,7 @@ def main():
 
     # Determine kernels to run
     if args.all:
-        kernels = sorted([d.name for d in KERNELS_DIR.iterdir() if d.is_dir()])
+        kernels = [name for name, _ in _iter_kernel_dirs()]
     else:
         kernels = [args.kernel]
 
