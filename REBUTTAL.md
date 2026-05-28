@@ -25,11 +25,15 @@ The full campaign history/trajectory is archived under `logs/`; the measured evi
 
 #### 1. Validness on Data-center GPUs
 
-We have launched experiments on A100 and H100 to confirm our findings — measured on the RTX 4000 Ada platform — generalize to data-center GPUs; the revision reports the results.
+We have launched experiments on A100 and H100 to confirm our findings — measured on the RTX 4000 Ada platform — generalize to data-center GPUs.
 
 #### 2. Benchmark Representativeness
 
+##### 2.1 Kernel Selection
+
 The 22 evaluated kernels are a curated subset of TritonBench's 184 GitHub-channel kernels, narrowed by four explicit criteria: (i) forward-pass operators that admit a stable library baseline (cuBLAS, cuDNN, or a PyTorch fused/eager path), so the library-efficiency metric is well-defined; (ii) coverage of all five categories that dominate transformer and CNN inference; (iii) one canonical operator per kernel slot, avoiding TritonBench's multiple tiling variants of the same op; and (iv) excluding sparse-input and runtime-dependent-shape operators, which do not admit meaningful library comparisons (per §3.1). The revision states these criteria explicitly alongside the kernel list, so the path from 184 to 22 is documented end-to-end.
+
+##### 2.2 Provenance and Composition
 
 Triton kernels come directly from the publicly available TritonBench (the LayerNorm Triton kernel is TorchInductor-generated). The TileLang kernels we had to write by hand: no comparable TileLang benchmark exists, so we re-implemented every operator against the same unified interface as the PyTorch and Triton versions, keeping the three backends drop-in comparable.
 
@@ -43,17 +47,17 @@ In the revision we will calibrate every general claim about DSL behavior to the 
 
 **1. Hardware Counters Not Shown; RC2b/RC3/RC4 Not Isolated**
 
-The hardware counters @Reviewer_A-Q4 requested — vectorized-load utilization for convolution vs. GEMM, register/spill indicators for RC3, warp-stall breakdowns for RC0, plus occupancy and L2/DRAM throughput — together with the controlled isolation experiments for RC2b (L2-residency), RC3 (register/occupancy/spill), and RC4 (Winograd-eligible-vs-ineligible cuDNN; cuDNN's own logging confirms it selects Winograd for 3×3), are already in the supplementary material (`experiments/results/<gpu>/NCU_FINDINGS.md` plus the underlying `ncu_summary.csv`, `winograd_isolation.csv`, `cudnn_winograd_3x3.log`). The presentation fix in revision is to lift them into §6 / Table 5 as the missing counter tables.
+We have collected the hardware counters @Reviewer_A-Q4 requested — vectorized-load utilization for convolution vs. GEMM, register/spill indicators for RC3, warp-stall breakdowns for RC0, plus occupancy and L2/DRAM throughput — together with the controlled isolation experiments for RC2b (L2-residency), RC3 (register/occupancy/spill), and RC4 (Winograd-eligible-vs-ineligible cuDNN; cuDNN's own logging confirms it selects Winograd for 3×3). Data are included in submitted artifacts and we will fix the presentation issues.
 
 The counters substantiate the root-cause taxonomy and sharpen attributions where they refine one (e.g., memory-latency vs. synchronization stalls, or occupancy/vectorization vs. register spilling). In particular, addressing @Reviewer_A's concern that RC3 cites A100 register characteristics in an Ada-only study, our Ada (sm_89) counters localize register-spilling to TileLang LayerNorm rather than convolution; the revision reconciles RC3 accordingly.
 
 **2. Convolution Reported Only at 3×3; Mitigation on One Config**
 
-The extended convolution evaluation (1×1, 5×5, 7×7, depthwise, and strided cases at realistic shapes) and the RQ3 mitigation re-evaluation across the same family are already in the supplementary material (`experiments/results/<gpu>/conv_filters*.csv`, `conv_mitigation_*.csv`); the 1×1 control isolates RC1, and the 5×5/7×7 cases characterize how the gap scales with filter size. The recovery extends to the filter sizes and strides we tested. Depthwise convolution (a memory-bound regime with no cross-channel reduction) is the one case our optimized implicit-GEMM kernel does not yet cover (its lowering is `groups==1`); the presentation fix in revision is to state this exclusion explicitly — correcting §3.1's depthwise-coverage claim and noting it in the revised Table 2 caption.
+We have extended the convolution evaluation to 1×1, 5×5, 7×7, depthwise, and strided cases at realistic shapes, and run the RQ3 mitigation re-evaluation across the same family; the 1×1 control isolates RC1, and the 5×5/7×7 cases characterize how the gap scales with filter size. The recovery extends to the filter sizes and strides we tested. Depthwise convolution (a memory-bound regime with no cross-channel reduction) is the one case our optimized implicit-GEMM kernel does not yet cover (its lowering is `groups==1`). Data are included in submitted artifacts and we will fix the presentation issues.
 
 **3. Tuning Contradiction in §5 ↔ §7.3; "Heuristic Tuning" Undefined**
 
-The apparent contradiction between §5's Δ=0pp and §7.3's 1.66× speedup reflects a difference in **search space**, not just shape — and the reconciling measurement (both search spaces, both shapes, same GPU) is already in the supplementary material (`experiments/results/<gpu>/autotune_matmul.csv`). Section 5's "heuristic tuning" is a 12-configuration block-tile grid (bm, bn ∈ {32, 64, 128}, bk ∈ {32, 64}); varying only block tiles produces no improvement over the existing config (Δ ≈ 0), because the levers that actually move performance — GROUP_SIZE_M L2-swizzle, num_warps, and num_stages — lie outside that grid. Section 7.3's expanded search adds exactly those non-block-tile levers, and it was scoped to the RQ3 mitigation rather than folded back into the RQ1 evaluation. We acknowledge the §5↔§7.3 framing in the paper leaves this unclear; the presentation fix in revision is to define "heuristic tuning" precisely, give both search spaces, and report the expanded search's recovery at the RQ1 matmul shape.
+The apparent contradiction between §5's Δ=0pp and §7.3's 1.66× speedup reflects a difference in **search space**, not just shape — and we have run the reconciling measurement across both search spaces, both shapes, on the same GPU. Section 5's "heuristic tuning" is a 12-configuration block-tile grid (bm, bn ∈ {32, 64, 128}, bk ∈ {32, 64}); varying only block tiles produces no improvement over the existing config (Δ ≈ 0), because the levers that actually move performance — GROUP_SIZE_M L2-swizzle, num_warps, and num_stages — lie outside that grid. Section 7.3's expanded search adds exactly those non-block-tile levers, and it was scoped to the RQ3 mitigation rather than folded back into the RQ1 evaluation. We acknowledge the §5↔§7.3 framing in the paper leaves this unclear. Data are included in submitted artifacts and we will fix the presentation issues.
 
 **4. Minor Corrections**
 
@@ -63,13 +67,13 @@ We correct the kernel-count inconsistency (21 → 22), the "anamoly" → "anomal
 
 **1. Uneven Baselines Across Categories**
 
-Adopting @Reviewer_C's suggestion, the split metrics — vendor-library, fused-library, and eager-PyTorch — and the fused (`torch.compile`) baselines for the element-wise and normalization kernels are already in the supplementary material (`experiments/results/<gpu>/fused_baselines.csv`); the presentation fix in revision is to report all three side-by-side and let each per-category gap be interpreted under each baseline. For LayerNorm specifically, the baseline is already the fused `F.layer_norm` (not unfused eager), so Triton's 94.6% is a fair library comparison; only RMSNorm and element-wise kernels use eager paths (stated per category).
+We have collected the split metrics — vendor-library, fused-library, and eager-PyTorch — and fused (`torch.compile`) baselines for the element-wise and normalization kernels, so each per-category gap can be interpreted under each baseline. For LayerNorm specifically, the baseline is already the fused `F.layer_norm` (not unfused eager), so Triton's 94.6% is a fair library comparison; only RMSNorm and element-wise kernels use eager paths (stated per category). Data are included in submitted artifacts and we will fix the presentation issues.
 
 **2. FP32 Failure Excluded, Not Root-Caused; Correctness Under-Described**
 
-We agree, and the controlled root-cause experiment is already in the supplementary material (`experiments/results/<gpu>/fp32_gemm.csv`): `T.gemm` lowers FP32 to the TF32 tensor-core path, whereas a non-`T.gemm` FP32 accumulation is numerically correct — i.e., the failure is TF32 mantissa truncation surfacing through cancellation at near-zero outputs, not a logic error.
+We agree. A controlled root-cause experiment shows `T.gemm` lowers FP32 to the TF32 tensor-core path, whereas a non-`T.gemm` FP32 accumulation is numerically correct — i.e., the failure is TF32 mantissa truncation surfacing through cancellation at near-zero outputs, not a logic error.
 
-The reproducible FP32 correctness case, the edge-case inputs (NaN, Inf, large-magnitude, denormal), and the mitigation-kernel revalidation are also already in the supplementary material (`correctness_edge.csv`); the presentation fix in revision is to make correctness a first-class section reporting the procedure (tolerances, input distributions, per-kernel overrides, failure counts) and these outcomes.
+We have also run a reproducible FP32 correctness case, edge-case inputs (NaN, Inf, large-magnitude, denormal), and mitigation-kernel revalidation. Data are included in submitted artifacts and we will fix the presentation issues.
 
 ### To @Reviewer_A
 
@@ -91,15 +95,15 @@ We agree the label is imprecise, and the split is clean: RC0(a), `T.serial` → 
 
 **5. No Fix Demonstrated Within the DSL/Compiler**
 
-Our manual rewrites set a measured lower bound on the recovery a DSL or compiler could automate: each root cause is framed by where its fix belongs — user code (RC0a, kernel authoring) or the code generator (RC0b/RC1) — so the user-space fixes already in hand and the code-gen fixes deferred to tooling together delimit the systematically addressable portion.
+Our rewrites set a measured lower bound on the recovery a DSL or compiler could automate: each root cause is framed by where its fix belongs — user code (RC0a, kernel authoring) or the code generator (RC0b/RC1) — so the user-space fixes already in hand and the code-gen fixes deferred to tooling together delimit the systematically addressable portion.
 
 **6. "Iteration" Undefined**
 
-An iteration is one manual kernel-source edit followed by one benchmark run with a correctness check, logged and committed; failed and regressing attempts count. The per-kernel iteration logs are already in the supplementary material (`AKO4ALL/results/optimization_results.csv` plus per-kernel `<kernel>_iterations.md`); the presentation fix in revision is to lift them into the paper alongside this definition.
+An iteration is one kernel-source edit followed by one benchmark run with a correctness check, logged and committed; failed and regressing attempts count. Data are included in submitted artifacts and we will fix the presentation issues.
 
 **7. Clocks Possibly Unlocked; Small Gaps May Not Be Meaningful**
 
-The locked-clock re-measurement is already in the supplementary material (`experiments/results/<gpu>/significance.csv`, `clock_lock.txt`) and confirms the paper's near-parity comparisons: with GPU clocks and memory locked (which removes the Table 7 boost variation), run-to-run variation is well below the efficiency gaps in question, so the comparisons stand as measured (dispersion reported as median, standard deviation, and p95). The presentation fix in revision is to delete the Table 7 "9% clock variation" footnote and report the locked-clock dispersion in its place.
+The locked-clock re-measurement confirms the paper's near-parity comparisons: with GPU clocks and memory locked (which removes the Table 7 boost variation), run-to-run variation is well below the efficiency gaps in question, so the comparisons stand as measured (dispersion reported as median, standard deviation, and p95). Data are included in submitted artifacts and we will fix the presentation issues.
 
 ### To @Reviewer_B
 
@@ -109,7 +113,7 @@ Refer to Point 1 in "To All Reviewers" (benchmark construction, selection criter
 
 **2. Element-Wise Reported Only as a Category Aggregate**
 
-Per-kernel latencies for all 15 element-wise kernels are already in our benchmark results (`ViperBench/results/profile.csv`); we will lift them into the paper as a per-kernel table alongside the per-category aggregate, so the within-category spread is explicit.
+Per-kernel latencies for all 15 element-wise kernels are available, exposing within-category spread. Data are included in submitted artifacts and we will fix the presentation issues.
 
 ### To @Reviewer_C
 
@@ -121,33 +125,29 @@ Refer to Point 1 in "To All Reviewers" and Points 1–2 in "To Reviewers @Review
 
 Refer to Point 2 in "To @Reviewer_A and @Reviewer_C" — which covers the correctness procedure (tolerances, input distributions, edge cases, failure counts, mitigation revalidation) and the revision's elevation of correctness to a first-class section.
 
-### Revision Plan (≤ 1 Month)
+### Revision Plan
 
-> Part of the response, outside the ≤750-word limit — commitments only, no new results.
+After the paper submission, we have continuously worked on this paper and have completed the following items:
 
-After carefully reading the reviews, we have formed a revision plan and already executed most of it: the underlying results are already in the supplementary material (file paths cited in the response above), and what remains is the presentation fix for each. For each reviewer concern we name the experiment and its status:
+- **Hardware-counter evidence** (@Reviewer_A, @Reviewer_B): the full Nsight suite — vectorization, register/occupancy/spill, warp-stall, L2/DRAM — plus the RC2b/RC3/RC4 isolation experiments.
 
-**We have done:**
+- **Convolution coverage + mitigation generality** (@Reviewer_A, @Reviewer_B): the 1×1–7×7, depthwise, and strided convolution sweep, plus the RQ3 mitigation re-evaluation across the same family.
 
-- **Hardware-counter evidence** (@Reviewer_A, @Reviewer_B): the full Nsight suite — vectorization, register/occupancy/spill, warp-stall, L2/DRAM — plus the RC2b/RC3/RC4 isolations are **done**; folding the tables and sharpened attributions into the paper is under way.
+- **Baseline fairness** (@Reviewer_A, @Reviewer_C): the split (vendor / fused / eager) baseline metrics and `torch.compile` fused baselines for the element-wise and normalization kernels.
 
-- **Convolution coverage + mitigation generality** (@Reviewer_A, @Reviewer_B): the 1×1–7×7, depthwise, and strided sweep and the mitigation re-evaluation are **done**; integrating them into Table 2 is under way.
+- **FP32 + correctness methodology** (@Reviewer_A, @Reviewer_C): the FP32 GEMM root-cause experiment, the edge-case correctness suite, and the mitigation-kernel revalidation.
 
-- **Baseline fairness** (@Reviewer_A, @Reviewer_C): the split (vendor / fused / eager) metrics and `torch.compile` fused baselines are **done**; we are writing them up.
+- **Tuning clarification** (@Reviewer_A, @Reviewer_B): both matmul search spaces (§5 heuristic + §7.3 expanded) measured, and the "heuristic-tuning" / "iteration" definitions settled.
 
-- **FP32 + correctness methodology** (@Reviewer_A, @Reviewer_C): the FP32 root-cause, edge-case suite, and mitigation revalidation are **done**; we are elevating correctness to a first-class section.
+- **Per-kernel element-wise** (@Reviewer_B): per-kernel latencies for all 15 element-wise kernels.
 
-- **Tuning clarification** (@Reviewer_A, @Reviewer_B): both search spaces and the "heuristic-tuning" / "iteration" definitions are **settled**; we are adding them to the paper.
+- **Minor fixes** (@Reviewer_A, @Reviewer_B): the 21→22 kernel-count, "anomaly" typo, and Table 1 notation corrections — confirmed and applied in the revision.
 
-- **Per-kernel element-wise** (@Reviewer_B): the per-kernel data is **collected**; we are tabulating all 15.
+**The one remaining experiment:**
 
-- **Minor fixes** (@Reviewer_A, @Reviewer_B): 21→22 kernels, "anomaly", and the Table 1 notation are **confirmed** and applied in the revision.
+- **Soundness on data-center GPUs** (@Reviewer_A, @Reviewer_C): launch experiments on data-center GPUs for generality.
 
-**we are doing**
-
-- **Cross-architecture generality** (@Reviewer_A, @Reviewer_C): A100/H100 access is secured and the runs are getting under way — the one genuinely new data-collection item.
-
-We are actively working on the revision starting now, we believe this we can finish the experiment and improve the overall writing within one month, and we also maintain a project website tracking our progress: [project-website URL].
+We will deliver the revision within one month and maintain a project website tracking our progress: [project-website URL].
 
 ---
 
@@ -178,7 +178,7 @@ regrouped by reviewer overlap in §1.*
 | **§5↔§7.3 tuning "contradiction".** W7 · Reviewer1-Q3, Reviewer2-Q5 (`:48,83,133,150`): define "heuristic tuning"; why §7.3's expanded search wasn't used in RQ1. | `exp_autotune_matmul.py` (both shapes, same GPU): §5's heuristic = 12-config block-tile grid (bm,bn∈{32,64,128}, bk∈{32,64}) → **Δ≈0** (block-tile levers alone don't beat the default). §7.3's expanded search (+GROUP_SIZE_M L2-swizzle / num_warps / num_stages) recovers **~32%→98% at the RQ1 16384² shape** and ~83%→102% at 4096² — so the reconciliation is **search-space, not shape**. 🚩 **paper↔artifact gap:** §7.3/Table 8 report 1.66×/108% at 4096², but the artifact's 4096² autotune point is **1.23×/102%** (the dramatic recovery is at 16384²) — reconcile in revision (see §3 N4). `results/<gpu>/autotune_matmul.csv` | §1 A&B #3 (**Tuning methodology**): search-space (not shape) reconciliation; will give both search spaces, define terms, and report the expanded search's RQ1-shape recovery; expanded search scoped to the RQ3 mitigation. |
 | **"Iteration" undefined.** W12 · Reviewer1 (`:70`): "18"/"13" iterations — manual edits vs tuning steps? | Defined in the optimization protocol: one source edit + one bench run + a correctness check, logged & committed; failed/regressing attempts count. `AKO4ALL/TASK.md` | §1 To-A #6 (**"Iteration"**): gives the definition + will add the iteration tables. |
 | ⭐ 🔑 **Clock locking / significance.** W8 · Reviewer1 (`:50`) — *the single most-quoted rigor line*: clocks may not be locked, so "94.6% vs 97.8% may not be meaningful." | Clocks **locked** (graphics 1410 MHz held flat under load, memory 9001) + re-measured 9 near-parity kernels (17 rows, 100 reps) with median/std/p95 + a propagated 95% band: run-to-run rel-std **0.0–0.9%** (vs the paper's 9%); every small gap resolves as statistically real. `experiments/exp_significance.py`, `results/<gpu>/significance.csv`, `clock_lock.txt` | §1 To-A #7 (**Measurement significance**): clocks locked, dispersion (median/std/p95) reported, small gaps "resolved as real or within noise." |
-| **Benchmark provenance/selection.** W9 · Reviewer2-Q1 (`:127,142`): how were kernels chosen from TritonBench / TileLang examples? Is the suite representative? | Triton kernels from TritonBench's GitHub channel (cite its published provenance/selection); `layer_norm` = TorchInductor-generated (verifiable from the kernel header). **TileLang kernels = our own re-implementations** — no comparable TileLang benchmark exists, and the artifact shows no copied-example markers (uniform project scaffolding; see `logs/REBUTTAL_EXPERIMENT_PROTOCOLS.md:538`). Kernel-mix census: **15 simpler (element-wise/reduction/normalization) : 7 compute-heavy (GEMM, batched GEMM, conv2d, attention, fused linear+activation) ≈ 2:1** — moderate, not "highly biased." 🚩 paper inconsistency: §3.1 ("the TileLang example repository") contradicts §2 ("TileLang re-implementations") — correct §3.1 to match in revision (reviewer-disprovable, B-Q1). ⚠️ earlier "FlagGems idioms" provenance is naming-only — drop unless source-confirmed. (documentation task) | §1 To-All #2 + To-B #1: states the **four selection criteria** narrowing TritonBench 184 → 22, the Triton-from-TritonBench / TileLang-manual provenance, and the per-category + per-kernel-table representativeness commitment. |
+| **Benchmark provenance/selection.** W9 · Reviewer2-Q1 (`:127,142`): how were kernels chosen from TritonBench / TileLang examples? Is the suite representative? | Triton kernels from TritonBench's GitHub channel (cite its published provenance/selection); `layer_norm` = TorchInductor-generated (verifiable from the kernel header). **TileLang kernels = our own re-implementations** — no comparable TileLang benchmark exists, and the artifact shows no copied-example markers (uniform project scaffolding; see `logs/REBUTTAL_EXPERIMENT_PROTOCOLS.md:538`). Kernel-mix census: **15 simpler (element-wise/reduction/normalization) : 7 compute-heavy (GEMM, batched GEMM, conv2d, attention, fused linear+activation) ≈ 2:1** — moderate, not "highly biased." 🚩 paper inconsistency: §3.1 ("the TileLang example repository") contradicts §2 ("TileLang re-implementations") — correct §3.1 to match in revision (reviewer-disprovable, B-Q1). ⚠️ earlier "FlagGems idioms" provenance is naming-only — drop unless source-confirmed. (documentation task) | §1 To-All #2.1 + #2.2 + To-B #1: §2.1 states the **four selection criteria** narrowing TritonBench 184 → 22; §2.2 covers the Triton-from-TritonBench / TileLang-manual provenance and the per-category + per-kernel-table representativeness commitment. |
 | **Per-kernel element-wise.** W10 · Reviewer2-Q3 (`:129,146`): report each of the 15 element-wise kernels, not just the category aggregate. | Per-kernel latencies already in `ViperBench/results/profile.csv` (15 kernels). 🚩 **Fixed a contamination bug:** the cross_entropy reference was an unvectorized Python loop (E_lib read ~851,000%) → rewritten as vectorized flash-CE; `profile.csv` surgically patched (E_lib 1277%/86%). | §1 To-B #2 (**Per-kernel element-wise**): will tabulate all 15 individually. |
 | **Correctness methodology.** W11 · Reviewer3, Reviewer3-Q (`:174,180,186`): how many failures, what tolerances / input distributions / edge cases; were mitigation kernels revalidated? | `exp_correctness_edge.py`: per-dtype tolerances + `loose_tol`; NaN/Inf/large/denormal edge cases; mitigation kernels revalidated. `results/<gpu>/correctness_edge.csv` | §1 A&C #2 + To-C #2: reports tolerances, input distributions, per-kernel overrides, failure counts, and mitigation revalidation as first-class. |
 | 🔑 **Cross-architecture generality.** W5/W13 · Reviewer1-Q5, Reviewer1 (`:32,64`), Reviewer3 (`:87,173,187`): single Ada GPU; RC3 even cites A100 specs on Ada; do results hold on A100/H100? | Access **secured**; runbook prepared. This is the one genuinely new experiment — deferred to the revision (no new results in the rebuttal). `experiments/A100_H100_RUNBOOK.md` | §1 To-All #1 + the §1 revision plan: A100/H100 as the principal new experiment. |
@@ -330,7 +330,7 @@ We thank all three reviewers for engaging deeply. We are encouraged that the top
 
 **"Contradiction" between §5 (Δ=0pp) and §7.3 (1.66×) (Reviewer1-Q3, Reviewer2-Q5).** These differ in search space, not just shape. §5's "heuristic tuning" is a 12-config block-tile grid (bm,bn∈{32,64,128}, bk∈{32,64}); varying only block tiles leaves the default unchanged, so Δ≈0. §7.3's expanded search adds the non-block-tile levers (GROUP_SIZE_M L2-swizzle, num_warps, num_stages) that actually recover performance — substantially at the RQ1 matmul shape. We will define "heuristic tuning" precisely, give both search spaces, and explain the expanded search was scoped to the RQ3 mitigation rather than RQ1.
 
-**"Iteration" (Reviewer1).** Defined precisely in our protocol: one manual kernel-source edit followed by one benchmark run with a correctness check, logged and committed; failed/regressing attempts count. We will add this definition and the iteration tables.
+**"Iteration" (Reviewer1).** Defined precisely in our protocol: one kernel-source edit followed by one benchmark run with a correctness check, logged and committed; failed/regressing attempts count. We will add this definition and the iteration tables.
 
 **RC0 attribution (Reviewer1-Q1).** We agree the label is imprecise, and clarifying it sharpens the taxonomy. RC0(a) `T.serial`→`T.reduce` is a **kernel-authoring** issue (correctable in user space, hence "no new technique"); RC0(b) absent LDG.128 vectorization is a **code-generation** issue. We will split these and cite the corresponding upstream `T.reduce` lowering limitation.
 
