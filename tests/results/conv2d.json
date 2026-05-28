@@ -1,0 +1,30 @@
+{
+  "kernel": "conv2d",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'N': 1, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 1, 'padding': 0, 'dilation': 1, 'label': 'basic'}",
+      "status": "PASS",
+      "max_err": 6.103515625e-05,
+      "time_ms": 907.6331480173394
+    },
+    {
+      "shape": "{'N': 2, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 2, 'padding': 0, 'dilation': 1, 'label': 'stride=2'}",
+      "status": "PASS",
+      "max_err": 0.0001220703125,
+      "time_ms": 29.44299901719205
+    },
+    {
+      "shape": "{'N': 1, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 1, 'padding': 1, 'dilation': 1, 'label': 'padding=1'}",
+      "status": "PASS",
+      "max_err": 6.103515625e-05,
+      "time_ms": 13.340136007172987
+    },
+    {
+      "shape": "{'N': 1, 'C': 3, 'H': 32, 'W': 32, 'OC': 16, 'KH': 3, 'KW': 3, 'stride': 1, 'padding': 0, 'dilation': 2, 'label': 'dilation=2'}",
+      "status": "PASS",
+      "max_err": 0.0078125,
+      "time_ms": 12.318043009145185
+    }
+  ]
+}

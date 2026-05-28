@@ -1,0 +1,30 @@
+{
+  "kernel": "logsumexp",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 32, 'N': 64, 'dim': 1}",
+      "status": "PASS",
+      "max_err": 4.76837158203125e-07,
+      "time_ms": 891.5281009976752
+    },
+    {
+      "shape": "{'M': 128, 'N': 128, 'dim': 1}",
+      "status": "PASS",
+      "max_err": 9.5367431640625e-07,
+      "time_ms": 18.936252017738298
+    },
+    {
+      "shape": "{'M': 256, 'N': 512, 'dim': 1}",
+      "status": "PASS",
+      "max_err": 1.430511474609375e-06,
+      "time_ms": 21.177715010708198
+    },
+    {
+      "shape": "{'M': 64, 'N': 1024, 'dim': 1}",
+      "status": "PASS",
+      "max_err": 1.9073486328125e-06,
+      "time_ms": 20.5058460123837
+    }
+  ]
+}

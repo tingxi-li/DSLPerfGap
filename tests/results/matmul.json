@@ -1,0 +1,30 @@
+{
+  "kernel": "matmul",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 64, 'K': 64, 'N': 64}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 3259.6333410183433
+    },
+    {
+      "shape": "{'M': 128, 'K': 256, 'N': 128}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 2568.585136992624
+    },
+    {
+      "shape": "{'M': 256, 'K': 128, 'N': 256}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 2461.9616270065308
+    },
+    {
+      "shape": "{'M': 512, 'K': 512, 'N': 512}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 2476.9170390209183
+    }
+  ]
+}

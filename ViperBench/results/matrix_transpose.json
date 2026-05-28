@@ -1,0 +1,60 @@
+{
+  "kernel": "matrix_transpose",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "32x32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 287.16823200011277
+    },
+    {
+      "name": "128x256",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.1384960014547687
+    },
+    {
+      "name": "1024x1024",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.04705700121121481
+    },
+    {
+      "name": "64x512",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.05693300045095384
+    },
+    {
+      "name": "1000x700",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 1.182631000119727
+    },
+    {
+      "name": "37x73_odd",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.05607699858956039
+    },
+    {
+      "name": "1x1000_single_row",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.9667119993537199
+    },
+    {
+      "name": "1000x1_single_col",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.995189999230206
+    },
+    {
+      "name": "7x13_small_odd",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.055391999921994284
+    }
+  ]
+}

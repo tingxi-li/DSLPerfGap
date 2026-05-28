@@ -1,0 +1,30 @@
+{
+  "kernel": "swiglu",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 32, 'D': 64}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 881.1341389955487
+    },
+    {
+      "shape": "{'M': 128, 'D': 128}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 12.956055987160653
+    },
+    {
+      "shape": "{'M': 256, 'D': 256}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 11.857136996695772
+    },
+    {
+      "shape": "{'M': 64, 'D': 512}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 11.726216995157301
+    }
+  ]
+}

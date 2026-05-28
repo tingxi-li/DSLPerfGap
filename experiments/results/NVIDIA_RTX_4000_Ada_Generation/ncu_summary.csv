@@ -1,0 +1,97 @@
+target,kernel,set,rc,metric,label,value,unit
+argmax_tilelang_large,func_kernel,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,"1,074,232,064",byte
+argmax_tilelang_large,func_kernel,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,10.19,%
+argmax_tilelang_large,func_kernel,l2dram,ref,gpu__time_duration.sum,kernel time (ns),"30,896,704",ns
+argmax_tilelang_large,func_kernel,l2dram,RC2b,lts__t_sector_hit_rate.pct,L2 hit %,0.64,%
+argmax_tilelang_large,func_kernel,loads,RC1,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,sectors/req (↑=less vectorized),16.00,sector/1
+argmax_tilelang_large,func_kernel,loads,RC1,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,bytes/sector load eff %,12.50,%
+argmax_tilelang_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,local-ld bytes (spill),0,byte
+argmax_tilelang_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,local-st bytes (spill),0,byte
+argmax_tilelang_large,func_kernel,regs,RC3,launch__occupancy_limit_registers,occ limit (reg) %,6,block
+argmax_tilelang_large,func_kernel,regs,RC3,launch__registers_per_thread,regs/thread,39,register/thread
+argmax_tilelang_large,func_kernel,regs,RC3,sm__warps_active.avg.pct_of_peak_sustained_active,achieved occ %,80.66,%
+argmax_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,stall barrier (sync),0,inst
+argmax_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,stall long_scoreboard,27.44,inst
+argmax_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0,inst
+argmax_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,0.00,inst
+argmax_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,0.00,inst
+conv2d_triton_large,conv2d_forward_kernel,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,"2,166,310,528",byte
+conv2d_triton_large,conv2d_forward_kernel,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,19.46,%
+conv2d_triton_large,conv2d_forward_kernel,l2dram,ref,gpu__time_duration.sum,kernel time (ns),"36,579,712",ns
+conv2d_triton_large,conv2d_forward_kernel,l2dram,RC2b,lts__t_sector_hit_rate.pct,L2 hit %,95.22,%
+conv2d_triton_large,conv2d_forward_kernel,loads,RC1,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,sectors/req (↑=less vectorized),5.61,sector/1
+conv2d_triton_large,conv2d_forward_kernel,loads,RC1,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,bytes/sector load eff %,36.35,%
+conv2d_triton_large,conv2d_forward_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,local-ld bytes (spill),0,byte
+conv2d_triton_large,conv2d_forward_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,local-st bytes (spill),0,byte
+conv2d_triton_large,conv2d_forward_kernel,regs,RC3,launch__occupancy_limit_registers,occ limit (reg) %,4,block
+conv2d_triton_large,conv2d_forward_kernel,regs,RC3,launch__registers_per_thread,regs/thread,128,register/thread
+conv2d_triton_large,conv2d_forward_kernel,regs,RC3,sm__warps_active.avg.pct_of_peak_sustained_active,achieved occ %,33.26,%
+conv2d_triton_large,conv2d_forward_kernel,stalls,RC0,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,stall barrier (sync),1.54,inst
+conv2d_triton_large,conv2d_forward_kernel,stalls,RC0,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,stall long_scoreboard,10.18,inst
+conv2d_triton_large,conv2d_forward_kernel,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0,inst
+conv2d_triton_large,conv2d_forward_kernel,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,1.16,inst
+conv2d_triton_large,conv2d_forward_kernel,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,0.39,inst
+layer_norm_tilelang_large,func_kernel,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,"48,986,651,776",byte
+layer_norm_tilelang_large,func_kernel,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,90.23,%
+layer_norm_tilelang_large,func_kernel,l2dram,ref,gpu__time_duration.sum,kernel time (ns),"271,161,024",ns
+layer_norm_tilelang_large,func_kernel,l2dram,RC2b,lts__t_sector_hit_rate.pct,L2 hit %,53.08,%
+layer_norm_tilelang_large,func_kernel,loads,RC1,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,sectors/req (↑=less vectorized),1,sector/1
+layer_norm_tilelang_large,func_kernel,loads,RC1,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,bytes/sector load eff %,50,%
+layer_norm_tilelang_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,local-ld bytes (spill),"51,538,558,976",byte
+layer_norm_tilelang_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,local-st bytes (spill),"34,359,738,368",byte
+layer_norm_tilelang_large,func_kernel,regs,RC3,launch__occupancy_limit_registers,occ limit (reg) %,8,block
+layer_norm_tilelang_large,func_kernel,regs,RC3,launch__registers_per_thread,regs/thread,254,register/thread
+layer_norm_tilelang_large,func_kernel,regs,RC3,sm__warps_active.avg.pct_of_peak_sustained_active,achieved occ %,16.50,%
+layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,stall barrier (sync),0,inst
+layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,stall long_scoreboard,104.91,inst
+layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0,inst
+layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,0.00,inst
+layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,1.57,inst
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,"9,872,333,952",byte
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,27.17,%
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,l2dram,ref,gpu__time_duration.sum,kernel time (ns),"123,637,216",ns
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,l2dram,RC2b,lts__t_sector_hit_rate.pct,L2 hit %,91.01,%
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,loads,RC1,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,sectors/req (↑=less vectorized),15.83,sector/1
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,loads,RC1,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,bytes/sector load eff %,99.66,%
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,local-ld bytes (spill),0,byte
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,local-st bytes (spill),0,byte
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,regs,RC3,launch__occupancy_limit_registers,occ limit (reg) %,1,block
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,regs,RC3,launch__registers_per_thread,regs/thread,218,register/thread
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,regs,RC3,sm__warps_active.avg.pct_of_peak_sustained_active,achieved occ %,16.65,%
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,stalls,RC0,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,stall barrier (sync),0.09,inst
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,stalls,RC0,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,stall long_scoreboard,0.06,inst
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0.00,inst
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,0.05,inst
+matmul_pytorch_large,ampere_fp16_s16816gemm_fp16_256x128_ldg8_f2f_stages_32x3_nn,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,0.01,inst
+matmul_triton_large,matmul_kernel,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,"69,847,397,504",byte
+matmul_triton_large,matmul_kernel,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,56.73,%
+matmul_triton_large,matmul_kernel,l2dram,ref,gpu__time_duration.sum,kernel time (ns),"363,084,448",ns
+matmul_triton_large,matmul_kernel,l2dram,RC2b,lts__t_sector_hit_rate.pct,L2 hit %,66.24,%
+matmul_triton_large,matmul_kernel,loads,RC1,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,sectors/req (↑=less vectorized),16,sector/1
+matmul_triton_large,matmul_kernel,loads,RC1,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,bytes/sector load eff %,0,%
+matmul_triton_large,matmul_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,local-ld bytes (spill),0,byte
+matmul_triton_large,matmul_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,local-st bytes (spill),0,byte
+matmul_triton_large,matmul_kernel,regs,RC3,launch__occupancy_limit_registers,occ limit (reg) %,3,block
+matmul_triton_large,matmul_kernel,regs,RC3,launch__registers_per_thread,regs/thread,154,register/thread
+matmul_triton_large,matmul_kernel,regs,RC3,sm__warps_active.avg.pct_of_peak_sustained_active,achieved occ %,24.98,%
+matmul_triton_large,matmul_kernel,stalls,RC0,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,stall barrier (sync),8.02,inst
+matmul_triton_large,matmul_kernel,stalls,RC0,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,stall long_scoreboard,22.22,inst
+matmul_triton_large,matmul_kernel,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0,inst
+matmul_triton_large,matmul_kernel,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,0.40,inst
+matmul_triton_large,matmul_kernel,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,0.55,inst
+max_reduction_tilelang_large,func_kernel,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,"2,425,975,296",byte
+max_reduction_tilelang_large,func_kernel,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,20.83,%
+max_reduction_tilelang_large,func_kernel,l2dram,ref,gpu__time_duration.sum,kernel time (ns),"34,102,432",ns
+max_reduction_tilelang_large,func_kernel,l2dram,RC2b,lts__t_sector_hit_rate.pct,L2 hit %,38.59,%
+max_reduction_tilelang_large,func_kernel,loads,RC1,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,sectors/req (↑=less vectorized),32.00,sector/1
+max_reduction_tilelang_large,func_kernel,loads,RC1,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,bytes/sector load eff %,12.50,%
+max_reduction_tilelang_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,local-ld bytes (spill),0,byte
+max_reduction_tilelang_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,local-st bytes (spill),0,byte
+max_reduction_tilelang_large,func_kernel,regs,RC3,launch__occupancy_limit_registers,occ limit (reg) %,6,block
+max_reduction_tilelang_large,func_kernel,regs,RC3,launch__registers_per_thread,regs/thread,39,register/thread
+max_reduction_tilelang_large,func_kernel,regs,RC3,sm__warps_active.avg.pct_of_peak_sustained_active,achieved occ %,64.44,%
+max_reduction_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,stall barrier (sync),0,inst
+max_reduction_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,stall long_scoreboard,86.74,inst
+max_reduction_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0,inst
+max_reduction_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,0.00,inst
+max_reduction_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,0.00,inst

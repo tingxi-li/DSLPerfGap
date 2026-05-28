@@ -1,0 +1,134 @@
+[
+  {
+    "kernel": "add",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.59
+  },
+  {
+    "kernel": "argmax",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.56
+  },
+  {
+    "kernel": "attention",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.65
+  },
+  {
+    "kernel": "batched_matmul",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.72
+  },
+  {
+    "kernel": "conv2d",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.74
+  },
+  {
+    "kernel": "cross_entropy",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.54
+  },
+  {
+    "kernel": "embedding",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.59
+  },
+  {
+    "kernel": "index_select",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.58
+  },
+  {
+    "kernel": "layer_norm",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.6
+  },
+  {
+    "kernel": "leaky_relu",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.65
+  },
+  {
+    "kernel": "linear_activation",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.66
+  },
+  {
+    "kernel": "log_softmax",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.64
+  },
+  {
+    "kernel": "logsumexp",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.64
+  },
+  {
+    "kernel": "matmul",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.72
+  },
+  {
+    "kernel": "matrix_transpose",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.56
+  },
+  {
+    "kernel": "max_reduction",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.57
+  },
+  {
+    "kernel": "mean_reduction",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.56
+  },
+  {
+    "kernel": "mul",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.54
+  },
+  {
+    "kernel": "relu",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.54
+  },
+  {
+    "kernel": "rms_norm",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.66
+  },
+  {
+    "kernel": "softmax",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.6
+  },
+  {
+    "kernel": "swiglu",
+    "status": "PASS",
+    "attempts": 1,
+    "elapsed_s": 2.53
+  }
+]

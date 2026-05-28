@@ -1,0 +1,30 @@
+{
+  "kernel": "mean_reduction",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "2D_dim0",
+      "status": "PASS",
+      "max_err": 2.9802322387695312e-08,
+      "time_ms": 294.32070899929386
+    },
+    {
+      "name": "2D_dim1_keepdim",
+      "status": "PASS",
+      "max_err": 2.2351741790771484e-08,
+      "time_ms": 0.18378100139671005
+    },
+    {
+      "name": "4D_multi_dim",
+      "status": "PASS",
+      "max_err": 1.955777406692505e-08,
+      "time_ms": 1.227673998073442
+    },
+    {
+      "name": "3D_dim2",
+      "status": "PASS",
+      "max_err": 5.960464477539063e-08,
+      "time_ms": 0.07911899956525303
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+==PROF== Connected to process 15775 (/usr/bin/python3.9)
+==PROF== Disconnected from process 15775
+"ID","Process ID","Process Name","Host Name","thread Domain:Push/Pop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Id:Domain:Start/Stop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Kernel Name","Context","Stream","Block Size","Grid Size","Device","CC","Section Name","Metric Name","Metric Unit","Metric Value"
+"0","15775","python3.9","127.0.0.1","15775  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(1, 512, 1)","0","8.9","Command line profiler metrics","dram__bytes_read.sum","byte","1,074,232,064"
+"0","15775","python3.9","127.0.0.1","15775  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(1, 512, 1)","0","8.9","Command line profiler metrics","dram__throughput.avg.pct_of_peak_sustained_elapsed","%","10.19"
+"0","15775","python3.9","127.0.0.1","15775  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(1, 512, 1)","0","8.9","Command line profiler metrics","gpu__time_duration.sum","ns","30,896,704"
+"0","15775","python3.9","127.0.0.1","15775  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(1, 512, 1)","0","8.9","Command line profiler metrics","lts__t_sector_hit_rate.pct","%","0.64"

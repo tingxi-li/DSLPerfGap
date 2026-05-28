@@ -1,0 +1,7 @@
+gpu_name,sm,timestamp_utc,kernel,shape,impl,median_ms,mean_ms,std_ms,p95_ms,e_lib_pct,ci95_band_pct,verdict,locked_gr_mhz,locked_mem_mhz
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-26T20:15:56+00:00,layer_norm,"x:(8192,8192) bf16",triton,0.9199,0.91978,0.00287,0.92458,94.52,1.08,significant: DSL slower,1410,9001
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-26T20:15:56+00:00,layer_norm,"x:(8192,8192) bf16",tilelang,275.54837,275.65697,0.55515,277.09338,0.32,0.0,significant: DSL slower,1410,9001
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-26T20:15:56+00:00,softmax,"x:(4096,32768) fp16",triton,1.81146,1.81166,0.00658,1.82989,95.2,0.77,significant: DSL slower,1410,9001
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-26T20:15:56+00:00,softmax,"x:(4096,32768) fp16",tilelang,8.66509,8.66727,0.01233,8.71014,19.9,0.1,significant: DSL slower,1410,9001
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-26T20:15:56+00:00,add,"x:(64M,) y:(64M,) fp16",triton,1.28205,1.28267,0.00535,1.30042,101.12,0.96,significant: DSL faster,1410,9001
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-26T20:15:56+00:00,add,"x:(64M,) y:(64M,) fp16",tilelang,1.71827,1.71925,0.00494,1.73043,75.45,0.56,significant: DSL slower,1410,9001

@@ -1,0 +1,26 @@
+{
+  "kernel": "linear_activation",
+  "overall": "FAIL",
+  "shapes": [
+    {
+      "shape": "{'M': 64, 'K': 64, 'N': 64, 'act': 'relu'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/linear_activation/test_kernel.py\", line 24, in make_inputs\n    a = torch.randn(M, K, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    },
+    {
+      "shape": "{'M': 128, 'K': 128, 'N': 128, 'act': 'relu'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/linear_activation/test_kernel.py\", line 24, in make_inputs\n    a = torch.randn(M, K, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    },
+    {
+      "shape": "{'M': 128, 'K': 64, 'N': 256, 'act': 'tanh'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/linear_activation/test_kernel.py\", line 24, in make_inputs\n    a = torch.randn(M, K, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    },
+    {
+      "shape": "{'M': 256, 'K': 128, 'N': 128, 'act': 'relu'}",
+      "status": "ERROR",
+      "traceback": "Traceback (most recent call last):\n  File \"/home/lxt230026/ase26/test_harness.py\", line 50, in run_test\n    inputs = make_inputs(shape)\n  File \"/home/lxt230026/ase26/newBench/linear_activation/test_kernel.py\", line 24, in make_inputs\n    a = torch.randn(M, K, device=\"cuda\", dtype=torch.float16)\n  File \"/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py\", line 412, in _lazy_init\n    torch._C._cuda_init()\nRuntimeError: No CUDA GPUs are available\n"
+    }
+  ]
+}

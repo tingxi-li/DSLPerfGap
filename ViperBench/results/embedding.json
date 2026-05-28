@@ -1,0 +1,30 @@
+{
+  "kernel": "embedding",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 296.8185429999721
+    },
+    {
+      "name": "medium",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 1.2845359997299965
+    },
+    {
+      "name": "large",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.9782279994396959
+    },
+    {
+      "name": "partial_vocab",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.98684199838317
+    }
+  ]
+}

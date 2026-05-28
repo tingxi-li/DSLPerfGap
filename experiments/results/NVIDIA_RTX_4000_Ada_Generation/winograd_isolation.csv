@@ -1,0 +1,16 @@
+gpu_name,sm,timestamp_utc,measurement,config,impl,winograd_eligible,median_ms,mean_ms,std_ms,gap_vs_cudnn,e_vs_cudnn,note
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=False,True,10.61683,10.66442,0.11785,,,nondeterministic(Winograd allowed)
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=True,True,10.85866,10.89753,0.09535,,,deterministic(Winograd mostly OFF)
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,cudnn_determinism_ab,3x3_s1,DELTA_det_minus_nondet,True,0.24183,,,,1.0228,upper bound on Winograd benefit (det - nondet)
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,3x3_s1,cudnn,True,10.56218,10.57463,0.02857,1.0,100.0,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,3x3_s1,triton,True,30.57968,30.9193,1.02521,2.895,34.54,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,3x3_s1,tilelang,True,115.71802,115.7217,0.0454,10.956,9.13,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,3x3_s2,cudnn,False,4.03046,4.03089,0.0037,1.0,100.0,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,3x3_s2,triton,False,11.92141,11.90137,0.11892,2.958,33.81,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,3x3_s2,tilelang,False,21.72314,21.72485,0.02011,5.39,18.55,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,5x5_s1,cudnn,False,23.74346,23.80031,0.27093,1.0,100.0,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,5x5_s1,triton,False,152.09369,152.037,0.83138,6.406,15.61,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,5x5_s1,tilelang,False,oom,oom,oom,oom,oom,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,7x7_s1,cudnn,False,43.13395,43.08453,0.31045,1.0,100.0,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,7x7_s1,triton,False,325.16156,324.87197,0.97903,7.538,13.27,
+NVIDIA RTX 4000 Ada Generation,sm_89,2026-05-25T23:41:35+00:00,eligible_vs_ineligible,7x7_s1,tilelang,False,oom,oom,oom,oom,oom,

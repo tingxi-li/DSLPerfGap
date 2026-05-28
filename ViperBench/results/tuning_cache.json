@@ -1,0 +1,183 @@
+{
+  "add/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE": 8192
+  },
+  "add/tilelang/RTX_4000_Ada": {
+    "block_N": 2048,
+    "threads": 256
+  },
+  "argmax/triton/RTX_4000_Ada": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 256
+  },
+  "argmax/tilelang/RTX_4000_Ada": {
+    "block_M": 16,
+    "block_K": 32,
+    "threads": 256
+  },
+  "attention/triton/RTX_4000_Ada": {
+    "BT": 16,
+    "num_warps": 4
+  },
+  "attention/tilelang/RTX_4000_Ada": {
+    "block_M": 32,
+    "block_N": 32,
+    "block_K": 32,
+    "threads": 128
+  },
+  "batched_matmul/triton/RTX_4000_Ada": {
+    "block_m": 8,
+    "block_n": 64,
+    "block_k": 32
+  },
+  "batched_matmul/tilelang/RTX_4000_Ada": {
+    "block_N": 32,
+    "block_K": 64,
+    "threads": 128
+  },
+  "conv2d/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE_BATCH_HEIGHT_WIDTH": 128,
+    "BLOCK_SIZE_IN_FEAT": 16,
+    "BLOCK_SIZE_OUT_FEAT": 32
+  },
+  "conv2d/tilelang/RTX_4000_Ada": {
+    "BLOCK_M": 32,
+    "BLOCK_N": 64,
+    "BLOCK_K": 32,
+    "NUM_STAGES": 2
+  },
+  "cross_entropy/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE": 256
+  },
+  "cross_entropy/tilelang/RTX_4000_Ada": {
+    "threads": 128
+  },
+  "embedding/triton/RTX_4000_Ada": {
+    "BLOCK_N": 32,
+    "num_warps": 2
+  },
+  "embedding/tilelang/RTX_4000_Ada": {
+    "block_N": 4,
+    "block_D": 64,
+    "threads": 256
+  },
+  "index_select/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE_COL": 256
+  },
+  "index_select/tilelang/RTX_4000_Ada": {
+    "block_N": 32,
+    "threads": 256
+  },
+  "layer_norm/triton/RTX_4000_Ada": {
+    "RBLOCK": 512
+  },
+  "layer_norm/tilelang/RTX_4000_Ada": {
+    "threads": 32
+  },
+  "leaky_relu/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 128,
+    "BLOCK_SIZE_K": 64,
+    "GROUP_SIZE_M": 8
+  },
+  "leaky_relu/tilelang/RTX_4000_Ada": {
+    "block_M": 128,
+    "block_N": 64,
+    "block_K": 32,
+    "num_stages": 3
+  },
+  "linear_activation/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 64,
+    "BLOCK_SIZE_K": 32
+  },
+  "linear_activation/tilelang/RTX_4000_Ada": {
+    "block_M": 64,
+    "block_N": 64,
+    "block_K": 32,
+    "num_stages": 2
+  },
+  "log_softmax/triton/RTX_4000_Ada": {
+    "BLOCK_M": 4
+  },
+  "log_softmax/tilelang/RTX_4000_Ada": {
+    "threads": 256
+  },
+  "logsumexp/triton/RTX_4000_Ada": {
+    "num_warps": 16
+  },
+  "logsumexp/tilelang/RTX_4000_Ada": {
+    "block_M": 8,
+    "threads": 256
+  },
+  "matmul/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE_M": 64,
+    "BLOCK_SIZE_N": 128,
+    "BLOCK_SIZE_K": 32
+  },
+  "matmul/tilelang/RTX_4000_Ada": {
+    "block_M": 64,
+    "block_N": 64,
+    "block_K": 32,
+    "num_stages": 3
+  },
+  "matrix_transpose/triton/RTX_4000_Ada": {
+    "BLOCK_ROWS": 16,
+    "BLOCK_COLS": 64
+  },
+  "matrix_transpose/tilelang/RTX_4000_Ada": {
+    "block_M": 64,
+    "block_N": 32,
+    "threads": 128
+  },
+  "max_reduction/triton/RTX_4000_Ada": {
+    "BLOCK_M": 4
+  },
+  "max_reduction/tilelang/RTX_4000_Ada": {
+    "block_M": 32,
+    "block_K": 16,
+    "threads": 256
+  },
+  "mean_reduction/triton/RTX_4000_Ada": {
+    "BLOCK_M": 4,
+    "BLOCK_N": 16
+  },
+  "mean_reduction/tilelang/RTX_4000_Ada": {
+    "block_M": 16,
+    "block_K": 32,
+    "threads": 256
+  },
+  "mul/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE": 4096
+  },
+  "mul/tilelang/RTX_4000_Ada": {
+    "block_N": 1024,
+    "threads": 256
+  },
+  "relu/triton/RTX_4000_Ada": {
+    "BLOCK_SIZE": 4096
+  },
+  "relu/tilelang/RTX_4000_Ada": {
+    "block_N": 2048,
+    "threads": 256
+  },
+  "rms_norm/triton/RTX_4000_Ada": {
+    "num_warps": 8
+  },
+  "rms_norm/tilelang/RTX_4000_Ada": {
+    "threads": 32
+  },
+  "softmax/triton/RTX_4000_Ada": {
+    "num_warps": 16
+  },
+  "softmax/tilelang/RTX_4000_Ada": {
+    "threads": 32
+  },
+  "swiglu/triton/RTX_4000_Ada": {
+    "BLOCK_N": 256
+  },
+  "swiglu/tilelang/RTX_4000_Ada": {
+    "block_M": 16,
+    "threads": 128
+  }
+}

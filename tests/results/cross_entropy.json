@@ -1,0 +1,30 @@
+{
+  "kernel": "cross_entropy",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'N': 32, 'V': 100, 'name': 'small'}",
+      "status": "PASS",
+      "max_err": 4.76837158203125e-07,
+      "time_ms": 885.3916390216909
+    },
+    {
+      "shape": "{'N': 128, 'V': 1000, 'name': 'medium'}",
+      "status": "PASS",
+      "max_err": 1.9073486328125e-06,
+      "time_ms": 10.107302019605413
+    },
+    {
+      "shape": "{'N': 512, 'V': 5000, 'name': 'large'}",
+      "status": "PASS",
+      "max_err": 3.814697265625e-06,
+      "time_ms": 9.234577999450266
+    },
+    {
+      "shape": "{'N': 16, 'V': 10, 'name': 'edge'}",
+      "status": "PASS",
+      "max_err": 2.384185791015625e-07,
+      "time_ms": 8.070518990280107
+    }
+  ]
+}

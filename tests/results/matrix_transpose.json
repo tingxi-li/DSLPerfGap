@@ -1,0 +1,30 @@
+{
+  "kernel": "matrix_transpose",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 64, 'N': 64}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 889.1325779841281
+    },
+    {
+      "shape": "{'M': 128, 'N': 256}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 11.60989998606965
+    },
+    {
+      "shape": "{'M': 256, 'N': 128}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 10.772069013910368
+    },
+    {
+      "shape": "{'M': 512, 'N': 512}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 10.205346014117822
+    }
+  ]
+}

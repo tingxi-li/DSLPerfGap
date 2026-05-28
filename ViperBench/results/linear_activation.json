@@ -1,0 +1,30 @@
+{
+  "kernel": "linear_activation",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "2x4x64",
+      "status": "PASS",
+      "max_err": 0.00390625,
+      "time_ms": 303.1322099996032
+    },
+    {
+      "name": "3x4x64",
+      "status": "PASS",
+      "max_err": 0.00048828125,
+      "time_ms": 0.15512399841099977
+    },
+    {
+      "name": "2x8x64",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 1.3774029976048041
+    },
+    {
+      "name": "1x16x128",
+      "status": "PASS",
+      "max_err": 0.001953125,
+      "time_ms": 0.0909629998204764
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "kernel": "index_select",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'N': 32, 'V': 100, 'D': 64}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 899.1313200094737
+    },
+    {
+      "shape": "{'N': 128, 'V': 500, 'D': 128}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 11.072463006712496
+    },
+    {
+      "shape": "{'N': 256, 'V': 1000, 'D': 256}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 10.098302009282634
+    },
+    {
+      "shape": "{'N': 64, 'V': 200, 'D': 512}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 9.603267011698335
+    }
+  ]
+}

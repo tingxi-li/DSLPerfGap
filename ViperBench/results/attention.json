@@ -1,0 +1,36 @@
+{
+  "kernel": "attention",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "basic_no_flags",
+      "status": "PASS",
+      "max_err": 9.5367431640625e-06,
+      "time_ms": 292.81627100135665
+    },
+    {
+      "name": "medium_no_flags",
+      "status": "PASS",
+      "max_err": 1.52587890625e-05,
+      "time_ms": 3.048744998523034
+    },
+    {
+      "name": "ifcond_true",
+      "status": "PASS",
+      "max_err": 7.62939453125e-06,
+      "time_ms": 1.264345999516081
+    },
+    {
+      "name": "small_seq",
+      "status": "PASS",
+      "max_err": 3.814697265625e-06,
+      "time_ms": 1.0752390007837676
+    },
+    {
+      "name": "store_true",
+      "status": "PASS",
+      "max_err": 1.1444091796875e-05,
+      "time_ms": 1.1293259994999971
+    }
+  ]
+}

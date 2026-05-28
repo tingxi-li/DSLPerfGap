@@ -1,0 +1,48 @@
+{
+  "kernel": "index_select",
+  "overall": "PASS",
+  "test_cases": [
+    {
+      "name": "small_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 298.1892300012987
+    },
+    {
+      "name": "medium_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 1.3284919987199828
+    },
+    {
+      "name": "large_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.07960400034789927
+    },
+    {
+      "name": "single_index_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 1.059897000232013
+    },
+    {
+      "name": "small_fp16",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.9629719970689621
+    },
+    {
+      "name": "3d_source_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.08488299863529392
+    },
+    {
+      "name": "odd_shape_fp32",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 0.9015139985422138
+    }
+  ]
+}

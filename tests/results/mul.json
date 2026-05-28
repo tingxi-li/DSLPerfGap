@@ -1,0 +1,30 @@
+{
+  "kernel": "mul",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 16}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 889.0021629922558
+    },
+    {
+      "shape": "{'M': 128}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 11.010524991434067
+    },
+    {
+      "shape": "{'M': 1024}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 9.535552002489567
+    },
+    {
+      "shape": "{'M': 4096}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 9.569039015332237
+    }
+  ]
+}

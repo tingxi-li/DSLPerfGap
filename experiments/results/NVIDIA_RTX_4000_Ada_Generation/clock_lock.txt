@@ -1,0 +1,28 @@
+# Clock-lock verification — 2026-05-26T20:16:59Z
+# Path A (rebuttal L72 / R1 reviews.txt:50). GPU 0 = RTX 4000 Ada (130 W cap).
+# Target lock: graphics 1400 MHz (-> 1410 step), memory 9001 MHz.
+
+## idle clocks (before load):
+clocks.current.graphics [MHz], clocks.current.memory [MHz], power.draw [W], temperature.gpu
+1410 MHz, 9001 MHz, 25.11 W, 44
+
+## under sustained fp16 matmul load (graphics must HOLD at the lock, power < 130 W):
+time_s, gr_MHz, mem_MHz, power_W, temp_C
+1410 MHz, 9001 MHz, 25.11 W, 44
+1410 MHz, 8551 MHz, 125.83 W, 56
+1410 MHz, 8551 MHz, 126.38 W, 58
+1410 MHz, 8551 MHz, 126.91 W, 60
+1410 MHz, 8551 MHz, 127.61 W, 62
+1410 MHz, 8551 MHz, 128.07 W, 64
+1410 MHz, 8551 MHz, 128.68 W, 66
+1410 MHz, 8551 MHz, 129.09 W, 67
+
+## interpretation
+- graphics: held FLAT at 1410 MHz across idle->load (the -lgc 1400 lock holds; no
+  thermal decay, vs the unlocked 1545->1425 drift). power 125-129 W (< 130 W cap).
+- memory: 9001 MHz idle (locked to max bin); reads 8551 MHz under compute load as the
+  130 W budget balances core+memory. DETERMINISTIC (graphics pinned => fixed split),
+  so every run sees the same 8551 -> reproducible.
+- effect: within-run rel-std = 0.0-0.9% (significance.csv), vs the paper's 9%
+  cross-session figure (Table 7). The small near-parity gaps are now resolvable.
+- reset after benchmarking:  sudo nvidia-smi -i 0 -rgc -rmc

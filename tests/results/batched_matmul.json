@@ -1,0 +1,5 @@
+{
+  "kernel": "batched_matmul",
+  "overall": "FAIL",
+  "note": "Failed after 20 attempts"
+}

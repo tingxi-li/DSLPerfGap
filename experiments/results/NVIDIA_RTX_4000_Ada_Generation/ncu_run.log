@@ -1,0 +1,316 @@
+======================================================================
+ ncu_counters.sh -- ASE-2026 #4134 Exp 1 hardware-counter collection
+======================================================================
+-----------------------------------------------------------------------------
+ STEP 0 -- UNBLOCK NCU COUNTERS (admin-only, ~15 min, one reboot)
+-----------------------------------------------------------------------------
+ Nsight Compute hardware counters are gated by the NVIDIA driver. Until an
+ admin lifts the restriction, EVERY collection returns ERR_NVGPUCTRPERM
+ (including launch__registers_per_thread and the default sections).
+
+ Hand the sysadmin (RHEL9 here; sudo is disallowed for the artifact user):
+
+   echo 'options nvidia NVreg_RestrictProfilingToAdminUsers=0' \
+       | sudo tee /etc/modprobe.d/nvidia-profiling.conf
+   sudo dracut -f          # RHEL9   (Debian/Ubuntu: sudo update-initramfs -u)
+   sudo reboot             # or rmmod/modprobe the nvidia* modules if headless
+
+ Verify afterwards (NO sudo needed):
+   grep RmProfilingAdminOnly /proc/driver/nvidia/params     # must read 0
+
+ Fallbacks if admin declines:
+   * a one-off  sudo ncu ...   collection, OR
+   * the admin-free register/spill path (Triton kernel.n_regs / n_spills,
+     ptxas -v, cudaFuncAttributes.numRegs) -- Experiment 3 Path A.
+
+ On a cloud A100/H100 root instance you can run the three lines yourself.
+-----------------------------------------------------------------------------
+[ncu_counters] using ncu: /usr/local/cuda/bin/ncu
+NVIDIA (R) Nsight Compute Command Line Profiler
+Copyright (c) 2018-2024 NVIDIA Corporation
+Version 2024.3.2.0 (build 34861637) (public-release)
+[ncu_counters] checking counter permission via: grep RmProfilingAdminOnly /proc/driver/nvidia/params
+[ncu_counters] /proc/driver/nvidia/params: RmProfilingAdminOnly: 0
+[ncu_counters] OK: counters appear UNBLOCKED (RmProfilingAdminOnly == 0).
+[ncu_counters] GPU slug: NVIDIA_RTX_4000_Ada_Generation
+[ncu_counters] output dir: /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu
+
+[ncu_counters] targets (6):
+   - conv2d:triton:large
+   - matmul:triton:large
+   - matmul:pytorch:large
+   - layer_norm:tilelang:large
+   - argmax:tilelang:large
+   - max_reduction:tilelang:large
+[ncu_counters] metric sets per target: A(loads) B(regs) C(stalls) D(l2dram)
+
+----------------------------------------------------------------------
+[ncu_counters] set A (loads): conv2d / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/conv2d_triton_large_loads.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] conv2d / triton / large  (x:(32,256,128,128) w:(256,256,3,3) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set B (regs): conv2d / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/conv2d_triton_large_regs.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] conv2d / triton / large  (x:(32,256,128,128) w:(256,256,3,3) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set C (stalls): conv2d / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/conv2d_triton_large_stalls.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] conv2d / triton / large  (x:(32,256,128,128) w:(256,256,3,3) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set D (l2dram): conv2d / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/conv2d_triton_large_l2dram.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] conv2d / triton / large  (x:(32,256,128,128) w:(256,256,3,3) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set A (loads): matmul / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_triton_large_loads.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / triton / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set B (regs): matmul / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_triton_large_regs.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / triton / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set C (stalls): matmul / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_triton_large_stalls.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / triton / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set D (l2dram): matmul / triton / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_triton_large_l2dram.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / triton / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set A (loads): matmul / pytorch / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_pytorch_large_loads.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / pytorch / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set B (regs): matmul / pytorch / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_pytorch_large_regs.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / pytorch / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set C (stalls): matmul / pytorch / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_pytorch_large_stalls.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / pytorch / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set D (l2dram): matmul / pytorch / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/matmul_pytorch_large_l2dram.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] matmul / pytorch / large  (A:(16384,16384) B:(16384,16384) fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set A (loads): layer_norm / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/layer_norm_tilelang_large_loads.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] layer_norm / tilelang / large  (x:(8192,8192) bf16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set B (regs): layer_norm / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/layer_norm_tilelang_large_regs.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] layer_norm / tilelang / large  (x:(8192,8192) bf16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set C (stalls): layer_norm / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/layer_norm_tilelang_large_stalls.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] layer_norm / tilelang / large  (x:(8192,8192) bf16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set D (l2dram): layer_norm / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/layer_norm_tilelang_large_l2dram.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] layer_norm / tilelang / large  (x:(8192,8192) bf16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set A (loads): argmax / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/argmax_tilelang_large_loads.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] argmax / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set B (regs): argmax / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/argmax_tilelang_large_regs.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] argmax / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set C (stalls): argmax / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/argmax_tilelang_large_stalls.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] argmax / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set D (l2dram): argmax / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/argmax_tilelang_large_l2dram.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] argmax / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set A (loads): max_reduction / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/max_reduction_tilelang_large_loads.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] max_reduction / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set B (regs): max_reduction / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/max_reduction_tilelang_large_regs.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] max_reduction / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set C (stalls): max_reduction / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/max_reduction_tilelang_large_stalls.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] max_reduction / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+----------------------------------------------------------------------
+[ncu_counters] set D (l2dram): max_reduction / tilelang / large
+               -> /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu/max_reduction_tilelang_large_l2dram.csv
+----------------------------------------------------------------------
+/home/lxt230026/.local/lib/python3.9/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[run_one_kernel] max_reduction / tilelang / large  (x:(8192,32768) dim=1 fp16)
+[run_one_kernel] GPU: NVIDIA RTX 4000 Ada Generation
+[run_one_kernel] warmup=5  nvtx_range='TARGET'
+[run_one_kernel] done: 1 launch profiled inside 'TARGET'.
+
+======================================================================
+[ncu_counters] done: 24 collections attempted, 0 failed.
+[ncu_counters] CSVs in: /home/lxt230026/ASE-GPUDSL-ARTIFACT/experiments/results/NVIDIA_RTX_4000_Ada_Generation/ncu
+[ncu_counters] consolidate into the Exp-1 table (RC0/RC2b/RC3/ref) per
+               REBUTTAL_PROTOCOLS_CRITICAL.md, then -> ncu_counters.csv.
+======================================================================

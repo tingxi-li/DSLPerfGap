@@ -1,0 +1,30 @@
+{
+  "kernel": "relu",
+  "overall": "PASS",
+  "shapes": [
+    {
+      "shape": "{'M': 16}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 887.540384021122
+    },
+    {
+      "shape": "{'M': 128}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 9.970178012736142
+    },
+    {
+      "shape": "{'M': 1024}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 8.711531001608819
+    },
+    {
+      "shape": "{'M': 4096}",
+      "status": "PASS",
+      "max_err": 0.0,
+      "time_ms": 8.660747000249103
+    }
+  ]
+}
