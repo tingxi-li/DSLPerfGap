@@ -20,10 +20,9 @@ The full campaign history/trajectory is archived under `logs/`; the measured evi
 > with "Refer to Point X" cross-references. It folds in every fix discussed, so it currently runs
 > **over** the 750-word soft limit; the revision plan (now §1's closing subsection) is deliberately outside the limit. We will
 > trim §1 to ≤750 once the structure is approved. The prior ≤750 5-group draft is kept in **Appendix A**.
-
 ### To All Reviewers
 
-#### 1. Validness on Data-center GPUs
+#### 1. Validity on Data-center GPUs
 
 We have launched experiments on A100 and H100 to confirm our findings — measured on the RTX 4000 Ada platform — generalize to data-center GPUs.
 
@@ -35,7 +34,7 @@ The 22 evaluated kernels are a curated subset of TritonBench's 184 GitHub-channe
 
 ##### 2.2 Provenance and Composition
 
-Triton kernels come directly from the publicly available TritonBench (the LayerNorm Triton kernel is TorchInductor-generated). The TileLang kernels we had to write by hand: no comparable TileLang benchmark exists, so we re-implemented every operator against the same unified interface as the PyTorch and Triton versions, keeping the three backends drop-in comparable.
+Triton kernels come directly from the publicly available TritonBench (the LayerNorm Triton kernel is TorchInductor-generated). The TileLang kernels we re-implement from scratch: no comparable TileLang benchmark exists, so we re-implemented every operator against the same unified interface as the PyTorch and Triton versions, keeping the three backends drop-in comparable.
 
 This composition is therefore not skewed to easy kernels: it covers the compute-heavy operators central to transformer and CNN inference, not only the simpler element-wise and reduction kernels. We report efficiency **per category** rather than as one blended figure, so the aggregate "Overall" efficiency is not dominated by any single class; in the revision we will add a **per-kernel** table alongside the per-category one to make the composition explicit. The per-category split is also what reveals where each DSL is competitive (Triton on element-wise and normalization) and where it is not (convolution; TileLang is uneven even on the simpler operators).
 
@@ -95,7 +94,7 @@ We agree the label is imprecise, and the split is clean: RC0(a), `T.serial` → 
 
 **5. No Fix Demonstrated Within the DSL/Compiler**
 
-Our rewrites set a measured lower bound on the recovery a DSL or compiler could automate: each root cause is framed by where its fix belongs — user code (RC0a, kernel authoring) or the code generator (RC0b/RC1) — so the user-space fixes already in hand and the code-gen fixes deferred to tooling together delimit the systematically addressable portion.
+Our rewrites set a measured lower bound on the mitigation kernel's recovery a DSL or compiler could automate: each root cause is framed by where its fix belongs — user code (RC0a, kernel authoring) or the code generator (RC0b/RC1) — so the user-space fixes already in hand and the code-gen fixes deferred to tooling together delimit the systematically addressable portion.
 
 **6. "Iteration" Undefined**
 
@@ -137,17 +136,16 @@ After the paper submission, we have continuously worked on this paper and have c
 
 - **FP32 + correctness methodology** (@Reviewer_A, @Reviewer_C): the FP32 GEMM root-cause experiment, the edge-case correctness suite, and the mitigation-kernel revalidation.
 
-- **Tuning clarification** (@Reviewer_A, @Reviewer_B): both matmul search spaces (§5 heuristic + §7.3 expanded) measured, and the "heuristic-tuning" / "iteration" definitions settled.
+- **Tuning clarification** (@Reviewer_A, @Reviewer_B): both matmul search spaces (§5 heuristic + §7.3 expanded) measured, and the "heuristic tuning" / "iteration" definitions settled.
 
 - **Per-kernel element-wise** (@Reviewer_B): per-kernel latencies for all 15 element-wise kernels.
 
-- **Minor fixes** (@Reviewer_A, @Reviewer_B): the 21→22 kernel-count, "anomaly" typo, and Table 1 notation corrections — confirmed and applied in the revision.
+- **Minor fixes** (@Reviewer_A, @Reviewer_B): the 21→22 kernel-count, typo, and Table 1 notation corrections — confirmed and applied in the revision.
 
 **The one remaining experiment:**
 
-- **Soundness on data-center GPUs** (@Reviewer_A, @Reviewer_C): launch experiments on data-center GPUs for generality.
+- **Validity on data-center GPUs** (@Reviewer_A, @Reviewer_C): experiments on A100 and H100 are underway; the revision will report the results.
 
-We will deliver the revision within one month and maintain a project website tracking our progress: [project-website URL].
 
 ---
 

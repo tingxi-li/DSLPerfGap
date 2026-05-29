@@ -1,0 +1,449 @@
+@inproceedings{tillet2019triton,
+author = {Tillet, Philippe and Kung, H. T. and Cox, David},
+title = {Triton: an intermediate language and compiler for tiled neural network computations},
+year = {2019},
+isbn = {9781450367196},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3315508.3329973},
+doi = {10.1145/3315508.3329973},
+abstract = {The validation and deployment of novel research ideas in the field of Deep Learning is often limited by the availability of efficient compute kernels for certain basic primitives. In particular, operations that cannot leverage existing vendor libraries (e.g., cuBLAS, cuDNN) are at risk of facing poor device utilization unless custom implementations are written by experts – usually at the expense of portability. For this reason, the development of new programming abstractions for specifying custom Deep Learning workloads at a minimal performance cost has become crucial. We present Triton, a language and compiler centered around the concept of tile, i.e., statically shaped multi-dimensional sub-arrays. Our approach revolves around (1) a C-based language and an LLVM-based intermediate representation (IR) for expressing tensor programs in terms of operations on parametric tile variables and (2) a set of novel tile-level optimization passes for compiling these programs into efficient GPU code. We demonstrate how Triton can be used to build portable implementations of matrix multiplication and convolution kernels on par with hand-tuned vendor libraries (cuBLAS / cuDNN), or for efficiently implementing recent research ideas such as shift convolutions.},
+booktitle = {Proceedings of the 3rd ACM SIGPLAN International Workshop on Machine Learning and Programming Languages},
+pages = {10–19},
+numpages = {10},
+keywords = {neural networks, compiler, GPU},
+location = {Phoenix, AZ, USA},
+series = {MAPL 2019}
+}
+
+@misc{openai2021triton,
+  title        = {Introducing {Triton}: Open-Source {GPU} Programming for Neural Networks},
+  author       = {{OpenAI}},
+  year         = {2021},
+  howpublished = {\url{https://openai.com/index/triton/}}
+}
+
+@inproceedings{wang2025tilelang,
+title={TileLang: Bridge Programmability and Performance in Modern Neural Kernels},
+author={Lei Wang and Yu Cheng and Yining Shi and Zhiwen Mo and Zhengju Tang and Wenhao Xie and Tong Wu and Lingxiao Ma and Yuqing Xia and Jilong Xue and Fan Yang and Zhi Yang},
+booktitle={The Fourteenth International Conference on Learning Representations},
+year={2026},
+url={https://openreview.net/forum?id=Jb1WkNSfUB}
+}
+
+@inproceedings{li2025tritonbench,
+    title = "{T}riton{B}ench: Benchmarking Large Language Model Capabilities for Generating Triton Operators",
+    author = "Li, Jianling  and
+      Li, Shangzhan  and
+      Gao, Zhenye  and
+      Shi, Qi  and
+      Li, Yuxuan  and
+      Wang, Zefan  and
+      Huang, Jiacheng  and
+      Wang, Haojie  and
+      Wang, Jianrong  and
+      Han, Xu  and
+      Liu, Zhiyuan  and
+      Sun, Maosong",
+    editor = "Che, Wanxiang  and
+      Nabende, Joyce  and
+      Shutova, Ekaterina  and
+      Pilehvar, Mohammad Taher",
+    booktitle = "Findings of the Association for Computational Linguistics: ACL 2025",
+    month = jul,
+    year = "2025",
+    address = "Vienna, Austria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.findings-acl.1183/",
+    doi = "10.18653/v1/2025.findings-acl.1183",
+    pages = "23053--23066",
+    ISBN = "979-8-89176-256-5",
+    abstract = "Triton, a high-level Python-like language designed for building efficient GPU kernels, is widely adopted in deep learning frameworks due to its portability, flexibility, and accessibility. However, programming and parallel optimization still require considerable trial and error from Triton developers. Despite advances in large language models (LLMs) for conventional code generation, these models struggle to generate accurate, performance-optimized Triton code, as they lack awareness of its specifications and the complexities of GPU programming. More critically, there is an urgent need for systematic evaluations tailored to Triton. In this work, we introduce TritonBench, the first comprehensive benchmark for Triton operator generation. TritonBench features two evaluation channels: a curated set of 184 real-world operators from GitHub and a collection of operators aligned with PyTorch interfaces. Unlike conventional code benchmarks prioritizing functional correctness, TritonBench also profiles efficiency performance on widely deployed GPUs aligned with industry applications. Our study reveals that current state-of-the-art code LLMs struggle to generate efficient Triton operators, highlighting a significant gap in high-performance code generation."
+}
+
+@article{chetlur2014cudnn,
+      title={cuDNN: Efficient Primitives for Deep Learning}, 
+      author={Sharan Chetlur and Cliff Woolley and Philippe Vandermersch and Jonathan Cohen and John Tran and Bryan Catanzaro and Evan Shelhamer},
+      year={2014},
+      eprint={1410.0759},
+      archivePrefix={arXiv},
+      primaryClass={cs.NE},
+      url={https://arxiv.org/abs/1410.0759}, 
+}
+
+@software{cublas2024,
+  title        = {{cuBLAS}: Basic Linear Algebra on NVIDIA GPUs},
+  author       = {{NVIDIA Corporation}},
+  year         = {2026},
+  howpublished = {\url{https://docs.nvidia.com/cuda/cublas/}}
+}
+
+@misc{cudnn2024,
+      title={cuDNN: Efficient Primitives for Deep Learning}, 
+      author={Sharan Chetlur and Cliff Woolley and Philippe Vandermersch and Jonathan Cohen and John Tran and Bryan Catanzaro and Evan Shelhamer},
+      year={2014},
+      eprint={1410.0759},
+      archivePrefix={arXiv},
+      primaryClass={cs.NE},
+      url={https://arxiv.org/abs/1410.0759}, 
+}
+
+@inproceedings{ragan-kelley2013halide,
+author = {Ragan-Kelley, Jonathan and Barnes, Connelly and Adams, Andrew and Paris, Sylvain and Durand, Fr\'{e}do and Amarasinghe, Saman},
+title = {Halide: a language and compiler for optimizing parallelism, locality, and recomputation in image processing pipelines},
+year = {2013},
+issue_date = {June 2013},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {48},
+number = {6},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/2499370.2462176},
+doi = {10.1145/2499370.2462176},
+abstract = {Image processing pipelines combine the challenges of stencil computations and stream programs. They are composed of large graphs of different stencil stages, as well as complex reductions, and stages with global or data-dependent access patterns. Because of their complex structure, the performance difference between a naive implementation of a pipeline and an optimized one is often an order of magnitude. Efficient implementations require optimization of both parallelism and locality, but due to the nature of stencils, there is a fundamental tension between parallelism, locality, and introducing redundant recomputation of shared values.We present a systematic model of the tradeoff space fundamental to stencil pipelines, a schedule representation which describes concrete points in this space for each stage in an image processing pipeline, and an optimizing compiler for the Halide image processing language that synthesizes high performance implementations from a Halide algorithm and a schedule. Combining this compiler with stochastic search over the space of schedules enables terse, composable programs to achieve state-of-the-art performance on a wide range of real image processing pipelines, and across different hardware architectures, including multicores with SIMD, and heterogeneous CPU+GPU execution. From simple Halide programs written in a few hours, we demonstrate performance up to 5x faster than hand-tuned C, intrinsics, and CUDA implementations optimized by experts over weeks or months, for image processing applications beyond the reach of past automatic compilers.},
+journal = {SIGPLAN Not.},
+month = jun,
+pages = {519–530},
+numpages = {12},
+keywords = {autotuning, compiler, domain specific language, gpu, image processing, locality, optimization, parallelism, redundant computation, vectorization}
+}
+
+@inproceedings{10.1145/2491956.2462176,
+author = {Ragan-Kelley, Jonathan and Barnes, Connelly and Adams, Andrew and Paris, Sylvain and Durand, Fr\'{e}do and Amarasinghe, Saman},
+title = {Halide: a language and compiler for optimizing parallelism, locality, and recomputation in image processing pipelines},
+year = {2013},
+isbn = {9781450320146},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2491956.2462176},
+doi = {10.1145/2491956.2462176},
+abstract = {Image processing pipelines combine the challenges of stencil computations and stream programs. They are composed of large graphs of different stencil stages, as well as complex reductions, and stages with global or data-dependent access patterns. Because of their complex structure, the performance difference between a naive implementation of a pipeline and an optimized one is often an order of magnitude. Efficient implementations require optimization of both parallelism and locality, but due to the nature of stencils, there is a fundamental tension between parallelism, locality, and introducing redundant recomputation of shared values.We present a systematic model of the tradeoff space fundamental to stencil pipelines, a schedule representation which describes concrete points in this space for each stage in an image processing pipeline, and an optimizing compiler for the Halide image processing language that synthesizes high performance implementations from a Halide algorithm and a schedule. Combining this compiler with stochastic search over the space of schedules enables terse, composable programs to achieve state-of-the-art performance on a wide range of real image processing pipelines, and across different hardware architectures, including multicores with SIMD, and heterogeneous CPU+GPU execution. From simple Halide programs written in a few hours, we demonstrate performance up to 5x faster than hand-tuned C, intrinsics, and CUDA implementations optimized by experts over weeks or months, for image processing applications beyond the reach of past automatic compilers.},
+booktitle = {Proceedings of the 34th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+pages = {519–530},
+numpages = {12},
+keywords = {autotuning, compiler, domain specific language, gpu, image processing, locality, optimization, parallelism, redundant computation, vectorization},
+location = {Seattle, Washington, USA},
+series = {PLDI '13}
+}
+
+
+@inproceedings{chen2018tvm,
+author = {Tianqi Chen and Thierry Moreau and Ziheng Jiang and Lianmin Zheng and Eddie Yan and Haichen Shen and Meghan Cowan and Leyuan Wang and Yuwei Hu and Luis Ceze and Carlos Guestrin and Arvind Krishnamurthy},
+title = {{TVM}: An Automated {End-to-End} Optimizing Compiler for Deep Learning},
+booktitle = {13th USENIX Symposium on Operating Systems Design and Implementation (OSDI 18)},
+year = {2018},
+isbn = {978-1-939133-08-3},
+address = {Carlsbad, CA},
+pages = {578--594},
+url = {https://www.usenix.org/conference/osdi18/presentation/chen},
+publisher = {USENIX Association},
+month = oct
+}
+
+@article{optimization_survey,
+author = {Hijma, Pieter and Heldens, Stijn and Sclocco, Alessio and van Werkhoven, Ben and Bal, Henri E.},
+title = {Optimization Techniques for GPU Programming},
+year = {2023},
+issue_date = {November 2023},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {55},
+number = {11},
+issn = {0360-0300},
+url = {https://doi.org/10.1145/3570638},
+doi = {10.1145/3570638},
+abstract = {In the past decade, Graphics Processing Units have played an important role in the field of high-performance computing and they still advance new fields such as IoT, autonomous vehicles, and exascale computing. It is therefore important to understand how to extract performance from these processors, something that is not trivial. This survey discusses various optimization techniques found in 450 articles published in the last 14 years. We analyze the optimizations from different perspectives which shows that the various optimizations are highly interrelated, explaining the need for techniques such as auto-tuning.},
+journal = {ACM Comput. Surv.},
+month = mar,
+articleno = {239},
+numpages = {81},
+keywords = {Survey, GPU, optimization, optimization techniques, performance bottleneck}
+}
+
+@article{gpuenergy,
+author = {Mittal, Sparsh and Vetter, Jeffrey S.},
+title = {A Survey of Methods for Analyzing and Improving GPU Energy Efficiency},
+year = {2014},
+issue_date = {January 2015},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {47},
+number = {2},
+issn = {0360-0300},
+url = {https://doi.org/10.1145/2636342},
+doi = {10.1145/2636342},
+abstract = {Recent years have witnessed phenomenal growth in the computational capabilities and applications of GPUs. However, this trend has also led to a dramatic increase in their power consumption. This article surveys research works on analyzing and improving energy efficiency of GPUs. It also provides a classification of these techniques on the basis of their main research idea. Further, it attempts to synthesize research works that compare the energy efficiency of GPUs with other computing systems (e.g., FPGAs and CPUs). The aim of this survey is to provide researchers with knowledge of the state of the art in GPU power management and motivate them to architect highly energy-efficient GPUs of tomorrow.},
+journal = {ACM Comput. Surv.},
+month = aug,
+articleno = {19},
+numpages = {23},
+keywords = {GPU (graphics-processing unit), architecture techniques, energy efficiency, energy saving, green computing, power management, power model}
+}
+
+@misc{hsu2025ligerkernelefficienttriton,
+      title={Liger Kernel: Efficient Triton Kernels for LLM Training}, 
+      author={Pin-Lun Hsu and Yun Dai and Vignesh Kothapalli and Qingquan Song and Shao Tang and Siyu Zhu and Steven Shimizu and Shivam Sahni and Haowen Ning and Yanning Chen},
+      year={2025},
+      eprint={2410.10989},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2410.10989}, 
+}
+
+@INPROCEEDINGS{kernelfusion,
+  author={Wang, Guibin and Lin, YiSong and Yi, Wei},
+  booktitle={2010 IEEE/ACM Int'l Conference on Green Computing and Communications & Int'l Conference on Cyber, Physical and Social Computing}, 
+  title={Kernel Fusion: An Effective Method for Better Power Efficiency on Multithreaded GPU}, 
+  year={2010},
+  volume={},
+  number={},
+  pages={344-350},
+  keywords={Kernel;Instruction sets;Graphics processing unit;Energy consumption;Hardware;Mathematical model;Dynamic programming;Kernel Fusion;Power Efficiency;Power Optimization;GPGPU},
+  doi={10.1109/GreenCom-CPSCom.2010.102}}
+
+
+@ARTICLE{acceleration_survey,
+  author={Shuvo, Md. Maruf Hossain and Islam, Syed Kamrul and Cheng, Jianlin and Morshed, Bashir I.},
+  journal={Proceedings of the IEEE}, 
+  title={Efficient Acceleration of Deep Learning Inference on Resource-Constrained Edge Devices: A Review}, 
+  year={2023},
+  volume={111},
+  number={1},
+  pages={42-91},
+  keywords={Edge computing;Image edge detection;Real-time systems;Cloud computing;Artificial intelligence;Optimization;Computer architecture;Neural networks;Deep learning;Algorithm–hardware codesign;artificial intelligence (AI);artificial intelligence on edge (edge-AI);deep learning (DL);model compression;neural accelerator},
+  doi={10.1109/JPROC.2022.3226481}}
+
+
+@INPROCEEDINGS{llm_survey,
+  author={Chkirbene, Zina and Hamila, Ridha and Gouissem, Ala and Devrim, Unal},
+  booktitle={2024 IEEE 21st International Conference on Smart Communities: Improving Quality of Life using AI, Robotics and IoT (HONET)}, 
+  title={Large Language Models (LLM) in Industry: A Survey of Applications, Challenges, and Trends}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={229-234},
+  keywords={Industries;Surveys;Technological innovation;Data privacy;Law;Large language models;Decision making;Finance;Medical services;Business;Large Language Models;automation;bias;data privacy;industry applications},
+  doi={10.1109/HONET63146.2024.10822885}}
+
+
+@ARTICLE{convolution_survey,
+  author={Younesi, Abolfazl and Ansari, Mohsen and Fazli, Mohammadamin and Ejlali, Alireza and Shafique, Muhammad and Henkel, Jörg},
+  journal={IEEE Access}, 
+  title={A Comprehensive Survey of Convolutions in Deep Learning: Applications, Challenges, and Future Trends}, 
+  year={2024},
+  volume={12},
+  number={},
+  pages={41180-41218},
+  keywords={Deep learning;Convolutional neural networks;Machine learning;Computer vision;Generative adversarial networks;Classification algorithms;Object detection;Image segmentation;Task analysis;Performance evaluation;Deep learning;DNN;CNN;machine learning;vision transformers;GAN;attention;computer vision;LLM;large language model;transformer;dilated convolution;depthwise,NAS,NAT;object detection;6D vision;vision language model},
+  doi={10.1109/ACCESS.2024.3376441}}
+
+
+@inproceedings{zheng2020ansor,
+author = {Lianmin Zheng and Chengfan Jia and Minmin Sun and Zhao Wu and Cody Hao Yu and Ameer Haj-Ali and Yida Wang and Jun Yang and Danyang Zhuo and Koushik Sen and Joseph E. Gonzalez and Ion Stoica},
+title = {Ansor: Generating {High-Performance} Tensor Programs for Deep Learning},
+booktitle = {14th USENIX Symposium on Operating Systems Design and Implementation (OSDI 20)},
+year = {2020},
+isbn = {978-1-939133-19-9},
+pages = {863--879},
+url = {https://www.usenix.org/conference/osdi20/presentation/zheng},
+publisher = {USENIX Association},
+month = nov
+}
+
+@inproceedings{bik2022mlir,
+author = {Katel, Navdeep and Khandelwal, Vivek and Bondhugula, Uday},
+title = {MLIR-based code generation for GPU tensor cores},
+year = {2022},
+isbn = {9781450391832},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3497776.3517770},
+doi = {10.1145/3497776.3517770},
+abstract = {The state-of-the-art in high-performance deep learning today is primarily driven by manually developed libraries optimized and highly tuned by expert programmers using low-level abstractions with significant effort. This effort is often repeated for similar hardware and future ones. In this work, we pursue and evaluate the more modular and reusable approach of using compiler IR infrastructure to generate libraries by encoding all the required optimizations as a sequence of transformations and customized passes on an IR. We believe that until the recent introduction of MLIR (Multi-level intermediate representation), it had been hard to represent and transform computation at various levels of abstraction within a single IR. Using the MLIR infrastructure, we build a transformation and lowering pipeline to automatically generate near-peak performance code for matrix-matrix multiplication (matmul) as well as matmul fused with simple pointwise operators targeting tensor cores on NVIDIA GPUs. On a set of problem sizes ranging from 256 to 16384, our performance evaluation shows that we can obtain performance that is 0.95\texttimes{} to 1.19\texttimes{} and 0.80\texttimes{} to 1.60\texttimes{} of cuBLAS for FP32 and FP16 accumulate respectively on NVIDIA’s Ampere based Geforce 3090 RTX. Furthermore, by allowing the fusion of common pointwise operations with matrix-matrix multiplication, we obtain performance ranging from 0.95\texttimes{} to 1.67\texttimes{} of a cuBLAS-based implementation. Additionally, we present matmul-like examples such as 3-d contraction and batched matmul, which the pipeline can efficiently handle while providing competitive performance. We believe that these results motivate further research and engineering on automatic domain-specific library generation using compiler IR infrastructure for similar specialized accelerators.},
+booktitle = {Proceedings of the 31st ACM SIGPLAN International Conference on Compiler Construction},
+pages = {117–128},
+numpages = {12},
+keywords = {tensor cores, matrix-matrix multiplication, MLIR, GPU},
+location = {Seoul, South Korea},
+series = {CC 2022}
+}
+
+@inproceedings{spector2024thunderkittens,
+title={ThunderKittens: Simple, Fast, and \${\textbackslash}textit\{Adorable\}\$ Kernels},
+author={Benjamin Frederick Spector and Simran Arora and Aaryan Singhal and Arjun Parthasarathy and Daniel Y Fu and Christopher Re},
+booktitle={The Thirteenth International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=0fJfVOSUra}
+}
+
+@misc{li2025tritonforge,
+      title={TritonForge: Profiling-Guided Framework for Automated Triton Kernel Optimization}, 
+      author={Haonan Li and Keyu Man and Partha Kanuparthy and Hanning Chen and Wei Sun and Sreen Tallam and Chenguang Zhu and Kevin Zhu and Zhiyun Qian},
+      year={2025},
+      eprint={2512.09196},
+      archivePrefix={arXiv},
+      primaryClass={cs.SE},
+      url={https://arxiv.org/abs/2512.09196}, 
+}
+
+@inproceedings{zhou2021implicit,
+  author={Zhou, Yangjie and Yang, Mengtian and Guo, Cong and Leng, Jingwen and Liang, Yun and Chen, Quan and Guo, Minyi and Zhu, Yuhao},
+  booktitle={2021 IEEE International Symposium on Workload Characterization (IISWC)}, 
+  title={Characterizing and Demystifying the Implicit Convolution Algorithm on Commercial Matrix-Multiplication Accelerators}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={214-225},
+  keywords={Deep learning;Tensors;Convolution;Heuristic algorithms;Neural networks;Hardware;Internet},
+  doi={10.1109/IISWC53511.2021.00029}}
+
+
+@misc{triton2022conv591,
+  title        = {Example Conv2D in Triton},
+  author       = {sebastienwood},
+  year         = {2022},
+  howpublished = {GitHub Discussion \#591, \url{https://github.com/triton-lang/triton/discussions/591}},
+  note         = {Accessed: 2026-03-25}
+}
+
+@inproceedings{dao2022flashattention,
+	author = {Dao, Tri and Fu, Dan and Ermon, Stefano and Rudra, Atri and R\'{e}, Christopher},
+	booktitle = {Advances in Neural Information Processing Systems},
+	editor = {S. Koyejo and S. Mohamed and A. Agarwal and D. Belgrave and K. Cho and A. Oh},
+	pages = {16344--16359},
+	publisher = {Curran Associates, Inc.},
+	title = {FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness},
+	url = {https://proceedings.neurips.cc/paper_files/paper/2022/file/67d57c32e20fd0a7a302cb81d36e40d5-Paper-Conference.pdf},
+	volume = {35},
+	year = {2022},
+	bdsk-url-1 = {https://proceedings.neurips.cc/paper_files/paper/2022/file/67d57c32e20fd0a7a302cb81d36e40d5-Paper-Conference.pdf}}
+
+@inproceedings{dao2023flashattention2,
+      title={FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning}, 
+      author={Tri Dao},
+      year={2023},
+      eprint={2307.08691},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2307.08691}, 
+}
+
+@inproceedings{li2023torchcompile,
+author = {Ansel, Jason and Yang, Edward and He, Horace and Gimelshein, Natalia and Jain, Animesh and Voznesensky, Michael and Bao, Bin and Bell, Peter and Berard, David and Burovski, Evgeni and Chauhan, Geeta and Chourdia, Anjali and Constable, Will and Desmaison, Alban and DeVito, Zachary and Ellison, Elias and Feng, Will and Gong, Jiong and Gschwind, Michael and Hirsh, Brian and Huang, Sherlock and Kalambarkar, Kshiteej and Kirsch, Laurent and Lazos, Michael and Lezcano, Mario and Liang, Yanbo and Liang, Jason and Lu, Yinghai and Luk, C. K. and Maher, Bert and Pan, Yunjie and Puhrsch, Christian and Reso, Matthias and Saroufim, Mark and Siraichi, Marcos Yukio and Suk, Helen and Zhang, Shunting and Suo, Michael and Tillet, Phil and Zhao, Xu and Wang, Eikan and Zhou, Keren and Zou, Richard and Wang, Xiaodong and Mathews, Ajit and Wen, William and Chanan, Gregory and Wu, Peng and Chintala, Soumith},
+title = {PyTorch 2: Faster Machine Learning Through Dynamic Python Bytecode Transformation and Graph Compilation},
+year = {2024},
+isbn = {9798400703850},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3620665.3640366},
+doi = {10.1145/3620665.3640366},
+abstract = {This paper introduces two extensions to the popular PyTorch machine learning framework, TorchDynamo and TorchInductor, which implement the torch.compile feature released in PyTorch 2. TorchDynamo is a Python-level just-in-time (JIT) compiler that enables graph compilation in PyTorch programs without sacrificing the flexibility of Python. It achieves this by dynamically modifying Python bytecode before execution and extracting sequences of PyTorch operations into an FX graph, which is then JIT compiled using one of many extensible backends. TorchInductor is the default compiler backend for TorchDynamo, which translates PyTorch programs into OpenAI's Triton for GPUs and C++ for CPUs. Results show that TorchDynamo is able to capture graphs more robustly than prior approaches while adding minimal overhead, and TorchInductor is able to provide a 2.27\texttimes{} inference and 1.41\texttimes{} training geometric mean speedup on an NVIDIA A100 GPU across 180+ real-world models, which outperforms six other compilers. These extensions provide a new way to apply optimizations through compilers in eager mode frameworks like PyTorch.},
+booktitle = {Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2},
+pages = {929–947},
+numpages = {19},
+location = {La Jolla, CA, USA},
+series = {ASPLOS '24}
+}
+
+@misc{vasilache2022composable,
+      title={Composable and Modular Code Generation in MLIR: A Structured and Retargetable Approach to Tensor Compiler Construction}, 
+      author={Nicolas Vasilache and Oleksandr Zinenko and Aart J. C. Bik and Mahesh Ravishankar and Thomas Raoux and Alexander Belyaev and Matthias Springer and Tobias Gysi and Diego Caballero and Stephan Herhut and Stella Laurenzo and Albert Cohen},
+      year={2022},
+      eprint={2202.03293},
+      archivePrefix={arXiv},
+      primaryClass={cs.PL},
+      url={https://arxiv.org/abs/2202.03293}, 
+}
+
+@inproceedings{wolfe1989more,
+author = {Wolfe, M.},
+title = {More iteration space tiling},
+year = {1989},
+isbn = {0897913418},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/76263.76337},
+doi = {10.1145/76263.76337},
+abstract = {Subdividing the iteration space of a loop into blocks or tiles with a fixed maximum size has several advantages. Tiles become a natural candidate as the unit of work for parallel task scheduling. Synchronization between processors can be done between tiles, reducing synchronization frequency (at some loss of potential parallelism). The shape and size of a tile can be optimized to take advantage of memory locality for memory hierarchy utilization. Vectorization and register locality naturally fits into the optimization within a tile, while parallelization and cache locality fits into optimization between tiles.},
+booktitle = {Proceedings of the 1989 ACM/IEEE Conference on Supercomputing},
+pages = {655–664},
+numpages = {10},
+location = {Reno, Nevada, USA},
+series = {Supercomputing '89}
+}
+@inproceedings{kjolstad2017tensor,
+  title     = {The Tensor Algebra Compiler},
+  author    = {Kjolstad, Fredrik and Kamil, Shoaib and Chou, Stephen and Lugato, David
+               and Amarasinghe, Saman},
+  booktitle = {Proceedings of the {ACM} on Programming Languages},
+  volume    = {1},
+  number    = {{OOPSLA}},
+  year      = {2017},
+  doi       = {10.1145/3133901},
+  publisher = {ACM}
+}
+
+@misc{nsightcompute2024,
+  title        = {{NVIDIA} Nsight Compute},
+  author       = {{NVIDIA Corporation}},
+  year         = {2024},
+  howpublished = {\url{https://developer.nvidia.com/nsight-compute}}
+}
+
+@software{cutlass2023,
+  title        = {{CUTLASS}: CUDA Templates and Python DSLs for High-Performance Linear Algebra},
+  author       = {{NVIDIA Corporation}},
+  year         = {2017},
+  howpublished = {\url{https://github.com/NVIDIA/cutlass}}
+}
+
+@InProceedings{lavin2016fast,
+author = {Lavin, Andrew and Gray, Scott},
+title = {Fast Algorithms for Convolutional Neural Networks},
+booktitle = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+month = {June},
+year = {2016}
+}
+
+@INPROCEEDINGS{reddi2020mlperf,
+  author={Reddi, Vijay Janapa and Cheng, Christine and Kanter, David and Mattson, Peter and Schmuelling, Guenther and Wu, Carole-Jean and Anderson, Brian and Breughe, Maximilien and Charlebois, Mark and Chou, William and Chukka, Ramesh and Coleman, Cody and Davis, Sam and Deng, Pan and Diamos, Greg and Duke, Jared and Fick, Dave and Gardner, J. Scott and Hubara, Itay and Idgunji, Sachin and Jablin, Thomas B. and Jiao, Jeff and John, Tom St. and Kanwar, Pankaj and Lee, David and Liao, Jeffery and Lokhmotov, Anton and Massa, Francisco and Meng, Peng and Micikevicius, Paulius and Osborne, Colin and Pekhimenko, Gennady and Rajan, Arun Tejusve Raghunath and Sequeira, Dilip and Sirasao, Ashish and Sun, Fei and Tang, Hanlin and Thomson, Michael and Wei, Frank and Wu, Ephrem and Xu, Lingjie and Yamada, Koichi and Yu, Bing and Yuan, George and Zhong, Aaron and Zhang, Peizhao and Zhou, Yuchen},
+  booktitle={2020 ACM/IEEE 47th Annual International Symposium on Computer Architecture (ISCA)}, 
+  title={MLPerf Inference Benchmark}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={446-459},
+  keywords={Degradation;Accuracy;Standards organizations;Organizations;Computer architecture;Benchmark testing;Throughput;Hardware;Servers;Optimization;Machine Learning;Inference;Benchmarking},
+  doi={10.1109/ISCA45697.2020.00045}}
+
+
+@article{williams2009roofline,
+author = {Williams, Samuel and Waterman, Andrew and Patterson, David},
+title = {Roofline: an insightful visual performance model for multicore architectures},
+year = {2009},
+issue_date = {April 2009},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {52},
+number = {4},
+issn = {0001-0782},
+url = {https://doi.org/10.1145/1498765.1498785},
+doi = {10.1145/1498765.1498785},
+abstract = {The Roofline model offers insight on how to improve the performance of software and hardware.},
+journal = {Commun. ACM},
+month = apr,
+pages = {65–76},
+numpages = {12}
+}
+
+@INPROCEEDINGS{lattner2021mlir,
+  author={Lattner, Chris and Amini, Mehdi and Bondhugula, Uday and Cohen, Albert and Davis, Andy and Pienaar, Jacques and Riddle, River and Shpeisman, Tatiana and Vasilache, Nicolas and Zinenko, Oleksandr},
+  booktitle={2021 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)}, 
+  title={MLIR: Scaling Compiler Infrastructure for Domain Specific Computation}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={2-14},
+  keywords={Program processors;Buildings;Semantics;Hardware;Software;Generators;Optimization},
+  doi={10.1109/CGO51591.2021.9370308}}
+

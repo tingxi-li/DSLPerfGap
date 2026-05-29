@@ -1,0 +1,50 @@
+% \paragraph{Construct validity.}
+% Library efficiency (\%) measures throughput relative to the best library call
+% we could identify for each kernel.
+% cuBLAS and cuDNN internally select from multiple algorithms;
+% if a more optimal library configuration exists and we failed to exercise it,
+% our efficiency estimates understate the true performance gap---DSLs appear closer to
+% the library than they would against an optimally configured baseline.
+% We mitigate this by invoking \texttt{cudnnFind} and recording the selected algorithm,
+% and by warm-starting cuBLAS with \texttt{CUBLAS\_WORKSPACE\_CONFIG} set to allow
+% the largest workspace.
+
+% \paragraph{Internal validity.}
+% Hardware performance counter values may be perturbed by measurement overhead.
+% We verified that single-iteration and ten-iteration Nsight Compute profiles
+% agree within 2\% on key counters,
+% and we report median values across five profiling runs.
+% GPU clock locking (\cref{sec:meth:setup}) eliminates frequency-scaling confounds.
+
+% \paragraph{External validity.}
+% Our kernel suite is derived from production Triton repositories
+% and standard deep learning model shapes (ResNet, EfficientNet);
+% it may not represent the full diversity of convolution configurations
+% encountered in practice.
+% Unusual configurations (dilated convolution, grouped convolution with many groups,
+% or very small batch sizes) may exhibit different gap profiles.
+
+% \paragraph{Conclusion validity.}
+% Our root-cause attribution (\cref{sec:analysis}) relies on correlating
+% counter measurements with throughput gaps.
+% We do not modify the compilers directly to confirm causality;
+% the mitigations in \cref{sec:mitigation} serve as experimental validation
+% of the causal claims,
+% but compiler-internal sources of underperformance that our mitigations do not address
+% remain a possibility.
+
+
+\textbf{Construct validity.}
+Our primary metric, library efficiency, measures DSL performance relative to the strongest library baseline we were able to exercise for each kernel. Because cuBLAS and cuDNN select among multiple internal algorithms, any failure to invoke their best-performing configuration would make the DSL appear closer to library performance than it actually is. To reduce this risk, we use library-backed PyTorch paths consistent with standard practice, invoke \texttt{cudnnFind} for convolution, record the selected algorithms, and allow cuBLAS to use a large workspace.
+
+\textbf{Internal validity.}
+Profiling-based analysis may be affected by measurement noise and tool overhead. We mitigate this threat by separating end-to-end timing from counter collection, using repeated runs for both, and verifying that key Nsight Compute measurements remain stable across repetitions. All experiments are executed in isolation on a fixed software and hardware setup to reduce confounding effects from concurrent workloads or environmental variation.
+
+\textbf{External validity.}
+Our study covers 22 kernels across five operator categories, but it does not represent the full design space of GPU workloads. In particular, the evaluated configurations emphasize common deep learning operators and shapes rather than uncommon cases such as highly dilated convolutions, extreme group counts, or very small batches. In addition, all experiments are conducted on a single NVIDIA RTX 4000 Ada Generation GPU, so the reported gaps may differ on other architectures or vendor backends.
+
+\textbf{Conclusion validity.}
+Our root-cause claims are based on a combination of performance measurements, hardware-counter evidence, and targeted mitigations. Although the mitigation results strengthen the causal interpretation, they do not rule out additional compiler or runtime factors that were not isolated in this study. The conclusions should therefore be read as evidence-supported explanations for the observed gaps, rather than as an exhaustive account of all possible causes.
+
+\textbf{Benchmark scale.}
+Our current benchmark suite comprises 22 kernels, each evaluated under two input configurations, across three implementations (Triton, TileLang, and PyTorch). While this selection covers the dominant operator categories in modern deep learning workloads, we acknowledge that the overall impact of this work is constrained by dataset size. Preparing high-quality kernel implementations for DSLs requires substantial expertise and manual effort. We are actively expanding the benchmark suite with additional kernels, configurations, and filter sizes, and aim to present further results during the rebuttal phase. Broader coverage remains a priority in our future work.

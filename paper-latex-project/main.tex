@@ -1,0 +1,165 @@
+\documentclass[sigconf,review,anonymous]{acmart}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+%%
+%% Rights management information.
+%% Update these when you receive your rights confirmation email.
+%%
+%\setcopyright{acmlicensed}
+%\copyrightyear{2026}
+%\acmYear{2026}
+%\acmDOI{XXXXXXX.XXXXXXX}
+%\acmConference[ASE '26]{The 41st IEEE/ACM International Conference on Automated Software Engineering}{2026}{Sacramento, California, USA}
+%\acmISBN{978-1-4503-XXXX-X/2026/XX}
+
+%%
+%% Packages
+%%
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{xspace}
+\usepackage{cleveref}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{multirow}
+
+%%
+%% Macros
+%%
+\newcommand{\etal}{et~al\mbox{.}\xspace}
+\newcommand{\ie}{i.e\mbox{.}\xspace}
+\newcommand{\eg}{e.g\mbox{.}\xspace}
+\newcommand{\aka}{a.k.a\mbox{.}\xspace}
+\newcommand{\Triton}{\textsc{Triton}\xspace}
+\newcommand{\TileLang}{\textsc{TileLang}\xspace}
+
+\begin{document}
+
+\title{An Empirical Study of {GPU} Kernel Performance Gaps in Modern Domain-Specific Languages}
+
+\author{Anonymous Author(s)}
+\affiliation{%
+  \institution{Anonymous Institution}
+  \country{}}
+
+\begin{abstract}
+  \input{tex/abstract}
+\end{abstract}
+
+%%
+%% CCS Concepts: generate at https://dl.acm.org/ccs/ccs.cfm
+%%
+%\begin{CCSXML}
+%<ccs2012>
+%   <concept>
+%       <concept_id>10010520.10010521.10010537.10010540</concept_id>
+%       <concept_desc>Computer systems organization~Parallel architectures</concept_desc>
+%       <concept_significance>500</concept_significance>
+%   </concept>
+%   <concept>
+%       <concept_id>10011007.10011006.10011008.10011009.10011021</concept_id>
+%       <concept_desc>Software and its engineering~Domain specific languages</concept_desc>
+%       <concept_significance>500</concept_significance>
+%   </concept>
+%   <concept>
+%       <concept_id>10011007.10011074.10011099.10011692</concept_id>
+%       <concept_desc>Software and its engineering~Empirical software validation</concept_desc>
+%       <concept_significance>300</concept_significance>
+%   </concept>
+%</ccs2012>
+%\end{CCSXML}
+%\ccsdesc[500]{Computer systems organization~Parallel architectures}
+%\ccsdesc[500]{Software and its engineering~Domain specific languages}
+%\ccsdesc[300]{Software and its engineering~Empirical software validation}
+
+\keywords{GPU kernels, domain-specific languages, Triton, TileLang, cuBLAS, cuDNN,
+          empirical study, performance analysis, convolution}
+
+\maketitle
+
+%%% ------------------------------------------------------------------
+\section{Introduction}
+\label{sec:introduction}
+\input{tex/introduction}
+
+%%% ------------------------------------------------------------------
+\section{Background}
+\label{sec:background}
+\input{tex/background}
+
+%%% ------------------------------------------------------------------
+\section{Methodology}
+\label{sec:methodology}
+We evaluate whether current GPU DSLs can match vendor libraries on representative deep learning operators, and, when they do not, identify the cause of the gap. To this end, we construct a kernel suite that covers the main computation patterns in modern models, compare DSL implementations against library-backed PyTorch baselines under matched configurations, and profile both end-to-end performance and low-level hardware behavior.
+
+\input{tex/methodology}
+
+%%% -----------------------
+
+\section{Research Questions}
+\label{sec:RQs}
+\input{ase26/tex/RQ_summary}
+
+%%% ------------------------------------------------------------------
+\section{Evaluation (RQ1: Characterization)}
+\label{sec:evaluation}
+\input{tex/evaluation}
+
+%%% ------------------------------------------------------------------
+\section{Analysis (RQ2: Root Causes)}
+\label{sec:analysis}
+\input{tex/analysis}
+
+%%% ------------------------------------------------------------------
+\section{Mitigation (RQ3)}
+\label{sec:mitigation}
+\input{tex/mitigation}
+
+%%% ------------------------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+
+The empirical results suggest that current GPU DSLs are not uniformly competitive with vendor libraries; rather, their effectiveness depends strongly on the operator class and the optimizations available in the compiler stack. This has two implications. First, the observed gaps identify concrete weaknesses in present DSL systems, particularly for convolution. Second, the results provide practical guidance for users deciding when DSL kernels are likely to be a good substitute for library calls. We discuss these implications for DSL developers and practitioners, and then outline the main limitations of the study.
+\input{tex/discussion}
+
+%%% ------------------------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+\input{tex/related_work}
+
+%%% ------------------------------------------------------------------
+\section{Threats to Validity}
+\label{sec:threats}
+\input{tex/threats}
+
+%%% ------------------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+\input{tex/conclusion}
+
+% \section{Broader Impact}
+% This study characterizes performance gaps between GPU kernel DSLs and vendor-optimized libraries.
+% The findings have implications for software practitioners, compiler engineers, and the broader ecosystem of GPU-accelerated computing.
+
+% GPU kernel efficiency has a direct multiplier effect on energy consumption.
+% A kernel running at 35\% of cuDNN throughput requires approximately $2.9\times$ the GPU time---and wall-clock energy---to complete the same computation.
+% At the scale of production inference serving or large-scale training, this inefficiency translates to measurable increases in power draw and carbon footprint.
+% Our mitigations demonstrate that a substantial fraction of this gap is recoverable through targeted compiler fixes rather than hardware upgrades, which suggests that compiler-level improvements carry concrete sustainability benefits.
+
+\section{Data Availability Statement}
+
+All data and scripts used in this study are publicly available in an anonymous repository archived on Zenodo at: \url{https://doi.org/10.5281/zenodo.19337858}. The repository includes the benchmark datasets, evaluation scripts, and a README file describing the contents and usage instructions.
+
+
+\begin{acks}
+  Acknowledgments hidden for review.
+\end{acks}
+\newpage
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

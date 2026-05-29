@@ -1,0 +1,110 @@
+\subsection{Kernel Suite}
+\label{sec:meth:kernels}
+
+% We collect a kernel suite spanning five operator categories
+% that cover the dominant computational patterns in modern deep learning.
+% In total, our suite comprises 22 kernels:
+% 3 \textbf{GEMM} (dense matmul, batched matmul, fused linear+activation),
+% 1 \textbf{Attention} (scaled dot-product / FlashAttention variants),
+% 1 \textbf{Convolution} (Conv2d, $1\times1$--$7\times7$ filters, depthwise, strided),
+% 2 \textbf{Normalization} (LayerNorm, RMSNorm),
+% and 15 \textbf{element-wise and reduction} operators
+% (add, mul, relu, leaky\_relu, softmax, log\_softmax, logsumexp, swiglu,
+%  argmax, max reduction, mean reduction, cross-entropy, matrix transpose, index select, embedding).
+
+% Our 22 kernels are sourced from TritonBench~\cite{li2025tritonbench},
+% the TileLang example repository~\cite{wang2025tilelang},
+% and custom implementations for configurations absent from both suites.
+% We exclude kernels with sparse inputs or runtime-dependent output shapes,
+% as these lack meaningful library baselines.
+
+Our benchmark suite covers five operator categories that capture the dominant computation patterns in modern deep learning: matrix multiplication, attention, convolution, normalization, and element-wise or reduction operators. In total, the suite contains 22 kernels: three \textbf{GEMM} workloads (i.e., dense matrix multiplication, batched matrix multiplication, and fused linear plus activation), one \textbf{attention} workload (i.e., scaled dot-product attention / FlashAttention variants), one \textbf{convolution} workload (i.e., Conv2d with $1\times1$ to $7\times7$ filters, including depthwise and strided cases), two \textbf{normalization} workloads (i.e., LayerNorm and RMSNorm), and fifteen \textbf{element-wise or reduction} workloads including add, mul, relu, leaky\_relu, softmax, log\_softmax, logsumexp, swiglu, argmax, max reduction, mean reduction, cross-entropy, matrix transpose, index select, and embedding.
+
+We derive these workloads from TritonBench~\cite{li2025tritonbench}, the TileLang example repository~\cite{wang2025tilelang}, and our own implementations for configurations not covered by either source. We exclude operators with sparse inputs or runtime-dependent output shapes, since they do not admit stable or meaningful library baselines.
+
+
+\subsection{Baseline Construction}
+\label{sec:meth:baselines}
+
+% Library baselines use PyTorch dispatch to cuBLAS (\texttt{torch.matmul} for GEMM),
+% \texttt{nn.Conv2d} in NHWC layout with \texttt{allow\_tf32=False} for convolution,
+% \texttt{F.layer\_norm}/\texttt{F.rms\_norm} for normalization,
+% and PyTorch eager execution for element-wise operators.
+% Attention baselines use scaled dot-product attention with the FlashAttention backend
+% (\texttt{enable\_flash\_sdp(True)}); results are presented separately because
+% the Triton and TileLang implementations differ algorithmically from PyTorch's baseline.
+
+For each workload, we compare DSL implementations against the corresponding vendor-library path exposed through PyTorch. GEMM baselines use cuBLAS via \texttt{torch.matmul}. Convolution baselines use \texttt{nn.Conv2d} in NHWC layout with \texttt{allow\_tf32=False}. Normalization baselines use \texttt{F.layer\_norm} and \texttt{F.rms\_norm}. Element-wise and reduction baselines use standard PyTorch eager execution.
+
+For attention, we use PyTorch scaled dot-product attention with the FlashAttention backend enabled through \texttt{enable\_flash\_sdp(True)}. We report these results separately because the Triton and TileLang implementations are not algorithmically identical to the PyTorch baseline.
+
+
+\subsection{Profiling Setup}
+\label{sec:meth:profiling}
+
+% \paragraph{End-to-end throughput.}
+% For each (kernel, configuration) pair we measure wall-clock kernel time
+% using CUDA events (\texttt{cudaEvent\allowbreak Record} / \texttt{cuda\allowbreak Event\allowbreak Elapsed\allowbreak Time}),
+% averaged over 100 iterations.
+% Throughput measurements warm up with 10 un-timed iterations before 100 timed iterations.
+% We report GPU-side time only, excluding host-side dispatch overhead.
+% All kernels are run in isolation (no concurrent workloads)
+% to minimize measurement noise from GPU frequency scaling.
+
+% \paragraph{Hardware performance counters.}
+% For root-cause analysis (RQ2) we collect hardware counter profiles
+% using NVIDIA Nsight Compute~\cite{nsightcompute2024}.
+% We collect three counter groups via Nsight Compute: \emph{memory access} (global load/store efficiency, L1/L2 hit rates, coalescing, vectorized-load fraction), \emph{compute utilization} (SM occupancy, warp stall cycles, Tensor Core utilization), and \emph{instruction mix} (\texttt{cp.async} issue count, register spill).
+% Each kernel is profiled in a single iteration; stability is verified within 2\% over five repeats.
+
+We measure both end-to-end latency and hardware performance counters. Latency is used for all comparisons against library baselines, while hardware counters are used to investigate the causes of observed performance gaps.
+
+\paragraph{End-to-end throughput.}
+For each workload and input configuration, we measure GPU execution time using CUDA events (\texttt{cudaEventRecord} and \texttt{cudaEventElapsedTime}). Each measurement uses 10 warm-up iterations followed by 100 timed iterations, and we report the average over the timed runs. All results reflect GPU-side execution only and exclude host-side dispatch overhead. To reduce measurement noise, we run each workload in isolation without concurrent GPU activity.
+
+\paragraph{Hardware performance counters.}
+To support root-cause analysis, we collect hardware counter profiles with NVIDIA Nsight Compute~\cite{nsightcompute2024}. We group the collected counters into three classes: \emph{memory access} (e.g., global load/store efficiency, L1/L2 hit rates, coalescing behavior, and vectorized-load fraction), \emph{compute utilization} (e.g., SM occupancy, warp stall cycles, and Tensor Core utilization), and \emph{instruction behavior} (e.g., \texttt{cp.async} issue count and register spill). Each profile is collected from a single execution, and we verify stability within 2\% across five repeated runs.
+
+
+\subsection{Metrics}
+\label{sec:meth:metrics}
+
+% The primary metric is \textbf{library efficiency}
+% $E_\text{lib} = t_\text{lib} / t_\text{DSL} \times 100\%$,
+% where $t_\text{lib}$ is the cuBLAS/cuDNN baseline latency and $t_\text{DSL}$ is the DSL kernel latency
+% on identical hardware and shape; 100\% indicates parity, below 100\% means the DSL is slower.
+% Secondary metrics---throughput ($T = 2 \cdot \text{FLOPs}/t$), hardware efficiency
+% ($E_\text{hw} = T/T_\text{peak}$), and memory bandwidth utilization
+% ($B = \text{bytes}/({t \cdot B_\text{peak}})$)---are reported for root-cause analysis (RQ2).
+
+Our primary metric is \textbf{library efficiency},
+\[
+E_{\mathrm{lib}} = \frac{t_{\mathrm{lib}}}{t_{\mathrm{DSL}}} \times 100\%,
+\]
+where $t_{\mathrm{lib}}$ denotes the latency of the cuBLAS or cuDNN baseline and $t_{\mathrm{DSL}}$ denotes the latency of the corresponding DSL implementation under the same hardware and input configuration. A value of 100\% indicates parity with the library baseline; lower values indicate that the DSL implementation is slower.
+
+Secondary metrics: throughput ($T = 2 \cdot \text{FLOPs}/t$), hardware efficiency
+($E_\text{hw} = T/T_\text{peak}$), and memory bandwidth utilization
+($B = \text{bytes}/({t \cdot B_\text{peak}})$)---are used qualitatively in root-cause analysis (RQ2)
+to interpret counter measurements; they are not tabulated separately.
+
+\subsection{Experimental Setup}
+\label{sec:meth:setup}
+
+% \paragraph{Hardware.}
+% All experiments run on an NVIDIA RTX 4000 Ada Generation (Ada Lovelace, \texttt{sm\_89}),
+% with 20~GB GDDR6 memory (360~GB/s peak bandwidth) and a 48~MB L2 cache.
+% NVIDIA Driver 595, CUDA Toolkit 12.6.
+
+% \paragraph{Software.}
+% PyTorch 2.8.0+cu126, Triton 3.4.0, TileLang 0.1.6.post1, cuDNN 9.1.0.2, Python 3.9.25,
+% Nsight Compute 2024.3.2.0; all versions are pinned in a reproducibility manifest
+% distributed with the benchmark suite.
+% We set random seeds, disable cuDNN benchmark mode (\texttt{torch.backends.cudnn.benchmark=False}),
+% and pre-warm the Triton auto-tuner before measurement.
+
+\paragraph{Hardware.}
+All experiments are conducted on an NVIDIA RTX 4000 Ada Generation GPU (Ada Lovelace, \texttt{sm\_89}) with 20\,GB GDDR6 memory, 360\,GB/s peak memory bandwidth, and a 48\,MB L2 cache. The system uses NVIDIA Driver 595 and CUDA Toolkit 12.6.
+
+\paragraph{Software.}
+Our software stack consists of PyTorch 2.8.0+cu126, Triton 3.4.0, TileLang 0.1.6.post1, cuDNN 9.1.0.2, Python 3.9.25, and Nsight Compute 2024.3.2.0. We pin all versions in a reproducibility manifest distributed with the benchmark suite. For all experiments, we fix random seeds, disable cuDNN benchmark mode (\texttt{torch.backends.cudnn.benchmark=False}), and pre-warm the Triton auto-tuner before measurement.

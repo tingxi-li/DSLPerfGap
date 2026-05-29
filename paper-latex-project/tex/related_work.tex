@@ -1,0 +1,88 @@
+This section situates our work in the literature on GPU kernel DSLs (\cref{sec:rel:dsls}),
+convolution optimization algorithms (\cref{sec:rel:conv}),
+performance analysis tools (\cref{sec:rel:profiling}),
+and GPU benchmarking frameworks (\cref{sec:rel:bench}).
+Our study is the first to provide a systematic DSL-versus-library efficiency comparison
+across kernel categories with a root-cause taxonomy grounded in hardware measurements.
+
+\subsection{GPU Kernel DSLs}
+\label{sec:rel:dsls}
+
+Halide~\cite{ragan-kelley2013halide} introduced the influential separation of
+algorithm specification from scheduling,
+enabling systematic search over loop transformations (tiling, vectorization, parallelism)
+without modifying the functional description.
+This principle informs both TVM~\cite{chen2018tvm} and TileLang~\cite{wang2025tilelang}.
+
+Triton~\cite{tillet2019triton} departed from the explicit-schedule model
+in favor of an implicit tile abstraction in which the compiler infers
+shared memory layouts, synchronization, and pipelining.
+Its integration into PyTorch~\cite{li2023torchcompile} has made it the
+most widely deployed GPU DSL.
+ThunderKittens~\cite{spector2024thunderkittens} targets the opposite extreme:
+a thin C++ header library that exposes warp-level tile operations directly,
+achieving state-of-the-art attention throughput on H100 through explicit warp specialization.
+Our study is complementary: we characterize performance at the DSL level
+rather than at the hand-optimized C++ level.
+
+TVM~\cite{chen2018tvm} and its auto-scheduler Ansor~\cite{zheng2020ansor}
+demonstrate that hierarchical program search
+substantially outperforms template-guided auto-tuning for irregular operator shapes,
+including convolution.
+This is consistent with RC2 in our analysis (\cref{sec:analysis:autotune}):
+the convolution search space is irregularly shaped relative to GEMM,
+and static configuration lists are insufficient.
+MLIR-based code generation~\cite{bik2022mlir,vasilache2022composable}
+offers a compiler-infrastructure approach to the same problem,
+generating near-peak-performance GEMM and fused-attention code
+through parametric Linalg transformations.
+
+\subsection{Convolution Optimization}
+\label{sec:rel:conv}
+
+Zhou~\etal~\cite{zhou2021implicit} provide a thorough characterization of
+the implicit GEMM convolution algorithm on GPU Tensor Cores,
+identifying the advantages of NHWC layout and on-the-fly tile formation
+over explicit im2col.
+Their analysis motivates the baseline construction in \cref{sec:meth:baselines}.
+
+Winograd convolution~\cite{lavin2016fast} reduces arithmetic by up to $4\times$
+for $3 \times 3$ filters at the cost of additional data transformation passes.
+cuDNN's selection of Winograd for appropriate shapes is a key component
+of its performance lead, as analyzed in \cref{sec:analysis:algo}.
+Adding Winograd support as a first-class lowering pass within a DSL like Triton
+remains an open engineering problem; our analysis identifies it as future work (\cref{sec:mitig:conv}).
+
+\subsection{Performance Analysis and Profiling}
+\label{sec:rel:profiling}
+
+TritonForge~\cite{li2025tritonforge} proposes a profiling-guided LLM loop
+for automated Triton kernel optimization,
+using Nsight Compute metrics to identify bottlenecks.
+Their finding that memory coalescing failures and low occupancy
+account for the majority of kernel-level inefficiencies
+is consistent with our RC1 and RC3 findings.
+The difference is scope:
+TritonForge focuses on automation of the fix-generation step,
+while our study focuses on systematic characterization across a kernel taxonomy.
+
+Empirical performance studies of GPU libraries have examined cuDNN~\cite{chetlur2014cudnn},
+cuBLAS~\cite{cublas2024}, and CUTLASS~\cite{cutlass2023} extensively,
+but performance comparisons \emph{between} DSL and library implementations
+at the scale and granularity of our study are absent from the literature.
+
+\subsection{Benchmarking GPU Software}
+\label{sec:rel:bench}
+
+TritonBench~\cite{li2025tritonbench} is the most closely related benchmark suite.
+It evaluates Triton kernel generation by LLMs,
+measuring functional correctness and GPU efficiency.
+Our work differs in three ways:
+we compare DSL kernels against library baselines (not against each other),
+we use hardware performance counters for root-cause analysis,
+and we propose and evaluate mitigations.
+
+MLPerf Inference~\cite{reddi2020mlperf} benchmarks end-to-end inference throughput
+but treats the computation stack as a black box.
+Our study operates at the kernel level
+to attribute performance differences to specific compiler behaviors.

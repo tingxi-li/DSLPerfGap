@@ -1,0 +1,24 @@
+% This study is organized around three research questions that
+% progress from measurement to diagnosis to remedy.
+
+% \noindent\textbf{RQ1 (Characterization).}
+% What is the magnitude and distribution of the performance gap between
+% DSL-written kernels (Triton, TileLang) and optimized library implementations
+% (cuBLAS, cuDNN) across operator categories?
+
+% \medskip\noindent\textbf{RQ2 (Root-Cause Analysis).}
+% What compiler-level and architectural factors explain the underperformance
+% of DSL-written kernels relative to library baselines?
+
+% \medskip\noindent\textbf{RQ3 (Mitigation).}
+% What targeted engineering changes reduce the identified performance gap,
+% and how much of the deficit do they recover?
+
+
+We organize the study around three research questions. The first quantifies performance gaps, the second explains them, and the third evaluates whether they can be reduced through targeted changes.
+
+\noindent\textbf{RQ1 (Characterization).} What performance gap separates Triton and TileLang kernels from cuBLAS and cuDNN baselines, and how does this gap differ across operator categories?
+
+\medskip\noindent\textbf{RQ2 (Root-Cause Analysis).} What compiler and architectural factors contribute most to the observed gaps?
+
+\medskip\noindent\textbf{RQ3 (Mitigation).} How much performance can be recovered by targeted implementation fixes derived from the root-cause analysis?

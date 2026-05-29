@@ -1,0 +1,39 @@
+% GPU kernel development is shifting from hand-written CUDA to domain-specific languages (DSLs)
+% such as Triton and TileLang,
+% which promise near-library performance with dramatically lower development effort.
+% While DSLs demonstrably match or approach cuBLAS throughput on matrix multiplication workloads,
+% practitioners report significant underperformance on convolution kernels.
+% This gap has been observed anecdotally but never systematically characterized.
+
+% We present the first empirical study of the performance gap between DSL-written kernels
+% and optimized libraries (cuBLAS, cuDNN) across a representative suite of
+% 22~GPU kernels drawn from TritonBench and augmented with TileLang implementations,
+% spanning five kernel categories:
+% GEMM, attention, convolution, normalization, and element-wise operations.
+% Our study characterizes the magnitude and distribution of the performance gap (RQ1),
+% identifies root causes through latency-driven analysis and compiler-level reasoning (RQ2),
+% and evaluates mitigations that narrow or close the gap on the most affected kernel categories (RQ3).
+% Triton achieves a median library efficiency (ratio of library baseline latency to DSL latency, expressed as a percentage; 100\% = parity) of 32--58\% on GEMM depending on shape and 103\% on element-wise kernels, but only 35\% on convolution.
+% TileLang, while competitive with cuBLAS on select large GEMM shapes (up to 56\%), achieves less than 10\% of cuDNN throughput on convolution.
+% TileLang also exhibits a catastrophic normalization anomaly: 314$\times$ slower than PyTorch on large LayerNorm, traced to use of \texttt{T.serial} manual reduction loops (which execute sequentially) instead of the native parallel \texttt{T.reduce} primitive, compounded by absent vectorized memory loads.
+% Our analysis identifies four compiler-level root causes of convolution underperformance:
+% absent vectorization of strided memory accesses (RC1),
+% auto-tuning search space mismatch (RC2),
+% register pressure from large-filter accumulations (RC3),
+% and missing Winograd algorithm support (RC4).
+% For five representative kernels, targeted fixes address each root cause directly:
+% correcting TileLang's reduction primitive usage brings LayerNorm and RMSNorm to 98\% of PyTorch throughput (recovering from a $314\times$ latency deficit);
+% restructuring Conv2d as an implicit GEMM with alignment and extended auto-tuning narrows the Triton convolution gap to 80\% of cuDNN efficiency,
+% with the remaining 20\% attributed to absent Winograd algorithm support and identified as future compiler work.
+% Our kernel suite, profiling scripts, and raw results are publicly available at \url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/} to support reproducibility.
+
+% The emergence of modern DSLs in GPU programming, like Triton and TileLang, allows developers to write highly efficient kernels without years of expertise in target hardware architecture or coding in low-level languages like CUDA. However, the performance of kernels written in modern DSLs has not been systematically studied, leaving gaps in kernel efficiency evaluation and performance degradation analysis in modern DSLs unaddressed.
+
+% We present the first empirical study of the performance gap between DSL-written kernels  and handcrafted high performance libraries across 22 GPU kernels drawn from TritonBench and augmented with TileLang implementations, spanning five categories: GEMM, attention, convolution, normalization, and element-wise operations. Our results highlights that Triton achieves a median library efficiency of 32--58\% on GEMM and 103\% on element-wise kernels, but only 35\% on convolution while TileLang reaches up to 56\% of cuBLAS on large GEMM shapes yet under 10\% of cuDNN throughput on convolution. TileLang also exhibits a catastrophic normalization anomaly, 314$\times$ slower than PyTorch on large LayerNorm, traced to sequential \texttt{T.serial} reduction loops and absent vectorized memory loads. Based on these empirical results, we identify four compiler-level root causes of convolution underperformance: \textit{absent vectorization of strided memory accesses, auto-tuning search space mismatch, register pressure from large-filter accumulations,} and \textit{missing Winograd algorithm support}. Targeted fixes recover 98\% of PyTorch throughput on LayerNorm and RMSNorm and narrow the Triton convolution gap to 80\% of cuDNN efficiency, with the remaining deficit attributed to absent Winograd support. Our kernel suite, profiling scripts, and raw results are publicly available at \url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/}.
+
+Modern GPU domain-specific languages (DSLs), such as Triton and TileLang, seek to make high-performance kernel development accessible without requiring deep expertise in CUDA or hardware-specific optimization. However, despite their increasing adoption, it remains unclear how closely DSL-written kernels approach the performance of highly optimized vendor libraries and what factors limit that performance.
+
+We present the first empirical study of the performance gap between DSL-written kernels and library implementations across 22 GPU kernels spanning five operator categories: GEMM, attention, convolution, normalization, and element-wise or reduction operators. Our benchmark suite is built from TritonBench, TileLang examples, and additional implementations for missing configurations. Across these workloads, we find that DSL performance is highly uneven across operator classes. Triton reaches 32--58\% of library performance on GEMM and 103\% on element-wise kernels, but only 35\% on convolution. TileLang reaches up to 56\% of cuBLAS throughput on large GEMM shapes, yet remains below 10\% of cuDNN throughput on convolution. We also observe a severe normalization anamoly in TileLang, where large LayerNorm is 314$\times$ slower than PyTorch.
+
+To explain these gaps, we combine end-to-end benchmarking with hardware counter analysis and identify four recurring causes of convolution underperformance: \textit{lack of vectorization for strided memory accesses, mismatch between autotuning search spaces and convolution workloads, register pressure from large-filter accumulations}, and \textit{absence of Winograd-based algorithm support}. Guided by this analysis, we implement targeted fixes that recover 98\% of PyTorch throughput on LayerNorm and RMSNorm and improve Triton convolution performance to 80\% of cuDNN. The remaining gap is primarily associated with missing Winograd support. Our data is available at \url{https://doi.org/10.5281/zenodo.19337858
+}.

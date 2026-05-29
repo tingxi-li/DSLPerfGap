@@ -1,0 +1,49 @@
+% Domain-specific languages for GPU programming have made significant strides:
+% Triton and TileLang enable practitioners to write GEMM and attention kernels
+% that match or approach cuBLAS and cuDNN performance in a fraction of the code.
+% Convolution, however, remains a weak point.
+% This paper is the first to characterize this gap systematically,
+% attribute it to concrete compiler-level root causes,
+% and demonstrate mitigations that recover a meaningful fraction of the shortfall.
+
+% Our empirical study, spanning
+% 22~kernels across five categories,
+% shows that DSL performance gaps are not uniform:
+% GEMM and attention are well-served by current DSL compilers,
+% while convolution --- especially $3 \times 3$ and larger filters ---
+% trails cuDNN by a substantial margin on the tested hardware.
+% Specifically, Triton conv2d achieves 35--49\% of cuDNN throughput across tested shapes,
+% while TileLang conv2d achieves less than 10\%,
+% an additional deficit attributed to sequential thread synchronization in TileLang's reduction primitive.
+% Root-cause analysis further reveals a catastrophic normalization anomaly in TileLang: LayerNorm runs 314$\times$ slower than PyTorch due to sequential thread synchronization caused by \texttt{T.serial} (used in place of \texttt{T.reduce}) and absent vectorized memory loads.
+% Root-cause analysis via Nsight Compute identifies four contributing factors:
+% absent vectorization of strided spatial memory accesses,
+% auto-tuning search space mismatch,
+% register pressure from large-filter accumulations,
+% and the absence of Winograd algorithm selection.
+% Targeted mitigations evaluated in \cref{sec:mitigation} demonstrate that four of five affected kernels
+% reach ${\geq}95\%$ of library efficiency after RC-targeted fixes;
+% the Triton Conv2d gap narrows to 80\% of cuDNN after RC1+RC2 mitigations,
+% with the remaining 20\% requiring Winograd algorithm support (future work).
+
+% These findings carry a practical message:
+% teams adopting Triton or TileLang for convolutional workloads
+% should profile against a cuDNN baseline and apply the mitigation checklist
+% before concluding that a DSL-based kernel is production-ready.
+% They also point to specific compiler engineering investments
+% --- vectorization of NHWC access patterns,
+% adaptive auto-tuning search,
+% and Winograd scheduling primitives ---
+% that would eliminate the need for such workarounds.
+
+% Future work includes extending the study to backward-pass kernels,
+% AMD ROCm targets, and the emerging class of
+% spatially sparse operators that libraries do not yet cover well,
+% where DSLs offer their clearest productivity advantage.
+
+
+We presented an empirical study of the performance gap between modern GPU DSLs and optimized vendor libraries across 22 kernels in five operator categories. The main result is that DSL performance is not uniform across workloads: Triton and TileLang perform well on GEMM-like and element-wise operators, but remain substantially behind cuDNN on convolution.
+
+Our analysis attributes this gap primarily to missing vectorization of strided accesses, inadequate autotuning for convolution, register pressure, and lack of Winograd support. We also identify a severe TileLang normalization anomaly caused by sequential reduction behavior and absent vectorized loads. Targeted fixes recover most of the lost performance for normalization workloads and substantially reduce the Triton convolution gap.
+
+In conclusion, current GPU DSLs provide a strong programming model, but they are not yet a complete substitute for vendor libraries. The results highlight concrete directions for compiler improvement and provide practitioners with a basis for deciding when DSL kernels are likely to be production-ready.
