@@ -47,8 +47,20 @@ CORRECTNESS_EXPS=(
   "exp_fp32_gemm.py"
   "exp_correctness_edge.py"
 )
+# Each entry is "script.py" or "script.py:extra args" (colon-separated args).
+# Same script can fire multiple times with different flags; logs and CSV names
+# are derived from the args by the experiment scripts themselves
+# (exp_conv_filters.py auto-suffixes its CSV by --shape).
+#
+# Conv sweep covers four arms: {baseline, --mitigation} x {small, large}.
+# This produces conv_{filters,mitigation}_{small,large}.csv -- the four files
+# cited by paper REVISION notes (id=4134A-W6, mitigation.tex). On Ada the large
+# shape OOM-guards per row; on A100/H100 (80 GB) all rows populate.
 TIMING_EXPS=(
   "exp_conv_filters.py"
+  "exp_conv_filters.py:--mitigation"
+  "exp_conv_filters.py:--shape large"
+  "exp_conv_filters.py:--shape large --mitigation"
   "exp_fused_baselines.py"
   "exp_winograd_isolation.py"
   "exp_autotune_matmul.py"
@@ -83,29 +95,37 @@ echo "######################################################################"
 # not have landed it yet) and a non-zero rc (keep going, report at the end).
 # ---------------------------------------------------------------------------
 RC_SUMMARY=()
-run_exp() {  # $1 = script filename
-  local script="$1"
+run_exp() {  # $1 = "script.py" or "script.py:extra args"
+  local entry="$1"
+  local script="${entry%%:*}"
+  local extra=""
+  if [[ "${entry}" == *:* ]]; then
+    extra="${entry#*:}"
+  fi
   local path="${HERE}/${script}"
+  local label="${script}"
+  [[ -n "${extra}" ]] && label="${script} ${extra}"
   echo ""
   echo "======================================================================"
-  echo "[run_all] >>> ${script}  ${EXTRA_ARGS[*]:-}"
+  echo "[run_all] >>> ${label}  ${EXTRA_ARGS[*]:-}"
   echo "======================================================================"
   if [[ ! -f "${path}" ]]; then
     echo "[run_all] SKIP: ${script} not present yet (built by another author?)."
-    RC_SUMMARY+=("SKIP  ${script}")
+    RC_SUMMARY+=("SKIP  ${label}")
     return 0
   fi
   local t0 t1 rc
   t0="$(date +%s)"
-  ( cd "${HERE}" && "${PYTHON}" "${path}" "${EXTRA_ARGS[@]}" )
+  # shellcheck disable=SC2086  # intentional word-splitting on ${extra}
+  ( cd "${HERE}" && "${PYTHON}" "${path}" ${extra} "${EXTRA_ARGS[@]}" )
   rc=$?
   t1="$(date +%s)"
   if [[ ${rc} -eq 0 ]]; then
-    echo "[run_all] OK   ${script}  ($((t1 - t0))s)"
-    RC_SUMMARY+=("OK    ${script}  ($((t1 - t0))s)")
+    echo "[run_all] OK   ${label}  ($((t1 - t0))s)"
+    RC_SUMMARY+=("OK    ${label}  ($((t1 - t0))s)")
   else
-    echo "[run_all] FAIL ${script}  (rc=${rc}, $((t1 - t0))s)"
-    RC_SUMMARY+=("FAIL  ${script}  (rc=${rc})")
+    echo "[run_all] FAIL ${label}  (rc=${rc}, $((t1 - t0))s)"
+    RC_SUMMARY+=("FAIL  ${label}  (rc=${rc})")
   fi
   return 0   # never abort the suite on one experiment's failure
 }

@@ -231,6 +231,12 @@
 
 \phantomsection\label{sec:analysis:jit}
 \paragraph{RC0: TileLang Compiler-Level Deficiencies.}
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+GAP-4, Major]}
+Concern (\textit{R1}): The submitted-PDF label conflates kernel-authoring (T.serial choice) with compiler-codegen (LDG.128 absent); the rebuttal splits them as RC0a (authoring, user-space-fixable) and RC0b (codegen, compiler-fixable).
+Evidence: \texttt{../REVISION\_TODO.md}, \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/NCU\_FINDINGS.md}.
+Fix: Restructure RC0 as two subheads: ``RC0a: TileLang Reduction Authoring (T.serial $\to$ T.reduce)'' for the user-space-fixable mechanism and ``RC0b: TileLang Vectorized-Load Codegen'' for the compiler-fixable one, keeping the body content but splitting the framing.}
+% REVISION-NOTE-END id=4134A-W1
 
 
 Two mechanisms contribute to RC0.
@@ -238,6 +244,12 @@ First, the original TileLang normalization kernels implement the reduction over 
 For LayerNorm, which accumulates 8 bfloat16 partial statistics per thread (sum and sum-of-squares for the mean and variance passes), this means the reduction is computed in 8 sequential steps with no inter-thread parallelism.
 The native alternative, \texttt{T.reduce}, lowers to a parallel butterfly reduction via \texttt{tl::AllReduce}.
 A \emph{butterfly reduction} is a logarithmic communication pattern in which threads exchange partial results in $\log_2 N$ rounds ($\log_2(256/32) = 3$ barriers over 256 threads grouped into warps of 32).
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+GAP-1, Major]}
+Concern (\textit{R1}): This sentence presents barriers as the dominant cost, but NCU shows \texttt{warp\_stall\_barrier} $\approx$ 0; the dominant stall is \texttt{warp\_stall\_long\_scoreboard} $\approx$ 105 cycles (memory latency).
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Keep butterfly-reduction description as algorithmic context, but add: ``The performance gain from \texttt{T.reduce} comes from better memory-latency hiding (\texttt{warp\_stall\_long\_scoreboard} drops from 104.91 to $<$ 5 cycles), not from removing barriers (barrier stalls were already $\approx$ 0 in both kernels).''}
+% REVISION-NOTE-END id=4134A-W1
 Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call reduces the dominant latency source: in our experiments, LayerNorm drops from 1090~ms to 5.24~ms ($208\times$ improvement, \cref{sec:mitig:norm}).
 
 Second, TileLang's compiled normalization kernels do not issue 128-bit vectorized loads
@@ -247,6 +259,13 @@ For a tensor of shape $8192 \times 8192$,
 this produces an excessive number of discrete memory transactions
 that bottlenecks the memory controller
 and prevents the L2 cache from streaming coalesced data to the SMs.
+
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+GAP-1+GAP-4, Major]}
+Concern (\textit{R1}): This is the RC0b mechanism; label it explicitly.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Re-label this paragraph as ``RC0b: Absent Vectorized Loads (Compiler Codegen)'' and tighten the wording so it does not blur with RC0a.}
+% REVISION-NOTE-END id=4134A-W1
 
 \paragraph{TileLang float32 correctness.}
 An additional deficiency discovered during our benchmark:
@@ -259,6 +278,13 @@ float32 TileLang GEMM results are excluded.
 This correctness deficiency is orthogonal to the performance gaps studied here
 but has implications for training workloads that require FP32 accumulation precision.
 
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+4134A-W11, Major]}
+Concern (\textit{R1}): Currently flagged as orthogonal; root cause is silent TF32 lowering in \texttt{T.gemm}, not a logic error.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/fp32\_gemm.csv}.
+Fix: Reframe the 99.6\% mismatch as consistent with TF32 mantissa truncation (10-bit mantissa vs FP32's 23-bit), reproducible across four isolation arms in \texttt{exp\_fp32\_gemm.py}; cite the experiment and add a forward ref to a TF32-lowering discussion.}
+% REVISION-NOTE-END id=4134A-W1
+
 
 \textbf{Finding RC0: TileLang's compiled kernels exhibit two structural performance deficiencies:
 (i) use of \texttt{T.serial} manual reduction loops instead of the native parallel \texttt{T.reduce} primitive,
@@ -266,6 +292,13 @@ executing the reduction sequentially over each partial value; and
 (ii) absent 128-bit vectorized memory loads for normalization kernels.
 These compound the per-kernel performance gaps measured in RQ1.
 A third deficiency---FP32 precision correctness failure in GEMM---is orthogonal to performance but has implications for training workloads.}
+
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+GAP-1+GAP-4, Major]}
+Concern (\textit{R1}): The bold finding should reflect the RC0a/RC0b split and the memory-latency framing.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/NCU\_FINDINGS.md}.
+Fix: Rewrite the finding: ``TileLang compiled kernels exhibit two structural deficiencies: (RC0a) \texttt{T.serial} reductions serialize memory-latency hiding rather than synchronization (\texttt{warp\_stall\_long\_scoreboard} dominates; \texttt{barrier} $\approx$ 0), correctable in user space via \texttt{T.reduce}; and (RC0b) absent 128-bit vectorized memory loads for normalization, which require compiler fixes. A third deficiency --- silent TF32 lowering of \texttt{T.gemm} under FP32 --- is correctness-affecting but orthogonal to performance.''}
+% REVISION-NOTE-END id=4134A-W1
 
 \phantomsection\label{sec:analysis:vec}
 \paragraph{RC1: Absent Vectorization of Strided Memory Accesses.}
@@ -299,6 +332,13 @@ On the RTX 4000 Ada's 160-bit GDDR6 interface (360~GB/s peak), scalar 32-bit loa
 \textbf{Finding RC1: Triton-generated convolution code fails to issue vectorized (128-bit) load instructions,
 preventing asynchronous copy (\texttt{cp.async}) from being applied and collapsing the software pipeline.}
 
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3, Major]}
+Concern (\textit{R1}): RC1 should cite the NCU counter confirming it.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv} (\texttt{ldg\_per\_request}).
+Fix: Add: ``NCU shows \texttt{ldg\_per\_request < 32} bits for Triton conv2d, vs \texttt{$\geq$ 128} bits for Triton matmul --- confirming the absent vectorized load.''}
+% REVISION-NOTE-END id=4134A-W3
+
 \phantomsection\label{sec:analysis:autotune}
 \paragraph{RC2: Auto-Tuning Search Space Mismatch.}
 Triton's auto-tuner sweeps a programmer-specified list of configurations
@@ -327,6 +367,13 @@ TileLang additionally requires \texttt{num\_stages} to be declared ahead of time
 is well-suited to GEMM but systematically under-covers optimal configurations
 for convolution, leading to sub-optimal tile shapes and pipeline depth.}
 
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3+4134A-W7, Major]}
+Concern (\textit{R1}): RC2 should distinguish RC2a (configs absent from default grid; e.g.\ matmul L2-swizzle) from RC2b (search budget exhausted before convergence).
+Evidence: \texttt{../AKO4ALL/results/optimized/matmul\_triton.py:10-26}, \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/autotune\_matmul.csv}.
+Fix: Split RC2 into RC2a / RC2b with concrete examples and cite \texttt{autotune\_matmul.csv} for matmul (RC2a) and conv2d (RC2b).}
+% REVISION-NOTE-END id=4134A-W3
+
 \phantomsection\label{sec:analysis:regpressure}
 \paragraph{RC3: Register Pressure and Occupancy Reduction.}
 Each streaming multiprocessor on A100 has 65,536 32-bit registers per block.
@@ -340,6 +387,13 @@ Triton's \texttt{num\_warps} controls thread count per block but does not direct
 \textbf{Finding RC3: Convolution kernels with $5 \times 5$ and larger filters
 exceed the per-thread register budget, causing spill to local memory
 and reducing SM occupancy below the level required for latency hiding.}
+
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3+4134A-W13+GAP-2, Major]}
+Concern (\textit{R1}): The submitted-PDF RC3 attributes register-spill to conv K$\geq$5, but NCU shows conv \texttt{n\_spills = 0}; spill is TileLang-LayerNorm-specific (254 regs/thread, 51.5\,GB local-load), and L336 cites A100 register file size in an Ada-only study.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Relabel RC3 as ``RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem),'' move conv discussion into RC1/RC2, document layer\_norm spill explicitly (254 regs, 51.5\,GB, 16.5\% occupancy), and change the L336 A100 citation to Ada (sm\_89) or note ``Ada and A100 share the 65{,}536 32-bit regs/SM budget.''}
+% REVISION-NOTE-END id=4134A-W3
 
 
 \phantomsection\label{sec:analysis:algo}
@@ -357,6 +411,13 @@ when the computation is arithmetic-bound.
 
 \textbf{Finding RC4: Both Triton and TileLang implement only the im2col-GEMM lowering for convolution,
 providing no access to Winograd or FFT algorithms that cuDNN uses for specific filter sizes.}
+
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3+GAP-3, Major]}
+Concern (\textit{R1}): RC4 currently presented as a major remaining gap; Winograd isolation shows $\approx$2.28\%.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/winograd\_isolation.csv}.
+Fix: Soften the finding to: ``Of the residual gap on 3$\times$3 conv, $\approx$2--3\% is attributable to absent Winograd selection; the remainder reflects cuDNN's general implicit-GEMM tuning.''}
+% REVISION-NOTE-END id=4134A-W3
 
 \subsection{Summary of Root Causes}
 \label{sec:analysis:summary}
@@ -383,3 +444,24 @@ most diagnostic for its detection.
     \bottomrule
   \end{tabular}
 \end{table*}
+
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+GAP-1, Major]}
+Concern (\textit{R1}): The RC0a row's ``Diagnostic counter'' cell reads ``Thread sync count, warp stall,'' implying barrier synchronization is the dominant stall. NCU shows the dominant stall is \texttt{warp\_stall\_long\_scoreboard} (memory latency, $\approx$\,105 cycles), with \texttt{warp\_stall\_barrier} $\approx$ 0.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}, \texttt{NCU\_FINDINGS.md}.
+Fix: Replace the RC0a ``Diagnostic counter'' cell with \texttt{warp\_stall\_long\_scoreboard} (and note ``barrier $\approx$ 0''). This is the same memory-latency framing applied throughout \S6 above.}
+% REVISION-NOTE-END id=4134A-W1
+
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3+GAP-2, Major]}
+Concern (\textit{R1}): The RC3 row lists ``Affected kernels'' as ``Conv2d ($K \geq 5$)''. NCU shows conv \texttt{n\_spills}\,=\,0; the spill is in TileLang LayerNorm (254 regs/thread, 51.5\,GB local-load, 16.5\% occupancy).
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Change the RC3 row's ``Affected kernels'' cell from ``Conv2d ($K \geq 5$)'' to ``TileLang LayerNorm (large)''; add a measured contribution column entry derived from the unspilled-vs-spilled \texttt{sm\_\_register\_spill} ratio for the kernel.}
+% REVISION-NOTE-END id=4134A-W3
+
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3, Major]}
+Concern (\textit{R1}): Counter values in the ``measured contribution'' column should ground every row.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Add a footnote pointing readers to the consolidated \texttt{ncu\_summary.csv} and to per-RC subsections, and update the RC0b row to cite its separate contribution rather than rolling it into RC0.}
+% REVISION-NOTE-END id=4134A-W3

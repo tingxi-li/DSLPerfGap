@@ -34,6 +34,26 @@
 Modern GPU domain-specific languages (DSLs), such as Triton and TileLang, seek to make high-performance kernel development accessible without requiring deep expertise in CUDA or hardware-specific optimization. However, despite their increasing adoption, it remains unclear how closely DSL-written kernels approach the performance of highly optimized vendor libraries and what factors limit that performance.
 
 We present the first empirical study of the performance gap between DSL-written kernels and library implementations across 22 GPU kernels spanning five operator categories: GEMM, attention, convolution, normalization, and element-wise or reduction operators. Our benchmark suite is built from TritonBench, TileLang examples, and additional implementations for missing configurations. Across these workloads, we find that DSL performance is highly uneven across operator classes. Triton reaches 32--58\% of library performance on GEMM and 103\% on element-wise kernels, but only 35\% on convolution. TileLang reaches up to 56\% of cuBLAS throughput on large GEMM shapes, yet remains below 10\% of cuDNN throughput on convolution. We also observe a severe normalization anamoly in TileLang, where large LayerNorm is 314$\times$ slower than PyTorch.
+% REVISION-NOTE-START id=Minor-2 severity=Minor
+\textcolor{red}{\textbf{[REVISION \#Minor-2, Minor]}
+Concern (\textit{4134A, 4134B}): Typo --- "anamoly" should read "anomaly".
+Evidence: n/a.
+Fix: Replace \texttt{anamoly} with \texttt{anomaly} on this line.}
+% REVISION-NOTE-END id=Minor-2
 
-To explain these gaps, we combine end-to-end benchmarking with hardware counter analysis and identify four recurring causes of convolution underperformance: \textit{lack of vectorization for strided memory accesses, mismatch between autotuning search spaces and convolution workloads, register pressure from large-filter accumulations}, and \textit{absence of Winograd-based algorithm support}. Guided by this analysis, we implement targeted fixes that recover 98\% of PyTorch throughput on LayerNorm and RMSNorm and improve Triton convolution performance to 80\% of cuDNN. The remaining gap is primarily associated with missing Winograd support. Our data is available at \url{https://doi.org/10.5281/zenodo.19337858
+To explain these gaps, we combine end-to-end benchmarking with hardware counter analysis and identify four recurring causes of convolution underperformance: \textit{lack of vectorization for strided memory accesses, mismatch between autotuning search spaces and convolution workloads, register pressure from large-filter accumulations}, and \textit{absence of Winograd-based algorithm support}.
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3 + \#GAP-2, Major]}
+Concern (\textit{4134A, Audit}): NCU shows Triton conv2d has \texttt{n\_spills = 0}; register-spill (RC3) is TileLang-LayerNorm-specific (254 regs/thread, 51.5\,GB local-load), not a Triton convolution problem.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Drop "register pressure from large-filter accumulations" from the list of \emph{convolution} causes here; if RC3 must be mentioned, relocate it to a separate clause about TileLang normalization spill.}
+% REVISION-NOTE-END id=4134A-W3
+Guided by this analysis, we implement targeted fixes that recover 98\% of PyTorch throughput on LayerNorm and RMSNorm and improve Triton convolution performance to 80\% of cuDNN. The remaining gap is primarily associated with missing Winograd support.
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3 + \#GAP-3, Major]}
+Concern (\textit{4134A, Audit}): Winograd-isolation experiment measures only $\approx$2.28\% deterministic-vs-non-deterministic delta on 3$\times$3 conv, so "primarily" overstates by an order of magnitude.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/winograd\_isolation.csv}.
+Fix: Replace "primarily associated with missing Winograd support" with "a small ($\approx$2--3\%) contribution from missing Winograd support; the remaining gap reflects general cuDNN implicit-GEMM optimizations".}
+% REVISION-NOTE-END id=4134A-W3
+Our data is available at \url{https://doi.org/10.5281/zenodo.19337858
 }.

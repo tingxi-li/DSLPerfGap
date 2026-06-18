@@ -36,12 +36,39 @@
 
 \textbf{Construct validity.}
 Our primary metric, library efficiency, measures DSL performance relative to the strongest library baseline we were able to exercise for each kernel. Because cuBLAS and cuDNN select among multiple internal algorithms, any failure to invoke their best-performing configuration would make the DSL appear closer to library performance than it actually is. To reduce this risk, we use library-backed PyTorch paths consistent with standard practice, invoke \texttt{cudnnFind} for convolution, record the selected algorithms, and allow cuBLAS to use a large workspace.
+% REVISION-NOTE-START id=Internal-N1 severity=Major decision=true
+\textcolor{red}{\textbf{[REVISION \#Internal-N1 + \#GAP-6, Major, AUTHOR DECISION]}
+Concern (\textit{Internal}): If Option B is chosen in \cref{sec:meth:baselines}, default-flag cuDNN selection is a construct limitation that must be acknowledged here.
+Evidence: \texttt{../ViperBench/benchmark.py}.
+Option A: No change here; only methodology section is updated.
+Option B: Add ``we report under default cuDNN flags (no explicit \texttt{cudnn.benchmark} toggle, no NHWC conversion); algorithm-selection variance is bounded by \texttt{cudnnFind} defaults.''
+Decision needed before camera-ready.}
+% REVISION-NOTE-END id=Internal-N1
 
 \textbf{Internal validity.}
 Profiling-based analysis may be affected by measurement noise and tool overhead. We mitigate this threat by separating end-to-end timing from counter collection, using repeated runs for both, and verifying that key Nsight Compute measurements remain stable across repetitions. All experiments are executed in isolation on a fixed software and hardware setup to reduce confounding effects from concurrent workloads or environmental variation.
+% REVISION-NOTE-START id=GAP-5 severity=Major
+\textcolor{red}{\textbf{[REVISION \#GAP-5 + \#4134A-W8, Major]}
+Concern (\textit{4134A}): Timing methodology + locked-clock significance belong here.
+Evidence: \texttt{../ViperBench/benchmark.py}, \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/significance.csv}.
+Fix: Replace the ``2\% stability'' / ``9\% variation'' wording with locked-clock results (0.0--0.9\% rel-std-dev on near-parity kernels). Note that \texttt{ViperBench/benchmark.py} uses \texttt{perf\_counter} + median (not CUDA events + average).}
+% REVISION-NOTE-END id=GAP-5
 
 \textbf{External validity.}
-Our study covers 22 kernels across five operator categories, but it does not represent the full design space of GPU workloads. In particular, the evaluated configurations emphasize common deep learning operators and shapes rather than uncommon cases such as highly dilated convolutions, extreme group counts, or very small batches. In addition, all experiments are conducted on a single NVIDIA RTX 4000 Ada Generation GPU, so the reported gaps may differ on other architectures or vendor backends.
+Our study covers 22 kernels across five operator categories, but it does not represent the full design space of GPU workloads. In particular, the evaluated configurations emphasize common deep learning operators and shapes rather than uncommon cases such as highly dilated convolutions, extreme group counts, or very small batches.
+% REVISION-NOTE-START id=4134A-W6 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W6, Major]}
+Concern (\textit{4134A}): Acknowledge conv coverage scope.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/conv\_filters\_*.csv}.
+Fix: Add: ``Conv2d is evaluated across 1$\times$1, 3$\times$3, 5$\times$5, 7$\times$7, depthwise, and strided variants in the revision; original submission tabulated only 3$\times$3 stride-1.''}
+% REVISION-NOTE-END id=4134A-W6
+In addition, all experiments are conducted on a single NVIDIA RTX 4000 Ada Generation GPU, so the reported gaps may differ on other architectures or vendor backends.
+% REVISION-NOTE-START id=4134A-W5 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W5, Major (deferred)]}
+Concern (\textit{4134A}): Single-GPU scope.
+Evidence: \texttt{../experiments/A100\_H100\_RUNBOOK.md}.
+Fix: Add: ``Cross-architecture replay on A100 and H100 is planned for the revision (runbook at \texttt{experiments/A100\_H100\_RUNBOOK.md}); the per-GPU result namespace \texttt{experiments/results/<gpu\_slug>/} ensures comparability.''}
+% REVISION-NOTE-END id=4134A-W5
 
 \textbf{Conclusion validity.}
 Our root-cause claims are based on a combination of performance measurements, hardware-counter evidence, and targeted mitigations. Although the mitigation results strengthen the causal interpretation, they do not rule out additional compiler or runtime factors that were not isolated in this study. The conclusions should therefore be read as evidence-supported explanations for the observed gaps, rather than as an exhaustive account of all possible causes.

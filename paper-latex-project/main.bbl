@@ -1,0 +1,549 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{31}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{} and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showURL}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showURL #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[Ansel et~al\mbox{.}(2024)]%
+        {li2023torchcompile}
+\bibfield{author}{\bibinfo{person}{Jason Ansel}, \bibinfo{person}{Edward Yang},
+  \bibinfo{person}{Horace He}, \bibinfo{person}{Natalia Gimelshein},
+  \bibinfo{person}{Animesh Jain}, \bibinfo{person}{Michael Voznesensky},
+  \bibinfo{person}{Bin Bao}, \bibinfo{person}{Peter Bell},
+  \bibinfo{person}{David Berard}, \bibinfo{person}{Evgeni Burovski},
+  \bibinfo{person}{Geeta Chauhan}, \bibinfo{person}{Anjali Chourdia},
+  \bibinfo{person}{Will Constable}, \bibinfo{person}{Alban Desmaison},
+  \bibinfo{person}{Zachary DeVito}, \bibinfo{person}{Elias Ellison},
+  \bibinfo{person}{Will Feng}, \bibinfo{person}{Jiong Gong},
+  \bibinfo{person}{Michael Gschwind}, \bibinfo{person}{Brian Hirsh},
+  \bibinfo{person}{Sherlock Huang}, \bibinfo{person}{Kshiteej Kalambarkar},
+  \bibinfo{person}{Laurent Kirsch}, \bibinfo{person}{Michael Lazos},
+  \bibinfo{person}{Mario Lezcano}, \bibinfo{person}{Yanbo Liang},
+  \bibinfo{person}{Jason Liang}, \bibinfo{person}{Yinghai Lu},
+  \bibinfo{person}{C.~K. Luk}, \bibinfo{person}{Bert Maher},
+  \bibinfo{person}{Yunjie Pan}, \bibinfo{person}{Christian Puhrsch},
+  \bibinfo{person}{Matthias Reso}, \bibinfo{person}{Mark Saroufim},
+  \bibinfo{person}{Marcos~Yukio Siraichi}, \bibinfo{person}{Helen Suk},
+  \bibinfo{person}{Shunting Zhang}, \bibinfo{person}{Michael Suo},
+  \bibinfo{person}{Phil Tillet}, \bibinfo{person}{Xu Zhao},
+  \bibinfo{person}{Eikan Wang}, \bibinfo{person}{Keren Zhou},
+  \bibinfo{person}{Richard Zou}, \bibinfo{person}{Xiaodong Wang},
+  \bibinfo{person}{Ajit Mathews}, \bibinfo{person}{William Wen},
+  \bibinfo{person}{Gregory Chanan}, \bibinfo{person}{Peng Wu}, {and}
+  \bibinfo{person}{Soumith Chintala}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{PyTorch 2: Faster Machine Learning Through Dynamic
+  Python Bytecode Transformation and Graph Compilation}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 29th ACM International
+  Conference on Architectural Support for Programming Languages and Operating
+  Systems, Volume 2}} (La Jolla, CA, USA) \emph{(\bibinfo{series}{ASPLOS
+  '24})}. \bibinfo{publisher}{Association for Computing Machinery},
+  \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{929–947}.
+\newblock
+\showISBNx{9798400703850}
+\href{https://doi.org/10.1145/3620665.3640366}{doi:\nolinkurl{10.1145/3620665.3640366}}
+
+
+\bibitem[Chen et~al\mbox{.}(2018)]%
+        {chen2018tvm}
+\bibfield{author}{\bibinfo{person}{Tianqi Chen}, \bibinfo{person}{Thierry
+  Moreau}, \bibinfo{person}{Ziheng Jiang}, \bibinfo{person}{Lianmin Zheng},
+  \bibinfo{person}{Eddie Yan}, \bibinfo{person}{Haichen Shen},
+  \bibinfo{person}{Meghan Cowan}, \bibinfo{person}{Leyuan Wang},
+  \bibinfo{person}{Yuwei Hu}, \bibinfo{person}{Luis Ceze},
+  \bibinfo{person}{Carlos Guestrin}, {and} \bibinfo{person}{Arvind
+  Krishnamurthy}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{TVM}: An Automated {End-to-End} Optimizing
+  Compiler for Deep Learning}. In \bibinfo{booktitle}{\emph{13th USENIX
+  Symposium on Operating Systems Design and Implementation (OSDI 18)}}.
+  \bibinfo{publisher}{USENIX Association}, \bibinfo{address}{Carlsbad, CA},
+  \bibinfo{pages}{578--594}.
+\newblock
+\showISBNx{978-1-939133-08-3}
+\urldef\tempurl%
+\url{https://www.usenix.org/conference/osdi18/presentation/chen}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Chetlur et~al\mbox{.}(2014a)]%
+        {cudnn2024}
+\bibfield{author}{\bibinfo{person}{Sharan Chetlur}, \bibinfo{person}{Cliff
+  Woolley}, \bibinfo{person}{Philippe Vandermersch}, \bibinfo{person}{Jonathan
+  Cohen}, \bibinfo{person}{John Tran}, \bibinfo{person}{Bryan Catanzaro}, {and}
+  \bibinfo{person}{Evan Shelhamer}.} \bibinfo{year}{2014}\natexlab{a}.
+\newblock \bibinfo{title}{cuDNN: Efficient Primitives for Deep Learning}.
+\newblock
+\showeprint[arxiv]{1410.0759}~[cs.NE]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/1410.0759}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Chetlur et~al\mbox{.}(2014b)]%
+        {chetlur2014cudnn}
+\bibfield{author}{\bibinfo{person}{Sharan Chetlur}, \bibinfo{person}{Cliff
+  Woolley}, \bibinfo{person}{Philippe Vandermersch}, \bibinfo{person}{Jonathan
+  Cohen}, \bibinfo{person}{John Tran}, \bibinfo{person}{Bryan Catanzaro}, {and}
+  \bibinfo{person}{Evan Shelhamer}.} \bibinfo{year}{2014}\natexlab{b}.
+\newblock \showarticletitle{cuDNN: Efficient Primitives for Deep Learning}.
+\newblock  (\bibinfo{year}{2014}).
+\newblock
+\showeprint[arxiv]{1410.0759}~[cs.NE]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/1410.0759}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Dao(2023)]%
+        {dao2023flashattention2}
+\bibfield{author}{\bibinfo{person}{Tri Dao}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{FlashAttention-2: Faster Attention with Better
+  Parallelism and Work Partitioning}.
+\newblock
+\showeprint[arxiv]{2307.08691}~[cs.LG]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2307.08691}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Dao et~al\mbox{.}(2022)]%
+        {dao2022flashattention}
+\bibfield{author}{\bibinfo{person}{Tri Dao}, \bibinfo{person}{Dan Fu},
+  \bibinfo{person}{Stefano Ermon}, \bibinfo{person}{Atri Rudra}, {and}
+  \bibinfo{person}{Christopher R\'{e}}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{FlashAttention: Fast and Memory-Efficient Exact
+  Attention with IO-Awareness}. In \bibinfo{booktitle}{\emph{Advances in Neural
+  Information Processing Systems}},
+  \bibfield{editor}{\bibinfo{person}{S.~Koyejo}, \bibinfo{person}{S.~Mohamed},
+  \bibinfo{person}{A.~Agarwal}, \bibinfo{person}{D.~Belgrave},
+  \bibinfo{person}{K.~Cho}, {and} \bibinfo{person}{A.~Oh}} (Eds.),
+  Vol.~\bibinfo{volume}{35}. \bibinfo{publisher}{Curran Associates, Inc.},
+  \bibinfo{pages}{16344--16359}.
+\newblock
+\urldef\tempurl%
+\url{https://proceedings.neurips.cc/paper_files/paper/2022/file/67d57c32e20fd0a7a302cb81d36e40d5-Paper-Conference.pdf}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Hijma et~al\mbox{.}(2023)]%
+        {optimization_survey}
+\bibfield{author}{\bibinfo{person}{Pieter Hijma}, \bibinfo{person}{Stijn
+  Heldens}, \bibinfo{person}{Alessio Sclocco}, \bibinfo{person}{Ben van
+  Werkhoven}, {and} \bibinfo{person}{Henri~E. Bal}.}
+  \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Optimization Techniques for GPU Programming}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{55},
+  \bibinfo{number}{11}, Article \bibinfo{articleno}{239} (\bibinfo{date}{March}
+  \bibinfo{year}{2023}), \bibinfo{numpages}{81}~pages.
+\newblock
+\showISSN{0360-0300}
+\href{https://doi.org/10.1145/3570638}{doi:\nolinkurl{10.1145/3570638}}
+
+
+\bibitem[Hsu et~al\mbox{.}(2025)]%
+        {hsu2025ligerkernelefficienttriton}
+\bibfield{author}{\bibinfo{person}{Pin-Lun Hsu}, \bibinfo{person}{Yun Dai},
+  \bibinfo{person}{Vignesh Kothapalli}, \bibinfo{person}{Qingquan Song},
+  \bibinfo{person}{Shao Tang}, \bibinfo{person}{Siyu Zhu},
+  \bibinfo{person}{Steven Shimizu}, \bibinfo{person}{Shivam Sahni},
+  \bibinfo{person}{Haowen Ning}, {and} \bibinfo{person}{Yanning Chen}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{Liger Kernel: Efficient Triton Kernels for LLM
+  Training}.
+\newblock
+\showeprint[arxiv]{2410.10989}~[cs.LG]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2410.10989}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Katel et~al\mbox{.}(2022)]%
+        {bik2022mlir}
+\bibfield{author}{\bibinfo{person}{Navdeep Katel}, \bibinfo{person}{Vivek
+  Khandelwal}, {and} \bibinfo{person}{Uday Bondhugula}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{MLIR-based code generation for GPU tensor cores}.
+  In \bibinfo{booktitle}{\emph{Proceedings of the 31st ACM SIGPLAN
+  International Conference on Compiler Construction}} (Seoul, South Korea)
+  \emph{(\bibinfo{series}{CC 2022})}. \bibinfo{publisher}{Association for
+  Computing Machinery}, \bibinfo{address}{New York, NY, USA},
+  \bibinfo{pages}{117–128}.
+\newblock
+\showISBNx{9781450391832}
+\href{https://doi.org/10.1145/3497776.3517770}{doi:\nolinkurl{10.1145/3497776.3517770}}
+
+
+\bibitem[Lattner et~al\mbox{.}(2021)]%
+        {lattner2021mlir}
+\bibfield{author}{\bibinfo{person}{Chris Lattner}, \bibinfo{person}{Mehdi
+  Amini}, \bibinfo{person}{Uday Bondhugula}, \bibinfo{person}{Albert Cohen},
+  \bibinfo{person}{Andy Davis}, \bibinfo{person}{Jacques Pienaar},
+  \bibinfo{person}{River Riddle}, \bibinfo{person}{Tatiana Shpeisman},
+  \bibinfo{person}{Nicolas Vasilache}, {and} \bibinfo{person}{Oleksandr
+  Zinenko}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{MLIR: Scaling Compiler Infrastructure for Domain
+  Specific Computation}. In \bibinfo{booktitle}{\emph{2021 IEEE/ACM
+  International Symposium on Code Generation and Optimization (CGO)}}.
+  \bibinfo{pages}{2--14}.
+\newblock
+\href{https://doi.org/10.1109/CGO51591.2021.9370308}{doi:\nolinkurl{10.1109/CGO51591.2021.9370308}}
+
+
+\bibitem[Lavin and Gray(2016)]%
+        {lavin2016fast}
+\bibfield{author}{\bibinfo{person}{Andrew Lavin} {and} \bibinfo{person}{Scott
+  Gray}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \showarticletitle{Fast Algorithms for Convolutional Neural Networks}.
+  In \bibinfo{booktitle}{\emph{Proceedings of the IEEE Conference on Computer
+  Vision and Pattern Recognition (CVPR)}}.
+\newblock
+
+
+\bibitem[Li et~al\mbox{.}(2025b)]%
+        {li2025tritonforge}
+\bibfield{author}{\bibinfo{person}{Haonan Li}, \bibinfo{person}{Keyu Man},
+  \bibinfo{person}{Partha Kanuparthy}, \bibinfo{person}{Hanning Chen},
+  \bibinfo{person}{Wei Sun}, \bibinfo{person}{Sreen Tallam},
+  \bibinfo{person}{Chenguang Zhu}, \bibinfo{person}{Kevin Zhu}, {and}
+  \bibinfo{person}{Zhiyun Qian}.} \bibinfo{year}{2025}\natexlab{b}.
+\newblock \bibinfo{title}{TritonForge: Profiling-Guided Framework for Automated
+  Triton Kernel Optimization}.
+\newblock
+\showeprint[arxiv]{2512.09196}~[cs.SE]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2512.09196}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Li et~al\mbox{.}(2025a)]%
+        {li2025tritonbench}
+\bibfield{author}{\bibinfo{person}{Jianling Li}, \bibinfo{person}{Shangzhan
+  Li}, \bibinfo{person}{Zhenye Gao}, \bibinfo{person}{Qi Shi},
+  \bibinfo{person}{Yuxuan Li}, \bibinfo{person}{Zefan Wang},
+  \bibinfo{person}{Jiacheng Huang}, \bibinfo{person}{Haojie Wang},
+  \bibinfo{person}{Jianrong Wang}, \bibinfo{person}{Xu Han},
+  \bibinfo{person}{Zhiyuan Liu}, {and} \bibinfo{person}{Maosong Sun}.}
+  \bibinfo{year}{2025}\natexlab{a}.
+\newblock \showarticletitle{{T}riton{B}ench: Benchmarking Large Language Model
+  Capabilities for Generating Triton Operators}. In
+  \bibinfo{booktitle}{\emph{Findings of the Association for Computational
+  Linguistics: ACL 2025}}, \bibfield{editor}{\bibinfo{person}{Wanxiang Che},
+  \bibinfo{person}{Joyce Nabende}, \bibinfo{person}{Ekaterina Shutova}, {and}
+  \bibinfo{person}{Mohammad~Taher Pilehvar}} (Eds.).
+  \bibinfo{publisher}{Association for Computational Linguistics},
+  \bibinfo{address}{Vienna, Austria}, \bibinfo{pages}{23053--23066}.
+\newblock
+\showISBNx{979-8-89176-256-5}
+\href{https://doi.org/10.18653/v1/2025.findings-acl.1183}{doi:\nolinkurl{10.18653/v1/2025.findings-acl.1183}}
+
+
+\bibitem[Mittal and Vetter(2014)]%
+        {gpuenergy}
+\bibfield{author}{\bibinfo{person}{Sparsh Mittal} {and}
+  \bibinfo{person}{Jeffrey~S. Vetter}.} \bibinfo{year}{2014}\natexlab{}.
+\newblock \showarticletitle{A Survey of Methods for Analyzing and Improving GPU
+  Energy Efficiency}.
+\newblock \bibinfo{journal}{\emph{ACM Comput. Surv.}} \bibinfo{volume}{47},
+  \bibinfo{number}{2}, Article \bibinfo{articleno}{19} (\bibinfo{date}{Aug.}
+  \bibinfo{year}{2014}), \bibinfo{numpages}{23}~pages.
+\newblock
+\showISSN{0360-0300}
+\href{https://doi.org/10.1145/2636342}{doi:\nolinkurl{10.1145/2636342}}
+
+
+\bibitem[{NVIDIA Corporation}(2017)]%
+        {cutlass2023}
+\bibfield{author}{\bibinfo{person}{{NVIDIA Corporation}}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{{CUTLASS}: CUDA Templates and Python DSLs
+  for High-Performance Linear Algebra}}.
+\newblock
+
+
+\bibitem[{NVIDIA Corporation}(2024)]%
+        {nsightcompute2024}
+\bibfield{author}{\bibinfo{person}{{NVIDIA Corporation}}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{{NVIDIA} Nsight Compute}.
+\newblock
+  \bibinfo{howpublished}{\url{https://developer.nvidia.com/nsight-compute}}.
+\newblock
+
+
+\bibitem[{NVIDIA Corporation}(2026)]%
+        {cublas2024}
+\bibfield{author}{\bibinfo{person}{{NVIDIA Corporation}}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \bibinfo{booktitle}{\emph{{cuBLAS}: Basic Linear Algebra on NVIDIA
+  GPUs}}.
+\newblock
+
+
+\bibitem[{OpenAI}(2021)]%
+        {openai2021triton}
+\bibfield{author}{\bibinfo{person}{{OpenAI}}.} \bibinfo{year}{2021}\natexlab{}.
+\newblock \bibinfo{title}{Introducing {Triton}: Open-Source {GPU} Programming
+  for Neural Networks}.
+\newblock \bibinfo{howpublished}{\url{https://openai.com/index/triton/}}.
+\newblock
+
+
+\bibitem[Ragan-Kelley et~al\mbox{.}(2013)]%
+        {ragan-kelley2013halide}
+\bibfield{author}{\bibinfo{person}{Jonathan Ragan-Kelley},
+  \bibinfo{person}{Connelly Barnes}, \bibinfo{person}{Andrew Adams},
+  \bibinfo{person}{Sylvain Paris}, \bibinfo{person}{Fr\'{e}do Durand}, {and}
+  \bibinfo{person}{Saman Amarasinghe}.} \bibinfo{year}{2013}\natexlab{}.
+\newblock \showarticletitle{Halide: a language and compiler for optimizing
+  parallelism, locality, and recomputation in image processing pipelines}.
+\newblock \bibinfo{journal}{\emph{SIGPLAN Not.}} \bibinfo{volume}{48},
+  \bibinfo{number}{6}, \bibinfo{pages}{519–530}.
+\newblock
+\showISSN{0362-1340}
+\href{https://doi.org/10.1145/2499370.2462176}{doi:\nolinkurl{10.1145/2499370.2462176}}
+
+
+\bibitem[Reddi et~al\mbox{.}(2020)]%
+        {reddi2020mlperf}
+\bibfield{author}{\bibinfo{person}{Vijay~Janapa Reddi},
+  \bibinfo{person}{Christine Cheng}, \bibinfo{person}{David Kanter},
+  \bibinfo{person}{Peter Mattson}, \bibinfo{person}{Guenther Schmuelling},
+  \bibinfo{person}{Carole-Jean Wu}, \bibinfo{person}{Brian Anderson},
+  \bibinfo{person}{Maximilien Breughe}, \bibinfo{person}{Mark Charlebois},
+  \bibinfo{person}{William Chou}, \bibinfo{person}{Ramesh Chukka},
+  \bibinfo{person}{Cody Coleman}, \bibinfo{person}{Sam Davis},
+  \bibinfo{person}{Pan Deng}, \bibinfo{person}{Greg Diamos},
+  \bibinfo{person}{Jared Duke}, \bibinfo{person}{Dave Fick},
+  \bibinfo{person}{J.~Scott Gardner}, \bibinfo{person}{Itay Hubara},
+  \bibinfo{person}{Sachin Idgunji}, \bibinfo{person}{Thomas~B. Jablin},
+  \bibinfo{person}{Jeff Jiao}, \bibinfo{person}{Tom~St. John},
+  \bibinfo{person}{Pankaj Kanwar}, \bibinfo{person}{David Lee},
+  \bibinfo{person}{Jeffery Liao}, \bibinfo{person}{Anton Lokhmotov},
+  \bibinfo{person}{Francisco Massa}, \bibinfo{person}{Peng Meng},
+  \bibinfo{person}{Paulius Micikevicius}, \bibinfo{person}{Colin Osborne},
+  \bibinfo{person}{Gennady Pekhimenko}, \bibinfo{person}{Arun Tejusve~Raghunath
+  Rajan}, \bibinfo{person}{Dilip Sequeira}, \bibinfo{person}{Ashish Sirasao},
+  \bibinfo{person}{Fei Sun}, \bibinfo{person}{Hanlin Tang},
+  \bibinfo{person}{Michael Thomson}, \bibinfo{person}{Frank Wei},
+  \bibinfo{person}{Ephrem Wu}, \bibinfo{person}{Lingjie Xu},
+  \bibinfo{person}{Koichi Yamada}, \bibinfo{person}{Bing Yu},
+  \bibinfo{person}{George Yuan}, \bibinfo{person}{Aaron Zhong},
+  \bibinfo{person}{Peizhao Zhang}, {and} \bibinfo{person}{Yuchen Zhou}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{MLPerf Inference Benchmark}. In
+  \bibinfo{booktitle}{\emph{2020 ACM/IEEE 47th Annual International Symposium
+  on Computer Architecture (ISCA)}}. \bibinfo{pages}{446--459}.
+\newblock
+\href{https://doi.org/10.1109/ISCA45697.2020.00045}{doi:\nolinkurl{10.1109/ISCA45697.2020.00045}}
+
+
+\bibitem[sebastienwood(2022)]%
+        {triton2022conv591}
+\bibfield{author}{\bibinfo{person}{sebastienwood}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \bibinfo{title}{Example Conv2D in Triton}.
+\newblock \bibinfo{howpublished}{GitHub Discussion \#591,
+  \url{https://github.com/triton-lang/triton/discussions/591}}.
+\newblock
+\newblock
+\shownote{Accessed: 2026-03-25}.
+
+
+\bibitem[Shuvo et~al\mbox{.}(2023)]%
+        {acceleration_survey}
+\bibfield{author}{\bibinfo{person}{Md. Maruf~Hossain Shuvo},
+  \bibinfo{person}{Syed~Kamrul Islam}, \bibinfo{person}{Jianlin Cheng}, {and}
+  \bibinfo{person}{Bashir~I. Morshed}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{Efficient Acceleration of Deep Learning Inference
+  on Resource-Constrained Edge Devices: A Review}.
+\newblock \bibinfo{journal}{\emph{Proc. IEEE}} \bibinfo{volume}{111},
+  \bibinfo{number}{1} (\bibinfo{year}{2023}), \bibinfo{pages}{42--91}.
+\newblock
+\href{https://doi.org/10.1109/JPROC.2022.3226481}{doi:\nolinkurl{10.1109/JPROC.2022.3226481}}
+
+
+\bibitem[Spector et~al\mbox{.}(2025)]%
+        {spector2024thunderkittens}
+\bibfield{author}{\bibinfo{person}{Benjamin~Frederick Spector},
+  \bibinfo{person}{Simran Arora}, \bibinfo{person}{Aaryan Singhal},
+  \bibinfo{person}{Arjun Parthasarathy}, \bibinfo{person}{Daniel~Y Fu}, {and}
+  \bibinfo{person}{Christopher Re}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{ThunderKittens: Simple, Fast, and
+  \${\textbackslash}textit\{Adorable\}\$ Kernels}. In
+  \bibinfo{booktitle}{\emph{The Thirteenth International Conference on Learning
+  Representations}}.
+\newblock
+\urldef\tempurl%
+\url{https://openreview.net/forum?id=0fJfVOSUra}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Tillet et~al\mbox{.}(2019)]%
+        {tillet2019triton}
+\bibfield{author}{\bibinfo{person}{Philippe Tillet}, \bibinfo{person}{H.~T.
+  Kung}, {and} \bibinfo{person}{David Cox}.} \bibinfo{year}{2019}\natexlab{}.
+\newblock \showarticletitle{Triton: an intermediate language and compiler for
+  tiled neural network computations}. In \bibinfo{booktitle}{\emph{Proceedings
+  of the 3rd ACM SIGPLAN International Workshop on Machine Learning and
+  Programming Languages}} (Phoenix, AZ, USA) \emph{(\bibinfo{series}{MAPL
+  2019})}. \bibinfo{publisher}{Association for Computing Machinery},
+  \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{10–19}.
+\newblock
+\showISBNx{9781450367196}
+\href{https://doi.org/10.1145/3315508.3329973}{doi:\nolinkurl{10.1145/3315508.3329973}}
+
+
+\bibitem[Vasilache et~al\mbox{.}(2022)]%
+        {vasilache2022composable}
+\bibfield{author}{\bibinfo{person}{Nicolas Vasilache},
+  \bibinfo{person}{Oleksandr Zinenko}, \bibinfo{person}{Aart J.~C. Bik},
+  \bibinfo{person}{Mahesh Ravishankar}, \bibinfo{person}{Thomas Raoux},
+  \bibinfo{person}{Alexander Belyaev}, \bibinfo{person}{Matthias Springer},
+  \bibinfo{person}{Tobias Gysi}, \bibinfo{person}{Diego Caballero},
+  \bibinfo{person}{Stephan Herhut}, \bibinfo{person}{Stella Laurenzo}, {and}
+  \bibinfo{person}{Albert Cohen}.} \bibinfo{year}{2022}\natexlab{}.
+\newblock \bibinfo{title}{Composable and Modular Code Generation in MLIR: A
+  Structured and Retargetable Approach to Tensor Compiler Construction}.
+\newblock
+\showeprint[arxiv]{2202.03293}~[cs.PL]
+\urldef\tempurl%
+\url{https://arxiv.org/abs/2202.03293}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Wang et~al\mbox{.}(2010)]%
+        {kernelfusion}
+\bibfield{author}{\bibinfo{person}{Guibin Wang}, \bibinfo{person}{YiSong Lin},
+  {and} \bibinfo{person}{Wei Yi}.} \bibinfo{year}{2010}\natexlab{}.
+\newblock \showarticletitle{Kernel Fusion: An Effective Method for Better Power
+  Efficiency on Multithreaded GPU}. In \bibinfo{booktitle}{\emph{2010 IEEE/ACM
+  Int'l Conference on Green Computing and Communications & Int'l Conference on
+  Cyber, Physical and Social Computing}}. \bibinfo{pages}{344--350}.
+\newblock
+\href{https://doi.org/10.1109/GreenCom-CPSCom.2010.102}{doi:\nolinkurl{10.1109/GreenCom-CPSCom.2010.102}}
+
+
+\bibitem[Wang et~al\mbox{.}(2026)]%
+        {wang2025tilelang}
+\bibfield{author}{\bibinfo{person}{Lei Wang}, \bibinfo{person}{Yu Cheng},
+  \bibinfo{person}{Yining Shi}, \bibinfo{person}{Zhiwen Mo},
+  \bibinfo{person}{Zhengju Tang}, \bibinfo{person}{Wenhao Xie},
+  \bibinfo{person}{Tong Wu}, \bibinfo{person}{Lingxiao Ma},
+  \bibinfo{person}{Yuqing Xia}, \bibinfo{person}{Jilong Xue},
+  \bibinfo{person}{Fan Yang}, {and} \bibinfo{person}{Zhi Yang}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{TileLang: Bridge Programmability and Performance in
+  Modern Neural Kernels}. In \bibinfo{booktitle}{\emph{The Fourteenth
+  International Conference on Learning Representations}}.
+\newblock
+\urldef\tempurl%
+\url{https://openreview.net/forum?id=Jb1WkNSfUB}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Williams et~al\mbox{.}(2009)]%
+        {williams2009roofline}
+\bibfield{author}{\bibinfo{person}{Samuel Williams}, \bibinfo{person}{Andrew
+  Waterman}, {and} \bibinfo{person}{David Patterson}.}
+  \bibinfo{year}{2009}\natexlab{}.
+\newblock \showarticletitle{Roofline: an insightful visual performance model
+  for multicore architectures}.
+\newblock \bibinfo{journal}{\emph{Commun. ACM}} \bibinfo{volume}{52},
+  \bibinfo{number}{4} (\bibinfo{date}{April} \bibinfo{year}{2009}),
+  \bibinfo{pages}{65–76}.
+\newblock
+\showISSN{0001-0782}
+\href{https://doi.org/10.1145/1498765.1498785}{doi:\nolinkurl{10.1145/1498765.1498785}}
+
+
+\bibitem[Wolfe(1989)]%
+        {wolfe1989more}
+\bibfield{author}{\bibinfo{person}{M. Wolfe}.} \bibinfo{year}{1989}\natexlab{}.
+\newblock \showarticletitle{More iteration space tiling}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 1989 ACM/IEEE Conference on
+  Supercomputing}} (Reno, Nevada, USA) \emph{(\bibinfo{series}{Supercomputing
+  '89})}. \bibinfo{publisher}{Association for Computing Machinery},
+  \bibinfo{address}{New York, NY, USA}, \bibinfo{pages}{655–664}.
+\newblock
+\showISBNx{0897913418}
+\href{https://doi.org/10.1145/76263.76337}{doi:\nolinkurl{10.1145/76263.76337}}
+
+
+\bibitem[Zheng et~al\mbox{.}(2020)]%
+        {zheng2020ansor}
+\bibfield{author}{\bibinfo{person}{Lianmin Zheng}, \bibinfo{person}{Chengfan
+  Jia}, \bibinfo{person}{Minmin Sun}, \bibinfo{person}{Zhao Wu},
+  \bibinfo{person}{Cody~Hao Yu}, \bibinfo{person}{Ameer Haj-Ali},
+  \bibinfo{person}{Yida Wang}, \bibinfo{person}{Jun Yang},
+  \bibinfo{person}{Danyang Zhuo}, \bibinfo{person}{Koushik Sen},
+  \bibinfo{person}{Joseph~E. Gonzalez}, {and} \bibinfo{person}{Ion Stoica}.}
+  \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{Ansor: Generating {High-Performance} Tensor
+  Programs for Deep Learning}. In \bibinfo{booktitle}{\emph{14th USENIX
+  Symposium on Operating Systems Design and Implementation (OSDI 20)}}.
+  \bibinfo{publisher}{USENIX Association}, \bibinfo{pages}{863--879}.
+\newblock
+\showISBNx{978-1-939133-19-9}
+\urldef\tempurl%
+\url{https://www.usenix.org/conference/osdi20/presentation/zheng}
+\showURL{%
+\tempurl}
+
+
+\bibitem[Zhou et~al\mbox{.}(2021)]%
+        {zhou2021implicit}
+\bibfield{author}{\bibinfo{person}{Yangjie Zhou}, \bibinfo{person}{Mengtian
+  Yang}, \bibinfo{person}{Cong Guo}, \bibinfo{person}{Jingwen Leng},
+  \bibinfo{person}{Yun Liang}, \bibinfo{person}{Quan Chen},
+  \bibinfo{person}{Minyi Guo}, {and} \bibinfo{person}{Yuhao Zhu}.}
+  \bibinfo{year}{2021}\natexlab{}.
+\newblock \showarticletitle{Characterizing and Demystifying the Implicit
+  Convolution Algorithm on Commercial Matrix-Multiplication Accelerators}. In
+  \bibinfo{booktitle}{\emph{2021 IEEE International Symposium on Workload
+  Characterization (IISWC)}}. \bibinfo{pages}{214--225}.
+\newblock
+\href{https://doi.org/10.1109/IISWC53511.2021.00029}{doi:\nolinkurl{10.1109/IISWC53511.2021.00029}}
+
+
+\end{thebibliography}

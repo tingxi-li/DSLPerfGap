@@ -41,6 +41,12 @@ RC2 (\cref{sec:analysis:autotune}) indicates that static tuning configurations t
 
 \textbf{Support algorithmic alternatives for convolution.}
 RC4 highlights a limitation that cannot be addressed through local schedule tuning alone: current DSL implementations do not expose algorithmic choices comparable to those available in cuDNN. In particular, support for Winograd-style transformations would allow the compiler or runtime to choose among direct convolution, GEMM lowering, and Winograd-based execution depending on filter shape and problem size. Although this requires a larger system change than RC1 or RC2, it is necessary to close the remaining gap on common $3\times3$ convolutions.
+% REVISION-NOTE-START id=4134A-W4 severity=Medium
+\textcolor{red}{\textbf{[REVISION \#4134A-W4, Medium]}
+Concern (\textit{Reviewer A}): Make the user-space-fixable vs compiler-fixable taxonomy explicit.
+Evidence: \texttt{../REBUTTAL.md} \S1 A\#4.
+Fix: Tag each bullet as either ``user-space fixable today (manual rewrite using existing primitives)'' or ``requires compiler change.''}
+% REVISION-NOTE-END id=4134A-W4
 
 
 % \subsection{Implications for Practitioners}
@@ -70,6 +76,12 @@ DSL kernels should not be assumed to match library performance by default. In ou
 
 \textbf{The root-cause analysis can guide debugging.}
 The mitigation results suggest a practical workflow for diagnosing underperforming DSL kernels. For convolution, developers should first check whether memory accesses are vectorized (RC1), then evaluate whether the tuning space is too narrow for the target shape (RC2), and finally inspect register pressure and spill behavior (RC3). For small filters such as $3\times3$, algorithmic alternatives such as Winograd should also be considered (RC4). This sequence provides a compact checklist for performance debugging in Triton and TileLang.
+% REVISION-NOTE-START id=4134A-W3 severity=Medium
+\textcolor{red}{\textbf{[REVISION \#4134A-W3, Medium]}
+Concern (\textit{Reviewer A}): Root-cause checklist for practitioners should reflect the corrected RC framing.
+Evidence: \texttt{../CLAUDE.md} (corrected RC labels).
+Fix: Update the checklist: RC0a (T.serial $\to$ T.reduce) before RC1; RC2a/RC2b distinction; drop RC3 unless TileLang normalization is being optimized; RC4 only for 3$\times$3 conv and only as a small ($\approx$2--3\%) contributor.}
+% REVISION-NOTE-END id=4134A-W3
 
 
 \subsection{Limitations}

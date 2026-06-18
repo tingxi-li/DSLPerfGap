@@ -24,7 +24,7 @@ The full campaign history/trajectory is archived under `logs/`; the measured evi
 
 #### 1. Validity on Data-center GPUs
 
-We have launched experiments on A100 and H100 to confirm our findings — measured on the RTX 4000 Ada platform — generalize to data-center GPUs.
+We have launched experiments on A100 and H100 to characterize how the relative impacts of our RC0--RC4 attributions shift on data-center architectures (HBM2e/HBM3 bandwidth, larger L2, and H100's TMA/wgmma async pipelines): the authoring-side root causes (RC0a, RC3 TileLang-LayerNorm spill) are predicted to reproduce arch-independently, while the bandwidth/L2-bound root cause (RC2b) and the GEMM gap are expected to shift with HBM3. The revision will report measured cross-architecture results from `experiments/A100_H100_RUNBOOK.md`.
 
 #### 2. Benchmark Representativeness
 

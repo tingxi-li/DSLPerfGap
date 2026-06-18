@@ -279,6 +279,12 @@ The key finding is that the performance gap is not uniform: Triton is broadly co
   \label{fig:overview}
 \end{figure}
 
+% REVISION-NOTE-START id=4134A-W2 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W2+4134A-W10, Major]}
+Concern (\textit{Reviewer A}): Same baseline-split and per-kernel EW concerns apply to the headline \cref{fig:overview}.
+Evidence: \texttt{figures/gen\_overview.py} (data hard-coded).
+Fix: After the baseline-split and per-kernel EW updates land in the tables, regenerate the figure from new arrays; note that \texttt{gen\_overview.py} has hard-coded data --- cite the regeneration command.}
+% REVISION-NOTE-END id=4134A-W2
 
 \phantomsection\label{sec:eval:gemm}
 
@@ -317,6 +323,20 @@ for FP16 matrix multiplication across representative shapes.
   }
 \end{table}
 
+% REVISION-NOTE-START id=Minor-3 severity=Minor
+\textcolor{red}{\textbf{[REVISION \#Minor-3, Minor]}
+Concern (\textit{Editorial}): Notation ``16384\textasciicircum{}2''/``64$\times$128\textasciicircum{}2'' in \cref{tab:gemm} is not spelled out.
+Evidence: n/a.
+Fix: Add a footnote (after \texttt{\textbackslash end\{table\}}) defining \texttt{16384\textasciicircum{}2} = square 16384$\times$16384 FP16 GEMM and \texttt{64$\times$128\textasciicircum{}2} = batched (batch 64) of 128$\times$128 GEMM.}
+% REVISION-NOTE-END id=Minor-3
+
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+4134A-W11, Major]}
+Concern (\textit{Reviewer A}): FP32 GEMM is excluded but not root-caused at this point in the paper.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/fp32\_gemm.csv}.
+Fix: Add a footnote: ``FP32 TileLang GEMM is excluded; the failure is diagnosed as silent TF32 lowering in \texttt{T.gemm} (see \cref{sec:analysis:jit}), not a logic error.''}
+% REVISION-NOTE-END id=4134A-W1
+
 The 31.7\% efficiency on the $16384^2$ matmul reflects the auto-tuning search space limitation (RC2, \cref{sec:analysis:autotune}):
 Triton's default configuration list for square GEMM does not cover optimal tile shapes at this scale,
 and register pressure from large tile configurations reduces SM occupancy.
@@ -342,6 +362,13 @@ Neither result constitutes a valid DSL-versus-library efficiency measurement for
 \Cref{tab:conv} reports library efficiency for representative Conv2d configurations.
 Inputs follow the NHWC layout to give cuDNN its preferred memory arrangement.
 
+% REVISION-NOTE-START id=4134A-W6 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W6+GAP-7, Major]}
+Concern (\textit{Reviewer A}): \cref{tab:conv} shows only 3$\times$3 stride-1 --- the \S3.1 claim of 1$\times$1--7$\times$7 + depthwise + strided is unsupported by this table.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/conv\_filters\_small.csv}, \texttt{conv\_filters\_large.csv}.
+Fix: Expand the table to 6 rows (1$\times$1, 3$\times$3, 5$\times$5, 7$\times$7, depthwise, strided) at the 8$\times$64$\times$56$\times$56 and 32$\times$256$\times$128$\times$128 shapes, sourcing from \texttt{conv\_filters\_small.csv} and \texttt{conv\_filters\_large.csv}.}
+% REVISION-NOTE-END id=4134A-W6
+
 \begin{table*}[t]
   \centering
   \caption{Conv2d throughput on NVIDIA RTX 4000 Ada Generation.
@@ -357,6 +384,13 @@ Inputs follow the NHWC layout to give cuDNN its preferred memory arrangement.
     \bottomrule
   \end{tabular}
 \end{table*}
+
+% REVISION-NOTE-START id=4134A-W3 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W3+GAP-2, Major]}
+Concern (\textit{Reviewer A}): If \cref{tab:conv} (or a Table 5 in this region) labels a row ``register pressure'' or ``spill'' for conv, that label is wrong (conv \texttt{n\_spills = 0}).
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Remove any ``register pressure'' or ``spill'' annotation from conv rows; the conv gap is occupancy- and coalescing-bound (RC1 + RC2), not spill.}
+% REVISION-NOTE-END id=4134A-W3
 
 Both tested configurations use $3\times3$ filters with stride 1.
 The $1\times1$ conv case, expected to behave more like GEMM and exhibit a narrower gap,
@@ -378,6 +412,12 @@ and 5.3\% for RMSNorm (187.5~ms vs.\ 9.98~ms).
 As analyzed in \cref{sec:analysis:jit}, this reflects a combination of
 per-launch JIT overhead, absent vectorized memory loads,
 and sequential synchronization in TileLang's reduction primitives.
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+GAP-1, Major]}
+Concern (\textit{R1}): ``Sequential synchronization in TileLang's reduction primitives'' here re-asserts the (refuted) barrier-stall framing. NCU shows \texttt{warp\_stall\_barrier} $\approx$ 0; the dominant stall is \texttt{warp\_stall\_long\_scoreboard} ($\approx$\,105 cycles) --- a memory-latency exposure caused by \texttt{T.serial} serializing the load schedule, not by barrier sync.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}, \texttt{NCU\_FINDINGS.md}.
+Fix: Replace ``sequential synchronization in TileLang's reduction primitives'' with ``serialized memory-latency exposure under \texttt{T.serial} reduction loops (\texttt{warp\_stall\_long\_scoreboard} dominates; \texttt{warp\_stall\_barrier} $\approx$ 0).''}
+% REVISION-NOTE-END id=4134A-W1
 
 \begin{table*}[t]
   \centering
@@ -394,6 +434,13 @@ and sequential synchronization in TileLang's reduction primitives.
   \end{tabular}
 \end{table*}
 
+% REVISION-NOTE-START id=4134A-W8 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W8, Major]}
+Concern (\textit{Reviewer A}): Any ``9\% clock variation'' footnote here is superseded by locked-clock re-timing.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/significance.csv}, \texttt{clock\_lock.txt}.
+Fix: Remove any ``9\% clock variation'' footnote (or descendant) and add a new footnote: ``Locked-clock re-timing (graphics 1410\,MHz / memory 9001) over 100 runs shows run-to-run relative std-dev 0.0--0.9\% on near-parity kernels; Triton LayerNorm re-measures at 94.5\% ($\Delta = -0.1$pp).''}
+% REVISION-NOTE-END id=4134A-W8
+
 \phantomsection\label{sec:eval:tuning}
 
 \medskip\noindent\textbf{Finding:
@@ -408,6 +455,13 @@ This indicates that either the default configurations are already optimal for th
 or the tuner's search space does not cover configurations that would improve performance on the RTX 4000 Ada Generation.
 The convolution gap (34.9\%) is unchanged by tuning,
 consistent with RC1--RC3 being structural compiler limitations rather than search-space coverage problems (\cref{sec:analysis}).
+
+% REVISION-NOTE-START id=4134A-W7 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W7, Major]}
+Concern (\textit{Reviewer A}): $\Delta \approx 0$pp here vs the 1.66$\times$ claim in \S7.3 looks contradictory; reconciliation is search-space, not shape: \S5 uses the 12-config block-tile grid; \S7.3 adds \texttt{GROUP\_SIZE\_M}/\texttt{num\_warps}/\texttt{num\_stages}; expanded search recovers to 98.49\% at 16384\textasciicircum{}2 (3.06$\times$).
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/autotune\_matmul.csv}.
+Fix: Add a reconciliation paragraph defining ``heuristic tuning'' = the 12-config block-tile grid from \texttt{ViperBench/tuning/configs.py:19-23}; cite $\Delta = 0$pp at 16384\textasciicircum{}2 for that grid; cite +3.06$\times$ at 16384\textasciicircum{}2 and +1.23$\times$ at 4096\textasciicircum{}2 when the expanded grid (\texttt{AKO4ALL/results/optimized/matmul\_triton.py:10-26}) is used; forward ref to \S7.3.}
+% REVISION-NOTE-END id=4134A-W7
 
 \phantomsection\label{sec:eval:summary}
 
@@ -439,6 +493,20 @@ consistent with RC1--RC3 being structural compiler limitations rather than searc
     RMSNorm Triton efficiency is 1099\% because the PyTorch eager path does not fuse normalization passes.}
 \end{table}
 
+% REVISION-NOTE-START id=4134A-W1 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W1+GAP-1, Major]}
+Concern (\textit{R1}): The \cref{tab:summary} footnote also attributes the 314$\times$ collapse to ``sequential thread synchronization'' --- same refuted barrier framing as \cref{sec:eval:norm}.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
+Fix: Replace ``sequential thread synchronization and absent vectorized loads'' with ``serialized memory-latency exposure under \texttt{T.serial} (\texttt{warp\_stall\_long\_scoreboard} dominates) and absent vectorized loads.''}
+% REVISION-NOTE-END id=4134A-W1
+
+% REVISION-NOTE-START id=4134A-W2 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W2, Major]}
+Concern (\textit{Reviewer A}): Baseline asymmetry in \cref{tab:summary} --- conv uses cuDNN-Winograd vendor; norm/EW use unfused eager; the blended $\sim$65\%/$\sim$30\% headline conflates them.
+Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/fused\_baselines.csv}.
+Fix: Add a split-baseline table or footnote reporting $E\_\text{lib}$ separately for vendor (cuBLAS/cuDNN) vs fused (\texttt{torch.compile(max-autotune)}) vs eager-PyTorch; confirm DSL gap on conv persists post-fusion.}
+% REVISION-NOTE-END id=4134A-W2
+
 The most striking asymmetry is TileLang's normalization collapse:
 a $314\times$ slowdown on large LayerNorm (\cref{sec:analysis:jit}) attributable to three compounding deficiencies (RC0).
 Triton is broadly competitive with PyTorch for element-wise (103\%) and normalization (95\%) kernels
@@ -447,3 +515,10 @@ TileLang shows competitive throughput only on fused linear+activation (200\%)
 and large square matmul (56\%);
 all other TileLang results trail PyTorch substantially,
 with element-wise operations at 68--77\% and batched GEMM at 10.7\%.
+
+% REVISION-NOTE-START id=4134A-W10 severity=Major
+\textcolor{red}{\textbf{[REVISION \#4134A-W10+4134B-Q3, Major]}
+Concern (\textit{Reviewers A, B}): Reviewers ask for per-kernel results on the 15 element-wise kernels (only the per-category aggregate is shown).
+Evidence: \texttt{../ViperBench/results/profile.csv} (15 EW kernels, large-input rows).
+Fix: Add a sub-table (or extend \cref{tab:summary}) listing all 15 EW kernels individually with large-input $E\_\text{lib}$ for Triton and TileLang; also patch the corrected \texttt{cross\_entropy} reference (was 15{,}908\,ms unvectorized; corrected vectorized: 23.87\,ms).}
+% REVISION-NOTE-END id=4134A-W10

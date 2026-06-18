@@ -509,6 +509,10 @@ def main():
         experiment = "conv_mitigation"
         print("  + mitigation arm: AKO4ALL optimized conv2d_triton -- tests whether the")
         print("    RQ3 conv recovery generalizes across filters (R1:68); groups==1 only.\n")
+    # Auto-suffix by shape so back-to-back small/large runs don't clobber each
+    # other (paper REVISION notes cite conv_{filters,mitigation}_{small,large}.csv).
+    if shape_key in ("small", "large"):
+        experiment = f"{experiment}_{shape_key}"
 
     cfgs = build_configs(N, C, H, W)
     all_rows = []

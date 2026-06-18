@@ -37,19 +37,92 @@ collide because the slug differs.)
 
 ```bash
 python -m pip install --upgrade pip
-pip install torch triton tilelang
+# Pinned install (reproduces the Ada toolchain on the new SM):
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
 ```
+- The repo-root `requirements.txt` pins `torch==2.8.0+cu126`, `triton==3.4.0`,
+  `tilelang==0.1.6.post1` — the exact versions reported in
+  `paper-latex-project/tex/methodology.tex:161`. A bare `pip install torch triton
+  tilelang` would silently pull newer wheels and shift cuBLAS/cuDNN heuristics
+  and the TileLang autotuner output, so cross-arch comparisons must use the pin.
+- The PyTorch cu126 wheel ships its own bundled CUDA runtime; only the host
+  driver and the system `ncu` need to match the new SM.
 - **TileLang and Triton JIT-recompile for the target SM automatically.** First
   call on A100 (sm_80) / H100 (sm_90) triggers a fresh compile + autotune; the
   `run_one_kernel.py` warmup loop and `_harness.time_kernel` warmup absorb that
   compile so it is never timed or profiled.
 - Match the CUDA toolkit to the driver. For **H100 (sm_90)** you need a
-  CUDA 12.x toolchain and an `ncu` ≥ 2023.x that knows `gh100`; CUDA 12.4+ /
+  CUDA 12.x toolchain and an `ncu` ≥ 2023.2 that knows `gh100`; CUDA 12.4+ /
   Nsight Compute 2024.x (what we used on Ada) covers both A100 and H100.
+  Verify:
+  ```bash
+  nvidia-smi --query-gpu=driver_version,compute_cap --format=csv,noheader
+  ncu --version | head -1     # must be >= 2023.2 for sm_90
+  ```
 - Sanity-check the portability layer (prints the *detected* GPU, no hardcoding):
   ```bash
   python experiments/_harness.py     # banner + device_info + a trivial matmul timing
   ```
+
+### (b.1) Pre-flight smoke test (cheap, ~5 min — do this BEFORE the full suite)
+
+Every `exp_*.py` accepts `--smoke` (forwarded by `run_all.sh`) for a tiny-input
+plumbing check. Run it first as a toolchain sanity check on the rented GPU
+*before* burning a full GPU-hour on a misconfigured stack:
+
+```bash
+bash experiments/run_all.sh --smoke    # ~5 minutes; writes <slug>/significance_smoke.csv etc.
+```
+
+If the smoke pass surfaces a Triton / TileLang JIT or import failure, stop and
+fix it before the full run.
+
+### (b.2) Preserve Ada CSVs that would be clobbered
+
+`ViperBench/results/profile.csv` has no per-arch namespacing — re-running
+`ViperBench/benchmark.py` on the new GPU **overwrites the Ada baseline in
+place** (the experiments under `experiments/results/<gpu_slug>/` *do* auto-
+namespace; this one CSV does not). Before any `ViperBench/benchmark*.py`
+invocation on the new box:
+
+```bash
+cp ViperBench/results/profile.csv ViperBench/results/profile.RTX4000Ada.csv
+cp ViperBench/results/slow_kernels.csv ViperBench/results/slow_kernels.RTX4000Ada.csv
+```
+
+Also do **NOT** invoke these two scripts on A100/H100:
+- `ViperBench/benchmark_attn.py` — Ada-only `D=64` workaround; would corrupt
+  the headline `D=128` attention rows in the new arch's `profile.csv`.
+- `ViperBench/benchmark_fix.py` — historical one-off patch script; would
+  overwrite three tilelang rows from a stale earlier run.
+
+The live benchmark scripts to use are `benchmark.py`, `benchmark_tilelang.py`,
+and `benchmark_tuned.py` only.
+
+### (b.3) Decide the `tuning_cache.json` stance for the new arch
+
+`ViperBench/results/tuning_cache.json` currently contains **only** RTX 4000 Ada
+entries (keyed by `<kernel>/<impl>/<gpu_arch>` via `ViperBench/tuning/cache.py`).
+On the new GPU, every kernel transparently falls back to `{}` and uses
+hardcoded defaults — **correctness is unchanged, but the `*_tuned` rows in
+`profile.csv` will be identical to the untuned rows**. Three options:
+
+1. **Run the full sweep (recommended for headline numbers)** — multi-GPU-hour:
+   ```bash
+   cd ViperBench && python -m tuning.sweep --all
+   ```
+   Then re-run `benchmark_tuned.py`. The cache adds new
+   `<kernel>/<impl>/<A100-or-H100-arch>` entries; Ada entries are untouched.
+2. **Skip `benchmark_tuned.py` on the new arch** — only run `benchmark.py` and
+   `benchmark_tilelang.py`. Document in the cross-arch comparison that the new-arch
+   numbers are untuned defaults.
+3. **Accept the unswept defaults** — run `benchmark_tuned.py` and note that
+   `*_tuned == *` for the new arch.
+
+The portable rebuttal experiments under `experiments/` do **not** depend on the
+ViperBench tuning cache (they import the optimized kernels directly from
+`AKO4ALL/results/optimized/` and use those kernels' own `@triton.autotune`
+search), so this decision affects only the §5/§7.3 reconciliation rows.
 
 ## (c) Request profiling permissions (same blocker as Ada)
 
@@ -81,10 +154,21 @@ if still blocked, so you never burn GPU time dumping `ERR_NVGPUCTRPERM`.
 # 1. Timing + correctness suite (serialized on one pinned GPU):
 bash experiments/run_all.sh                 # defaults to CUDA_VISIBLE_DEVICES=0
 #    -> experiments/results/<A100_or_H100_slug>/*.csv + run_all.log
+#
+# This includes a 4-way conv sweep — {baseline, --mitigation} x {--shape small,
+# --shape large} — that produces conv_{filters,mitigation}_{small,large}.csv,
+# the four files cited by tab:mitig:conv / REVISION id=4134A-W6 in the paper.
 
 # 2. Hardware counters (after permissions granted):
 bash experiments/ncu_counters.sh
 #    -> experiments/results/<A100_or_H100_slug>/ncu/*.csv
+
+# 3. Roll up ncu/*.csv into the consolidated table the paper cites:
+python experiments/consolidate_ncu.py
+#    -> experiments/results/<A100_or_H100_slug>/ncu_summary.csv
+#    Cited by paper-latex-project/tex/analysis.tex (tab:rootcauses) and
+#    referenced in REVISION_TODO.md. Skip this step and the paper's RC table
+#    has no per-arch evidence.
 ```
 - The GPU slug (e.g. `NVIDIA_A100-SXM4-80GB`, `NVIDIA_H100_80GB_HBM3`) is
   derived from `torch.cuda.get_device_name`, so **A100/H100 will not collide
@@ -92,7 +176,43 @@ bash experiments/ncu_counters.sh
   arch's CSVs (idempotent).
 - If the box has multiple GPUs, pin one: `CUDA_VISIBLE_DEVICES=1 bash experiments/run_all.sh`.
 - Counter metric IDs in `ncu_counters.sh` are **arch-portable** — the same
-  strings work on sm_80/sm_90; no edits needed.
+  `smsp__`, `l1tex__`, `lts__`, `launch__`, `dram__` strings work on sm_80 / sm_89 /
+  sm_90; no edits needed.
+- TileLang `--kernel-name regex:func_kernel` filter in `ncu_counters.sh` is
+  symbol-name-dependent. If the sm_90 lowering branch has shifted symbol
+  naming, smoke-test with `ncu --list-launches python experiments/run_one_kernel.py
+  layer_norm tilelang large` and update the regex if needed.
+
+## (d.5) Locked-clock significance — RUN MANUALLY (needs sudo)
+
+`exp_significance.py` is **not** in `run_all.sh` because it needs `sudo
+nvidia-smi -lgc/-lmc`. It reports run-to-run dispersion (median + std + p95 +
+significance verdict) on the near-parity kernels — the locked-clock evidence
+the rebuttal `To-A #7` and `REVISION_TODO #6` pin the "94.6% vs 97.8%" framing
+to.
+
+The script auto-queries this GPU's `clocks.max.{gr,mem}` via `nvidia-smi`, so
+no per-arch threshold is hardcoded; lock to those targets (or override with
+`--lock-gr-mhz` / `--lock-mem-mhz` for sub-max headroom):
+
+```bash
+# Per-arch reference recipes (max-clock targets vary; numbers below are typical):
+# RTX 4000 Ada (sm_89):     sudo nvidia-smi -i 0 -pm 1 -lmc 9001 -lgc 1400
+# A100 SXM4-80GB (sm_80):   sudo nvidia-smi -i 0 -pm 1 -lmc 1593 -lgc 1410
+# H100 SXM5-80GB (sm_90):   sudo nvidia-smi -i 0 -pm 1 -lmc 2619 -lgc 1980
+
+# After locking, re-time the noise-sensitive set:
+python experiments/exp_significance.py            # 100 reps; targets default to GPU max
+# or with explicit targets if you locked below max:
+# python experiments/exp_significance.py --lock-gr-mhz 1400 --lock-mem-mhz 9001
+#    -> experiments/results/<gpu_slug>/significance.csv
+
+# Reset clocks afterward (mandatory — leaves the GPU at boost state otherwise):
+sudo nvidia-smi -i 0 -rgc -rmc
+```
+
+The script self-aborts with the GPU-specific lock recipe if measured clocks
+are not within `--lock-tolerance-pct` (default 5%) of the target.
 
 ## (e) Minimal high-value subset (when GPU time is limited, ~1 GPU-day/arch)
 
@@ -101,11 +221,11 @@ generalization question:
 
 | Target | Why it matters | How |
 |---|---|---|
-| **matmul 16384²** | headline GEMM gap; RC2b L2 thrash; TMA/wgmma effect on H100 | `run_one_kernel.py matmul {triton,pytorch,tilelang} large` + counter set D |
-| **conv2d 3×3** `(32,256,128,128)` | headline conv gap; Winograd eligibility | `run_one_kernel.py conv2d triton large` + sets A/B; `exp_winograd_isolation.py` |
-| **layer_norm 8192²** | the **RC0 anomaly** (sync/scalar-load bug) — expected to reproduce arch-independently | `run_one_kernel.py layer_norm tilelang large` + sets A/C |
-| **argmax + max_reduction** `(8192,32768)` | RC0a `stalled_barrier` (24 `__syncthreads`/fragment) | `run_one_kernel.py {argmax,max_reduction} tilelang large` + set C |
-| **counter spot-check** | sets **A** (vectorized loads) + **C** (warp stalls) on the five above | `ncu_counters.sh` (override `TARGETS=...` to trim) |
+| **matmul 16384²** | headline GEMM gap; RC2b L2 thrash; TMA/wgmma effect on H100 | `python experiments/run_one_kernel.py matmul triton large` (and `pytorch`, `tilelang`) + counter set D |
+| **conv2d 3×3** `(32,256,128,128)` | headline conv gap; Winograd eligibility | `python experiments/run_one_kernel.py conv2d triton large` + sets A/B; `python experiments/exp_winograd_isolation.py` |
+| **layer_norm 8192²** | the **RC0 anomaly** — memory-latency-bound under `T.serial`; expected to reproduce arch-independently | `python experiments/run_one_kernel.py layer_norm tilelang large` + sets A/C |
+| **argmax + max_reduction** `(8192,32768)` | RC0a `warp_stall_long_scoreboard` (memory latency under `T.serial`; barrier ≈ 0) | `python experiments/run_one_kernel.py argmax tilelang large` (and `max_reduction`) + set C |
+| **counter spot-check** | sets **A** (vectorized loads) + **C** (warp stalls) on the five above | `bash experiments/ncu_counters.sh` (override `TARGETS=...` to trim) |
 
 Trim the counter run without editing the script:
 ```bash
@@ -130,17 +250,21 @@ These are *predictions* — the point of the replay is to confirm/refute them:
   exploits heavily; **the GEMM gap (cuBLAS vs DSL) may widen on H100** if the DSLs
   don't emit wgmma, or shrink if their autotuners adapt. A100 (Ampere
   tensor cores, no TMA/wgmma) is the intermediate point.
-- **RC0 TileLang LayerNorm anomaly (the central result):** the 314× collapse and
-  the `T.serial`→`T.reduce` recovery stem from **excess sync barriers + scalar
-  loads in the kernel source**, not from any HW feature. It should reproduce on
-  **both** A100 and H100 — `stalled_barrier` dominating (set C) and
-  `…data_bytes_per_sector…pct` < 100% (set A) **independent of arch**. That
-  cross-arch consistency is itself a strong result for R1-Q5/R3.
-- **Registers/spill (RC3):** `launch__registers_per_thread` and occupancy limits
-  differ per SM (A100/H100 have 65536 regs/SM like Ada but different occupancy
-  curves); the *trend* (regs rising with conv filter size 1→3→5→7, spills
-  appearing at 5×5/7×7) is the portable claim, re-measured by
-  `exp_conv_filters.py` + set B.
+- **RC0a TileLang LayerNorm anomaly (the central result):** the 314× collapse
+  and the `T.serial`→`T.reduce` recovery are a **memory-latency exposure** —
+  Ada NCU shows `warp_stall_long_scoreboard` ≈ 105 cycles with
+  `warp_stall_barrier` ≈ 0, so the dominant cost is serialized memory-latency
+  hiding, **not** barrier synchronization (the submitted-PDF framing). It
+  should reproduce on **both** A100 and H100 — `long_scoreboard` dominating
+  (set C) and `…data_bytes_per_sector…pct` < 100% (set A) **independent of
+  arch**. That cross-arch consistency is itself a strong result for R1-Q5/R3.
+- **Registers/spill (RC3 — TileLang LayerNorm, NOT conv):** Ada NCU shows
+  Triton conv `n_spills = 0` for filters 1×1–7×7. The 51.5 GB spill / 254
+  regs/thread / 16.5% occupancy lives in **TileLang LayerNorm**, not in conv.
+  On A100/H100 (same 65,536 regs/SM as Ada) the TileLang norm spill is
+  expected to reproduce; the conv per-filter `n_regs` trend (set B) is the
+  portable claim measured by `exp_conv_filters.py`, and the spill column for
+  conv is expected to stay 0 on the new arches as well.
 
 **Framing for the camera-ready (R1-Q5, R3):** *"We replay the suite on A100 and
 H100 with an unmodified portable harness. The RC0 LayerNorm anomaly reproduces
@@ -154,13 +278,21 @@ cause is a property of the DSL or of the hardware."*
 ### Artifacts produced per arch
 ```
 experiments/results/<gpu_slug>/
-    run_all.log                     # full suite log (tee'd)
-    exp_fp32_gemm.csv               # Exp 2  (TF32 root cause)
-    exp_correctness_edge.csv        # edge-case correctness
-    exp_conv_filters.csv            # Exp 3  (regs/latency vs 1/3/5/7; RC3/W13/W6)
-    exp_fused_baselines.csv
-    exp_winograd_isolation.csv      # Exp 4  (Winograd eligible vs ineligible; RC4)
-    exp_autotune_matmul.csv
+    run_all.log                       # full suite log (tee'd)
+    fp32_gemm.csv                     # Exp 2: TF32 root cause (W1/W11)
+    correctness_edge.csv              # edge-case numerical correctness
+    conv_filters_small.csv            # Exp 3a: 1/3/5/7 + depthwise, Ada-safe shape
+    conv_filters_large.csv            # Exp 3a: 1/3/5/7 + depthwise, paper Table-2 shape
+    conv_mitigation_small.csv         # Exp 3b: AKO4ALL conv2d_triton on small shape
+    conv_mitigation_large.csv         # Exp 3b: AKO4ALL conv2d_triton on large shape
+    fused_baselines.csv               # Eager vs torch.compile vs DSL
+    winograd_isolation.csv            # Exp 4: Winograd eligible vs not (RC4)
+    cudnn_winograd_3x3.log            # cuDNN algorithm-selection log for 3x3
+    autotune_matmul.csv               # §5 vs §7.3 matmul autotune reconcile
+    significance.csv                  # Step (d.5): locked-clock dispersion (manual)
+    significance_smoke.csv            # written by --smoke runs (plumbing check)
+    ncu_summary.csv                   # rolled-up RC table for tab:rootcauses
+    NCU_FINDINGS.md                   # written by consolidate_ncu.py
     ncu/
         <kernel>_<impl>_large_loads.csv    # set A  (vectorized loads)
         <kernel>_<impl>_large_regs.csv     # set B  (regs + spill + occupancy)
@@ -170,3 +302,10 @@ experiments/results/<gpu_slug>/
 Each CSV is self-describing (the harness prepends `gpu_name`, `sm`,
 `timestamp_utc`), so the A100/H100 results are unambiguous when collated with
 Ada's into the cross-architecture comparison tables.
+
+> **Future work:** a small `experiments/compare_archs.py` that diffs
+> `ncu_summary.csv`, `conv_filters_*.csv`, `autotune_matmul.csv`,
+> `fp32_gemm.csv`, `winograd_isolation.csv` across multiple `<gpu_slug>` result
+> dirs would automate the cross-arch table assembly the paper's revision needs.
+> Until then, the per-arch CSVs are pre-aligned in schema, so a single `pandas`
+> read+merge on `(kernel, impl, shape)` is sufficient.

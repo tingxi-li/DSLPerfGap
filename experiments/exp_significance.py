@@ -9,12 +9,22 @@ meaningful unless clocks are locked. profile.csv pins those two numbers to
 layer_norm (94.5%) and softmax (97.6%); this script re-times the full
 noise-sensitive set with dispersion and classifies each as significant-vs-noise.
 
-RUN ONLY WITH CLOCKS LOCKED:
-    sudo nvidia-smi -i 0 -pm 1
-    sudo nvidia-smi -i 0 -lmc 9001
-    sudo nvidia-smi -i 0 -lgc 1400          # fallback 1350 if it won't hold
-    python experiments/exp_significance.py
-    sudo nvidia-smi -i 0 -rgc -rmc          # reset afterward
+RUN ONLY WITH CLOCKS LOCKED. The required clock targets are GPU-specific; the
+script queries `nvidia-smi --query-gpu=clocks.max.{gr,mem}` to learn this GPU's
+maximum graphics/memory clocks and accepts measurements within --lock-tolerance-pct
+of them. Override the targets with --lock-gr-mhz / --lock-mem-mhz if you must
+lock below max (e.g. for thermal headroom).
+
+  # Per-arch reference recipes (replace with your own targets if needed):
+  # RTX 4000 Ada (sm_89): sudo nvidia-smi -i 0 -lmc 9001 -lgc 1400
+  # A100 SXM4-80GB (sm_80): sudo nvidia-smi -i 0 -lmc 1593 -lgc 1410
+  # H100 SXM5 (sm_90):      sudo nvidia-smi -i 0 -lmc 2619 -lgc 1980
+  sudo nvidia-smi -i 0 -pm 1
+  sudo nvidia-smi -i 0 -lmc <mem-mhz> -lgc <gr-mhz>
+  python experiments/exp_significance.py            # uses GPU's max clocks
+  # OR  python experiments/exp_significance.py --lock-gr-mhz 1400 --lock-mem-mhz 9001
+  sudo nvidia-smi -i 0 -rgc -rmc                    # reset afterward
+
 The script self-checks the clocks are pinned and ABORTS otherwise, so no
 unlocked data is ever recorded. Numbers here are revision material — the
 rebuttal text stays qualitative.
@@ -47,10 +57,8 @@ KERNELS = ["layer_norm", "softmax", "mean_reduction", "relu", "add",
 SIZE = "large"
 IMPLS = ["pytorch", "triton", "tilelang"]
 
-# Locked-clock self-check: accept either the primary 1400 or the 1350 fallback.
-GR_OK = lambda g: (1340 <= g <= 1460) or (1290 <= g <= 1410)  # noqa: E731
-MEM_MIN = 8900
 Z95 = 1.96
+DEFAULT_LOCK_TOLERANCE_PCT = 5.0  # accept |gr - target| <= 5% and mem >= 95% of target
 
 
 def _get_cases():
@@ -70,25 +78,54 @@ def resolve_case(kernel, size, cases):
     return None
 
 
-def query_clocks(idx=0):
-    """Read-only: current (graphics, memory) clocks in MHz for GPU idx."""
+def _query_nvidia_smi(fields, idx=0):
     out = subprocess.run(
-        ["nvidia-smi", "--query-gpu=clocks.gr,clocks.mem",
+        ["nvidia-smi", f"--query-gpu={fields}",
          "--format=csv,noheader,nounits", "-i", str(idx)],
         capture_output=True, text=True, timeout=10)
-    gr, mem = out.stdout.strip().splitlines()[0].split(",")
-    return int(gr), int(mem)
+    return [int(v) for v in out.stdout.strip().splitlines()[0].split(",")]
 
 
-def assert_clocks_locked(allow_unlocked, idx=0):
+def query_clocks(idx=0):
+    """Read-only: current (graphics, memory) clocks in MHz for GPU idx."""
+    return tuple(_query_nvidia_smi("clocks.gr,clocks.mem", idx))
+
+
+def query_clock_caps(idx=0):
+    """Read-only: this GPU's max (graphics, memory) clocks in MHz.
+    Used as default lock targets so the script is portable across Ada / A100 / H100
+    without per-arch hardcoded thresholds."""
+    return tuple(_query_nvidia_smi("clocks.max.gr,clocks.max.mem", idx))
+
+
+def assert_clocks_locked(target_gr, target_mem, tolerance_pct, allow_unlocked, idx=0):
+    """Verify the GPU's current clocks are pinned at the given targets.
+    If target_gr / target_mem are None, default to this GPU's max clocks.
+    Acceptance band: |gr - target_gr| <= tolerance_pct%, mem >= (100-tolerance_pct)% of target_mem."""
     gr, mem = query_clocks(idx)
-    ok = GR_OK(gr) and mem >= MEM_MIN
-    print(f"  clock self-check: graphics={gr} MHz, memory={mem} MHz  -> "
+    max_gr, max_mem = query_clock_caps(idx)
+    if target_gr is None:
+        target_gr = max_gr
+    if target_mem is None:
+        target_mem = max_mem
+
+    gr_tol = target_gr * tolerance_pct / 100.0
+    mem_floor = int(target_mem * (1 - tolerance_pct / 100.0))
+    ok = (abs(gr - target_gr) <= gr_tol) and (mem >= mem_floor)
+
+    print(f"  clock self-check: graphics={gr} MHz "
+          f"(target={target_gr} +/-{tolerance_pct:.1f}%, "
+          f"max={max_gr}), memory={mem} MHz "
+          f"(target={target_mem}, floor={mem_floor}, max={max_mem})  -> "
           f"{'LOCKED ok' if ok else 'NOT pinned'}")
     if not ok and not allow_unlocked:
-        print("  ABORT: clocks are not pinned. Lock them first:\n"
-              "    sudo nvidia-smi -i 0 -lmc 9001 -lgc 1400\n"
-              "  then re-run. (Use --allow-unlocked only for a dev smoke test.)",
+        print(f"  ABORT: clocks are not pinned. Lock them first (per-GPU max clocks "
+              f"queried just now):\n"
+              f"    sudo nvidia-smi -i {idx} -pm 1\n"
+              f"    sudo nvidia-smi -i {idx} -lmc {target_mem} -lgc {target_gr}\n"
+              f"  then re-run. To override the targets, pass\n"
+              f"    --lock-gr-mhz <int> --lock-mem-mhz <int>\n"
+              f"  (Use --allow-unlocked only for a dev smoke test.)",
               file=sys.stderr)
         sys.exit(2)
     if not ok:
@@ -129,6 +166,16 @@ def main():
     ap.add_argument("--allow-unlocked", action="store_true",
                     help="do not abort if clocks are not pinned (dev only)")
     ap.add_argument("--reps", type=int, default=100)
+    ap.add_argument("--lock-gr-mhz", type=int, default=None,
+                    help="target graphics clock in MHz; if omitted, default to this "
+                         "GPU's max graphics clock queried from nvidia-smi.")
+    ap.add_argument("--lock-mem-mhz", type=int, default=None,
+                    help="target memory clock in MHz; if omitted, default to this "
+                         "GPU's max memory clock queried from nvidia-smi.")
+    ap.add_argument("--lock-tolerance-pct", type=float,
+                    default=DEFAULT_LOCK_TOLERANCE_PCT,
+                    help=f"acceptance band on the lock targets, in percent "
+                         f"(default {DEFAULT_LOCK_TOLERANCE_PCT}).")
     args = ap.parse_args()
 
     kernels = KERNELS
@@ -142,7 +189,12 @@ def main():
         experiment = "significance_smoke"
 
     banner("Significance / clock-locked re-measurement (Path A, R1 reviews.txt:50)")
-    locked_gr, locked_mem = assert_clocks_locked(allow_unlocked)
+    locked_gr, locked_mem = assert_clocks_locked(
+        target_gr=args.lock_gr_mhz,
+        target_mem=args.lock_mem_mhz,
+        tolerance_pct=args.lock_tolerance_pct,
+        allow_unlocked=allow_unlocked,
+    )
     print(f"  config: reps={reps}, warmup=15, kernels={len(kernels)}, "
           f"experiment={experiment}")
 

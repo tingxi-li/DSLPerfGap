@@ -49,12 +49,12 @@ conv2d,large,triton,"x:(32,256,128,128) w:(256,256,3,3) fp16",30.3002,10355.31
 conv2d,large,triton_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",31.3701,10347.18
 conv2d,large,tilelang,"x:(32,256,128,128) w:(256,256,3,3) fp16",115.7389,17003.18
 conv2d,large,tilelang_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",115.7057,17003.18
-cross_entropy,small,pytorch,"logits:(256,1024) fp32",129.6211,10102.33
+cross_entropy,small,pytorch,"logits:(256,1024) fp32",0.2168,10095.21
 cross_entropy,small,triton,"logits:(256,1024) fp32",0.0292,10102.31
 cross_entropy,small,triton_tuned,"logits:(256,1024) fp32",0.0296,10094.18
 cross_entropy,small,tilelang,"logits:(256,1024) fp32",0.0909,10094.19
 cross_entropy,small,tilelang_tuned,"logits:(256,1024) fp32",0.0921,10094.19
-cross_entropy,large,pytorch,"logits:(4096,32768) fp32",15908.4856,11636.83
+cross_entropy,large,pytorch,"logits:(4096,32768) fp32",23.8647,12142.39
 cross_entropy,large,triton,"logits:(4096,32768) fp32",1.8684,11635.31
 cross_entropy,large,triton_tuned,"logits:(4096,32768) fp32",1.8676,11627.18
 cross_entropy,large,tilelang,"logits:(4096,32768) fp32",27.7739,11627.2

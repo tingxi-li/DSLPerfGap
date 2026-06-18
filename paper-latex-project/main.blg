@@ -1,0 +1,83 @@
+This is BibTeX, Version 0.99d (TeX Live 2020)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: ACM-Reference-Format.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: references.bib
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Warning--no journal in chetlur2014cudnn
+Warning--no number and no volume in chetlur2014cudnn
+Warning--page numbers missing in both pages and numpages fields in chetlur2014cudnn
+Warning--empty booktitle in dao2023flashattention2
+Warning--empty publisher in dao2023flashattention2
+Warning--empty address in dao2023flashattention2
+Warning--page numbers missing in both pages and numpages fields in dao2023flashattention2
+Warning--empty address in dao2022flashattention
+Warning--empty publisher in lattner2021mlir
+Warning--empty address in lattner2021mlir
+Warning--empty publisher in lavin2016fast
+Warning--empty address in lavin2016fast
+Warning--page numbers missing in both pages and numpages fields in lavin2016fast
+Warning--empty booktitle in ragan-kelley2013halide
+Warning--empty publisher in reddi2020mlperf
+Warning--empty address in reddi2020mlperf
+Warning--empty publisher in spector2024thunderkittens
+Warning--empty address in spector2024thunderkittens
+Warning--page numbers missing in both pages and numpages fields in spector2024thunderkittens
+Warning--empty publisher in kernelfusion
+Warning--empty address in kernelfusion
+Warning--empty publisher in wang2025tilelang
+Warning--empty address in wang2025tilelang
+Warning--page numbers missing in both pages and numpages fields in wang2025tilelang
+Warning--empty address in zheng2020ansor
+Warning--empty publisher in zhou2021implicit
+Warning--empty address in zhou2021implicit
+You've used 31 entries,
+            6273 wiz_defined-function locations,
+            1742 strings with 28600 characters,
+and the built_in function-call counts, 41112 in all, are:
+= -- 4353
+> -- 2327
+< -- 0
++ -- 821
+- -- 822
+* -- 3704
+:= -- 4601
+add.period$ -- 146
+call.type$ -- 31
+change.case$ -- 386
+chr.to.int$ -- 29
+cite$ -- 58
+duplicate$ -- 3147
+empty$ -- 2179
+format.name$ -- 916
+if$ -- 9247
+int.to.chr$ -- 4
+int.to.str$ -- 1
+missing$ -- 103
+newline$ -- 342
+num.names$ -- 219
+pop$ -- 1392
+preamble$ -- 1
+purify$ -- 624
+quote$ -- 0
+skip$ -- 1251
+stack$ -- 0
+substring$ -- 2359
+swap$ -- 329
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 852
+warning$ -- 27
+while$ -- 159
+width$ -- 0
+write$ -- 682
+(There were 27 warnings)

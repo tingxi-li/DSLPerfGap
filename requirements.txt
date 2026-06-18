@@ -1,0 +1,19 @@
+# ASE 2026 #4134 artifact — pinned dependencies
+# Used for the RTX 4000 Ada (sm_89) measurements reported in the paper, and
+# for A100/H100 (sm_80/sm_90) replay per experiments/A100_H100_RUNBOOK.md.
+#
+# Reproducible install (works on Ada / A100 / H100):
+#   python -m pip install --upgrade pip
+#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu126
+#
+# Notes:
+#   - The PyTorch cu126 wheel ships its own bundled CUDA runtime — the host only
+#     needs a recent NVIDIA driver (>= 555) and matching toolkit for `ncu`.
+#   - For Nsight Compute counters on sm_90 (H100), the system `ncu` must be
+#     >= 2023.2 (CUDA Toolkit 12.x); see A100_H100_RUNBOOK.md step (b).
+#   - Triton and TileLang JIT-recompile per target SM automatically; the same
+#     pinned versions cover sm_80 / sm_89 / sm_90 without source edits.
+
+torch==2.8.0+cu126
+triton==3.4.0
+tilelang==0.1.6.post1
