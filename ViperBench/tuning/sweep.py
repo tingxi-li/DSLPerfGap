@@ -19,27 +19,32 @@ import torch
 BENCH_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(BENCH_DIR))
 
+import tuning.cache as _cachemod
 from tuning.cache import get_gpu_arch, load_cache, save_cache
 from tuning.configs import TRITON_CONFIGS, TILELANG_CONFIGS
 
-WARMUP = 3
-TRIALS = 10
+# Rigor matched to the benchmark harness: enough warmup to absorb the
+# Triton/TileLang JIT + autotune, CUDA-event timing (not wall-clock) so the
+# selection is not corrupted by compile tails or host-launch jitter.
+WARMUP = 15
+TRIALS = 50
 
 
 def time_fn(fn, args, warmup=WARMUP, trials=TRIALS):
-    """Time a function, return median latency in ms."""
+    """Median latency in ms, measured with CUDA events on an idle GPU."""
     for _ in range(warmup):
         fn(*args)
     torch.cuda.synchronize()
 
+    starter = torch.cuda.Event(enable_timing=True)
+    ender = torch.cuda.Event(enable_timing=True)
     times = []
     for _ in range(trials):
-        torch.cuda.synchronize()
-        t0 = time.perf_counter()
+        starter.record()
         fn(*args)
+        ender.record()
         torch.cuda.synchronize()
-        t1 = time.perf_counter()
-        times.append((t1 - t0) * 1000)
+        times.append(starter.elapsed_time(ender))  # ms
     times.sort()
     return times[len(times) // 2]
 
@@ -142,17 +147,24 @@ def sweep_kernel(kernel_name, impl_type, configs):
         print(f"  SKIP {kernel_name}: unknown function name")
         return None, float("inf")
 
+    # Candidate set includes the impl's hardcoded default (config=None -> the
+    # cache-miss path) so the sweep can never select a grid config that is
+    # worse than the default at the tuning shape.
+    candidates = [None] + list(configs)
     best_config = None
     best_latency = float("inf")
 
-    for i, config in enumerate(configs):
+    # Each candidate must be applied at BUILD time. The impls read _TUNED at
+    # import (via get_best_config) to construct the kernel, so setting
+    # mod._TUNED AFTER load_module is a no-op (the kernel is already built).
+    # Instead, patch get_best_config so the *fresh import* builds the kernel
+    # with this candidate, then restore it.
+    _orig_gbc = _cachemod.get_best_config
+    for i, config in enumerate(candidates):
+        label = "default" if config is None else str(config)
         try:
-            # Reload module fresh for each config
-            mod = load_module(kdir, module_name)
-
-            # Apply config by setting _TUNED on the module
-            mod._TUNED = config
-
+            _cachemod.get_best_config = (lambda *a, _c=config, **k: _c)
+            mod = load_module(kdir, module_name)  # builds kernel with `config`
             fn = getattr(mod, fn_name)
             torch.cuda.empty_cache()
 
@@ -165,8 +177,10 @@ def sweep_kernel(kernel_name, impl_type, configs):
 
         except Exception as e:
             status = f"ERROR: {str(e)[:60]}"
+        finally:
+            _cachemod.get_best_config = _orig_gbc
 
-        print(f"  [{i+1}/{len(configs)}] {config} -> {status}")
+        print(f"  [{i+1}/{len(candidates)}] {label} -> {status}")
 
     return best_config, best_latency
 
@@ -201,12 +215,17 @@ def run_sweep(kernel_name=None, impl_type=None):
 
         best_config, best_latency = sweep_kernel(kname, itype, configs)
 
+        key = f"{kname}/{itype}/{arch}"
         if best_config is not None:
-            key = f"{kname}/{itype}/{arch}"
             cache[key] = best_config
             print(f"  BEST: {best_config} -> {best_latency:.4f}ms")
         else:
-            print(f"  No valid config found")
+            # The hardcoded default beat every grid config at the tuning shape;
+            # do not write an override (and drop any stale entry) so the impl
+            # falls back to its default. This makes Delta=0 the honest result.
+            cache.pop(key, None)
+            print(f"  BEST: default (no grid config beat it) -> "
+                  f"{best_latency:.4f}ms; no cache override written")
 
     save_cache(cache)
     print(f"\nCache saved to {cache_path()}")
