@@ -1,4 +1,4 @@
-# ASE 2026 Paper #4134 — Artifact
+# Paper Artifact
 
 > *"An Empirical Study of GPU Kernel Performance Gaps in Modern Domain-Specific Languages."*
 
