@@ -1,0 +1,16 @@
+gpu_name,sm,timestamp_utc,measurement,config,impl,winograd_eligible,median_ms,mean_ms,std_ms,gap_vs_cudnn,e_vs_cudnn,note
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=False,True,1.36278,1.35854,0.01883,,,nondeterministic(Winograd allowed)
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=True,True,1.64509,1.88229,0.44786,,,deterministic(Winograd mostly OFF)
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,cudnn_determinism_ab,3x3_s1,DELTA_det_minus_nondet,True,0.28231,,,,1.2072,upper bound on Winograd benefit (det - nondet)
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,3x3_s1,cudnn,True,1.34826,1.44814,0.30618,1.0,100.0,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,3x3_s1,triton,True,12.97488,13.10703,1.21912,9.623,10.39,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,3x3_s1,tilelang,True,19.57072,19.57649,0.41431,14.516,6.89,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,3x3_s2,cudnn,False,0.84474,0.90702,0.21775,1.0,100.0,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,3x3_s2,triton,False,4.92528,4.94175,0.83946,5.831,17.15,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,3x3_s2,tilelang,False,5.14624,5.14349,0.01224,6.092,16.41,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,5x5_s1,cudnn,False,6.24858,6.23121,0.09487,1.0,100.0,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,5x5_s1,triton,False,42.00992,41.71319,0.48569,6.723,14.87,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,5x5_s1,tilelang,False,51.75661,51.75053,0.24633,8.283,12.07,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,7x7_s1,cudnn,False,16.12522,16.28092,0.26215,1.0,100.0,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,7x7_s1,triton,False,101.07088,101.07988,0.55319,6.268,15.95,
+NVIDIA H100 80GB HBM3,sm_90,2026-06-24T09:14:09+00:00,eligible_vs_ineligible,7x7_s1,tilelang,False,98.85968,98.91703,0.69462,6.131,16.31,
