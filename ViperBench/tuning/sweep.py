@@ -9,7 +9,9 @@ Usage:
 """
 import argparse
 import importlib
+import json
 import sys
+import tempfile
 import time
 import traceback
 from pathlib import Path
@@ -19,11 +21,18 @@ import torch
 BENCH_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(BENCH_DIR))
 
+from tuning import cache as _cache_mod
 from tuning.cache import get_gpu_arch, load_cache, save_cache
 from tuning.configs import TRITON_CONFIGS, TILELANG_CONFIGS
 
-WARMUP = 3
-TRIALS = 10
+# The impls read their tuning config from the on-disk cache AT IMPORT time
+# (module-level constants and @jit default args bound once on import). The sweep
+# must therefore seed the cache BEFORE importing each candidate, not assign
+# mod._TUNED afterwards (a post-import assignment never rebuilds the kernel).
+REAL_CACHE_PATH = _cache_mod.CACHE_PATH
+
+WARMUP = 5
+TRIALS = 20
 
 
 def time_fn(fn, args, warmup=WARMUP, trials=TRIALS):
@@ -127,10 +136,21 @@ KERNEL_FN_NAMES = {
 }
 
 
-def sweep_kernel(kernel_name, impl_type, configs):
+def _seed_cache(base_cache, key, config, seed_path):
+    """Write `config` for `key` into the seed cache file so a *fresh import* of
+    the impl reads it. The impls bind their tuning params at import time, so the
+    config must be on disk BEFORE the module is imported — assigning mod._TUNED
+    after import is a no-op for most kernels."""
+    merged = dict(base_cache)
+    merged[key] = config
+    seed_path.write_text(json.dumps(merged, indent=2))
+
+
+def sweep_kernel(kernel_name, impl_type, configs, arch, base_cache, seed_path):
     """Sweep configs for a single kernel. Returns best (config, latency)."""
     kdir = BENCH_DIR / kernel_name
     module_name = f"{impl_type}_impl"
+    key = f"{kernel_name}/{impl_type}/{arch}"
 
     inputs = _make_inputs(kernel_name)
     if inputs is None:
@@ -147,17 +167,21 @@ def sweep_kernel(kernel_name, impl_type, configs):
 
     for i, config in enumerate(configs):
         try:
-            # Reload module fresh for each config
+            # Seed the cache with this config, THEN import fresh so the impl
+            # builds its kernel from it (the same import-time path that
+            # benchmark_tuned.py uses to deploy the winner).
+            _seed_cache(base_cache, key, config, seed_path)
             mod = load_module(kdir, module_name)
 
-            # Apply config by setting _TUNED on the module
-            mod._TUNED = config
+            # Guard: confirm the impl actually picked up the seeded config.
+            applied = getattr(mod, "_TUNED", None)
+            prefix = "" if applied == config else "WARN(_TUNED!=seed) "
 
             fn = getattr(mod, fn_name)
             torch.cuda.empty_cache()
 
             latency = time_fn(fn, inputs)
-            status = f"{latency:.4f}ms"
+            status = f"{prefix}{latency:.4f}ms"
 
             if latency < best_latency:
                 best_latency = latency
@@ -173,8 +197,12 @@ def sweep_kernel(kernel_name, impl_type, configs):
 
 def run_sweep(kernel_name=None, impl_type=None):
     """Run sweep for specified or all kernels."""
-    cache = load_cache()
     arch = get_gpu_arch()
+
+    # final_cache: preserved (other-arch keys kept) + updated with real winners,
+    # written ONCE at the end. base_cache: immutable seed base.
+    final_cache = load_cache()
+    base_cache = dict(final_cache)
 
     if kernel_name and impl_type:
         pairs = [(kernel_name, impl_type)]
@@ -188,27 +216,37 @@ def run_sweep(kernel_name=None, impl_type=None):
             if k in TILELANG_CONFIGS:
                 pairs.append((k, "tilelang"))
 
-    for kname, itype in pairs:
-        configs_map = TRITON_CONFIGS if itype == "triton" else TILELANG_CONFIGS
-        configs = configs_map.get(kname, [])
-        if not configs:
-            print(f"\n=== {kname} ({itype}): no configs defined, skip ===")
-            continue
+    # Redirect the impls' import-time cache reads to a temp seed file so the real
+    # cache is never left half-swept if we crash mid-run.
+    seed_dir = Path(tempfile.mkdtemp(prefix="sweep_seed_"))
+    seed_path = seed_dir / "tuning_cache.json"
+    _cache_mod.CACHE_PATH = seed_path
+    try:
+        for kname, itype in pairs:
+            configs_map = TRITON_CONFIGS if itype == "triton" else TILELANG_CONFIGS
+            configs = configs_map.get(kname, [])
+            if not configs:
+                print(f"\n=== {kname} ({itype}): no configs defined, skip ===")
+                continue
 
-        print(f"\n{'='*60}")
-        print(f"  Sweeping: {kname} ({itype}) — {len(configs)} configs")
-        print(f"{'='*60}")
+            print(f"\n{'='*60}")
+            print(f"  Sweeping: {kname} ({itype}) — {len(configs)} configs")
+            print(f"{'='*60}")
 
-        best_config, best_latency = sweep_kernel(kname, itype, configs)
+            best_config, best_latency = sweep_kernel(
+                kname, itype, configs, arch, base_cache, seed_path)
 
-        if best_config is not None:
-            key = f"{kname}/{itype}/{arch}"
-            cache[key] = best_config
-            print(f"  BEST: {best_config} -> {best_latency:.4f}ms")
-        else:
-            print(f"  No valid config found")
+            if best_config is not None:
+                key = f"{kname}/{itype}/{arch}"
+                final_cache[key] = best_config
+                print(f"  BEST: {best_config} -> {best_latency:.4f}ms")
+            else:
+                print(f"  No valid config found")
+    finally:
+        # Restore the real cache path before persisting the winners there.
+        _cache_mod.CACHE_PATH = REAL_CACHE_PATH
 
-    save_cache(cache)
+    save_cache(final_cache)
     print(f"\nCache saved to {cache_path()}")
 
 
