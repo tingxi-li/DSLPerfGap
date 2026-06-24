@@ -1,0 +1,838 @@
+######################################################################
+#  ASE-2026 #4134 rebuttal suite -- run_all.sh
+#  2026-06-24T05:26:35Z   CUDA_VISIBLE_DEVICES=0
+#  results -> /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB
+######################################################################
+========================================================================
+  Experiment: run_all
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+
+##### PHASE 1 -- CORRECTNESS (timing-insensitive) #####################
+
+======================================================================
+[run_all] >>> exp_fp32_gemm.py  
+======================================================================
+========================================================================
+  Experiment: exp_fp32_gemm  (FP32 GEMM TF32-truncation root-cause; W1/W11/R1-Q1)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  [FULL]  shape M,K,N = 4096,2048,1024  (the reported failing shape)
+
+  [CONTROL] cuBLAS-TF32 vs fp32-ref: max_abs=0.07261  max_rel=827.1  pct_mismatch=18.14%  worst-rel @ idx (1393, 73) (ref_mag=3.802e-05)
+            => an INDEPENDENT TF32 GEMM (cuBLAS) shows the same near-zero rel-err signature; this is the format, not a DSL bug.
+
+  --- Arm A: TileLang T.gemm  dtype=float32, accum=float ---
+    vs fp32-ref : max_abs=0.1852  max_rel=633.1  pct_mismatch=31.81%  passes_fp32(1e-5)=False
+    worst rel-err @ idx (1393, 73): ref_mag=3.802e-05  abs_err_there=0.02407
+    vs TF32-ref : max_abs=0.2091  allclose@(atol=0.1,rtol=0.01)=True
+    error-class : Arm-A max_abs vs fp32 = 0.1852  ~  cuBLAS-TF32 max_abs vs fp32 = 0.07261  (same TF32 class=True)
+
+  --- Arm B: TileLang manual fp32 MAC (no T.gemm) ---
+    vs fp32-ref : max_abs=0  max_rel=0  pct_mismatch=0.000%
+    mean_abs/mean|ref| = 0 (fp32-ULP class <1e-5: True); strict(1e-5)=True accum(1e-4)=True
+    Arm A max_abs=0.1852 vs Arm B max_abs=0 => Arm B ~185195922852x more accurate
+
+  --- Arm C: Arm-A output vs TF32 reference (decisive diagnostic) ---
+    Arm-A err vs fp32   : max_abs=0.1852
+    cuBLAS-TF32 err vs fp32: max_abs=0.07261  (Arm A in same TF32 error class=True)
+    Arm-A vs TF32 ref absolute allclose(atol=0.1): True
+    => Arm A behaves like a TF32 GEMM (matches the TF32 error budget) and fails the fp32 bar: TF32 truncation confirmed = True
+
+  --- Arm D: scan installed tilelang for a user-space TF32 disable knob ---
+    has user-space tf32 knob: False
+    detail: PassConfigKey precision/tf32 entries: NONE | T.gemm params: ['A', 'B', 'C', 'transpose_A', 'transpose_B', 'policy', 'clear_accum', 'k_pack', 'wg_wait']; precision/tf32 params: ['clear_accum'] | tilelang python-api files mentioning a tf32 *knob*: NONE | float32 MMA atom hardcoded in CUDA templates: ['src/tl_templates/cuda/gemm_mma.h:SM80_16x8x8_F32TF32TF32F32_TN']
+
+  --- Magnitude / error-pattern signature check ---
+    mean |ref| = 36.1;  mean |Arm A - fp32| = 0.028 (small vs output scale=True)
+    worst-rel-err output magnitude = 3.802e-05 (near-zero, i.e. < 5% of mean=True)
+    abs err at that worst-rel element = 0.02407 (vs global max_abs=0.1852)
+    => matches TF32 signature (huge REL err at near-zero output via cancellation, small MEAN abs err elsewhere): True
+  -> wrote 5 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/fp32_gemm.csv
+
+========================================================================
+ROOT-CAUSE VERDICT: NOT A BUG — TileLang's T.gemm lowers dtype=float32 to the TF32 tensor-core MMA path (SM80 F32TF32TF32F32, 10-bit mantissa); Arm A fails the fp32 reference (31.8% mismatch, max_rel=633.1) with an error the SAME magnitude class as cuBLAS's own TF32 path (Arm A max_abs=0.1852 vs cuBLAS-TF32 0.07261), the worst rel err sits at a near-zero output via cancellation (TF32 signature, not a layout bug), the non-T.gemm manual MAC (Arm B) is true-fp32 class, and NO user-space knob disables TF32 in T.gemm (Arm D).
+========================================================================
+[run_all] OK   exp_fp32_gemm.py  (4s)
+
+======================================================================
+[run_all] >>> exp_correctness_edge.py  
+======================================================================
+========================================================================
+  Experiment: exp_correctness_edge  (edge-case behaviour + mitigation revalidation; R3/W11)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  [FULL]  edge shape M,N = 1024,2048
+
+------------------------------------------------------------------------
+  PART (a): edge-case inputs  (DSL vs PyTorch; NaN/Inf divergences documented)
+------------------------------------------------------------------------
+
+  == matmul  (DSL=tilelang, dtype=float16) ==
+    [PASS] normal          MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [ok  ] nan             PROPAGATES_SAME  ref(nan=True,inf=False) dsl(nan=True,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [ok  ] posinf          PROPAGATES_SAME  ref(nan=False,inf=True) dsl(nan=False,inf=True) nan_match=True inf_match=True finite_max_abs=0
+    [ok  ] neginf          PROPAGATES_SAME  ref(nan=False,inf=True) dsl(nan=False,inf=True) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] large_mag       MATCH            ref(nan=False,inf=True) dsl(nan=False,inf=True) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] denormal        MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] all_equal_rows  MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+
+  == add  (DSL=tilelang, dtype=float16) ==
+    [PASS] normal          MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [ok  ] nan             PROPAGATES_SAME  ref(nan=True,inf=False) dsl(nan=True,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [ok  ] posinf          PROPAGATES_SAME  ref(nan=False,inf=True) dsl(nan=False,inf=True) nan_match=True inf_match=True finite_max_abs=0
+    [ok  ] neginf          PROPAGATES_SAME  ref(nan=False,inf=True) dsl(nan=False,inf=True) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] large_mag       MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] denormal        MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] all_equal_rows  MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+
+  == softmax  (DSL=tilelang, dtype=float32) ==
+2026-06-24 05:26:43  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:27:19  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+    [PASS] normal          MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=5.59e-08
+    [ok  ] nan             PROPAGATES_SAME  ref(nan=True,inf=False) dsl(nan=True,inf=False) nan_match=True inf_match=True finite_max_abs=3.73e-08
+    [ok  ] posinf          PROPAGATES_SAME  ref(nan=True,inf=False) dsl(nan=True,inf=False) nan_match=True inf_match=True finite_max_abs=3.54e-08
+    [ok  ] neginf          PROPAGATES_SAME  ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=2.98e-08
+    [PASS] large_mag       MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=5.96e-08
+    [PASS] denormal        MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] all_equal_rows  MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+
+  == layer_norm  (DSL=tilelang, dtype=float32) ==
+2026-06-24 05:27:19  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:30:30  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+    [PASS] normal          MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=4.29e-06
+    [ok  ] nan             PROPAGATES_SAME  ref(nan=True,inf=False) dsl(nan=True,inf=False) nan_match=True inf_match=True finite_max_abs=4.29e-06
+    [ok  ] posinf          PROPAGATES_SAME  ref(nan=True,inf=False) dsl(nan=True,inf=False) nan_match=True inf_match=True finite_max_abs=4.29e-06
+    [ok  ] neginf          PROPAGATES_SAME  ref(nan=True,inf=False) dsl(nan=True,inf=False) nan_match=True inf_match=True finite_max_abs=4.53e-06
+    [PASS] large_mag       MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=3.81e-06
+    [PASS] denormal        MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+    [PASS] all_equal_rows  MATCH            ref(nan=False,inf=False) dsl(nan=False,inf=False) nan_match=True inf_match=True finite_max_abs=0
+
+------------------------------------------------------------------------
+  PART (b): mitigation-kernel revalidation  (AKO4ALL optimized vs PyTorch ref)
+------------------------------------------------------------------------
+2026-06-24 05:30:30  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=[-1]`
+2026-06-24 05:30:38  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  [PASS] layer_norm_tilelang    REVALIDATED  max_abs_err=0.0625  tol={'atol': 0.02, 'rtol': 0.02}
+2026-06-24 05:30:38  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:30:46  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  [PASS] rms_norm_tilelang      REVALIDATED  max_abs_err=0.00391  tol={'atol': 0.002, 'rtol': 0.002}
+2026-06-24 05:30:46  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:30:54  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  [PASS] argmax_tilelang        REVALIDATED  index_match=100.00%
+  [PASS] matmul_triton          REVALIDATED  max_abs_err=0  tol={'atol': 0.2, 'rtol': 0.01}
+  [PASS] conv2d_triton          REVALIDATED  max_abs_err=0.0312  tol={'atol': 0.002, 'rtol': 0.002}
+  -> wrote 33 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/correctness_edge.csv
+
+========================================================================
+  EDGE: 28 cases across 4 kernels; 0 crashed, 0 numeric-diff on finite inputs.
+        (NaN/Inf propagation divergences are EXPECTED and documented, not failures.)
+  MITIGATION: 5/5 kernels REVALIDATED against PyTorch; 0 with issues.
+        revalidated: layer_norm_tilelang, rms_norm_tilelang, argmax_tilelang, matmul_triton, conv2d_triton
+========================================================================
+[run_all] OK   exp_correctness_edge.py  (258s)
+
+##### PHASE 2 -- TIMING (serialized on pinned GPU 0) #####
+
+======================================================================
+[run_all] >>> exp_conv_filters.py  
+======================================================================
+========================================================================
+  Experiment: Conv filter-size coverage sweep (W6 / RC3 / R1-Q2 / R2-Q2)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  Shape preset: small = (N=8, C=64, H=56, W=56)  dtype=float16
+  Timing: warmup=15, reps=50   Correctness tol: atol=0.05, rtol=0.05
+  Note: 'small' is Ada-safe (<20 GB). On A100/H100 (80 GB) use --shape large for the paper Table-2 case.
+
+
+[1x1_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.01 GB, free ~39.1 GB)
+  pytorch (cuDNN): median 0.0399 ms  (mean 0.0411 +/- 0.0031)
+  triton  RC3: n_regs=96 n_spills=0 num_warps=4
+  triton  : median 0.0737 ms  (mean 0.0745 +/- 0.0033)  E_lib=54.17%  correct=True maxerr=0.00e+00
+2026-06-24 05:31:02  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:31:20  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 0.7516 ms  (mean 0.7567 +/- 0.0217)  E_lib=5.31%  correct=True maxerr=1.56e-02
+
+[3x3_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.05 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0768 ms  (mean 0.0774 +/- 0.0013)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.1526 ms  (mean 0.1554 +/- 0.0146)  E_lib=50.33%  correct=True maxerr=6.25e-02
+2026-06-24 05:31:21  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:31:39  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 0.7557 ms  (mean 0.7623 +/- 0.0217)  E_lib=10.16%  correct=True maxerr=3.13e-02
+
+[5x5_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.15 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.1075 ms  (mean 0.1074 +/- 0.0014)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.4854 ms  (mean 0.4877 +/- 0.0084)  E_lib=22.15%  correct=True maxerr=1.25e-01
+2026-06-24 05:31:39  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:31:57  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 1.2810 ms  (mean 1.2807 +/- 0.0022)  E_lib=8.39%  correct=True maxerr=6.26e-02
+
+[7x7_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.29 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.1526 ms  (mean 0.1523 +/- 0.0014)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 1.0230 ms  (mean 1.0018 +/- 0.0387)  E_lib=14.92%  correct=True maxerr=1.25e-01
+2026-06-24 05:31:58  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:32:16  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 2.2426 ms  (mean 2.2429 +/- 0.0022)  E_lib=6.8%  correct=True maxerr=1.01e-01
+
+[dw_3x3_s1] 8x64x56x56 -> out 8x64x56x56  groups=64  (est im2col ~0.05 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0297 ms  (mean 0.0303 +/- 0.0018)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.7342 ms  (mean 0.7359 +/- 0.0072)  E_lib=4.05%  correct=True maxerr=7.81e-03
+2026-06-24 05:32:17  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:32:35  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 71.7384 ms  (mean 71.7853 +/- 0.2718)  E_lib=0.04%  correct=True maxerr=7.74e-03
+
+[3x3_s2] 8x64x56x56 -> out 8x64x28x28  groups=1  (est im2col ~0.01 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0635 ms  (mean 0.0632 +/- 0.0010)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.0952 ms  (mean 0.0970 +/- 0.0122)  E_lib=66.67%  correct=True maxerr=3.12e-02
+2026-06-24 05:32:40  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:32:58  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 0.9974 ms  (mean 1.0021 +/- 0.0195)  E_lib=6.37%  correct=True maxerr=3.12e-02
+
+================================================================================================
+  CONV FILTER SWEEP SUMMARY  (E_lib = t_pytorch / t_DSL * 100;  >100% = DSL faster)
+================================================================================================
+  filter  s   grp |  pytorch ms |  triton ms      E%  regs spill |  tilelang ms      E% | corr
+  --------------------------------------------------------------------------------------------
+  1x1     1     1 |      0.0399 |     0.0737   54.17    96     0 |       0.7516    5.31 | T=ok L=ok
+  3x3     1     1 |      0.0768 |     0.1526   50.33   168     0 |       0.7557   10.16 | T=ok L=ok
+  5x5     1     1 |      0.1075 |     0.4854   22.15   168     0 |       1.2810    8.39 | T=ok L=ok
+  7x7     1     1 |      0.1526 |     1.0230   14.92   168     0 |       2.2426     6.8 | T=ok L=ok
+  3x3     1    64 |      0.0297 |     0.7342    4.05   168     0 |      71.7384    0.04 | T=ok L=ok
+  3x3     2     1 |      0.0635 |     0.0952   66.67   168     0 |       0.9974    6.37 | T=ok L=ok
+================================================================================================
+
+  RC3 (register pressure vs filter size, Triton dense stride-1 conv):
+    1x1  : n_regs=96  n_spills=0 no-spill
+    3x3  : n_regs=168  n_spills=0 no-spill
+    5x5  : n_regs=168  n_spills=0 no-spill
+    7x7  : n_regs=168  n_spills=0 no-spill
+    (n_regs is expected to rise with k^2; first n_spills>0 substantiates RC3 on this GPU)
+  -> wrote 18 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/conv_filters_small.csv
+
+Done: 18 (config x impl) timings recorded across 6 configs.
+[run_all] OK   exp_conv_filters.py  (120s)
+
+======================================================================
+[run_all] >>> exp_conv_filters.py --mitigation  
+======================================================================
+========================================================================
+  Experiment: Conv filter-size coverage sweep (W6 / RC3 / R1-Q2 / R2-Q2)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  Shape preset: small = (N=8, C=64, H=56, W=56)  dtype=float16
+  Timing: warmup=15, reps=50   Correctness tol: atol=0.05, rtol=0.05
+  Note: 'small' is Ada-safe (<20 GB). On A100/H100 (80 GB) use --shape large for the paper Table-2 case.
+
+  + mitigation arm: AKO4ALL optimized conv2d_triton -- tests whether the
+    RQ3 conv recovery generalizes across filters (R1:68); groups==1 only.
+
+
+[1x1_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.01 GB, free ~39.1 GB)
+  pytorch (cuDNN): median 0.0399 ms  (mean 0.0410 +/- 0.0026)
+  triton  RC3: n_regs=96 n_spills=0 num_warps=4
+  triton  : median 0.0737 ms  (mean 0.0750 +/- 0.0040)  E_lib=54.17%  correct=True maxerr=0.00e+00
+  tilelang: median 0.7578 ms  (mean 0.7612 +/- 0.0167)  E_lib=5.27%  correct=True maxerr=1.56e-02
+  mitigation: median 0.1270 ms  (mean 0.1278 +/- 0.0044)  E_lib=31.45%  correct=True maxerr=0.00e+00
+
+[3x3_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.05 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0563 ms  (mean 0.0565 +/- 0.0013)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.1167 ms  (mean 0.1174 +/- 0.0018)  E_lib=48.24%  correct=True maxerr=6.25e-02
+  tilelang: median 0.7649 ms  (mean 0.7681 +/- 0.0128)  E_lib=7.36%  correct=True maxerr=3.13e-02
+  mitigation: median 0.2345 ms  (mean 0.2354 +/- 0.0034)  E_lib=24.02%  correct=True maxerr=6.25e-02
+
+[5x5_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.15 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0963 ms  (mean 0.0963 +/- 0.0012)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.4280 ms  (mean 0.4295 +/- 0.0056)  E_lib=22.49%  correct=True maxerr=1.25e-01
+  tilelang: median 1.0015 ms  (mean 1.0395 +/- 0.0649)  E_lib=9.61%  correct=True maxerr=6.25e-02
+  mitigation: median 0.2939 ms  (mean 0.2950 +/- 0.0048)  E_lib=32.75%  correct=True maxerr=1.25e-01
+
+[7x7_s1] 8x64x56x56 -> out 8x64x56x56  groups=1  (est im2col ~0.29 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0963 ms  (mean 0.0967 +/- 0.0013)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.5612 ms  (mean 0.5669 +/- 0.0150)  E_lib=17.15%  correct=True maxerr=1.25e-01
+  tilelang: median 1.5247 ms  (mean 1.5251 +/- 0.0023)  E_lib=6.31%  correct=True maxerr=7.34e-02
+  mitigation: median 0.4311 ms  (mean 0.4323 +/- 0.0048)  E_lib=22.33%  correct=True maxerr=1.25e-01
+
+[dw_3x3_s1] 8x64x56x56 -> out 8x64x56x56  groups=64  (est im2col ~0.05 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0297 ms  (mean 0.0305 +/- 0.0024)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.7035 ms  (mean 0.7050 +/- 0.0042)  E_lib=4.22%  correct=True maxerr=7.81e-03
+  tilelang: median 72.2616 ms  (mean 72.2617 +/- 0.1966)  E_lib=0.04%  correct=True maxerr=6.82e-03
+  mitigation: SKIP (depthwise unsupported, groups==1 only)
+
+[3x3_s2] 8x64x56x56 -> out 8x64x28x28  groups=1  (est im2col ~0.01 GB, free ~39.0 GB)
+  pytorch (cuDNN): median 0.0635 ms  (mean 0.0640 +/- 0.0010)
+  triton  RC3: n_regs=168 n_spills=0 num_warps=4
+  triton  : median 0.0952 ms  (mean 0.0953 +/- 0.0022)  E_lib=66.67%  correct=True maxerr=6.25e-02
+  tilelang: median 0.9912 ms  (mean 0.9972 +/- 0.0172)  E_lib=6.41%  correct=True maxerr=3.12e-02
+  mitigation: median 0.1700 ms  (mean 0.1714 +/- 0.0033)  E_lib=37.35%  correct=True maxerr=3.12e-02
+
+================================================================================================
+  CONV FILTER SWEEP SUMMARY  (E_lib = t_pytorch / t_DSL * 100;  >100% = DSL faster)
+================================================================================================
+  filter  s   grp |  pytorch ms |  triton ms      E%  regs spill |  tilelang ms      E% | corr
+  --------------------------------------------------------------------------------------------
+  1x1     1     1 |      0.0399 |     0.0737   54.17    96     0 |       0.7578    5.27 | T=ok L=ok
+  3x3     1     1 |      0.0563 |     0.1167   48.24   168     0 |       0.7649    7.36 | T=ok L=ok
+  5x5     1     1 |      0.0963 |     0.4280   22.49   168     0 |       1.0015    9.61 | T=ok L=ok
+  7x7     1     1 |      0.0963 |     0.5612   17.15   168     0 |       1.5247    6.31 | T=ok L=ok
+  3x3     1    64 |      0.0297 |     0.7035    4.22   168     0 |      72.2616    0.04 | T=ok L=ok
+  3x3     2     1 |      0.0635 |     0.0952   66.67   168     0 |       0.9912    6.41 | T=ok L=ok
+================================================================================================
+
+  RC3 (register pressure vs filter size, Triton dense stride-1 conv):
+    1x1  : n_regs=96  n_spills=0 no-spill
+    3x3  : n_regs=168  n_spills=0 no-spill
+    5x5  : n_regs=168  n_spills=0 no-spill
+    7x7  : n_regs=168  n_spills=0 no-spill
+    (n_regs is expected to rise with k^2; first n_spills>0 substantiates RC3 on this GPU)
+
+====================================================================================
+  CONV MITIGATION GENERALITY  (R1:68;  E_lib = t_cuDNN / t_kernel * 100, higher=better)
+====================================================================================
+  filter  s  grp |  baseline triton E% |  optimized (mitig) E%
+  --------------------------------------------------------------------------------
+  1x1     1    1 |               54.17 |                 31.45
+  3x3     1    1 |               48.24 |                 24.02
+  5x5     1    1 |               22.49 |                 32.75
+  7x7     1    1 |               17.15 |                 22.33
+  3x3     1   64 |                4.22 |                         (optimized kernel: groups==1 only (depthwise excluded))
+  3x3     2    1 |               66.67 |                 37.35
+====================================================================================
+  Generality holds if the optimized E% stays high as filter size grows;
+  a fall-off localizes where the RQ3 recovery does/doesn't transfer.
+  -> wrote 24 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/conv_mitigation_small.csv
+
+Done: 23 (config x impl) timings recorded across 6 configs.
+[run_all] OK   exp_conv_filters.py --mitigation  (64s)
+
+======================================================================
+[run_all] >>> exp_conv_filters.py --shape large  
+======================================================================
+========================================================================
+  Experiment: Conv filter-size coverage sweep (W6 / RC3 / R1-Q2 / R2-Q2)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  Shape preset: large = (N=32, C=256, H=128, W=128)  dtype=float16
+  Timing: warmup=15, reps=50   Correctness tol: atol=0.05, rtol=0.05
+
+
+[1x1_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~0.50 GB, free ~39.1 GB)
+  pytorch (cuDNN): median 0.6769 ms  (mean 0.6778 +/- 0.0022)
+  triton  RC3: n_regs=95 n_spills=0 num_warps=4
+  triton  : median 1.8299 ms  (mean 1.8308 +/- 0.0036)  E_lib=36.99%  correct=True maxerr=0.00e+00
+2026-06-24 05:34:07  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:34:25  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 6.5905 ms  (mean 7.1343 +/- 1.2751)  E_lib=10.27%  correct=True maxerr=3.12e-02
+
+[3x3_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~4.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 3.9701 ms  (mean 3.9610 +/- 0.0326)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 16.2837 ms  (mean 16.4379 +/- 0.3152)  E_lib=24.38%  correct=True maxerr=1.25e-01
+2026-06-24 05:34:27  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:34:45  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 25.9707 ms  (mean 25.9912 +/- 0.0963)  E_lib=15.29%  correct=True maxerr=1.24e-01
+
+[5x5_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~12.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 8.6385 ms  (mean 8.6391 +/- 0.0227)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 51.1386 ms  (mean 51.3085 +/- 0.2871)  E_lib=16.89%  correct=True maxerr=2.50e-01
+2026-06-24 05:34:51  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:35:09  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 66.7146 ms  (mean 66.7090 +/- 0.2275)  E_lib=12.95%  correct=True maxerr=1.26e-01
+
+[7x7_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~24.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 16.2939 ms  (mean 16.5269 +/- 0.6735)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 130.0849 ms  (mean 130.0750 +/- 0.1214)  E_lib=12.53%  correct=True maxerr=2.50e-01
+2026-06-24 05:35:24  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:35:42  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: SKIP (OOM-skip)
+
+[dw_3x3_s1] 32x256x128x128 -> out 32x256x128x128  groups=256  (est im2col ~4.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 0.6717 ms  (mean 0.6891 +/- 0.0249)
+  triton  RC3: n_regs=226 n_spills=0 num_warps=4
+  triton  : median 59.3418 ms  (mean 59.3461 +/- 0.0210)  E_lib=1.13%  correct=True maxerr=7.81e-03
+2026-06-24 05:35:47  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:36:05  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 1136.1342 ms  (mean 1136.1882 +/- 1.4405)  E_lib=0.06%  correct=True maxerr=7.81e-03
+
+[3x3_s2] 32x256x128x128 -> out 32x256x64x64  groups=1  (est im2col ~1.12 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 1.6937 ms  (mean 1.6937 +/- 0.0031)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 6.8024 ms  (mean 6.8130 +/- 0.0271)  E_lib=24.9%  correct=True maxerr=1.25e-01
+2026-06-24 05:37:21  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:37:39  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang: median 6.9909 ms  (mean 7.4311 +/- 1.0778)  E_lib=24.23%  correct=True maxerr=9.41e-02
+
+================================================================================================
+  CONV FILTER SWEEP SUMMARY  (E_lib = t_pytorch / t_DSL * 100;  >100% = DSL faster)
+================================================================================================
+  filter  s   grp |  pytorch ms |  triton ms      E%  regs spill |  tilelang ms      E% | corr
+  --------------------------------------------------------------------------------------------
+  1x1     1     1 |      0.6769 |     1.8299   36.99    95     0 |       6.5905   10.27 | T=ok L=ok
+  3x3     1     1 |      3.9701 |    16.2837   24.38   224     0 |      25.9707   15.29 | T=ok L=ok
+  5x5     1     1 |      8.6385 |    51.1386   16.89   224     0 |      66.7146   12.95 | T=ok L=ok
+  7x7     1     1 |     16.2939 |   130.0849   12.53   224     0 |         SKIP         | T=ok L=ok
+  3x3     1   256 |      0.6717 |    59.3418    1.13   226     0 |    1136.1342    0.06 | T=ok L=ok
+  3x3     2     1 |      1.6937 |     6.8024    24.9   224     0 |       6.9909   24.23 | T=ok L=ok
+================================================================================================
+
+  RC3 (register pressure vs filter size, Triton dense stride-1 conv):
+    1x1  : n_regs=95  n_spills=0 no-spill
+    3x3  : n_regs=224  n_spills=0 no-spill
+    5x5  : n_regs=224  n_spills=0 no-spill
+    7x7  : n_regs=224  n_spills=0 no-spill
+    (n_regs is expected to rise with k^2; first n_spills>0 substantiates RC3 on this GPU)
+  -> wrote 18 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/conv_filters_large.csv
+
+Done: 17 (config x impl) timings recorded across 6 configs.
+[run_all] OK   exp_conv_filters.py --shape large  (217s)
+
+======================================================================
+[run_all] >>> exp_conv_filters.py --shape large --mitigation  
+======================================================================
+========================================================================
+  Experiment: Conv filter-size coverage sweep (W6 / RC3 / R1-Q2 / R2-Q2)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  Shape preset: large = (N=32, C=256, H=128, W=128)  dtype=float16
+  Timing: warmup=15, reps=50   Correctness tol: atol=0.05, rtol=0.05
+
+  + mitigation arm: AKO4ALL optimized conv2d_triton -- tests whether the
+    RQ3 conv recovery generalizes across filters (R1:68); groups==1 only.
+
+
+[1x1_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~0.50 GB, free ~39.1 GB)
+  pytorch (cuDNN): median 0.6758 ms  (mean 0.6765 +/- 0.0031)
+  triton  RC3: n_regs=95 n_spills=0 num_warps=4
+  triton  : median 1.8268 ms  (mean 1.8273 +/- 0.0043)  E_lib=37.0%  correct=True maxerr=0.00e+00
+  tilelang: median 6.6028 ms  (mean 6.6771 +/- 0.0982)  E_lib=10.24%  correct=True maxerr=3.12e-02
+  mitigation: median 0.6093 ms  (mean 0.6153 +/- 0.0175)  E_lib=110.92%  correct=True maxerr=0.00e+00
+
+[3x3_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~4.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 3.8820 ms  (mean 3.8887 +/- 0.0286)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 16.2949 ms  (mean 16.4156 +/- 0.1778)  E_lib=23.82%  correct=True maxerr=1.25e-01
+  tilelang: median 26.0608 ms  (mean 26.0461 +/- 0.0911)  E_lib=14.9%  correct=True maxerr=1.25e-01
+  mitigation: median 8.0323 ms  (mean 8.0577 +/- 0.0386)  E_lib=48.33%  correct=True maxerr=1.25e-01
+
+[5x5_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~12.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 8.6866 ms  (mean 8.6309 +/- 0.0812)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 51.6997 ms  (mean 51.6704 +/- 0.3132)  E_lib=16.8%  correct=True maxerr=2.50e-01
+  tilelang: median 67.0106 ms  (mean 67.0242 +/- 0.2204)  E_lib=12.96%  correct=True maxerr=1.26e-01
+  mitigation: median 19.7448 ms  (mean 19.6598 +/- 0.1124)  E_lib=43.99%  correct=True maxerr=2.50e-01
+
+[7x7_s1] 32x256x128x128 -> out 32x256x128x128  groups=1  (est im2col ~24.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 16.3983 ms  (mean 16.6009 +/- 0.6693)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 130.5324 ms  (mean 130.7065 +/- 0.5743)  E_lib=12.56%  correct=True maxerr=5.00e-01
+  tilelang: SKIP (OOM-skip)
+  mitigation: median 37.0176 ms  (mean 37.0682 +/- 0.1372)  E_lib=44.3%  correct=True maxerr=2.50e-01
+
+[dw_3x3_s1] 32x256x128x128 -> out 32x256x128x128  groups=256  (est im2col ~4.50 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 0.7086 ms  (mean 0.6955 +/- 0.0215)
+  triton  RC3: n_regs=226 n_spills=0 num_warps=4
+  triton  : median 59.2937 ms  (mean 59.3009 +/- 0.0383)  E_lib=1.2%  correct=True maxerr=7.81e-03
+  tilelang: median 1153.3384 ms  (mean 1153.1526 +/- 1.5139)  E_lib=0.06%  correct=True maxerr=7.81e-03
+  mitigation: SKIP (depthwise unsupported, groups==1 only)
+
+[3x3_s2] 32x256x128x128 -> out 32x256x64x64  groups=1  (est im2col ~1.12 GB, free ~38.7 GB)
+  pytorch (cuDNN): median 1.5370 ms  (mean 1.5370 +/- 0.0025)
+  triton  RC3: n_regs=224 n_spills=0 num_warps=4
+  triton  : median 6.8239 ms  (mean 6.8714 +/- 0.1190)  E_lib=22.52%  correct=True maxerr=1.25e-01
+  tilelang: median 6.9663 ms  (mean 6.9743 +/- 0.0194)  E_lib=22.06%  correct=True maxerr=1.09e-01
+  mitigation: median 2.7658 ms  (mean 2.7674 +/- 0.0092)  E_lib=55.57%  correct=True maxerr=1.25e-01
+
+================================================================================================
+  CONV FILTER SWEEP SUMMARY  (E_lib = t_pytorch / t_DSL * 100;  >100% = DSL faster)
+================================================================================================
+  filter  s   grp |  pytorch ms |  triton ms      E%  regs spill |  tilelang ms      E% | corr
+  --------------------------------------------------------------------------------------------
+  1x1     1     1 |      0.6758 |     1.8268    37.0    95     0 |       6.6028   10.24 | T=ok L=ok
+  3x3     1     1 |      3.8820 |    16.2949   23.82   224     0 |      26.0608    14.9 | T=ok L=ok
+  5x5     1     1 |      8.6866 |    51.6997    16.8   224     0 |      67.0106   12.96 | T=ok L=ok
+  7x7     1     1 |     16.3983 |   130.5324   12.56   224     0 |         SKIP         | T=ok L=ok
+  3x3     1   256 |      0.7086 |    59.2937     1.2   226     0 |    1153.3384    0.06 | T=ok L=ok
+  3x3     2     1 |      1.5370 |     6.8239   22.52   224     0 |       6.9663   22.06 | T=ok L=ok
+================================================================================================
+
+  RC3 (register pressure vs filter size, Triton dense stride-1 conv):
+    1x1  : n_regs=95  n_spills=0 no-spill
+    3x3  : n_regs=224  n_spills=0 no-spill
+    5x5  : n_regs=224  n_spills=0 no-spill
+    7x7  : n_regs=224  n_spills=0 no-spill
+    (n_regs is expected to rise with k^2; first n_spills>0 substantiates RC3 on this GPU)
+
+====================================================================================
+  CONV MITIGATION GENERALITY  (R1:68;  E_lib = t_cuDNN / t_kernel * 100, higher=better)
+====================================================================================
+  filter  s  grp |  baseline triton E% |  optimized (mitig) E%
+  --------------------------------------------------------------------------------
+  1x1     1    1 |                37.0 |                110.92
+  3x3     1    1 |               23.82 |                 48.33
+  5x5     1    1 |                16.8 |                 43.99
+  7x7     1    1 |               12.56 |                  44.3
+  3x3     1  256 |                 1.2 |                         (optimized kernel: groups==1 only (depthwise excluded))
+  3x3     2    1 |               22.52 |                 55.57
+====================================================================================
+  Generality holds if the optimized E% stays high as filter size grows;
+  a fall-off localizes where the RQ3 recovery does/doesn't transfer.
+  -> wrote 24 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/conv_mitigation_large.csv
+
+Done: 22 (config x impl) timings recorded across 6 configs.
+[run_all] OK   exp_conv_filters.py --shape large --mitigation  (141s)
+
+======================================================================
+[run_all] >>> exp_fused_baselines.py  
+======================================================================
+========================================================================
+  Experiment: Experiment 1 — split baselines (eager / fused / DSL)  (W2)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  torch.compile mode = max-autotune; sizes = ['small', 'large']
+
+  rms_norm [small]  (512, 1024)/(1024,)  (float16)
+      eager                  median=0.1188 ms  mean=0.1211+/-0.0087
+      fused                  median=0.0963 ms  mean=0.0977+/-0.0057
+      triton                 median=0.0727 ms  mean=0.0766+/-0.0150
+2026-06-24 05:40:07  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:40:36  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=3.4304 ms  mean=3.1739+/-0.3566
+  rms_norm [large]  (8192, 8192)/(8192,)  (float16)
+      eager                  median=2.4351 ms  mean=2.4352+/-0.0036
+      fused                  median=0.7741 ms  mean=0.7744+/-0.0044
+      triton                 median=0.2591 ms  mean=0.2627+/-0.0143
+2026-06-24 05:40:40  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:44:10  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=278.4656 ms  mean=278.6379+/-0.6159
+  swiglu [small]  (512, 8192)  (float16)
+      eager                  median=0.0471 ms  mean=0.0481+/-0.0019
+      fused                  median=0.0922 ms  mean=0.0923+/-0.0027
+      triton                 median=0.0870 ms  mean=0.0886+/-0.0043
+2026-06-24 05:44:30  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:44:38  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=0.1260 ms  mean=0.1280+/-0.0058
+  swiglu [large]  (4096, 32768)  (float16)
+      eager                  median=1.4828 ms  mean=1.4846+/-0.0063
+      fused                  median=1.2401 ms  mean=1.2402+/-0.0042
+      triton                 median=0.3676 ms  mean=0.3692+/-0.0037
+2026-06-24 05:44:41  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:44:49  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=1.3722 ms  mean=1.3743+/-0.0115
+  softmax [small]  (512, 1024)  (float16)
+      eager                  median=0.0225 ms  mean=0.0221+/-0.0006
+      fused                  median=0.1024 ms  mean=0.1031+/-0.0036
+      triton                 median=0.0543 ms  mean=0.0557+/-0.0045
+2026-06-24 05:44:52  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:45:20  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=4.2977 ms  mean=4.2157+/-0.2803
+  softmax [large]  (4096, 32768)  (float16)
+      eager                  median=0.4844 ms  mean=0.4811+/-0.0052
+      fused                  median=1.2134 ms  mean=1.2138+/-0.0045
+      triton                 median=0.4301 ms  mean=0.4323+/-0.0076
+      tilelang               median=2.8068 ms  mean=2.8072+/-0.0032
+  log_softmax [small]  (512, 1024)  (float16)
+      eager                  median=0.0174 ms  mean=0.0178+/-0.0015
+      fused                  median=0.1034 ms  mean=0.1045+/-0.0041
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+      triton                 median=0.0922 ms  mean=0.0925+/-0.0033
+2026-06-24 05:45:25  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:45:33  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=0.1085 ms  mean=0.1110+/-0.0073
+  log_softmax [large]  (4096, 32768)  (float16)
+      eager                  median=0.5683 ms  mean=0.5687+/-0.0028
+      fused                  median=1.5186 ms  mean=1.5194+/-0.0042
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/DSLPerfGap/ViperBench/log_softmax/triton_impl.py:59: UserWarning: Logical operators 'and' and 'or' are deprecated for non-scalar tensors; please use '&' or '|' instead
+  mask = m_offset[:, None] < M and n_offset[None, :] < N
+UserWarning: Enable tracemalloc to get the object allocation traceback
+      triton                 median=0.9984 ms  mean=1.0005+/-0.0095
+2026-06-24 05:46:10  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:46:18  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=3.0208 ms  mean=3.0195+/-0.0133
+  add [small]  (4096,)/(4096,)  (float16)
+      eager                  median=0.0184 ms  mean=0.0187+/-0.0009
+      fused                  median=0.0922 ms  mean=0.0924+/-0.0029
+      triton                 median=0.0399 ms  mean=0.0398+/-0.0014
+      tilelang               median=0.0778 ms  mean=0.0787+/-0.0035
+  add [large]  (67108864,)/(67108864,)  (float16)
+      eager                  median=0.3082 ms  mean=0.3087+/-0.0028
+      fused                  median=0.8376 ms  mean=0.8354+/-0.0060
+      triton                 median=0.3226 ms  mean=0.3228+/-0.0021
+2026-06-24 05:46:20  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:46:28  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=0.4229 ms  mean=0.4237+/-0.0038
+  relu [small]  (4096, 4096)  (float16)
+      eager                  median=0.0625 ms  mean=0.0629+/-0.0011
+      fused                  median=0.1966 ms  mean=0.1976+/-0.0034
+      triton                 median=0.0799 ms  mean=0.0817+/-0.0086
+2026-06-24 05:46:29  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:46:37  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=0.1024 ms  mean=0.1043+/-0.0052
+  relu [large]  (16384, 16384)  (float16)
+      eager                  median=0.7803 ms  mean=0.7802+/-0.0025
+      fused                  median=1.9558 ms  mean=1.9596+/-0.0276
+      triton                 median=0.8008 ms  mean=0.8021+/-0.0042
+2026-06-24 05:46:37  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:46:45  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=1.1940 ms  mean=1.1942+/-0.0035
+  leaky_relu [small]  (4096, 4096)/(4096, 4096)  (float16)
+      eager                  median=8.0005 ms  mean=8.2580+/-0.5177
+/venv/main/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:282: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+E0624 05:46:51.092000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Runtime error during autotuning: 
+E0624 05:46:51.092000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 196608 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:46:51.092000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Ignoring this choice.
+E0624 05:46:51.339000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Runtime error during autotuning: 
+E0624 05:46:51.339000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 262144 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:46:51.339000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Ignoring this choice.
+E0624 05:46:51.724000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Runtime error during autotuning: 
+E0624 05:46:51.724000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 294912 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:46:51.724000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Ignoring this choice.
+E0624 05:46:52.432000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Runtime error during autotuning: 
+E0624 05:46:52.432000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 262144 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:46:52.432000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/0] Ignoring this choice.
+AUTOTUNE mm(4096x4096, 4096x4096)
+strides: [4096, 1], [4096, 1]
+dtypes: torch.float32, torch.float32
+  triton_mm_6 7.7548 ms 100.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=4
+  triton_mm_13 7.8551 ms 98.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_5 7.9718 ms 97.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=64, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=4
+  triton_mm_9 8.0210 ms 96.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_7 8.0896 ms 95.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=64, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=8
+  triton_mm_15 8.3732 ms 92.6% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=8
+  triton_mm_14 8.9375 ms 86.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_10 8.9846 ms 86.3% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=128, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_3 9.0685 ms 85.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=32, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+  triton_mm_2 9.2416 ms 83.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=32, BLOCK_N=64, EVEN_K=True, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=5, num_warps=8
+SingleProcess AUTOTUNE benchmarking takes 1.8411 seconds and 4.2574 seconds precompiling for 20 choices
+      fused                  median=8.0742 ms  mean=8.5025+/-1.4955
+      triton                 median=2.3214 ms  mean=2.2997+/-0.0392
+2026-06-24 05:46:58  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:47:17  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=1.2329 ms  mean=1.2344+/-0.0042
+  leaky_relu [large]  (8192, 8192)/(8192, 8192)  (float16)
+      eager                  median=60.2092 ms  mean=60.2129+/-0.0296
+E0624 05:47:37.875000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Runtime error during autotuning: 
+E0624 05:47:37.875000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 196608 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:47:37.875000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Ignoring this choice.
+E0624 05:47:42.599000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Runtime error during autotuning: 
+E0624 05:47:42.599000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 262144 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:47:42.599000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Ignoring this choice.
+E0624 05:47:46.471000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Runtime error during autotuning: 
+E0624 05:47:46.471000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 294912 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:47:46.471000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Ignoring this choice.
+E0624 05:47:53.693000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Runtime error during autotuning: 
+E0624 05:47:53.693000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] No valid triton configs. OutOfMemoryError: out of resource: triton_mm Required: 262144 Hardware limit:166912 Reducing block sizes or `num_stages` may help.. 
+E0624 05:47:53.693000 40614 site-packages/torch/_inductor/select_algorithm.py:2691] [3/1] Ignoring this choice.
+AUTOTUNE mm(8192x8192, 8192x8192)
+strides: [s52, 1], [s20, 1]
+dtypes: torch.float32, torch.float32
+  mm 60.2685 ms 100.0% 
+  triton_mm_35 108.8410 ms 55.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=128, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_32 120.4593 ms 50.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=64, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_34 124.2030 ms 48.5% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=128, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=8
+  triton_mm_28 146.9399 ms 41.0% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=128, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_24 167.7814 ms 35.9% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=16, BLOCK_M=64, BLOCK_N=64, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=4
+  triton_mm_33 178.1832 ms 33.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=128, BLOCK_N=64, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+  triton_mm_30 195.8707 ms 30.8% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=64, BLOCK_M=64, BLOCK_N=128, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=3, num_warps=4
+  triton_mm_25 196.3540 ms 30.7% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=64, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=2, num_warps=4
+  triton_mm_29 205.0959 ms 29.4% ACC_TYPE='tl.float32', ALLOW_TF32=False, BLOCK_K=32, BLOCK_M=64, BLOCK_N=128, EVEN_K=False, GROUP_M=8, USE_FAST_ACCUM=False, num_stages=4, num_warps=8
+SingleProcess AUTOTUNE benchmarking takes 26.3710 seconds and 5.4371 seconds precompiling for 20 choices
+      fused                  median=61.0017 ms  mean=61.0216+/-0.1411
+      triton                 median=18.1995 ms  mean=18.1523+/-0.1638
+2026-06-24 05:48:02  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:48:21  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+      tilelang               median=6.3263 ms  mean=6.7429+/-0.5327
+
+  === cross_entropy (CONTAMINATION CHECK) ===
+  cross_entropy [small]  logits=(256, 1024) fp32
+      eager_contaminated     median=0.6165 ms  mean=0.6202+/-0.0149
+      fused_F_cross_entropy  median=0.1096 ms  mean=0.1105+/-0.0033
+      triton                 median=0.0635 ms  mean=0.0647+/-0.0032
+2026-06-24 05:48:23  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `kernel` with `out_idx=None`
+2026-06-24 05:48:31  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `kernel`
+      tilelang               median=0.1475 ms  mean=0.1487+/-0.0048
+      >> CONTAMINATION: 'library efficiency' of Triton vs the python-loop baseline = 970.94%  (nonsensical -- baseline is an interpreter loop, not vectorized PyTorch)
+      >> HONEST: vs fused F.cross_entropy = 172.58%  (note: different output semantics -- per-block buffer vs scalar mean loss; reported for scale, not as a strict like-for-like ratio)
+  cross_entropy [large]  logits=(4096, 32768) fp32
+      eager_contaminated     median=6.1123 ms  mean=6.1119+/-0.0029
+      fused_F_cross_entropy  median=1.5473 ms  mean=1.5319+/-0.0278
+      triton                 median=0.4168 ms  mean=0.4189+/-0.0065
+2026-06-24 05:48:36  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `kernel` with `out_idx=None`
+2026-06-24 05:48:44  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `kernel`
+      tilelang               median=5.7334 ms  mean=6.2285+/-1.0177
+      >> CONTAMINATION: 'library efficiency' of Triton vs the python-loop baseline = 1466.58%  (nonsensical -- baseline is an interpreter loop, not vectorized PyTorch)
+      >> HONEST: vs fused F.cross_entropy = 371.25%  (note: different output semantics -- per-block buffer vs scalar mean loss; reported for scale, not as a strict like-for-like ratio)
+  -> wrote 64 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/fused_baselines.csv
+[run_all] OK   exp_fused_baselines.py  (525s)
+
+======================================================================
+[run_all] >>> exp_winograd_isolation.py  
+======================================================================
+========================================================================
+  Experiment: Experiment 4 — Winograd isolation in the conv gap  (RC4)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+  conv input (N,C,H,W)=(32,256,128,128) weight C_out=256 fp16
+
+--- (1) cuDNN deterministic A/B on 3x3 s1 (delta upper-bounds Winograd) ---
+      nondeterministic(Winograd allowed)       median=3.8933 ms  mean=3.8769+/-0.0303
+      deterministic(Winograd mostly OFF)       median=3.8144 ms  mean=3.8314+/-0.0248
+      >> delta (det - nondet) = -0.0789 ms  (0.980x); positive => non-deterministic (Winograd-allowed) path is faster, upper-bounding Winograd's 3x3 s1 contribution.
+
+--- (2) Winograd eligible-vs-ineligible proxy (cuDNN vs Triton vs TileLang) ---
+  config 3x3_s1 (k=3, stride=1, winograd_eligible=True)
+      cudnn      median=3.7888 ms  mean=3.8074+/-0.0309
+      triton     median=16.3052 ms  mean=16.4486+/-0.2475
+      tilelang   median=26.0557 ms  mean=26.0259+/-0.0906
+      >> triton gap vs cuDNN @ 3x3_s1: 4.30x  [Winograd-eligible]
+      >> tilelang gap vs cuDNN @ 3x3_s1: 6.88x  [Winograd-eligible]
+  config 3x3_s2 (k=3, stride=2, winograd_eligible=False)
+      cudnn      median=1.3701 ms  mean=1.3591+/-0.0205
+      triton     median=6.8536 ms  mean=6.8728+/-0.0578
+      tilelang   median=6.9816 ms  mean=6.9821+/-0.0052
+      >> triton gap vs cuDNN @ 3x3_s2: 5.00x  [ineligible]
+      >> tilelang gap vs cuDNN @ 3x3_s2: 5.10x  [ineligible]
+  config 5x5_s1 (k=5, stride=1, winograd_eligible=False)
+      cudnn      median=8.6989 ms  mean=8.7038+/-0.1096
+      triton     median=51.6905 ms  mean=51.7535+/-0.2604
+      tilelang   median=67.1928 ms  mean=67.1812+/-0.1863
+      >> triton gap vs cuDNN @ 5x5_s1: 5.94x  [ineligible]
+      >> tilelang gap vs cuDNN @ 5x5_s1: 7.72x  [ineligible]
+  config 7x7_s1 (k=7, stride=1, winograd_eligible=False)
+      cudnn      median=16.3666 ms  mean=16.4184+/-0.2783
+      triton     median=129.7388 ms  mean=130.1160+/-0.7480
+      tilelang   median=126.3340 ms  mean=126.3660+/-0.2418
+      >> triton gap vs cuDNN @ 7x7_s1: 7.93x  [ineligible]
+      >> tilelang gap vs cuDNN @ 7x7_s1: 7.72x  [ineligible]
+  >> triton: gap@3x3_s1(eligible)=4.30x vs avg gap@ineligible=6.29x. Eligible gap not larger => Winograd not the dominant factor here.
+  >> tilelang: gap@3x3_s1(eligible)=6.88x vs avg gap@ineligible=6.85x. Eligible gap LARGER => residual attributable to Winograd.
+
+--- (3) Confirm cuDNN's selected algorithm via CUDNN_LOGINFO_DBG ---
+      invoking:  CUDNN_LOGINFO_DBG=1 CUDNN_LOGDEST_DBG=stdout \
+                 /workspace/DSLPerfGap/experiments/exp_winograd_isolation.py --cudnn-log-worker --shape 32 256 128 128 256 --k 3 --stride 1
+      cuDNN debug log captured but no 'winograd' token found. Engine/algo lines:
+        i!     descriptorType: type=cudnnBackendDescriptorType_t; val=CUDNN_BACKEND_ENGINEHEUR_DESCRIPTOR (4);
+        i!     descriptor: type=CUDNN_BACKEND_ENGINEHEUR_DESCRIPTOR; val=NOT_IMPLEMENTED;
+        i!     attributeName: type=cudnnBackendAttributeName_t; val=CUDNN_ATTR_ENGINEHEUR_OPERATION_GRAPH (201);
+        i!     descriptor: type=CUDNN_BACKEND_ENGINEHEUR_DESCRIPTOR; val=NOT_IMPLEMENTED;
+        i!     attributeName: type=cudnnBackendAttributeName_t; val=CUDNN_ATTR_ENGINEHEUR_MODE (200);
+  -> wrote 15 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/winograd_isolation.csv
+[run_all] OK   exp_winograd_isolation.py  (38s)
+
+======================================================================
+[run_all] >>> exp_autotune_matmul.py  
+======================================================================
+========================================================================
+  Experiment: Experiment 3 — autotuned-matmul reconciliation (W7)
+  GPU: NVIDIA A100-PCIE-40GB  (sm_80, 108 SMs, 39.49 GB, L2=40.0 MB)
+  torch 2.8.0+cu126 / cuda 12.6 / driver 580.126.09
+========================================================================
+
+--- shape 4096x4096 (fp16, working set ~= 0.10 GB) ---
+  cublas             median=0.9390 ms  mean=0.9392+/-0.0021  146365.8 GFLOP/s
+  triton_plain       median=1.6282 ms  mean=1.6288+/-0.0065   84413.7 GFLOP/s
+  triton_autotune    median=0.8530 ms  mean=0.8472+/-0.0097  161126.1 GFLOP/s
+2026-06-24 05:49:29  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:49:48  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang_swizzle   median=1.2298 ms  mean=1.2316+/-0.0058  111755.3 GFLOP/s
+  >> autotune vs plain @ 4096^2: 1.909x (§7.3 1.66x regime)
+
+--- shape 16384x16384 (fp16, working set ~= 1.61 GB) ---
+  cublas             median=41.5027 ms  mean=41.9009+/-1.4159  211940.2 GFLOP/s
+  triton_plain       median=108.3249 ms  mean=108.4536+/-1.5459   81201.0 GFLOP/s
+  triton_autotune    median=47.4440 ms  mean=47.7148+/-0.7304  185399.6 GFLOP/s
+2026-06-24 05:50:07  [TileLang:tilelang.jit.kernel:INFO]: TileLang begins to compile kernel `func` with `out_idx=None`
+2026-06-24 05:50:27  [TileLang:tilelang.jit.kernel:INFO]: TileLang completes to compile kernel `func`
+  tilelang_swizzle   median=50.6737 ms  mean=50.7560+/-0.5633  173583.1 GFLOP/s
+  >> autotune vs plain @ 16384^2: 2.283x (Delta~=0pp regime (§5))
+  -> wrote 8 rows to /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/autotune_matmul.csv
+[run_all] OK   exp_autotune_matmul.py  (67s)
+
+##### PHASE 3 -- HARDWARE COUNTERS (admin-gated; run SEPARATELY) ######
+[run_all] NOTE: Nsight Compute counter collection (Experiment 1) is NOT run by
+          run_all.sh because it requires admin to unblock counters
+          (NVreg_RestrictProfilingToAdminUsers=0 + reboot). When enabled:
+
+              bash /workspace/DSLPerfGap/experiments/ncu_counters.sh
+
+          It pre-checks /proc/driver/nvidia/params and exits 2 with the
+          unblock instructions if counters are still restricted.
+
+######################################################################
+[run_all] SUMMARY (2026-06-24T05:50:31Z):
+    OK    exp_fp32_gemm.py  (4s)
+    OK    exp_correctness_edge.py  (258s)
+    OK    exp_conv_filters.py  (120s)
+    OK    exp_conv_filters.py --mitigation  (64s)
+    OK    exp_conv_filters.py --shape large  (217s)
+    OK    exp_conv_filters.py --shape large --mitigation  (141s)
+    OK    exp_fused_baselines.py  (525s)
+    OK    exp_winograd_isolation.py  (38s)
+    OK    exp_autotune_matmul.py  (67s)
+[run_all] full log: /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/run_all.log
+[run_all] CSVs:     /workspace/DSLPerfGap/experiments/results/NVIDIA_A100-PCIE-40GB/*.csv
+######################################################################

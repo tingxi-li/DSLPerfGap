@@ -1,0 +1,16 @@
+gpu_name,sm,timestamp_utc,measurement,config,impl,winograd_eligible,median_ms,mean_ms,std_ms,gap_vs_cudnn,e_vs_cudnn,note
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=False,True,3.89325,3.87686,0.0303,,,nondeterministic(Winograd allowed)
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=True,True,3.8144,3.83138,0.02481,,,deterministic(Winograd mostly OFF)
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,cudnn_determinism_ab,3x3_s1,DELTA_det_minus_nondet,True,-0.07885,,,,0.9797,upper bound on Winograd benefit (det - nondet)
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,3x3_s1,cudnn,True,3.7888,3.80744,0.03095,1.0,100.0,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,3x3_s1,triton,True,16.30515,16.44863,0.24751,4.304,23.24,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,3x3_s1,tilelang,True,26.05568,26.02592,0.09062,6.877,14.54,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,3x3_s2,cudnn,False,1.37011,1.35909,0.02049,1.0,100.0,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,3x3_s2,triton,False,6.85363,6.87282,0.05779,5.002,19.99,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,3x3_s2,tilelang,False,6.98163,6.98212,0.00523,5.096,19.62,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,5x5_s1,cudnn,False,8.69888,8.7038,0.10963,1.0,100.0,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,5x5_s1,triton,False,51.69049,51.75355,0.26041,5.942,16.83,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,5x5_s1,tilelang,False,67.19283,67.1812,0.18633,7.724,12.95,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,7x7_s1,cudnn,False,16.36659,16.41841,0.27835,1.0,100.0,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,7x7_s1,triton,False,129.73875,130.11601,0.74801,7.927,12.62,
+NVIDIA A100-PCIE-40GB,sm_80,2026-06-24T05:49:23+00:00,eligible_vs_ineligible,7x7_s1,tilelang,False,126.33395,126.36602,0.24176,7.719,12.96,
