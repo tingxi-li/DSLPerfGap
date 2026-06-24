@@ -185,7 +185,7 @@
   },
   "add/tilelang/A100-PCIE-40GB": {
     "block_N": 2048,
-    "threads": 256
+    "threads": 128
   },
   "argmax/triton/A100-PCIE-40GB": {
     "BLOCK_M": 64,
@@ -193,7 +193,7 @@
   },
   "argmax/tilelang/A100-PCIE-40GB": {
     "block_M": 16,
-    "block_K": 16,
+    "block_K": 64,
     "threads": 128
   },
   "attention/triton/A100-PCIE-40GB": {
@@ -202,18 +202,8 @@
   },
   "attention/tilelang/A100-PCIE-40GB": {
     "block_M": 16,
-    "block_N": 32,
-    "block_K": 32,
-    "threads": 128
-  },
-  "batched_matmul/triton/A100-PCIE-40GB": {
-    "block_m": 8,
-    "block_n": 16,
-    "block_k": 64
-  },
-  "batched_matmul/tilelang/A100-PCIE-40GB": {
-    "block_N": 64,
-    "block_K": 32,
+    "block_N": 16,
+    "block_K": 16,
     "threads": 128
   },
   "conv2d/triton/A100-PCIE-40GB": {
@@ -225,32 +215,26 @@
     "BLOCK_M": 32,
     "BLOCK_N": 32,
     "BLOCK_K": 16,
-    "NUM_STAGES": 3
-  },
-  "cross_entropy/triton/A100-PCIE-40GB": {
-    "BLOCK_SIZE": 512
+    "NUM_STAGES": 2
   },
   "cross_entropy/tilelang/A100-PCIE-40GB": {
     "threads": 32
   },
   "embedding/triton/A100-PCIE-40GB": {
     "BLOCK_N": 32,
-    "num_warps": 1
+    "num_warps": 4
   },
   "embedding/tilelang/A100-PCIE-40GB": {
     "block_N": 2,
-    "block_D": 128,
+    "block_D": 64,
     "threads": 128
-  },
-  "index_select/triton/A100-PCIE-40GB": {
-    "BLOCK_SIZE_COL": 512
   },
   "index_select/tilelang/A100-PCIE-40GB": {
     "block_N": 16,
-    "threads": 256
+    "threads": 128
   },
   "layer_norm/triton/A100-PCIE-40GB": {
-    "RBLOCK": 4096
+    "RBLOCK": 2048
   },
   "layer_norm/tilelang/A100-PCIE-40GB": {
     "threads": 32
@@ -258,14 +242,8 @@
   "leaky_relu/triton/A100-PCIE-40GB": {
     "BLOCK_SIZE_M": 32,
     "BLOCK_SIZE_N": 128,
-    "BLOCK_SIZE_K": 32,
+    "BLOCK_SIZE_K": 64,
     "GROUP_SIZE_M": 8
-  },
-  "leaky_relu/tilelang/A100-PCIE-40GB": {
-    "block_M": 128,
-    "block_N": 64,
-    "block_K": 32,
-    "num_stages": 2
   },
   "linear_activation/triton/A100-PCIE-40GB": {
     "BLOCK_SIZE_M": 32,
@@ -274,21 +252,21 @@
   },
   "linear_activation/tilelang/A100-PCIE-40GB": {
     "block_M": 64,
-    "block_N": 64,
-    "block_K": 64,
+    "block_N": 128,
+    "block_K": 32,
     "num_stages": 2
   },
   "log_softmax/triton/A100-PCIE-40GB": {
-    "BLOCK_M": 16
+    "BLOCK_M": 4
   },
   "log_softmax/tilelang/A100-PCIE-40GB": {
-    "threads": 32
+    "threads": 64
   },
   "logsumexp/triton/A100-PCIE-40GB": {
-    "num_warps": 16
+    "num_warps": 1
   },
   "logsumexp/tilelang/A100-PCIE-40GB": {
-    "block_M": 16,
+    "block_M": 4,
     "threads": 128
   },
   "matmul/triton/A100-PCIE-40GB": {
@@ -302,64 +280,32 @@
     "block_K": 32,
     "num_stages": 2
   },
-  "matrix_transpose/triton/A100-PCIE-40GB": {
-    "BLOCK_ROWS": 16,
-    "BLOCK_COLS": 16
-  },
   "matrix_transpose/tilelang/A100-PCIE-40GB": {
-    "block_M": 64,
-    "block_N": 32,
-    "threads": 256
+    "block_M": 32,
+    "block_N": 128,
+    "threads": 128
   },
   "max_reduction/triton/A100-PCIE-40GB": {
-    "BLOCK_M": 32
+    "BLOCK_M": 16
   },
   "max_reduction/tilelang/A100-PCIE-40GB": {
+    "block_M": 16,
+    "block_K": 64,
+    "threads": 128
+  },
+  "mean_reduction/tilelang/A100-PCIE-40GB": {
     "block_M": 16,
     "block_K": 16,
     "threads": 128
   },
-  "mean_reduction/triton/A100-PCIE-40GB": {
-    "BLOCK_M": 8,
-    "BLOCK_N": 32
-  },
-  "mean_reduction/tilelang/A100-PCIE-40GB": {
-    "block_M": 16,
-    "block_K": 32,
-    "threads": 128
-  },
   "mul/triton/A100-PCIE-40GB": {
-    "BLOCK_SIZE": 1024
-  },
-  "mul/tilelang/A100-PCIE-40GB": {
-    "block_N": 2048,
-    "threads": 256
-  },
-  "relu/triton/A100-PCIE-40GB": {
-    "BLOCK_SIZE": 2048
-  },
-  "relu/tilelang/A100-PCIE-40GB": {
-    "block_N": 2048,
-    "threads": 256
-  },
-  "rms_norm/triton/A100-PCIE-40GB": {
-    "num_warps": 4
+    "BLOCK_SIZE": 512
   },
   "rms_norm/tilelang/A100-PCIE-40GB": {
     "threads": 32
   },
-  "softmax/triton/A100-PCIE-40GB": {
-    "num_warps": 16
-  },
   "softmax/tilelang/A100-PCIE-40GB": {
     "threads": 32
-  },
-  "swiglu/triton/A100-PCIE-40GB": {
-    "BLOCK_N": 32
-  },
-  "swiglu/tilelang/A100-PCIE-40GB": {
-    "block_M": 32,
-    "threads": 128
   },
   "matmul/triton/H100_80GB_HBM3": {
     "BLOCK_SIZE_M": 64,
