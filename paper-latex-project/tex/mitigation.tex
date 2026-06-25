@@ -146,7 +146,7 @@ This addresses both RC0 (dtype cast overhead) and RC1 (non-vectorized global acc
 The same RC0 fix---replacing \texttt{T.serial} reduction loops with native \texttt{T.reduce}
 and streaming the reduction dimension in tiles (an online, max-rescaled pass for the softmax
 variants) rather than materializing the full row in a fragment---generalizes across the
-\emph{entire} TileLang reduction and normalization family (\cref{tab:mitig:reductions}), not
+\emph{entire} TileLang reduction and normalization family (\cref{tab:mitigation}), not
 just the kernels of the original campaign. Every catastrophically slow kernel recovers to
 PyTorch-comparable or better: \texttt{max\_reduction}, \texttt{mean\_reduction}, and
 \texttt{logsumexp} \emph{exceed} PyTorch ($132\%$, $99\%$, $582\%$), and \texttt{softmax} and
@@ -159,27 +159,6 @@ index-returning \texttt{argmax} ($27\%$), where the index bookkeeping is intrins
 and \texttt{torch.argmax} is already well tuned---note that the \emph{value-only} reduction over
 the identical shape (\texttt{max\_reduction}) reaches $132\%$, isolating the residual to the index pass.
 
-\begin{table}[t]
-  \centering
-  \caption{The RC0 fix generalizes across the TileLang reduction/softmax family
-    (re-timed on the A100-SXM4, locked clocks). \emph{Naive} is the idiomatic
-    \texttt{T.serial} kernel shipped in the suite; \emph{Optimized} replaces it with native
-    \texttt{T.reduce} plus tiled streaming. $E_\text{lib}$ relative to PyTorch; all correct.
-    \textbf{Bold} = ${\geq}95\%$.}
-  \label{tab:mitig:reductions}
-  \begin{tabular}{lrrr}
-    \toprule
-    Kernel & Naive $E_\text{lib}$ & Optimized $E_\text{lib}$ & Speedup \\
-    \midrule
-    \texttt{max\_reduction}  & 4.7\%  & \textbf{131.6\%} & 28.6$\times$ \\
-    \texttt{mean\_reduction} & 7.2\%  & \textbf{99.5\%}  & 13.9$\times$ \\
-    \texttt{logsumexp}       & 57.6\% & \textbf{581.7\%} & 10.1$\times$ \\
-    \texttt{softmax}         & 19.0\% & 86.1\%           & 4.6$\times$ \\
-    \texttt{log\_softmax}    & 17.0\% & 70.8\%           & 4.2$\times$ \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
 \subsection{Summary and Remaining Gap}
 \label{sec:mitig:summary}
 
@@ -188,7 +167,7 @@ The outcomes separate cleanly into two kinds, and the distinction is the central
 The TileLang \emph{normalization and reduction family} are \emph{authoring artifacts}: correcting
 RC0 (\texttt{T.serial}$\to$\texttt{T.reduce} plus native-dtype, tiled streaming I/O) brings every
 kernel to PyTorch-comparable or better---LayerNorm $124\%$, RMSNorm $990\%$, and the full
-reduction/softmax family at $71$--$582\%$ (\cref{tab:mitig:reductions})---closing gaps that were as
+reduction/softmax family at $71$--$582\%$ (\cref{tab:mitigation})---closing gaps that were as
 large as $300\times$ in RQ1. These are not DSL ceilings: once the kernel is written the competent
 way, the DSL matches or beats the vendor library on the whole family. The remaining gaps are
 \emph{genuine residuals} that survive best-effort optimization: Conv2d ($42\%$), large square GEMM
@@ -217,8 +196,13 @@ the rest reflects general cuDNN implicit-GEMM tuning
     \midrule
     \multicolumn{6}{l}{\textit{TileLang}} \\
     \quad LayerNorm & 0.335 & 364  & \textbf{0.270} & \textbf{124\%}    & RC0 \\
-    \quad RMSNorm   & 2.52  & 294  & \textbf{0.254} & 990\%$^\dagger$   & RC0 \\
-    \quad Argmax    & 0.622 & 11.97 & 2.306         & 27.0\%            & RC0+RC1 \\
+    \quad RMSNorm       & 2.52  & 294   & \textbf{0.254} & 990\%$^\dagger$  & RC0 \\
+    \quad Softmax       & 0.539 & 2.86  & 0.626          & 86.1\%           & RC0 \\
+    \quad LogSoftmax    & 0.442 & 2.65  & 0.624          & 70.8\%           & RC0 \\
+    \quad MaxReduction  & 0.560 & 11.97 & \textbf{0.418} & \textbf{131.6\%} & RC0 \\
+    \quad MeanReduction & 0.768 & 10.65 & \textbf{0.766} & \textbf{99.5\%}  & RC0 \\
+    \quad LogSumExp     & 2.40  & 4.18  & \textbf{0.412} & \textbf{581.7\%} & RC0 \\
+    \quad Argmax        & 0.622 & 11.97 & 2.306          & 27.0\%           & RC0+RC1 \\
     \bottomrule
   \end{tabular}
   }
