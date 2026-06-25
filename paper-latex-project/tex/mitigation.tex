@@ -13,39 +13,28 @@ RC0a, RC2a, and the matmul L2-swizzle are user-space-fixable today, while RC0b a
 \subsection{Normalization Kernels: Correcting RC0}
 \label{sec:mitig:norm}
 
-\paragraph{Finding: For LayerNorm, two sequential optimizations (each necessary, neither sufficient alone)
-bring TileLang to within 2\% of PyTorch throughput after 18 iterations:
+\paragraph{Finding: Correcting RC0 with two optimizations (each necessary, neither sufficient alone)
+brings TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch throughput on the A100-SXM4---
+a $1347\times$ and $1157\times$ reduction over the unoptimized TileLang baseline (\cref{tab:norm}):
 (1) replacing \texttt{T.serial} reduction loops with the native \texttt{T.reduce} primitive
-yields a $208\times$ latency reduction (1090~ms $\to$ 5.24~ms);
-(2) switching to native bfloat16 I/O and eliminating intermediate \texttt{.float()} precision casts
-yields a $3.4\times$ reduction from the best intermediate result (3.02~ms $\to$ 0.89~ms).
-For RMSNorm, both fixes were applied simultaneously in a single iteration ($796\times$, 716~ms $\to$ 0.90~ms).
-These results confirm RC0 as the primary cause of TileLang's normalization deficit.}
+(the dominant step; in the RTX 4000 Ada optimization campaign this change alone gave $208\times$);
+(2) switching to native bfloat16/float16 I/O and eliminating intermediate \texttt{.float()} precision casts.
+These results confirm RC0 as the primary cause of TileLang's normalization deficit and as fully correctable in user space.}
 Here one iteration denotes a single kernel-source edit plus one benchmark run with a correctness check,
 logged and committed in \texttt{ITERATIONS.md}; failed and regressing attempts count.
 The LayerNorm \texttt{ITERATIONS.md} records 18 such iterations and the RMSNorm log records one.
 
-The LayerNorm optimization proceeded in 18 iterations.
-The baseline (1{,}090~ms)%
-\footnote{These \emph{before} latencies exceed those in \cref{tab:norm} (273~ms and 188~ms respectively)
-  because the mitigation experiment uses the TileLang example-repository kernel variant,
-  which additionally includes intermediate \texttt{.float()} precision casts in the I/O path;
-  correcting these casts is part of the RC0 fix applied here.
-  The evaluation-section measurements used an I/O-only variant without this cast overhead.}
-reflects the \texttt{T.serial} sequential loop described in RC0 (\cref{sec:analysis:jit}).
+\textit{Step~1: Replace \texttt{T.serial} with \texttt{T.reduce}:}
+Replacing the manual \texttt{T.serial} loop with a single \texttt{T.reduce} call is the dominant fix.
+Subsequent iterations explored thread count, tiling, and two-pass formulations,
+confirming the loop structure---not thread configuration---was the bottleneck.
 
-\textit{Step~1: Replace \texttt{T.serial} with \texttt{T.reduce} (iteration~1):}
-Replacing the manual \texttt{T.serial} loop with a single \texttt{T.reduce} call
-drops latency from 1090~ms to 5.24~ms ($208\times$).
-Subsequent iterations (2--13) explored thread count, tiling, and two-pass formulations;
-none improved beyond 3.02~ms, confirming the loop structure---not thread configuration---was the dominant bottleneck.
-
-\textit{Step~2: Native bfloat16 I/O (iteration~14):}
+\textit{Step~2: Native bfloat16 I/O:}
 Switching to native bfloat16 tensors and removing intermediate \texttt{.float()} casts
-drops latency from 3.02~ms to 0.89~ms ($3.4\times$).
-This brings the kernel near the memory-bandwidth limit: the theoretical minimum for a $8192\times8192$ bfloat16 tensor (read + write $\approx 268$~MB) at 288~GB/s is $\approx 0.93$~ms; the achieved 0.89~ms lies within measurement variance of this bound.
-The native-dtype change removes intermediate FP32 upcasting overhead
-present in the original I/O path.
+brings the kernel close to the memory-bandwidth limit:
+the theoretical minimum for a $8192\times8192$ bfloat16 tensor (read + write $\approx 268$~MB)
+at the A100's $\approx$1.5~TB/s is $\approx 0.18$~ms; the re-timed kernel reaches 0.270~ms.
+The native-dtype change removes intermediate FP32 upcasting overhead present in the original I/O path.
 
 This result does not represent a new optimization technique:
 \texttt{T.reduce} already existed in the API.
@@ -54,22 +43,24 @@ without any algorithmic change.
 
 \begin{table}[t]
   \centering
-  \caption{Normalization kernel latency (ms, lower is better) before and after RC0 correction.
-    $E_\text{lib}$ = library efficiency after fix, relative to PyTorch.
-    Input shape: $8192 \times 8192$.}
+  \caption{Normalization kernel latency (ms, lower is better) before and after RC0 correction,
+    re-timed on the A100-SXM4 (locked clocks). $E_\text{lib}$ = library efficiency after fix,
+    relative to PyTorch. \emph{Before} is the unoptimized TileLang kernel (cf.\ \cref{tab:norm});
+    \emph{After} is the AKO4ALL-optimized kernel. Input shape: $8192 \times 8192$.}
   \label{tab:mitig:norm}
   \begin{tabular}{lrrrr}
     \toprule
     Kernel & PyTorch & Before & After & $E_\text{lib}$ \\
     \midrule
     \multicolumn{5}{l}{\textit{TileLang}} \\
-    \quad LayerNorm (BF16) & 0.87 & 1090 & \textbf{0.89} & \textbf{97.8\%} \\
-    \quad RMSNorm   (FP16) & 9.99 & 716  & \textbf{0.90} & 1110\%$^\dagger$ \\
+    \quad LayerNorm (BF16) & 0.335 & 364 & \textbf{0.270} & \textbf{124\%} \\
+    \quad RMSNorm   (FP16) & 2.52  & 294 & \textbf{0.254} & 990\%$^\dagger$ \\
     \bottomrule
   \end{tabular}
   \vspace{0.3em}
-  {\small $^\dagger$ $E_\text{lib} > 100\%$ because the fixed kernel fuses the scaling pass,
-  reducing total memory traffic relative to PyTorch's two-pass implementation.}
+  {\small $^\dagger$ RMSNorm $E_\text{lib} > 100\%$ because the fixed kernel fuses the scaling pass,
+  reducing total memory traffic relative to PyTorch's unfused two-pass eager implementation;
+  the fixed LayerNorm ($124\%$) also slightly exceeds cuDNN's already-fused \texttt{F.layer\_norm}.}
 \end{table}
 
 \subsection{Convolution: Partial Recovery via Implicit GEMM}
@@ -149,19 +140,26 @@ Decision needed before camera-ready.}
 
 \textbf{Argmax (TileLang, FP16).}
 Replacing global-memory element accesses with tiled shared-memory bulk loads
-and native FP16 I/O reduces latency from 16.2~ms to 1.75~ms ($9.26\times$, $E_\text{lib} = 97.7\%$)
-on a $8192\times32768$ reduction after 13 iterations.
-The tile sweet spot is \texttt{bM=256} (0.98$\times$ PyTorch); both smaller (\texttt{bM=128}: 0.70$\times$) and larger (\texttt{bM=512}: 0.54$\times$) configurations underperform---the former due to insufficient parallelism, the latter due to shared memory saturation.
+and native FP16 I/O reduces latency from 11.97~ms to 2.31~ms ($5.2\times$) on a $8192\times32768$
+reduction, re-timed on the A100-SXM4 (the original campaign reported $9.26\times$ on the RTX 4000 Ada).
+The optimized kernel reaches $E_\text{lib} = 27\%$: it removes most of the unoptimized-TileLang overhead,
+but the A100's native \texttt{torch.argmax} (0.62~ms) remains $3.7\times$ faster, so parity is not reached on this GPU.
 This addresses both RC0 (dtype cast overhead) and RC1 (non-vectorized global access).
 
 \subsection{Summary and Remaining Gap}
 \label{sec:mitig:summary}
 
-\Cref{tab:mitigation} summarizes all five mitigation results.
-Four of five kernels reach ${\geq}95\%$ library efficiency after their respective fixes.
-The exception is Conv2d, where RC1+RC2 mitigations narrow but do not close the gap.
-Of the remaining $\approx$20\% gap on Conv2d, only $\approx$2--3\% is attributable to absent Winograd selection (RC4);
-the remaining $\approx$17--18\% reflects general cuDNN implicit-GEMM tuning
+\Cref{tab:mitigation} summarizes all five mitigation results, re-timed on the A100-SXM4.
+The two TileLang normalization mitigations recover most dramatically: correcting RC0 brings
+LayerNorm and RMSNorm to $124\%$ and $990\%$ of PyTorch ($1347\times$ and $1157\times$ over the
+unoptimized TileLang baseline), confirming RC0 is fully and mechanically correctable.
+The reduction and convolution mitigations recover large speedups over unoptimized DSL code
+(Argmax $5.2\times$, Conv2d $2.2\times$) but do not reach the A100's faster vendor baselines
+($27\%$ and $42\%$): on the data-center A100, \texttt{torch.argmax} and cuDNN are themselves
+substantially faster than on the RTX 4000 Ada where the original optimization campaign ran,
+so the same DSL kernels reach a smaller fraction of the now-faster vendor baseline.
+Of the remaining gap on Conv2d, only $\approx$2--3\% is attributable to absent Winograd selection (RC4);
+the rest reflects general cuDNN implicit-GEMM tuning
 (kernel selection across data layouts, split-K, and shared-mem tile sizing) that the Triton kernel does not match.
 
 \begin{table}[t]
@@ -177,21 +175,25 @@ the remaining $\approx$17--18\% reflects general cuDNN implicit-GEMM tuning
     \midrule
     \multicolumn{6}{l}{\textit{Triton}} \\
     \quad Matmul    & 1.76 & 2.71  & \textbf{1.63}  & \textbf{108\%}    & RC2 \\
-    \quad Conv2d    & 10.0 & 32.1  & 12.5           & 80.0\%            & RC1+RC2 \\
+    \quad Conv2d    & 3.44 & 17.86 & 8.12           & 42.4\%            & RC1+RC2 \\
     \midrule
     \multicolumn{6}{l}{\textit{TileLang}} \\
-    \quad LayerNorm & 0.87 & 1090  & \textbf{0.89}  & \textbf{97.8\%}   & RC0 \\
-    \quad RMSNorm   & 9.99 & 716   & \textbf{0.90}  & 1110\%$^\dagger$  & RC0 \\
-    \quad Argmax    & 1.71 & 16.2  & \textbf{1.75}  & \textbf{97.7\%}   & RC0+RC1 \\
+    \quad LayerNorm & 0.335 & 364  & \textbf{0.270} & \textbf{124\%}    & RC0 \\
+    \quad RMSNorm   & 2.52  & 294  & \textbf{0.254} & 990\%$^\dagger$   & RC0 \\
+    \quad Argmax    & 0.622 & 11.97 & 2.306         & 27.0\%            & RC0+RC1 \\
     \bottomrule
   \end{tabular}
   }
   \vspace{0.3em}
-  {\small $^\dagger$ $E_\text{lib} > 100\%$ due to kernel fusion; see \cref{tab:mitig:norm}.}
+  {\small $^\dagger$ RMSNorm $E_\text{lib} > 100\%$ due to kernel fusion; see \cref{tab:mitig:norm}.
+  Conv2d and the TileLang rows are re-timed on the A100-SXM4 (locked clocks); Matmul is the
+  AKO4ALL-campaign figure (see \S7.3 reconciliation). Conv2d \emph{Before}/\emph{After} are the
+  baseline vs.\ implicit-GEMM Triton at $3\times3$ (cf.\ \cref{tab:mitig:conv}).}
 
 \end{table}
-The five speedups in \cref{tab:mitigation} are the figures from the AKO4ALL optimization campaign.
-On the A100-SXM4 these mitigations were revalidated against the same ViperBench tolerances as the unmitigated kernels (5/5 pass):
+The normalization, reduction, and convolution mitigations in \cref{tab:mitigation} are re-timed on the
+A100-SXM4 (locked clocks); the matmul figure is the AKO4ALL-campaign value pending the \S7.3 reconciliation.
+The optimized kernels were revalidated against the same ViperBench tolerances as the unmitigated kernels (5/5 pass):
 the core mechanism (\texttt{T.serial}$\to$\texttt{T.reduce} plus native-dtype I/O) reproduces correctly,
 and the edge-case correctness suite (NaN/Inf/denormal/all-equal) shows 0 crashes.
 
@@ -200,8 +202,8 @@ reflect correction of a known compiler deficiency (incorrect use of \texttt{T.se
 rather than a novel optimization technique.
 They confirm that RC0 is both the primary cause of TileLang's normalization anomaly
 and mechanically correctable without algorithmic change.
-The convolution result (80\% $E_\text{lib}$ after RC1+RC2) establishes a tighter upper bound
-on what can be achieved without Winograd support,
+The convolution result ($42\%$ $E_\text{lib}$ at $3\times3$ after RC1+RC2, 36--76\% across the filter family) establishes a tighter upper bound
+on what can be achieved without Winograd support on the A100,
 and leaves $\approx$17--18pp of $E_\text{lib}$ attributable to general cuDNN implicit-GEMM tuning that DSL kernels do not match
 (kernel selection across layouts, split-K, shared-mem tiling), and $\approx$2--3pp to absent Winograd selection (RC4);
 both are candidates for future compiler work, with RC2b-style search-space expansion the higher-leverage priority.

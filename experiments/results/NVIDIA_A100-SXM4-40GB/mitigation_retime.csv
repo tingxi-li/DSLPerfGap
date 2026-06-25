@@ -1,0 +1,4 @@
+kernel,impl,dtype,shape,before_ms_unopt,pytorch_ms,after_ms_opt,speedup_vs_unopt,after_vs_pytorch,correctness,note
+layer_norm,tilelang,bfloat16,8192x8192,364.0895,0.3353,0.2702,1347.3,1.241,atol=2e-2,AKO4ALL optimized kernel re-timed on A100-SXM4 locked-clock
+rms_norm,tilelang,float16,8192x8192,294.2667,2.5163,0.2543,1157.4,9.897,atol=2e-2,AKO4ALL optimized kernel re-timed on A100-SXM4 locked-clock
+argmax,tilelang,float16,8192x32768,11.9696,0.6221,2.3062,5.2,0.270,idx_match=100.00%,AKO4ALL optimized kernel re-timed on A100-SXM4 locked-clock
