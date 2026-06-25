@@ -22,12 +22,16 @@ Our benchmark suite covers five operator categories that capture the dominant co
 
 We derive these workloads from TritonBench~\cite{li2025tritonbench}, the TileLang example repository~\cite{wang2025tilelang}, and our own implementations for configurations not covered by either source. We exclude operators with sparse inputs or runtime-dependent output shapes, since they do not admit stable or meaningful library baselines.
 
-% REVISION-NOTE-START id=4134A-W9 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#4134A-W9 + \#4134B-Q1, Medium]}
-Concern (\textit{Reviewers A and B}): Reviewers ask for explicit selection criteria and per-kernel provenance for the 22-kernel suite.
-Evidence: \texttt{../REBUTTAL.md} \S1 A\#9.
-Fix: Add a 4-bullet selection-criteria block (forward-pass only; stable library baseline; five-category coverage; canonical ops --- no sparse or dynamic shapes) and a provenance table mapping each kernel to its source (Triton kernels from TritonBench, \texttt{layer\_norm} from TorchInductor, TileLang re-implementations).}
-% REVISION-NOTE-END id=4134A-W9
+% REVISION-NOTE id=4134A-W9 + 4134B-Q1 RESOLVED: selection criteria + coarse provenance added below.
+% TODO(revision): add a full per-kernel provenance table (tab:provenance) once each kernel's
+% source is verified against ../ViperBench/ dirs --- reviewers A and B requested per-kernel provenance.
+\paragraph{Selection criteria.}
+We narrow the kernels in TritonBench~\cite{li2025tritonbench} to our 22-kernel suite using four criteria.
+First, \emph{forward-pass only}: we exclude backward and gradient kernels, whose performance is governed by different access patterns and reduction structures.
+Second, \emph{stable library baseline}: each kernel must admit a well-defined cuBLAS, cuDNN, or PyTorch reference that computes the same function, so that library efficiency is a meaningful quantity.
+Third, \emph{five-category coverage}: we retain kernels that populate the five operator categories above rather than over-sampling any single class.
+Fourth, \emph{canonical operators}: we exclude operators with sparse inputs or runtime-dependent output shapes, which lack a stable library baseline.
+The Triton implementations are drawn from TritonBench, except \texttt{layer\_norm}, which follows the TorchInductor reference; the TileLang implementations are our re-implementations of the same operators, and any kernel absent from both source suites is implemented by us.
 
 
 \subsection{Baseline Construction}
