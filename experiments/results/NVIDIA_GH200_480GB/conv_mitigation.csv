@@ -1,0 +1,25 @@
+gpu_name,sm,timestamp_utc,filter,stride,groups,shape,impl,median_ms,mean_ms,std_ms,e_lib,n_regs,n_spills,correct,note
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,1x1,1,1,2x32x16x16,pytorch,0.04371,0.05596,0.0249,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,1x1,1,1,2x32x16x16,triton,0.06269,0.07219,0.01696,69.72,64,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,1x1,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,1x1,1,1,2x32x16x16,mitigation,0.0879,0.09026,0.00556,49.73,,,True,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,1,2x32x16x16,pytorch,0.04806,0.05003,0.00487,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,1,2x32x16x16,triton,0.05885,0.06941,0.01994,81.67,226,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,1,2x32x16x16,mitigation,0.1265,0.12906,0.01147,37.99,,,True,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,5x5,1,1,2x32x16x16,pytorch,0.0889,0.09483,0.01722,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,5x5,1,1,2x32x16x16,triton,0.10048,0.10347,0.00794,88.48,226,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,5x5,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,5x5,1,1,2x32x16x16,mitigation,0.12813,0.13806,0.02004,69.38,,,True,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,7x7,1,1,2x32x16x16,pytorch,0.10032,0.10255,0.01625,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,7x7,1,1,2x32x16x16,triton,0.13021,0.13069,0.00922,77.04,226,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,7x7,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,7x7,1,1,2x32x16x16,mitigation,0.14794,0.14908,0.01287,67.81,,,True,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,32,2x32x16x16,pytorch,0.05552,0.05744,0.00393,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,32,2x32x16x16,triton,0.09222,0.09382,0.00558,60.2,230,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,32,2x32x16x16,tilelang,11.44915,11.47654,0.46209,0.48,,,True,per-group GEMM x64 launches
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,1,32,2x32x16x16,mitigation,,,,,,,,optimized kernel: groups==1 only (depthwise excluded)
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,2,1,2x32x16x16,pytorch,0.08269,0.08501,0.00566,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,2,1,2x32x16x16,triton,0.09843,0.10556,0.02268,84.01,168,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,2,1,2x32x16x16,tilelang,0.27126,0.28208,0.0164,30.48,,,True,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:55+00:00,3x3,2,1,2x32x16x16,mitigation,0.11725,0.12031,0.00645,70.52,,,True,

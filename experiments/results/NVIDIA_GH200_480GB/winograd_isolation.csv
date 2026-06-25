@@ -1,0 +1,16 @@
+gpu_name,sm,timestamp_utc,measurement,config,impl,winograd_eligible,median_ms,mean_ms,std_ms,gap_vs_cudnn,e_vs_cudnn,note
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=False,True,1.45302,1.43107,0.03958,,,nondeterministic(Winograd allowed)
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=True,True,1.49315,1.48875,0.00989,,,deterministic(Winograd mostly OFF)
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,cudnn_determinism_ab,3x3_s1,DELTA_det_minus_nondet,True,0.04013,,,,1.0276,upper bound on Winograd benefit (det - nondet)
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,3x3_s1,cudnn,True,1.43328,1.39498,0.08256,1.0,100.0,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,3x3_s1,triton,True,9.80893,9.81979,0.03753,6.844,14.61,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,3x3_s1,tilelang,True,2.24864,2.24971,0.006,1.569,63.74,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,3x3_s2,cudnn,False,0.5279,0.52831,0.00387,1.0,100.0,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,3x3_s2,triton,False,3.62915,3.63114,0.01337,6.875,14.55,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,3x3_s2,tilelang,False,4.83632,4.83774,0.00697,9.161,10.92,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,5x5_s1,cudnn,False,3.13366,3.13457,0.00435,1.0,100.0,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,5x5_s1,triton,False,30.26701,30.26666,0.0356,9.659,10.35,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,5x5_s1,tilelang,False,5.22842,5.2303,0.00864,1.668,59.94,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,7x7_s1,cudnn,False,8.46634,8.44443,0.03929,1.0,100.0,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,7x7_s1,triton,False,73.26711,73.27186,0.07699,8.654,11.56,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:47:43+00:00,eligible_vs_ineligible,7x7_s1,tilelang,False,10.14336,10.07708,0.15009,1.198,83.47,

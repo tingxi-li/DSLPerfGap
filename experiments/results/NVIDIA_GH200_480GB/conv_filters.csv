@@ -1,0 +1,19 @@
+gpu_name,sm,timestamp_utc,filter,stride,groups,shape,impl,median_ms,mean_ms,std_ms,e_lib,n_regs,n_spills,correct,note
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,1x1,1,1,2x32x16x16,pytorch,0.04893,0.05109,0.00867,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,1x1,1,1,2x32x16x16,triton,0.06566,0.07205,0.01364,74.52,64,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,1x1,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,1,1,2x32x16x16,pytorch,0.0544,0.05876,0.0091,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,1,1,2x32x16x16,triton,0.06925,0.06865,0.00785,78.56,226,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,5x5,1,1,2x32x16x16,pytorch,0.08544,0.09261,0.01913,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,5x5,1,1,2x32x16x16,triton,0.09866,0.09952,0.00534,86.6,226,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,5x5,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,7x7,1,1,2x32x16x16,pytorch,0.09738,0.1049,0.01875,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,7x7,1,1,2x32x16x16,triton,0.12976,0.13375,0.01152,75.05,226,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,7x7,1,1,2x32x16x16,tilelang,,,,,,,,unsupported/failed: InternalError: Check failed: (m_warp * n_warp == num_warps) is false: m_warp * n_warp
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,1,32,2x32x16x16,pytorch,0.0591,0.06956,0.01917,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,1,32,2x32x16x16,triton,0.09341,0.1037,0.02044,63.27,230,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,1,32,2x32x16x16,tilelang,12.2191,12.27372,0.46946,0.48,,,True,per-group GEMM x64 launches
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,2,1,2x32x16x16,pytorch,0.09008,0.0933,0.00908,100.0,,,ref,
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,2,1,2x32x16x16,triton,0.10314,0.11054,0.02387,87.34,168,0,True,warps=4
+NVIDIA GH200 480GB,sm_90,2026-06-25T23:37:42+00:00,3x3,2,1,2x32x16x16,tilelang,0.27926,0.29758,0.02501,32.26,,,True,
