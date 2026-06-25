@@ -1,10 +1,16 @@
 """
-TileLang conv2d via im2col + GEMM.
-Steps:
-  1. Use torch.nn.functional.unfold (im2col) to extract patches -> (N, C*KH*KW, OH*OW)
-  2. Reshape weight to (OC, C*KH*KW)
-  3. Perform GEMM using TileLang: weight @ col -> (N, OC, OH*OW)
-  4. Reshape to (N, OC, OH, OW) and add bias if present
+TileLang conv2d.
+
+Fast path (tensor-core-friendly, stride-1 configs incl. the large benchmark):
+  direct implicit conv -- pad the input spatially with F.pad (border padding
+  only, no arithmetic), then compute KH*KW accumulating fp16 TENSOR-CORE GEMMs
+  (one per kernel tap) entirely in TileLang. No im2col, no cuDNN. See
+  `_conv2d_direct_kernel` / `_conv2d_direct`.
+
+Fallback path (other configs: stride>1, tiny/odd channels, non-fp16, etc.):
+  im2col via F.unfold + a TileLang GEMM (`_conv2d_gemm_kernel`). The GEMM is
+  still TileLang; F.unfold only gathers patches. This path is NOT used by the
+  large benchmark shape.
 """
 import torch
 import torch.nn.functional as F

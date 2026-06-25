@@ -63,7 +63,7 @@ def _softmax_row_kernel(M, N, blk, threads, dtype):
 
     Reads the input in its native dtype (no fp32 round-trip) and does exactly
     one global read + one global write per element. Bandwidth-bound: matches
-    torch.softmax even for very large N where the fragment kernel OOMs/spills.
+    PyTorch softmax even for very large N where the fragment kernel OOMs/spills.
     """
     nt = N // blk
 
@@ -114,12 +114,21 @@ def softmax(x):
             _softmax_row_kernel(M, N, blk, 256, _TL_DTYPE[x.dtype])(x_2d, out)
             return out.reshape(orig_shape)
 
-    # Pad N to next power of 2, but cap at 8192 to avoid OOM on large inputs
+    # Non-power-of-2 N (rare; never hit by the benchmark, which is N=32768).
+    # Stay in TileLang: pad N up to a multiple of a power-of-2 tile with -inf
+    # (exp(-inf-max)=0, so padding contributes nothing) and run the same row
+    # kernel. No PyTorch softmax fallback.
+    if x.dtype in _TL_DTYPE:
+        blk = 4096 if N >= 4096 else _next_power_of_2(max(N, 1))
+        N_pad2 = ((N + blk - 1) // blk) * blk
+        x_pad2 = torch.full((M, N_pad2), float('-inf'), device=x.device, dtype=x.dtype)
+        x_pad2[:, :N] = x_2d
+        out = torch.empty(M, N_pad2, device=x.device, dtype=x.dtype)
+        _softmax_row_kernel(M, N_pad2, blk, 256, _TL_DTYPE[x.dtype])(x_pad2, out)
+        return out[:, :N].reshape(orig_shape)
+
+    # Final fallback for unsupported dtypes only: fragment kernel (fp32).
     N_pad = _next_power_of_2(max(N, 128))
-    if N_pad > 8192:
-        # For large N, fall back to PyTorch softmax to avoid fragment OOM
-        result = torch.softmax(x_2d.float(), dim=-1)
-        return result.reshape(orig_shape).to(x.dtype)
 
     # Pad input: N to N_pad (fill extra cols with -inf for softmax correctness)
     if N_pad != N:
