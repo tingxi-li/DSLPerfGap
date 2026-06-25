@@ -53,6 +53,49 @@ def _softmax_kernel(m, n, threads=_TUNED.get("threads", 128)):
     return func
 
 
+_TL_DTYPE = {torch.float16: "float16", torch.float32: "float32", torch.bfloat16: "bfloat16"}
+
+
+@tilelang.jit
+def _softmax_row_kernel(M, N, blk, threads, dtype):
+    """One block per row; cache the row in shared memory and stream tiled
+    reductions (max, sum) so the whole row never lives in registers.
+
+    Reads the input in its native dtype (no fp32 round-trip) and does exactly
+    one global read + one global write per element. Bandwidth-bound: matches
+    torch.softmax even for very large N where the fragment kernel OOMs/spills.
+    """
+    nt = N // blk
+
+    @T.prim_func
+    def func(A: T.Tensor((M, N), dtype), C: T.Tensor((M, N), dtype)):
+        with T.Kernel(M, threads=threads) as bx:
+            S = T.alloc_shared((N,), dtype)
+            tile = T.alloc_fragment((blk,), "float32")
+            part = T.alloc_fragment((1,), "float32")
+            mx = T.alloc_fragment((1,), "float32")
+            sm = T.alloc_fragment((1,), "float32")
+            for j in T.Parallel(N):
+                S[j] = A[bx, j]
+            mx[0] = T.float32(-3.0e38)
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    tile[j] = T.cast(S[t * blk + j], "float32")
+                T.reduce(tile, part, "max", dim=0, clear=True)
+                mx[0] = T.max(mx[0], part[0])
+            sm[0] = T.float32(0)
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    tile[j] = T.exp(T.cast(S[t * blk + j], "float32") - mx[0])
+                T.reduce(tile, part, "sum", dim=0, clear=True)
+                sm[0] = sm[0] + part[0]
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    C[bx, t * blk + j] = T.cast(
+                        T.exp(T.cast(S[t * blk + j], "float32") - mx[0]) / sm[0], dtype)
+    return func
+
+
 def softmax(x):
     """Softmax along the last dimension for any shape tensor using TileLang."""
     orig_shape = x.shape
@@ -60,6 +103,16 @@ def softmax(x):
     # Flatten all dims except the last into one "row" dimension
     x_2d = x.reshape(-1, n_cols).contiguous()
     M, N = x_2d.shape
+
+    # Fast path: native-dtype shared-memory row kernel (no fp32 round-trip,
+    # no PyTorch fallback). Covers all power-of-2 N including the large case.
+    if x.dtype in _TL_DTYPE and N > 0:
+        blk = min(4096, N)
+        # require a power-of-2 tile so the (blk,) -> threads reduce layout is valid
+        if N % blk == 0 and (blk & (blk - 1)) == 0:
+            out = torch.empty(M, N, device=x.device, dtype=x.dtype)
+            _softmax_row_kernel(M, N, blk, 256, _TL_DTYPE[x.dtype])(x_2d, out)
+            return out.reshape(orig_shape)
 
     # Pad N to next power of 2, but cap at 8192 to avoid OOM on large inputs
     N_pad = _next_power_of_2(max(N, 128))

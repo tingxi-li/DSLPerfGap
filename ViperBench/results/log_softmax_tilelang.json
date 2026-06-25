@@ -6,31 +6,31 @@
       "name": "small_fp32",
       "status": "PASS",
       "max_err": 4.76837158203125e-07,
-      "time_ms": 49.70427700027358
+      "time_ms": 6.549564000124519
     },
     {
       "name": "medium_fp32",
       "status": "PASS",
       "max_err": 9.5367431640625e-07,
-      "time_ms": 23.965629006852396
+      "time_ms": 2.956891000394535
     },
     {
       "name": "large_fp32",
       "status": "PASS",
-      "max_err": 9.5367431640625e-07,
-      "time_ms": 20.684977993369102
+      "max_err": 1.9073486328125e-06,
+      "time_ms": 2.3658779991819756
     },
     {
       "name": "4d_fp32",
       "status": "PASS",
       "max_err": 9.5367431640625e-07,
-      "time_ms": 17.731421001371928
+      "time_ms": 2.011505999689689
     },
     {
       "name": "small_fp16",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 5.638831004034728
+      "time_ms": 1.9639539996205713
     }
   ]
 }

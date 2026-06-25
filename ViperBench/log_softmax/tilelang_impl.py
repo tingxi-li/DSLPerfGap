@@ -34,6 +34,48 @@ def _log_softmax_kernel(m, n, threads=_TUNED.get("threads", 128)):
     return func
 
 
+_TL_DTYPE = {torch.float16: "float16", torch.float32: "float32", torch.bfloat16: "bfloat16"}
+
+
+@tilelang.jit
+def _log_softmax_row_kernel(M, N, blk, threads, dtype):
+    """One block per row; row cached in shared memory, tiled reductions.
+
+    Reads native dtype directly (no fp32 host-side copy) and does one global
+    read + one global write. out = x - max - log(sum exp(x - max)).
+    """
+    nt = N // blk
+
+    @T.prim_func
+    def func(A: T.Tensor((M, N), dtype), C: T.Tensor((M, N), dtype)):
+        with T.Kernel(M, threads=threads) as bx:
+            S = T.alloc_shared((N,), dtype)
+            tile = T.alloc_fragment((blk,), "float32")
+            part = T.alloc_fragment((1,), "float32")
+            mx = T.alloc_fragment((1,), "float32")
+            sm = T.alloc_fragment((1,), "float32")
+            lse = T.alloc_fragment((1,), "float32")
+            for j in T.Parallel(N):
+                S[j] = A[bx, j]
+            mx[0] = T.float32(-3.0e38)
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    tile[j] = T.cast(S[t * blk + j], "float32")
+                T.reduce(tile, part, "max", dim=0, clear=True)
+                mx[0] = T.max(mx[0], part[0])
+            sm[0] = T.float32(0)
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    tile[j] = T.exp(T.cast(S[t * blk + j], "float32") - mx[0])
+                T.reduce(tile, part, "sum", dim=0, clear=True)
+                sm[0] = sm[0] + part[0]
+            lse[0] = T.log(sm[0]) + mx[0]
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    C[bx, t * blk + j] = T.cast(T.cast(S[t * blk + j], "float32") - lse[0], dtype)
+    return func
+
+
 def log_softmax(x, dim=-1, dtype=None):
     """Log-softmax along the given dimension using TileLang."""
     dim = dim % x.ndim
@@ -47,6 +89,17 @@ def log_softmax(x, dim=-1, dtype=None):
 
     x_2d = x.contiguous().view(outer, inner, trailing).permute(0, 2, 1).contiguous().view(-1, inner)
     M, N = x_2d.shape
+    out_dtype = dtype if dtype is not None else x.dtype
+
+    # Fast path: native-dtype shared-memory row kernel (no fp32 round-trip).
+    if x.dtype in _TL_DTYPE and N > 0:
+        blk = min(4096, N)
+        # require a power-of-2 tile so the (blk,) -> threads reduce layout is valid
+        if N % blk == 0 and (blk & (blk - 1)) == 0:
+            out = torch.empty(M, N, device=x.device, dtype=x.dtype)
+            _log_softmax_row_kernel(M, N, blk, 256, _TL_DTYPE[x.dtype])(x_2d, out)
+            result = out.view(outer, trailing, inner).permute(0, 2, 1).contiguous().view(x.shape)
+            return result.to(out_dtype)
 
     x_f32 = x_2d.float().contiguous()
     c_out = torch.zeros(M, N, device=x.device, dtype=torch.float32)
@@ -54,6 +107,4 @@ def log_softmax(x, dim=-1, dtype=None):
     func(x_f32, c_out)
 
     result = c_out.view(outer, trailing, inner).permute(0, 2, 1).contiguous().view(x.shape)
-
-    out_dtype = dtype if dtype is not None else x.dtype
     return result.to(out_dtype)

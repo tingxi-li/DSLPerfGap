@@ -22,40 +22,44 @@ except Exception:
     _TUNED = {}
 
 
+_TL_DTYPE = {torch.float16: "float16", torch.float32: "float32", torch.bfloat16: "bfloat16"}
+
+
 @tilelang.jit
-def _batched_kernel(M_dim, N_dim, K_dim, bN=_TUNED.get("block_N", 64), bK=_TUNED.get("block_K", 64)):
+def _batched_kernel(M_dim, N_dim, K_dim, bN, bK, threads, dtype):
+    """C[m,n] = sum_k A[m,k] * B[m,n,k].
+
+    One block per (m, n-tile of bN). Load A[m,:] into shared once (reused
+    across the tile), stream B in (bN,bK) tiles via T.copy, multiply by the
+    matching A slice, and T.reduce over K. Reads B in its native dtype (the old
+    kernel upcast B to fp32 -> 2x the bytes) and accumulates in fp32. The op is
+    bandwidth-bound on B, so this matches/beats torch.einsum.
+    """
     @T.prim_func
     def func(
-        A_t: T.Tensor((M_dim, K_dim), "float32"),
-        B_t: T.Tensor((M_dim, N_dim, K_dim), "float32"),
-        C_t: T.Tensor((M_dim, N_dim), "float32"),
+        A_t: T.Tensor((M_dim, K_dim), dtype),
+        B_t: T.Tensor((M_dim, N_dim, K_dim), dtype),
+        C_t: T.Tensor((M_dim, N_dim), dtype),
     ):
-        # Grid: (N_blocks, M) - one thread block per (m, n_block)
-        with T.Kernel(
-            T.ceildiv(N_dim, bN), M_dim,
-            threads=_TUNED.get("threads", 128)
-        ) as (bx, by):
-            C_local = T.alloc_fragment((bN,), "float32")
-            A_local = T.alloc_fragment((bK,), "float32")
-            B_local = T.alloc_fragment((bN,), "float32")
+        with T.Kernel(T.ceildiv(N_dim, bN), M_dim, threads=threads) as (bx, by):
+            A_sh = T.alloc_shared((K_dim,), dtype)
+            Bt = T.alloc_shared((bN, bK), dtype)
+            prod = T.alloc_fragment((bN, bK), "float32")
+            part = T.alloc_fragment((bN,), "float32")
+            acc = T.alloc_fragment((bN,), "float32")
 
-            T.clear(C_local)
-
-            for k_tile in range(T.ceildiv(K_dim, bK)):
-                # Load A tile for this m
-                for j in T.Parallel(bK):
-                    A_local[j] = A_t[by, k_tile * bK + j]
-
-                # For each k in the tile, multiply and accumulate
-                for kk in range(bK):
-                    for j in T.Parallel(bN):
-                        B_local[j] = B_t[by, bx * bN + j, k_tile * bK + kk]
-                    for j in T.Parallel(bN):
-                        C_local[j] += A_local[kk] * B_local[j]
-
-            # Store result
-            for j in T.Parallel(bN):
-                C_t[by, bx * bN + j] = C_local[j]
+            for k in T.Parallel(K_dim):
+                A_sh[k] = A_t[by, k]
+            T.clear(acc)
+            for kt in T.serial(K_dim // bK):
+                T.copy(B_t[by, bx * bN, kt * bK], Bt)
+                for i, j in T.Parallel(bN, bK):
+                    prod[i, j] = T.cast(Bt[i, j], "float32") * T.cast(A_sh[kt * bK + j], "float32")
+                T.reduce(prod, part, "sum", dim=1, clear=True)
+                for i in T.Parallel(bN):
+                    acc[i] = acc[i] + part[i]
+            for i in T.Parallel(bN):
+                C_t[by, bx * bN + i] = T.cast(acc[i], dtype)
 
     return func
 
@@ -63,43 +67,34 @@ def _batched_kernel(M_dim, N_dim, K_dim, bN=_TUNED.get("block_N", 64), bK=_TUNED
 def batched_matmul(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
     assert A.ndim == 2 and B.ndim == 3
     orig_dtype = A.dtype
-    A = A.float()
-    B = B.float()
+    work_dtype = orig_dtype if orig_dtype in _TL_DTYPE else torch.float32
+    A = A.to(work_dtype)
+    B = B.to(work_dtype)
     M, K = A.shape
     M2, N, K2 = B.shape
     assert M == M2 and K == K2
 
-    # Flatten to 2D problem:
-    # A_flat[m*N+n, k] = A[m, k]  (broadcast A across N)
-    # B_flat[m*N+n, k] = B[m, n, k]
-    # C_flat[m*N+n] = sum_k A_flat[m*N+n, k] * B_flat[m*N+n, k]
-    #
-    # But this requires expanding A which wastes memory.
-    # Instead, use tiled approach: grid over (M, N_blocks), reduce over K.
-
-    block_N = _TUNED.get("block_N", 64)
-    block_K = _TUNED.get("block_K", 64)
+    block_N = 64
+    block_K = 256
 
     N_pad = ((N + block_N - 1) // block_N) * block_N
     K_pad = ((K + block_K - 1) // block_K) * block_K
 
-    # Pad B to [M, N_pad, K_pad]
     if N_pad != N or K_pad != K:
-        B_pad = torch.zeros(M, N_pad, K_pad, device=B.device, dtype=B.dtype)
+        B_pad = torch.zeros(M, N_pad, K_pad, device=B.device, dtype=work_dtype)
         B_pad[:, :N, :K] = B
     else:
         B_pad = B.contiguous()
 
-    # Pad A to [M, K_pad]
     if K_pad != K:
-        A_pad = torch.zeros(M, K_pad, device=A.device, dtype=A.dtype)
+        A_pad = torch.zeros(M, K_pad, device=A.device, dtype=work_dtype)
         A_pad[:, :K] = A
     else:
         A_pad = A.contiguous()
 
-    C_pad = torch.zeros(M, N_pad, device=A.device, dtype=A.dtype)
+    C_pad = torch.empty(M, N_pad, device=A.device, dtype=work_dtype)
 
-    fn = _batched_kernel(M, N_pad, K_pad)
+    fn = _batched_kernel(M, N_pad, K_pad, block_N, block_K, 128, _TL_DTYPE[work_dtype])
     fn(A_pad, B_pad, C_pad)
 
     return C_pad[:, :N].to(orig_dtype)

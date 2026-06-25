@@ -15,19 +15,16 @@ except Exception:
     _TUNED = {}
 
 
-def heur_block_n(args):
-    return triton.next_power_of_2(args["N"])
-
-
 @triton.autotune(
     configs=[
-        triton.Config({"BLOCK_M": 8}, num_warps=8),
-        triton.Config({"BLOCK_M": 16}, num_warps=8),
-        triton.Config({"BLOCK_M": 32}, num_warps=8),
+        triton.Config({"BLOCK_M": 2, "BLOCK_N": 4096}, num_warps=8),
+        triton.Config({"BLOCK_M": 1, "BLOCK_N": 4096}, num_warps=8),
+        triton.Config({"BLOCK_M": 4, "BLOCK_N": 2048}, num_warps=8),
+        triton.Config({"BLOCK_M": 8, "BLOCK_N": 1024}, num_warps=4),
+        triton.Config({"BLOCK_M": 16, "BLOCK_N": 512}, num_warps=4),
     ],
     key=["M", "N"],
 )
-@triton.heuristics({"BLOCK_N": heur_block_n})
 @triton.jit
 def max_kernel(
     inp,
@@ -39,23 +36,30 @@ def max_kernel(
     BLOCK_M: tl.constexpr,
     BLOCK_N: tl.constexpr,
 ):
+    # Tiled row reduction: each program owns BLOCK_M rows (for a fixed k) and
+    # streams the reduced dim in BLOCK_N-wide tiles, keeping a running max and
+    # argmax. The old kernel loaded the whole N=next_pow2(N) row in one block,
+    # which spilled badly for large N. strict-> tie-break matches torch.max.
     pid_m = tl.program_id(0)
     pid_k = tl.program_id(1)
-    m_offset = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)
-    n_offset = tl.arange(0, BLOCK_N)
-    offset = m_offset[:, None] * N * K + n_offset[None, :] * K + pid_k
-    offset_index = m_offset * K + pid_k
-    mask1 = m_offset < M
-    mask = m_offset[:, None] < M and n_offset[None, :] < N
-    inp_ptrs = inp + offset
-    inp_vals = tl.load(inp_ptrs, mask=mask, other=-float("inf"))
-    result_value, result_index = tl.max(inp_vals, axis=1, return_indices=True)
+    rows = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)
+    rmask = rows < M
+    acc_val = tl.full((BLOCK_M,), -float("inf"), tl.float32)
+    acc_idx = tl.zeros((BLOCK_M,), tl.int64)
+    for n0 in range(0, N, BLOCK_N):
+        cols = n0 + tl.arange(0, BLOCK_N)
+        cmask = cols < N
+        ptrs = inp + rows[:, None] * N * K + cols[None, :] * K + pid_k
+        vals = tl.load(ptrs, mask=rmask[:, None] & cmask[None, :], other=-float("inf")).to(tl.float32)
+        tmax, targ = tl.max(vals, axis=1, return_indices=True)
+        tidx = n0 + targ
+        upd = tmax > acc_val
+        acc_idx = tl.where(upd, tidx, acc_idx)
+        acc_val = tl.where(upd, tmax, acc_val)
 
-    out_value_ptrs = out_value + offset_index
-    out_index_ptrs = out_index + offset_index
-
-    tl.store(out_value_ptrs, result_value, mask=mask1)
-    tl.store(out_index_ptrs, result_index, mask=mask1)
+    oidx = rows * K + pid_k
+    tl.store(out_value + oidx, acc_val.to(out_value.dtype.element_ty), mask=rmask)
+    tl.store(out_index + oidx, acc_idx, mask=rmask)
 
 
 def max_reduction(input, dim, keepdim=False):

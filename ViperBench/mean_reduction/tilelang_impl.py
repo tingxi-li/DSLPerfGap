@@ -34,6 +34,32 @@ def _mean_reduction_kernel(m, n, k, bM=_TUNED.get("block_M", 32), bK=_TUNED.get(
     return func
 
 
+@tilelang.jit
+def _mean_row_kernel(M, N, blk, threads):
+    """Fast row reduction (reduce over the contiguous last dim, K==1).
+
+    One block per row; stream the row in tiles of `blk` and accumulate a
+    per-tile parallel reduction (T.reduce) rather than a serial element loop.
+    Bandwidth-bound; matches/beats torch.mean on large rows.
+    """
+    nt = N // blk
+
+    @T.prim_func
+    def func(A: T.Tensor((M, N), "float32"), Out: T.Tensor((M,), "float32")):
+        with T.Kernel(M, threads=threads) as bx:
+            tile = T.alloc_fragment((blk,), "float32")
+            part = T.alloc_fragment((1,), "float32")
+            acc = T.alloc_fragment((1,), "float32")
+            T.clear(acc)
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    tile[j] = A[bx, t * blk + j]
+                T.reduce(tile, part, "sum", dim=0, clear=True)
+                acc[0] = acc[0] + part[0]
+            Out[bx] = acc[0] / T.float32(N)
+    return func
+
+
 def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.Tensor:
     """Mean reduction along a single dim using TileLang."""
     dim = dim % x.ndim
@@ -43,6 +69,22 @@ def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.
     K = x.numel() // M // N
 
     x_3d = x.contiguous().float().view(M, N, K)
+
+    # Fast path: reduction over the contiguous last dim (K == 1). Uses a
+    # bandwidth-bound tiled T.reduce kernel (one block per row).
+    if K == 1:
+        blk = min(2048, N)
+        if blk > 0 and N % blk == 0 and (blk & (blk - 1)) == 0:
+            x_2d = x_3d.view(M, N)
+            out = torch.empty(M, device=x.device, dtype=torch.float32)
+            _mean_row_kernel(M, N, blk, 128)(x_2d, out)
+            result = out.view(M, 1)
+            shape_list = list(shape)
+            shape_list[dim] = 1
+            result = result.view(shape_list)
+            if not keepdim:
+                result = result.squeeze(dim)
+            return result
 
     block_M = min(_TUNED.get("block_M", 32), M)
     block_K = min(_TUNED.get("block_K", 32), K)

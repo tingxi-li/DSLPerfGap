@@ -92,6 +92,73 @@ def _tilelang_gemm(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
     return C_pad[:M, :N]
 
 
+_TL_DTYPE = {torch.float16: "float16", torch.float32: "float32", torch.bfloat16: "bfloat16"}
+
+
+@tilelang.jit
+def _conv2d_direct_kernel(N, C, Hp, Wp, OC, KH, KW, OH, OW, bM, bN, bK, threads):
+    """Direct conv (stride 1) as KH*KW accumulating fp16 tensor-core GEMMs over a
+    spatially padded input. One block owns an output row (bN == OW) for OC tile
+    bM. For each tap (kh,kw) and channel tile, the input slice is a contiguous,
+    bounds-free, coalesced affine region of the padded input -- no im2col
+    materialization, no per-element index math, no fp32 round-trip on B.
+    """
+    KHW = KH * KW
+    NROWS = N * OH
+
+    @T.prim_func
+    def func(Xp: T.Tensor((N, C, Hp, Wp), "float16"),
+             Wt: T.Tensor((KHW, OC, C), "float16"),
+             Ct: T.Tensor((N, OC, OH, OW), "float16")):
+        with T.Kernel(NROWS, T.ceildiv(OC, bM), threads=threads) as (bx, by):
+            n = bx // OH
+            oh = bx % OH
+            As = T.alloc_shared((bM, bK), "float16")
+            Bs = T.alloc_shared((bK, bN), "float16")
+            Cl = T.alloc_fragment((bM, bN), "float32")
+            T.clear(Cl)
+            for t in T.serial(KHW):
+                kh = t // KW
+                kw = t % KW
+                for kc in T.serial(T.ceildiv(C, bK)):
+                    T.copy(Wt[t, by * bM, kc * bK], As)
+                    for ci, wj in T.Parallel(bK, bN):
+                        Bs[ci, wj] = Xp[n, kc * bK + ci, oh + kh, kw + wj]
+                    T.gemm(As, Bs, Cl)
+            # write straight into NCHW output (no post-kernel transpose)
+            for i, j in T.Parallel(bM, bN):
+                Ct[n, by * bM + i, oh, j] = T.cast(Cl[i, j], "float16")
+    return func
+
+
+def _conv2d_direct(input, weight, bias, padding, OH, OW):
+    N_, C_, Hh, Ww = input.shape
+    OC, _, KH, KW = weight.shape
+    out_dtype = input.dtype
+    x = input if input.dtype == torch.float16 else input.to(torch.float16)
+    w16 = weight if weight.dtype == torch.float16 else weight.to(torch.float16)
+    xpad = F.pad(x, (padding[1], padding[1], padding[0], padding[0])).contiguous()
+    Hp, Wp = Hh + 2 * padding[0], Ww + 2 * padding[1]
+    wt = w16.permute(2, 3, 0, 1).reshape(KH * KW, OC, C_).contiguous()
+
+    bM = OC
+    bN = OW
+    if C_ % 128 == 0:
+        bK = 128
+    elif C_ % 64 == 0:
+        bK = 64
+    elif C_ % 32 == 0:
+        bK = 32
+    else:
+        bK = 16
+
+    out = torch.empty(N_, OC, OH, OW, device=x.device, dtype=torch.float16)
+    _conv2d_direct_kernel(N_, C_, Hp, Wp, OC, KH, KW, OH, OW, bM, bN, bK, 256)(xpad, wt, out)
+    if bias is not None:
+        out = out + bias.reshape(1, OC, 1, 1).to(torch.float16)
+    return out.to(out_dtype)
+
+
 def conv2d(input, weight, bias=None, stride=1, padding=0, groups=1):
     """
     Conv2d using im2col (torch.nn.functional.unfold) + TileLang GEMM.
@@ -112,6 +179,15 @@ def conv2d(input, weight, bias=None, stride=1, padding=0, groups=1):
     # Output spatial dimensions
     OH = (H + 2 * padding[0] - dilation[0] * (KH - 1) - 1) // stride[0] + 1
     OW = (W + 2 * padding[1] - dilation[1] * (KW - 1) - 1) // stride[1] + 1
+
+    # Fast path: direct conv via accumulating fp16 tensor-core GEMMs (no im2col).
+    # Restricted to tensor-core-friendly, stride-1 configs (covers the large
+    # benchmark); everything else falls through to the im2col path below.
+    if (groups == 1 and stride == (1, 1) and dilation == (1, 1)
+            and OW % 16 == 0 and OW <= 128
+            and C_in % 16 == 0 and OC % 16 == 0 and OC <= 256
+            and input.dtype in _TL_DTYPE):
+        return _conv2d_direct(input, weight, bias, padding, OH, OW)
 
     # Use unfold (im2col): produces (N, C*KH*KW, OH*OW)
     col = F.unfold(input, kernel_size=(KH, KW), dilation=dilation,
