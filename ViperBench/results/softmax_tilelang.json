@@ -6,49 +6,49 @@
       "name": "small_2d",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 6.260600999667076
+      "time_ms": 6.218488000740763
     },
     {
       "name": "medium_2d",
       "status": "PASS",
       "max_err": 7.450580596923828e-09,
-      "time_ms": 2.882297999349248
+      "time_ms": 2.8805379988625646
     },
     {
       "name": "large_cols",
       "status": "PASS",
       "max_err": 1.862645149230957e-09,
-      "time_ms": 2.157299999453244
+      "time_ms": 2.1107069987920113
     },
     {
       "name": "wide",
       "status": "PASS",
       "max_err": 1.862645149230957e-09,
-      "time_ms": 1.9629929993243422
+      "time_ms": 1.9278899999335408
     },
     {
       "name": "square",
       "status": "PASS",
-      "max_err": 1.4901161193847656e-08,
-      "time_ms": 3221.6156249996857
+      "max_err": 2.9802322387695312e-08,
+      "time_ms": 7.075327997881686
     },
     {
       "name": "3d_tensor",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 2.497622000191768
+      "time_ms": 1.945426000020234
     },
     {
       "name": "4d_tensor",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 2.023858000029577
+      "time_ms": 1.8675050014280714
     },
     {
       "name": "1d_tensor",
       "status": "PASS",
       "max_err": 0.0,
-      "time_ms": 1.9975859995611245
+      "time_ms": 1.8986089999089018
     }
   ]
 }
