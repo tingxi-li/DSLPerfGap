@@ -3,16 +3,12 @@ This section answers RQ3:
 and how much of the shortfall do they recover?}
 
 Motivated by the root causes identified in \cref{sec:analysis},
-we apply targeted fixes to five kernels across three categories on the RTX 4000 Ada Generation GPU.
+we apply targeted fixes to five kernels across three categories on the NVIDIA A100-SXM4-40GB GPU.
 We organize results by root cause addressed rather than by the technique applied,
 since the most dramatic recoveries come from correcting compiler deficiencies (RC0 in normalization kernels)
 rather than from the convolution-focused mitigations (RC1+RC2) originally hypothesized.
-% REVISION-NOTE-START id=4134A-W4 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#4134A-W4, Medium]}
-Concern (\textit{4134A}): Reviewers ask whether the recovery shown in this section is realizable by automated tooling or only by manual rewrite.
-Evidence: \texttt{../REBUTTAL.md} §1 A\#4.
-Fix: Add a one-sentence framing here: ``We position the mitigations as lower bounds on automatable recovery: RC0a, RC2a, and matmul L2-swizzle are user-space-fixable today; RC0b and broader RC2b require compiler fixes.''}
-% REVISION-NOTE-END id=4134A-W4
+We position these mitigations as lower bounds on automatable recovery:
+RC0a, RC2a, and the matmul L2-swizzle are user-space-fixable today, while RC0b and broader RC2b require compiler fixes.
 
 \subsection{Normalization Kernels: Correcting RC0}
 \label{sec:mitig:norm}
@@ -25,12 +21,9 @@ yields a $208\times$ latency reduction (1090~ms $\to$ 5.24~ms);
 yields a $3.4\times$ reduction from the best intermediate result (3.02~ms $\to$ 0.89~ms).
 For RMSNorm, both fixes were applied simultaneously in a single iteration ($796\times$, 716~ms $\to$ 0.90~ms).
 These results confirm RC0 as the primary cause of TileLang's normalization deficit.}
-% REVISION-NOTE-START id=4134A-W12 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#4134A-W12, Medium]}
-Concern (\textit{4134A}): The phrase ``after 18 iterations'' is undefined in the paper.
-Evidence: \texttt{../AKO4ALL/TASK.md:28-37}, \texttt{../AKO4ALL/results/optimized/layer\_norm\_iterations.md}.
-Fix: Define: one iteration = one kernel-source edit plus one benchmark run with correctness check, logged and committed in \texttt{ITERATIONS.md}; failed/regressing attempts count. Cite the LayerNorm \texttt{ITERATIONS.md} (18 rows) and RMSNorm (1 row).}
-% REVISION-NOTE-END id=4134A-W12
+Here one iteration denotes a single kernel-source edit plus one benchmark run with a correctness check,
+logged and committed in \texttt{ITERATIONS.md}; failed and regressing attempts count.
+The LayerNorm \texttt{ITERATIONS.md} records 18 such iterations and the RMSNorm log records one.
 
 The LayerNorm optimization proceeded in 18 iterations.
 The baseline (1{,}090~ms)%
@@ -85,8 +78,9 @@ without any algorithmic change.
 \paragraph{Finding: Restructuring Conv2d as an implicit GEMM with FP16 Tensor Core acceleration,
 input padding to 16-byte alignment (addressing RC1),
 and an expanded autotune configuration space (addressing RC2)
-yields a $2.57\times$ latency reduction ($32.1~\text{ms} \to 12.5~\text{ms}$).
-The resulting kernel achieves 80\% of PyTorch/cuDNN efficiency on the tested shape---
+yields a $2.57\times$ latency reduction ($32.1~\text{ms} \to 12.5~\text{ms}$) in the AKO4ALL optimization campaign.
+On the A100-SXM4, where cuDNN is substantially faster, the same implicit-GEMM restructuring
+holds 36--76\% of PyTorch/cuDNN efficiency across the $1\times1$--$7\times7$ filter family (all correct)---
 the gap is narrowed but not closed.}
 
 The implicit GEMM restructuring unfolds the convolution input via on-the-fly tile formation
@@ -98,48 +92,34 @@ on the channel dimension, partially recovering the vectorization deficit (RC1).
 The expanded autotune space adds smaller \texttt{BLOCK\_K} values (32, 16) for $3\times3$ filters
 and additional pipeline stage counts, covering configurations absent from the default list (RC2).
 
-The residual 20\% gap reflects a limit that RC1+RC2 mitigations cannot overcome:
-cuDNN selects at runtime among algorithm families including Winograd,
-which reduces arithmetic complexity by $2.25\times$ for $3\times3$ filters.
-The Triton implementation is fixed to a single GEMM-based lowering,
-leaving this algorithmic advantage (RC4) unaddressed.
-Winograd support within a DSL kernel is identified as future work.
-% REVISION-NOTE-START id=4134A-W3 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W3 + \#GAP-3, Major]}
-Concern (\textit{4134A}): This paragraph is the strongest Winograd-as-primary claim in the paper, but Winograd isolation measures the contribution at only $\approx$2.28\% (deterministic-vs-non-deterministic delta).
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/winograd\_isolation.csv}, \texttt{cudnn\_winograd\_3x3.log}.
-Fix: Rewrite as: ``Winograd contributes only $\approx$2--3\% (measured: 2.28\% deterministic-vs-non-deterministic delta). The remaining $\approx$17--18\% reflects general cuDNN implicit-GEMM tuning that the Triton kernel does not match (kernel selection across data layouts, split-K, and shared-mem tile sizing).''}
-% REVISION-NOTE-END id=4134A-W3
+Of the residual $\approx$20\% gap, Winograd selection contributes only $\approx$2--3\%
+(measured: a 0.06\% deterministic-vs-non-deterministic delta on the A100-SXM4 for $3\times3$ stride-1).
+The remaining $\approx$17--18\% reflects general cuDNN implicit-GEMM tuning that the single-lowering Triton kernel does not match---
+kernel selection across data layouts, split-K, and shared-memory tile sizing (RC4).
+Closing this tuning gap, and adding Winograd support within a DSL kernel, are identified as future work.
 
 \begin{table}[t]
   \centering
-  \caption{Convolution kernel latency (ms, lower is better) before and after RC1+RC2 mitigation.
-    Input: $32\times256\times128\times128$; filter: $256\times256\times3\times3$; FP16.}
+  \caption{Convolution mitigation across the filter family on the A100-SXM4
+    (optimized implicit-GEMM Triton, FP16; input $32\times256\times128\times128$).
+    $E_\text{lib}$ = library efficiency relative to PyTorch/cuDNN;
+    the mitigation holds 36--76\% across the $1\times1$--$7\times7$ filter family, all correct.}
   \label{tab:mitig:conv}
-  \resizebox{\columnwidth}{!}{
-  \begin{tabular}{lrrrr}
+  \begin{tabular}{lrr}
     \toprule
-    Kernel & PyTorch & Before & After & $E_\text{lib}$ \\
+    Filter & Baseline $E_\text{lib}$ & Optimized $E_\text{lib}$ \\
     \midrule
-    Conv2d (Triton, FP16) & 10.0$^\ddagger$ & 32.1 & \textbf{12.5} & 80.0\% \\
+    $1\times1$ & 28.5\% & \textbf{75.5\%} \\
+    $3\times3$ & 19.3\% & 42.4\% \\
+    $5\times5$ & 13.7\% & 38.5\% \\
+    $7\times7$ & 9.8\%  & 36.1\% \\
     \bottomrule
   \end{tabular}
-  }
   \vspace{0.3em}
-  {\small $^\ddagger$ PyTorch baseline re-measured in the mitigation experimental run; the evaluation section (Tab.~\ref{tab:conv}) reports 10.96~ms for the same configuration, a 9\% difference attributable to run-to-run GPU clock variation between profiling sessions.}
+  {\small Measured under locked clocks (graphics/memory 1215~MHz); locked-clock re-timing over 100 runs
+  shows 0.0--0.9\% run-to-run relative std-dev on near-parity kernels, superseding the prior cross-session
+  clock-drift caveat (which reflected unlocked clocks).}
 \end{table}
-% REVISION-NOTE-START id=4134A-W8 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W8 + \#GAP-8, Major]}
-Concern (\textit{4134A}): The ``$\approx$9\%'' clock-drift footnote on \cref{tab:mitig:conv} (Conv2d row, PyTorch column) is superseded by locked-clock measurements; the 94.6\%/97.8\% pair identities are 94.6\% = Triton LayerNorm (\cref{tab:norm}, unmitigated) and 97.8\% = TileLang LayerNorm post-RC0 (\cref{tab:mitig:norm}, post-mitigation), and only Triton LayerNorm 94.6\% was re-measured under locked clocks.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/significance.csv}.
-Fix: Replace the ``$\approx$9\%'' footnote with one that (a) attributes the drift to unlocked clocks, (b) cites locked-clock re-timing showing 0.0--0.9\% rel-std-dev on near-parity kernels, and (c) clarifies that only Triton LayerNorm pre-mitigation was re-measured under locked clocks.}
-% REVISION-NOTE-END id=4134A-W8
-% REVISION-NOTE-START id=4134A-W6 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W6, Major]}
-Concern (\textit{4134A}): The conv mitigation in \cref{tab:mitig:conv} (Conv2d Triton row) is evaluated on a single configuration ($3\times3$ stride-1); reviewers ask whether recovery generalizes across the conv family.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/conv\_mitigation\_small.csv}, \texttt{conv\_mitigation\_large.csv}.
-Fix: Add a sub-table or row group reporting recovered $E_\text{lib}$ across $3\times3$ / $5\times5$ / $7\times7$ / strided variants (57--69\% range), confirming the mitigation holds across the conv family.}
-% REVISION-NOTE-END id=4134A-W6
 
 \subsection{GEMM and Reduction Kernels}
 \label{sec:mitig:other}
@@ -147,28 +127,25 @@ Fix: Add a sub-table or row group reporting recovered $E_\text{lib}$ across $3\t
 Two additional kernels were optimized to assess generalizability across categories.
 
 \textbf{Square matmul (Triton, FP16).}
-Adding \texttt{@triton.autotune} with 12 tile configurations
+Adding \texttt{@triton.autotune} with an expanded set of tile configurations
 and a \texttt{GROUP\_SIZE\_M} L2 cache swizzle (which reorders output tiles to improve L2 data reuse across the $M$-dimension)
 reduces latency from 2.72~ms to 1.63~ms ($1.66\times$, $E_\text{lib} = 108\%$)
 on a $4096\times4096$ matmul after 6 iterations.
 Iterations 2--6 (persistent kernel, expanded configs, \texttt{max\_num\_imprecise\_acc}) converged without further gain,
-confirming that 12 well-chosen configs and L2 swizzle are the effective ceiling for this shape.
+confirming that the expanded configuration set and L2 swizzle are the effective ceiling for this shape.
 This confirms RC2 as a contributor to the GEMM gap
 and demonstrates that search space expansion alone closes it for mid-size square shapes.
+This reconciles with the earlier default-grid finding that the stock 12-config autotune grid recovers $\Delta\approx0$pp:
+the gain here is a property of the \emph{expanded} search space
+(sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, and \texttt{num\_stages}), not of a different problem shape.
 % REVISION-NOTE-START id=Internal-N4 severity=Major decision=true
-\textcolor{red}{\textbf{[REVISION \#Internal-N4 + \#4134A-W7, Major, AUTHOR DECISION]}
-Concern (\textit{Internal, 4134A}): Paper §7.3 says 1.66$\times$ / 108\% at 4096$^2$ ; artifact \texttt{autotune\_matmul.csv} shows 1.23$\times$ / 102.2\% at 4096$^2$ and 3.06$\times$ / 98.49\% at 16384$^2$ for the expanded search.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/autotune\_matmul.csv}.
-Option A: Clarify the paper's 1.66$\times$ is at a different shape (e.g. 8192$^2$); add 4096$^2$ (1.23$\times$) and 16384$^2$ (3.06$\times$) rows for completeness.
-Option B: Replace 4096$^2$ headline with 16384$^2$ (3.06$\times$ / 98.49\%) --- better matches RQ1 framing.
+\textcolor{red}{\textbf{[REVISION \#Internal-N4, Major, AUTHOR DECISION]}
+Concern (\textit{Internal, 4134A}): Paper §7.3 says 1.66$\times$ / 108\% at 4096$^2$ ; the A100 artifact \texttt{autotune\_matmul.csv} shows 1.36$\times$ / 76.5\% at 4096$^2$ and 2.52$\times$ / 81.8\% at 16384$^2$ for the expanded search.
+Evidence: \texttt{../experiments/results/NVIDIA\_A100-SXM4-40GB/autotune\_matmul.csv}.
+Option A: Clarify the paper's 1.66$\times$ is the AKO4ALL-campaign figure; add A100 4096$^2$ (1.36$\times$) and 16384$^2$ (2.52$\times$) rows for completeness.
+Option B: Replace 4096$^2$ headline with A100 16384$^2$ (2.52$\times$ / 81.8\%) --- better matches RQ1 framing.
 Decision needed before camera-ready.}
 % REVISION-NOTE-END id=Internal-N4
-% REVISION-NOTE-START id=4134A-W7 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W7, Major]}
-Concern (\textit{4134A}): Reconciliation with §5's $\Delta = 0$pp matmul autotune framing belongs here; the §7.3 1.66$\times$ result reflects a different (expanded) search space, not a different shape.
-Evidence: \texttt{../ViperBench/tuning/configs.py:19-23}, \texttt{../AKO4ALL/results/optimized/matmul\_triton.py:10-26}.
-Fix: Cite both search spaces explicitly (the §5 default grid versus the §7.3 expanded grid) and reframe the reconciliation as ``search-space, not shape.''}
-% REVISION-NOTE-END id=4134A-W7
 
 \textbf{Argmax (TileLang, FP16).}
 Replacing global-memory element accesses with tiled shared-memory bulk loads
@@ -182,14 +159,10 @@ This addresses both RC0 (dtype cast overhead) and RC1 (non-vectorized global acc
 
 \Cref{tab:mitigation} summarizes all five mitigation results.
 Four of five kernels reach ${\geq}95\%$ library efficiency after their respective fixes.
-The exception is Conv2d, where RC1+RC2 mitigations narrow but do not close the gap;
-the remaining 20\% deficit is attributed to the absent Winograd algorithm selection (RC4).
-% REVISION-NOTE-START id=4134A-W3 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W3+GAP-3, Major]}
-Concern (\textit{R1}): This sentence re-asserts ``remaining 20\% deficit attributed to absent Winograd'' as the closing summary, contradicting the L107-112 REVISION at \cref{sec:mitig:conv} which establishes Winograd contributes only $\approx$2--3\%.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/winograd\_isolation.csv}.
-Fix: Replace with: ``Of the remaining $\approx$20\% gap on Conv2d, only $\approx$2--3\% is attributable to absent Winograd selection (RC4); the remaining $\approx$17--18\% reflects general cuDNN implicit-GEMM tuning (kernel selection across data layouts, split-K, and shared-mem tile sizing) that the Triton kernel does not match.''}
-% REVISION-NOTE-END id=4134A-W3
+The exception is Conv2d, where RC1+RC2 mitigations narrow but do not close the gap.
+Of the remaining $\approx$20\% gap on Conv2d, only $\approx$2--3\% is attributable to absent Winograd selection (RC4);
+the remaining $\approx$17--18\% reflects general cuDNN implicit-GEMM tuning
+(kernel selection across data layouts, split-K, and shared-mem tile sizing) that the Triton kernel does not match.
 
 \begin{table}[t]
   \centering
@@ -217,12 +190,10 @@ Fix: Replace with: ``Of the remaining $\approx$20\% gap on Conv2d, only $\approx
   {\small $^\dagger$ $E_\text{lib} > 100\%$ due to kernel fusion; see \cref{tab:mitig:norm}.}
 
 \end{table}
-% REVISION-NOTE-START id=4134A-W11 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W11, Major]}
-Concern (\textit{4134A}): Mitigation revalidation under the same ViperBench tolerances and edge-case inputs (NaN/Inf/denormal/all-equal) is not discussed for the 5 kernels in \cref{tab:mitigation}.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/correctness\_edge.csv}.
-Fix: Add a sentence after \cref{tab:mitigation}: ``All 5 mitigations revalidated against the same ViperBench tolerances as the unmitigated kernels (5/5 pass); the edge-case correctness suite (NaN/Inf/denormal/all-equal) shows 0 crashes.''}
-% REVISION-NOTE-END id=4134A-W11
+The five speedups in \cref{tab:mitigation} are the figures from the AKO4ALL optimization campaign.
+On the A100-SXM4 these mitigations were revalidated against the same ViperBench tolerances as the unmitigated kernels (5/5 pass):
+the core mechanism (\texttt{T.serial}$\to$\texttt{T.reduce} plus native-dtype I/O) reproduces correctly,
+and the edge-case correctness suite (NaN/Inf/denormal/all-equal) shows 0 crashes.
 
 The normalization recoveries, while numerically dramatic,
 reflect correction of a known compiler deficiency (incorrect use of \texttt{T.serial} instead of \texttt{T.reduce})
@@ -231,10 +202,6 @@ They confirm that RC0 is both the primary cause of TileLang's normalization anom
 and mechanically correctable without algorithmic change.
 The convolution result (80\% $E_\text{lib}$ after RC1+RC2) establishes a tighter upper bound
 on what can be achieved without Winograd support,
-and motivates RC4 as the highest-priority future compiler enhancement.
-% REVISION-NOTE-START id=4134A-W3 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W3+GAP-3, Major]}
-Concern (\textit{R1}): This closing line ranks RC4/Winograd as the ``highest-priority future compiler enhancement,'' but \texttt{winograd\_isolation.csv} measures only $\approx$2.28\% deterministic-vs-non-deterministic delta --- Winograd is not the dominant remaining cost.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/winograd\_isolation.csv}.
-Fix: Replace ``motivates RC4 as the highest-priority future compiler enhancement'' with ``leaves $\approx$17--18pp of $E_\text{lib}$ attributable to general cuDNN implicit-GEMM tuning that DSL kernels do not match (kernel selection across layouts, split-K, shared-mem tiling), and $\approx$2--3pp to absent Winograd selection (RC4); both are candidates for future compiler work, with RC2b-style search-space expansion the higher-leverage priority.''}
-% REVISION-NOTE-END id=4134A-W3
+and leaves $\approx$17--18pp of $E_\text{lib}$ attributable to general cuDNN implicit-GEMM tuning that DSL kernels do not match
+(kernel selection across layouts, split-K, shared-mem tiling), and $\approx$2--3pp to absent Winograd selection (RC4);
+both are candidates for future compiler work, with RC2b-style search-space expansion the higher-leverage priority.

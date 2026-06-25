@@ -1,0 +1,43 @@
+# Clock-lock verification -- 2026-06-25 (A100-SXM4-40GB revision re-baseline)
+# Path A (rebuttal L72 / R1 reviews.txt:50). GPU 0 = NVIDIA A100-SXM4-40GB (sm_80, 400 W cap).
+# Driver 610.43.02, CUDA 12.8 (torch 2.8.0+cu128).
+#
+# NOTE on target choice: this GPU's max graphics clock is 1410 MHz, but under a
+# sustained fp16 tensor-core load the 400 W board power cap (event reason 0x4,
+# "SW Power Cap") pulls graphics down to ~1200-1215 MHz and lets it fluctuate.
+# Locking at 1410 is therefore NOT honored under load. We instead lock graphics
+# to 1215 MHz -- a clock the board sustains FLAT within the power budget -- so the
+# clock is genuinely pinned during measurement. Memory (HBM2e) locks at its max,
+# 1215 MHz. E_lib is a same-clock latency RATIO, so locking below peak does not
+# bias the efficiency numbers; it only buys reproducibility.
+#
+# Lock procedure (driver 610 rejects a combined -lgc/-lmc, so issue separately):
+#   sudo nvidia-smi -i 0 -pm 1
+#   sudo nvidia-smi -i 0 -lgc 1215
+#   sudo nvidia-smi -i 0 -lmc 1215
+#   ... run benchmarks ...
+#   sudo nvidia-smi -i 0 -rgc
+#   sudo nvidia-smi -i 0 -rmc
+
+## idle clocks (after lock, before load):
+clocks.gr, clocks.mem
+1215 MHz, 1215 MHz
+
+## under sustained fp16 matmul load (8192^3), sampled every ~2.2 s
+## graphics HOLDS flat at the 1215 lock; power brushes the 400 W cap but the
+## clock does NOT drop (contrast the 1410 attempt, which dipped to 1200-1215):
+util%, gr_MHz, mem_MHz, throttle, power_W, temp_C
+ 48%, 1215, 1215, 0x0, 379.3, 44
+100%, 1215, 1215, 0x0, 396.8, 54
+100%, 1215, 1215, 0x4, 398.9, 56
+100%, 1215, 1215, 0x4, 390.7, 57
+100%, 1215, 1215, 0x4, 392.4, 58
+100%, 1215, 1215, 0x4, 386.9, 59
+100%, 1215, 1215, 0x4, 405.0, 60
+
+## interpretation:
+# Graphics clock is pinned flat at 1215 MHz across the full load window (0% dispersion
+# in the sampled clock), even as temperature climbs 44 -> 60 C and power touches the
+# 400 W cap. This is the deterministic baseline for the revision's significance study
+# (exp_significance.py --lock-gr-mhz 1215 --lock-mem-mhz 1215). Contrast the Ada box
+# (130 W cap), where graphics held 1410 and memory dropped 9001 -> 8551 under load.

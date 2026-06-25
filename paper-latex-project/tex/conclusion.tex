@@ -44,18 +44,7 @@
 
 We presented an empirical study of the performance gap between modern GPU DSLs and optimized vendor libraries across 22 kernels in five operator categories. The main result is that DSL performance is not uniform across workloads: Triton and TileLang perform well on GEMM-like and element-wise operators, but remain substantially behind cuDNN on convolution.
 
-% REVISION-NOTE-START id=4134A-W1 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W1 + \#4134A-W3 + \#GAP-1 + \#GAP-2 + \#GAP-3, Major]}
-Concern (\textit{4134A}): All four corrected-RC labels are touched in this summary; must not regress to barriers / conv-spill / Winograd-primary.
-Evidence: \texttt{../CLAUDE.md} corrected RC labels.
-Fix: Rewrite the list: ``missing vectorization (RC1), inadequate convolution autotuning (RC2), register-pressure in TileLang normalization (RC3, not in Triton convolution), and a small ($\approx$2--3\%) Winograd contribution (RC4).'' Reductions are memory-latency-bound, not barrier-bound.}
-% REVISION-NOTE-END id=4134A-W1
-Our analysis attributes this gap primarily to missing vectorization of strided accesses, inadequate autotuning for convolution, register pressure, and lack of Winograd support. We also identify a severe TileLang normalization anomaly caused by sequential reduction behavior and absent vectorized loads. Targeted fixes recover most of the lost performance for normalization workloads and substantially reduce the Triton convolution gap.
-% REVISION-NOTE-START id=4134A-W4 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#4134A-W4, Medium]}
-Concern (\textit{4134A}): Match the user-space-vs-compiler taxonomy used in \S8.
-Evidence: \texttt{../REBUTTAL.md} \S1 A\#4.
-Fix: Add: ``The targeted fixes (RC0a rewrites, RC2a search-space expansion, matmul L2 swizzle) are realizable by today's DSLs in user space and set a lower bound on automatable recovery; closing the residual gap requires compiler-side changes (RC0b vectorization, RC2b broader search).''}
-% REVISION-NOTE-END id=4134A-W4
+Our analysis attributes this gap primarily to missing vectorization of strided accesses (RC1), inadequate autotuning for convolution (RC2), register pressure in TileLang normalization rather than in Triton convolution (RC3), and a small ($\approx$2--3\%) Winograd contribution (RC4). We also identify a severe TileLang normalization anomaly: on the A100-SXM4, TileLang LayerNorm collapses to about 0.1\% of PyTorch throughput because serial \texttt{T.serial} accumulation leaves memory latency exposed---a memory-latency rather than barrier-synchronization bottleneck---compounded by absent vectorized loads. Targeted fixes recover most of the lost performance for normalization workloads and substantially reduce the Triton convolution gap.
+The targeted fixes (RC0a rewrites, RC2a search-space expansion, and matmul L2 swizzle) are realizable by today's DSLs in user space and set a lower bound on automatable recovery; closing the residual gap requires compiler-side changes (RC0b vectorization, RC2b broader search).
 
 In conclusion, current GPU DSLs provide a strong programming model, but they are not yet a complete substitute for vendor libraries. The results highlight concrete directions for compiler improvement and provide practitioners with a basis for deciding when DSL kernels are likely to be production-ready.

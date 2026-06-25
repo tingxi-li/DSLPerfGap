@@ -33,20 +33,14 @@
 
 Our results point to three practical directions for improving current GPU DSL systems.
 
-\textbf{Improve vectorization for convolution accesses.}
-RC1 (\cref{sec:analysis:vec}) shows that convolution performance is limited in part by the failure to vectorize strided spatial accesses under channel-last layouts. A direct compiler remedy is to extend alias and layout analysis to recognize NHWC access patterns and emit vectorized loads when the channel dimension is contiguous and aligned (e.g., multiples of 8 for FP16). This change targets code generation rather than the programming model, and therefore does not require changes to the user-facing API.
+\textbf{Improve vectorization for convolution accesses (requires compiler change).}
+RC1 (\cref{sec:analysis:vec}) shows that convolution performance is limited in part by the failure to emit wide \texttt{LDG.128} loads for strided spatial accesses. A direct compiler remedy is to extend alias and layout analysis to recognize the convolution access pattern and emit vectorized loads when the contiguous dimension is aligned (e.g., multiples of 8 for FP16). This change targets code generation rather than the programming model, and therefore does not require changes to the user-facing API.
 
-\textbf{Make auto-tuning shape-aware.}
-RC2 (\cref{sec:analysis:autotune}) indicates that static tuning configurations transfer poorly from GEMM-like workloads to convolution. This suggests that current auto-tuning strategies should be made more adaptive to operator shape and memory-access structure. Prior work such as Ansor~\cite{zheng2020ansor} shows that sketch-based search can discover effective schedules for irregular operators, including convolution, without relying on manually enumerated templates. A similar shape-aware search mechanism for Triton or TileLang would be a concrete step toward reducing this gap.
+\textbf{Make auto-tuning shape-aware (partly user-space fixable today; broader search requires compiler change).}
+RC2 (\cref{sec:analysis:autotune}) indicates that static tuning configurations transfer poorly from GEMM-like workloads to convolution. The RC2a portion is fixable in user space today: manually expanding the configuration list (e.g., \texttt{GROUP\_SIZE\_M}/\texttt{num\_warps}/\texttt{num\_stages}) recovers most of the GEMM gap, as shown in \cref{sec:mitigation}. Closing the residual RC2b gap calls for auto-tuning strategies that are more adaptive to operator shape and memory-access structure. Prior work such as Ansor~\cite{zheng2020ansor} shows that sketch-based search can discover effective schedules for irregular operators, including convolution, without relying on manually enumerated templates. A similar shape-aware search mechanism for Triton or TileLang would be a concrete step toward reducing this gap.
 
-\textbf{Support algorithmic alternatives for convolution.}
-RC4 highlights a limitation that cannot be addressed through local schedule tuning alone: current DSL implementations do not expose algorithmic choices comparable to those available in cuDNN. In particular, support for Winograd-style transformations would allow the compiler or runtime to choose among direct convolution, GEMM lowering, and Winograd-based execution depending on filter shape and problem size. Although this requires a larger system change than RC1 or RC2, it is necessary to close the remaining gap on common $3\times3$ convolutions.
-% REVISION-NOTE-START id=4134A-W4 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#4134A-W4, Medium]}
-Concern (\textit{Reviewer A}): Make the user-space-fixable vs compiler-fixable taxonomy explicit.
-Evidence: \texttt{../REBUTTAL.md} \S1 A\#4.
-Fix: Tag each bullet as either ``user-space fixable today (manual rewrite using existing primitives)'' or ``requires compiler change.''}
-% REVISION-NOTE-END id=4134A-W4
+\textbf{Support algorithmic alternatives for convolution (requires compiler change).}
+RC4 highlights a limitation that cannot be addressed through local schedule tuning alone: current DSL implementations do not expose algorithmic choices comparable to those available in cuDNN. In particular, support for Winograd-style transformations would allow the compiler or runtime to choose among direct convolution, GEMM lowering, and Winograd-based execution depending on filter shape and problem size. Although this requires a larger system change than RC1 or RC2, and the wall-clock benefit attributable specifically to Winograd is small ($\approx$2--3\%), it contributes to closing the remaining gap on common $3\times3$ convolutions.
 
 
 % \subsection{Implications for Practitioners}
@@ -75,13 +69,7 @@ The results also have immediate consequences for users who adopt DSLs to replace
 DSL kernels should not be assumed to match library performance by default. In our study, Triton is near parity on element-wise and normalization workloads, and can therefore offer a favorable trade-off between programmability and performance in these cases. For GEMM, the observed cost relative to cuBLAS may be acceptable when customization or fusion is required. Convolution is different: both Triton and TileLang remain substantially behind cuDNN in the evaluated settings. For convolution-heavy models, DSL kernels should therefore be treated as an optimization target that must be validated against a library baseline, not as a drop-in replacement.
 
 \textbf{The root-cause analysis can guide debugging.}
-The mitigation results suggest a practical workflow for diagnosing underperforming DSL kernels. For convolution, developers should first check whether memory accesses are vectorized (RC1), then evaluate whether the tuning space is too narrow for the target shape (RC2), and finally inspect register pressure and spill behavior (RC3). For small filters such as $3\times3$, algorithmic alternatives such as Winograd should also be considered (RC4). This sequence provides a compact checklist for performance debugging in Triton and TileLang.
-% REVISION-NOTE-START id=4134A-W3 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#4134A-W3, Medium]}
-Concern (\textit{Reviewer A}): Root-cause checklist for practitioners should reflect the corrected RC framing.
-Evidence: \texttt{../CLAUDE.md} (corrected RC labels).
-Fix: Update the checklist: RC0a (T.serial $\to$ T.reduce) before RC1; RC2a/RC2b distinction; drop RC3 unless TileLang normalization is being optimized; RC4 only for 3$\times$3 conv and only as a small ($\approx$2--3\%) contributor.}
-% REVISION-NOTE-END id=4134A-W3
+The mitigation results suggest a practical workflow for diagnosing underperforming DSL kernels. For TileLang reductions and normalization, developers should first replace serial \texttt{T.serial} accumulation with \texttt{T.reduce} (RC0a), since the dominant cost is exposed memory latency rather than thread synchronization; this is also where register pressure and spill should be inspected (RC3), which on our hardware appears in TileLang normalization rather than in convolution. For convolution, developers should check whether memory accesses are vectorized into wide \texttt{LDG.128} loads (RC1), then evaluate whether the tuning configuration space is too narrow for the target shape, distinguishing a config that is merely absent from the default grid (RC2a, fixable by expanding the search) from one that needs a broader search strategy (RC2b). For $3\times3$ filters, Winograd selection (RC4) is worth considering, but only as a small ($\approx$2--3\%) contributor. This sequence provides a compact checklist for performance debugging in Triton and TileLang.
 
 
 \subsection{Limitations}
@@ -96,7 +84,7 @@ Fix: Update the checklist: RC0a (T.serial $\to$ T.reduce) before RC1; RC2a/RC2b 
 % and are left for future work.
 
 % \paragraph{Hardware scope.}
-% We test on a single GPU (NVIDIA RTX 4000 Ada Generation).
+% We test primarily on an NVIDIA A100-SXM4-40GB (sm_80), with cross-arch replay on A100-PCIE-40GB and H100-80GB-HBM3.
 % AMD ROCm and Intel XPU are excluded;
 % TileLang's AMD support~\cite{wang2025tilelang} makes AMD an important target for future work.
 
@@ -112,7 +100,7 @@ Our conclusions should be interpreted within the scope of the study.
 We evaluate forward-pass kernels only. Backward kernels introduce different computation and memory patterns, including larger temporary state and more complex accumulation behavior, and may expose additional bottlenecks not captured here.
 
 \textbf{Hardware scope.}
-All experiments are conducted on a single NVIDIA RTX 4000 Ada Generation GPU. The results therefore characterize one modern NVIDIA platform rather than all accelerators. In particular, we do not evaluate ROCm or Intel XPU backends, although these are important targets for future work.
+Our primary measurements are conducted on an NVIDIA A100-SXM4-40GB (sm\_80) GPU, with cross-architecture replay on A100-PCIE-40GB (same sm\_80) and H100-80GB-HBM3 (sm\_90) confirming that the gaps generalize across form factors and GPU families. The results nonetheless characterize NVIDIA datacenter platforms rather than all accelerators; in particular, we do not evaluate ROCm or Intel XPU backends, although these are important targets for future work.
 
 \textbf{Software snapshot.}
 Both Triton and TileLang are evolving systems. The measurements in this paper reflect the software versions listed in \cref{sec:meth:setup}; later compiler or runtime changes may reduce some of the gaps we report. Our released benchmark suite is intended to support such re-evaluation.

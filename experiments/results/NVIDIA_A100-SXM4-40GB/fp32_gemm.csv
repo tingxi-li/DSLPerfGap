@@ -1,0 +1,6 @@
+gpu_name,sm,timestamp_utc,arm,max_abs_err,max_rel_err,pct_mismatch,vs_fp32_ref,vs_tf32_ref,verdict
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T02:36:36+00:00,A_T.gemm_fp32,0.185196,633.125,31.807,FAIL@1e-5,MATCH_abs+sameclass,"TF32 truncation: fails fp32 ref, error is same magnitude class as cuBLAS's own TF32 path"
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T02:36:36+00:00,B_manual_fp32_MAC,0,0,0.0000,PASS@1e-5,n/a,"true-fp32 class (mean err at fp32 epsilon, no T.gemm) => fault is isolated to T.gemm, NOT indexing/layout"
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T02:36:36+00:00,C_A_vs_TF32ref,0.209106,4499.17,43.054,A_max_abs=0.1852 vs cuBLAS-TF32_max_abs=0.07261,MATCH(same TF32 class),Arm A is TF32-error-class & fails fp32 => DEFINITIVE TF32 mantissa truncation in T.gemm (confirmed by cuBLAS-TF32 control showing identical signature)
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T02:36:36+00:00,D_tf32_knob_scan,n/a,n/a,n/a,n/a,n/a,NO user-space TF32 knob (PassConfigKey + T.gemm sig expose none; fp32 lowers to SM80 F32TF32TF32F32 MMA atom) => fp32 T.gemm is unavoidably TF32
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T02:36:36+00:00,signature_check,0.185196,633.125,31.807,worst_ref_mag=3.802e-05,mean_abs=0.028,"matches TF32 signature: max-rel-err at a near-zero output (cancellation), small mean abs err; NOT a uniform-large-abs-err layout bug"
