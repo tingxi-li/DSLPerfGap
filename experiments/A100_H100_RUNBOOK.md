@@ -50,6 +50,10 @@ $PYTHON experiments/repro/retime_mitigation.py        # -> results/<slug>/mitiga
 
 # 5. Reset clocks (MANDATORY — else the GPU is left pinned).
 sudo nvidia-smi -i 0 -rgc ; sudo nvidia-smi -i 0 -rmc
+
+# 6. Fold the new arch into the paper (CPU-only; no GPU).
+$PYTHON experiments/compute_elib.py ViperBench/results/profile.<short>.csv     # per-kernel E_lib check
+$PYTHON experiments/results/cross_arch/gen_cross_arch_tables.py                # -> tex/cross_arch.tex (the locked-clock H100 now feeds the cross-arch tables)
 ```
 
 ### Gotchas that WILL bite you (learned the hard way on A100-SXM4)
@@ -71,6 +75,31 @@ sudo nvidia-smi -i 0 -rgc ; sudo nvidia-smi -i 0 -rmc
 - **Two slug conventions (don't cross them):** `experiments/results/<slug>/` uses the
   `_harness` slug `NVIDIA_A100-SXM4-40GB`; the ViperBench profile uses the **short** name
   `profile.A100-SXM4-40GB.csv` (`H100-80GB-HBM3` for H100). The scripts derive both.
+
+### What carries over to H100 — one-time AUTHORING vs per-arch MEASUREMENT
+
+The primary result has two kinds of artifact, and only one needs the GPU each time:
+
+- **One-time kernel AUTHORING — already in the repo, do NOT redo on H100.** A *necessary*
+  part of the study is showing the large DSL gaps are **authoring artifacts, not DSL
+  ceilings** — which required writing competent versions of the under-optimized kernels.
+  Without this step the RQ1 gaps look like a strawman ("you benchmarked a naive kernel");
+  with it, RQ3 proves the gap closes. These are committed, **arch-portable** TileLang/Triton
+  *source* that recompiles unchanged for `sm_90`:
+  - `AKO4ALL/results/optimized/{layer_norm,rms_norm,argmax}_tilelang.py`, `matmul_triton.py`,
+    `conv2d_triton.py` — the original optimization campaign.
+  - `experiments/opt_kernels/{mean,max}_reduction_opt.py`, `{soft,log_soft}max_opt.py`,
+    `logsumexp_opt.py` — the reduction/softmax family rewritten with `T.reduce` + tiled
+    streaming, which closed the remaining 100× gaps.
+
+  You do **not** re-author these on H100 — `retime_mitigation.py` just **re-times** the same
+  source on the new GPU. (If H100 ever exposes a kernel that *doesn't* recover with the
+  existing rewrite, that's a genuine finding worth a one-off authoring pass — but the
+  expectation is they all recompile and recover, since the fix is `T.serial`→`T.reduce`.)
+
+- **Per-arch MEASUREMENT — re-run via section (0).** Everything that produces numbers: the
+  locked-clock pipeline, the profile regen, and `retime_mitigation.py`. This is the only
+  part that needs the H100.
 
 ---
 
