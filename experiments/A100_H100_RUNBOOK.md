@@ -16,6 +16,62 @@ collide. No source edits are required for a new GPU.
 > RC2b (L2/BW-bound) and the GEMM gap may shrink or shift; the RC0 TileLang
 > LayerNorm anomaly (a sync/authoring bug) should reproduce arch-independently.
 
+> **NOTE (revision, 2026-06):** the study now treats **A100-SXM4-40GB as the PRIMARY
+> GPU** (all numbers locked-clock), with **H100 + A100-PCIE** as cross-architecture
+> generalization points. Run section **(0)** on the H100 box to produce the *same*
+> artifact set under the *same* locked-clock methodology so everything stays consistent.
+> The committed H100/A100-PCIE replays were collected **un-locked** earlier (noisier at
+> sub-ms shapes); re-running section (0) under locked clocks supersedes them.
+
+---
+
+## (0) Quick-start — reproduce the full primary artifact set on a new GPU
+
+Helper scripts live in **`experiments/repro/`**. Full sequence (one GPU, ~2–3 GPU-hours):
+
+```bash
+export PYTHON=/home/ubuntu/dslperf-venv/bin/python    # env with torch 2.8 + triton 3.4 + tilelang 0.1.6
+
+# 1. Find the SUSTAINED locked clock (NOT the max — see gotchas).
+bash experiments/repro/lock_clocks.sh                 # load-tests max; prints the sustained GR/MEM to use
+
+# 2. Counter + timing + significance pipeline at the sustained clock.
+bash experiments/repro/run_pipeline.sh <GR> <MEM>     # A100-SXM4 used: 1215 1215
+#    -> results/<slug>/{run_all.log, fp32_gemm.csv, conv_*.csv, fused_baselines.csv,
+#       winograd_isolation.csv, autotune_matmul.csv, correctness_edge.csv,
+#       ncu/, ncu_summary.csv, significance.csv, clock_lock.txt}
+
+# 3. Regenerate this arch's ViperBench profile (untuned + tuned sweep).
+bash experiments/repro/lock_clocks.sh <GR> <MEM>      # re-lock (pipeline resets clocks at the end)
+bash experiments/repro/regen_profile.sh --tuned       # -> ViperBench/results/profile.<short>.csv (+ .tuned.csv)
+
+# 4. Re-time every mitigation (AKO4ALL norm/argmax/matmul + the optimized reduction/softmax family).
+$PYTHON experiments/repro/retime_mitigation.py        # -> results/<slug>/mitigation_retime.csv
+
+# 5. Reset clocks (MANDATORY — else the GPU is left pinned).
+sudo nvidia-smi -i 0 -rgc ; sudo nvidia-smi -i 0 -rmc
+```
+
+### Gotchas that WILL bite you (learned the hard way on A100-SXM4)
+- **Clock lock ≠ max clock.** Locking the GPU's *max* graphics clock is silently
+  power-capped under sustained tensor-core load (throttle bit `0x4` = SW Power Cap),
+  giving a *fluctuating* clock — the opposite of locking. `lock_clocks.sh` load-tests
+  and reports the **sustained** value. A100-SXM4 (400 W): 1410 caps to ~1215 → lock
+  **1215/1215**. H100 (700 W): query first — 1980 may hold (more headroom) or may cap.
+- **Issue `-lgc` and `-lmc` SEPARATELY.** Driver ≥ 610 rejects the combined
+  `nvidia-smi -lgc X -lmc Y` ("Only one device modification may be done at a time").
+- **`ncu` is admin-gated** (`/proc/driver/nvidia/params` → `RmProfilingAdminOnly: 1`).
+  `ncu_counters.sh` runs ncu under **`sudo`** (root bypasses the gate; no reboot needed).
+  `ncu` is off `PATH` at `/usr/local/cuda/bin/ncu` (scripts use `$NCU`).
+- **TileLang JIT needs the venv's bundled CUDA libs on `LD_LIBRARY_PATH`**
+  (`libnvrtc.so.12`, `libcudart.so.12`). `retime_mitigation.py` sets this itself; if you
+  import `experiments/opt_kernels/*` elsewhere, prepend the venv `nvidia/*/lib` dirs.
+- **`ViperBench/results/profile.csv` is NOT arch-namespaced** — `benchmark*.py` overwrite
+  it in place. `regen_profile.sh` snapshots+restores it and writes `profile.<short>.csv`.
+- **Two slug conventions (don't cross them):** `experiments/results/<slug>/` uses the
+  `_harness` slug `NVIDIA_A100-SXM4-40GB`; the ViperBench profile uses the **short** name
+  `profile.A100-SXM4-40GB.csv` (`H100-80GB-HBM3` for H100). The scripts derive both.
+
 ---
 
 ## (a) Get the repo onto the target machine
@@ -196,19 +252,21 @@ no per-arch threshold is hardcoded; lock to those targets (or override with
 `--lock-gr-mhz` / `--lock-mem-mhz` for sub-max headroom):
 
 ```bash
-# Per-arch reference recipes (max-clock targets vary; numbers below are typical):
-# RTX 4000 Ada (sm_89):     sudo nvidia-smi -i 0 -pm 1 -lmc 9001 -lgc 1400
-# A100 SXM4-80GB (sm_80):   sudo nvidia-smi -i 0 -pm 1 -lmc 1593 -lgc 1410
-# H100 SXM5-80GB (sm_90):   sudo nvidia-smi -i 0 -pm 1 -lmc 2619 -lgc 1980
+# Use experiments/repro/lock_clocks.sh to find the SUSTAINED clock (NOT the max --
+# the max power-caps under load; see section (0) gotchas). It issues -lgc/-lmc
+# SEPARATELY (driver >= 610 rejects the combined form). Verified sustained targets:
+#   RTX 4000 Ada (sm_89, 130 W):   -lgc 1400  -lmc 9001  (gr holds; mem -> 8551 under load)
+#   A100-SXM4-40GB (sm_80, 400 W): -lgc 1215  -lmc 1215  (1410 power-caps; 1215 holds flat)
+#   H100-SXM5-80GB (sm_90, 700 W): query first -- 1980 may hold; lock_clocks.sh reports it
+bash experiments/repro/lock_clocks.sh             # discovery -> prints sustained <GR> <MEM>
+bash experiments/repro/lock_clocks.sh <GR> <MEM>  # lock at the sustained value
 
-# After locking, re-time the noise-sensitive set:
-python experiments/exp_significance.py            # 100 reps; targets default to GPU max
-# or with explicit targets if you locked below max:
-# python experiments/exp_significance.py --lock-gr-mhz 1400 --lock-mem-mhz 9001
+# Re-time the noise-sensitive set at the sustained clock (pass the same targets):
+python experiments/exp_significance.py --lock-gr-mhz <GR> --lock-mem-mhz <MEM>
 #    -> experiments/results/<gpu_slug>/significance.csv
 
-# Reset clocks afterward (mandatory — leaves the GPU at boost state otherwise):
-sudo nvidia-smi -i 0 -rgc -rmc
+# Reset clocks afterward (mandatory): SEPARATE commands.
+sudo nvidia-smi -i 0 -rgc ; sudo nvidia-smi -i 0 -rmc
 ```
 
 The script self-aborts with the GPU-specific lock recipe if measured clocks
@@ -291,6 +349,9 @@ experiments/results/<gpu_slug>/
     autotune_matmul.csv               # §5 vs §7.3 matmul autotune reconcile
     significance.csv                  # Step (d.5): locked-clock dispersion (manual)
     significance_smoke.csv            # written by --smoke runs (plumbing check)
+    clock_lock.txt                    # locked-clock verification (lock_clocks.sh / run_pipeline.sh)
+    mitigation_retime.csv             # retime_mitigation.py: all mitigations (AKO4ALL norm/argmax/matmul
+                                      #   + optimized reduction/softmax family from opt_kernels/)
     ncu_summary.csv                   # rolled-up RC table for tab:rootcauses
     NCU_FINDINGS.md                   # written by consolidate_ncu.py
     ncu/
@@ -299,6 +360,15 @@ experiments/results/<gpu_slug>/
         <kernel>_<impl>_large_stalls.csv   # set C  (warp-stall breakdown)
         <kernel>_<impl>_large_l2dram.csv   # set D  (L2 / DRAM)
 ```
+Plus, written outside the per-arch dir (by `regen_profile.sh`):
+```
+ViperBench/results/profile.<short>.csv         # untuned pytorch/triton/tilelang (this arch)
+ViperBench/results/profile.<short>.tuned.csv   # + triton_tuned/tilelang_tuned (with --tuned)
+ViperBench/results/tuning_cache.json           # gains this arch's best-config keys from the sweep
+```
+The optimized reduction/softmax kernels (`experiments/opt_kernels/*_opt.py`) are
+arch-portable source; `retime_mitigation.py` re-times them per arch.
+
 Each CSV is self-describing (the harness prepends `gpu_name`, `sm`,
 `timestamp_utc`), so the A100/H100 results are unambiguous when collated with
 Ada's into the cross-architecture comparison tables.
