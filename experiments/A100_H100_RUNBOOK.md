@@ -23,6 +23,13 @@ collide. No source edits are required for a new GPU.
 > The committed H100/A100-PCIE replays were collected **un-locked** earlier (noisier at
 > sub-ms shapes); re-running section (0) under locked clocks supersedes them.
 
+> **NOTE (2026-06-25): GH200 is the current source box and is NOT covered below.**
+> The GH200 is **aarch64** with a different stack (torch 2.7.0 / triton 3.3.0 / tilelang
+> 0.1.11) — see **`MACHINE_SETUP.md`** for its install path, the per-GPU stack table, and
+> the **pre-move checklist** (capture + commit results, sweep tuning, record the sustained
+> clock) to run **before** releasing this box. As of now there is **no
+> `results/NVIDIA_GH200*/` directory and no GH200 tuning key** — its evidence is uncaptured.
+
 ---
 
 ## (0) Quick-start — reproduce the full primary artifact set on a new GPU
@@ -186,8 +193,10 @@ and `benchmark_tuned.py` only.
 
 ### (b.3) Decide the `tuning_cache.json` stance for the new arch
 
-`ViperBench/results/tuning_cache.json` currently contains **only** RTX 4000 Ada
-entries (keyed by `<kernel>/<impl>/<gpu_arch>` via `ViperBench/tuning/cache.py`).
+`ViperBench/results/tuning_cache.json` currently contains entries for **four x86
+archs** (`RTX_4000_Ada`, `A100-SXM4-40GB`, `A100-PCIE-40GB`, `H100_80GB_HBM3`;
+143 keys), keyed by `<kernel>/<impl>/<gpu_arch>` via `ViperBench/tuning/cache.py`.
+There is **no GH200 key** (the current aarch64 box uses defaults until swept).
 On the new GPU, every kernel transparently falls back to `{}` and uses
 hardcoded defaults — **correctness is unchanged, but the `*_tuned` rows in
 `profile.csv` will be identical to the untuned rows**. Three options:

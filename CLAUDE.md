@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> ⚠️ **PAPER PIVOT (2026-06-25) — read `PIVOT_FRAMING.md` first.** The paper has pivoted from
+> *"An Empirical Study of GPU Kernel Performance Gaps in Modern DSLs"* (characterize → root-cause →
+> mitigate a gap) to **the DSL kernel *evaluation* problem**: existing benchmarks (KernelBench,
+> TritonBench) pass correct-but-slow kernels, a comprehensive benchmark is infeasible, and we propose
+> evaluation heuristics + optimization patterns to guide DSL kernel development. **`PIVOT_FRAMING.md`
+> (repo root) is the single source of truth for the new thesis and RQs.** The old gap study is now
+> *evidence* (it became RQ2), not the thesis. The RQ labels below describe the OLD framing and are being
+> reconciled section-by-section; where any doc conflicts with `PIVOT_FRAMING.md`, the framing doc wins.
+> New RQ map: **RQ1 = evaluation gap (benchmarks miss slow kernels)**, **RQ2 = the hidden gap + its
+> causes** (the old RQ1+RQ2 evidence), **RQ3 = guidance heuristics + optimization patterns**.
+
 ## What this repository is
 
 Research artifact for ASE 2026 paper #4134 (`ase26-paper4134.pdf`, reviewer text in `reviews.txt`, author response in `REBUTTAL.md`, in-flight revision items in `REVISION_TODO.md`). Five coupled subsystems:

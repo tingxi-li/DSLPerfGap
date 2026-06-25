@@ -2,6 +2,16 @@
 
 ## Project Overview
 
+> ⚠️ **PAPER PIVOT (2026-06-25).** The paper is being completely re-framed around **the DSL kernel
+> *evaluation* problem** (existing benchmarks pass correct-but-slow kernels; a comprehensive benchmark
+> is infeasible; we offer evaluation heuristics + optimization patterns). The canonical new thesis, RQ
+> wording, candidate titles, and section-rewrite checklist live in **`../PIVOT_FRAMING.md`** — read it
+> before editing any `.tex`. The "Research topic", "Core thesis", and "Paper Structure & Research
+> Questions" sections below describe the **OLD** framing and are being reconciled; new RQs are
+> **RQ1 = evaluation gap**, **RQ2 = the hidden gap + causes**, **RQ3 = guidance (heuristics + patterns)**.
+> Where this file conflicts with `../PIVOT_FRAMING.md`, the framing doc wins. `abstract.tex` and
+> `RQ_summary.tex` are already rewritten; the other sections are pending.
+
 LaTeX source for the ASE 2026 submission "An Empirical Study of GPU Kernel Performance Gaps in Modern Domain-Specific Languages" (paper #4134). The build is `acmart[sigconf,review,anonymous]` (see `main.tex:1`); commented venue lines for the camera-ready form are at `main.tex:11-16`. The submitted PDF and reviewer text live one directory up at `../ase26-paper4134.pdf` and `../reviews.txt`.
 
 **Research topic:** An empirical study on the performance gap between modern Domain-Specific Languages (DSLs) — specifically Triton and TileLang — and PyTorch + cuBLAS/cuDNN, with root-cause analysis and proposed mitigations.

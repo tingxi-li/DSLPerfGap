@@ -1,41 +1,34 @@
-% GPU kernel development is shifting from hand-written CUDA to domain-specific languages (DSLs)
-% such as Triton and TileLang,
-% which promise near-library performance with dramatically lower development effort.
-% While DSLs demonstrably match or approach cuBLAS throughput on matrix multiplication workloads,
-% practitioners report significant underperformance on convolution kernels.
-% This gap has been observed anecdotally but never systematically characterized.
+% Abstract — pivoted framing (the DSL kernel *evaluation* problem).
+% Canonical framing: ../PIVOT_FRAMING.md. Pre-pivot gap-study drafts are in git history.
 
-% We present the first empirical study of the performance gap between DSL-written kernels
-% and optimized libraries (cuBLAS, cuDNN) across a representative suite of
-% 22~GPU kernels drawn from TritonBench and augmented with TileLang implementations,
-% spanning five kernel categories:
-% GEMM, attention, convolution, normalization, and element-wise operations.
-% Our study characterizes the magnitude and distribution of the performance gap (RQ1),
-% identifies root causes through latency-driven analysis and compiler-level reasoning (RQ2),
-% and evaluates mitigations that narrow or close the gap on the most affected kernel categories (RQ3).
-% Triton achieves a median library efficiency (ratio of library baseline latency to DSL latency, expressed as a percentage; 100\% = parity) of 32--58\% on GEMM depending on shape and 103\% on element-wise kernels, but only 35\% on convolution.
-% TileLang, while competitive with cuBLAS on select large GEMM shapes (up to 56\%), achieves less than 10\% of cuDNN throughput on convolution.
-% TileLang also exhibits a catastrophic normalization anomaly: 314$\times$ slower than PyTorch on large LayerNorm, traced to use of \texttt{T.serial} manual reduction loops (which execute sequentially) instead of the native parallel \texttt{T.reduce} primitive, compounded by absent vectorized memory loads.
-% Our analysis identifies four compiler-level root causes of convolution underperformance:
-% absent vectorization of strided memory accesses (RC1),
-% auto-tuning search space mismatch (RC2),
-% register pressure from large-filter accumulations (RC3),
-% and missing Winograd algorithm support (RC4).
-% For five representative kernels, targeted fixes address each root cause directly:
-% correcting TileLang's reduction primitive usage brings LayerNorm and RMSNorm to 98\% of PyTorch throughput (recovering from a $314\times$ latency deficit);
-% restructuring Conv2d as an implicit GEMM with alignment and extended auto-tuning narrows the Triton convolution gap to 80\% of cuDNN efficiency,
-% with the remaining 20\% attributed to absent Winograd algorithm support and identified as future compiler work.
-% Our kernel suite, profiling scripts, and raw results are publicly available at \url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/} to support reproducibility.
+Modern GPU domain-specific languages (DSLs) such as Triton and TileLang promise
+near-vendor-library performance at a fraction of the development effort, and are
+increasingly the lowering target for compilers and LLM-based kernel generators.
+Yet a developer who writes a \emph{functionally correct} DSL kernel has no dependable
+way to know whether it is \emph{performant}.
+We show that a kernel can pass the prevailing evaluation benchmarks and still run
+hundreds of times slower than the vendor-library baseline: across 22 kernels in five
+operator categories, naive-but-idiomatic DSL kernels that pass standard correctness
+gating range from competitive to more than two orders of magnitude slower than
+cuBLAS/cuDNN.
 
-% The emergence of modern DSLs in GPU programming, like Triton and TileLang, allows developers to write highly efficient kernels without years of expertise in target hardware architecture or coding in low-level languages like CUDA. However, the performance of kernels written in modern DSLs has not been systematically studied, leaving gaps in kernel efficiency evaluation and performance degradation analysis in modern DSLs unaddressed.
+The benchmarks practitioners rely on do not surface this.
+Prevailing DSL and LLM-generated-kernel benchmarks (e.g., KernelBench and TritonBench)
+gate primarily on correctness---at most a weak speedup-over-eager check---and therefore
+admit performance-poor kernels, while under-covering DSLs, data types, shapes, and
+hardware and only partially preventing reward hacking.
+A benchmark comprehensive enough to close this gap is combinatorially infeasible.
 
-% We present the first empirical study of the performance gap between DSL-written kernels  and handcrafted high performance libraries across 22 GPU kernels drawn from TritonBench and augmented with TileLang implementations, spanning five categories: GEMM, attention, convolution, normalization, and element-wise operations. Our results highlights that Triton achieves a median library efficiency of 32--58\% on GEMM and 103\% on element-wise kernels, but only 35\% on convolution while TileLang reaches up to 56\% of cuBLAS on large GEMM shapes yet under 10\% of cuDNN throughput on convolution. TileLang also exhibits a catastrophic normalization anomaly, 314$\times$ slower than PyTorch on large LayerNorm, traced to sequential \texttt{T.serial} reduction loops and absent vectorized memory loads. Based on these empirical results, we identify four compiler-level root causes of convolution underperformance: \textit{absent vectorization of strided memory accesses, auto-tuning search space mismatch, register pressure from large-filter accumulations,} and \textit{missing Winograd algorithm support}. Targeted fixes recover 98\% of PyTorch throughput on LayerNorm and RMSNorm and narrow the Triton convolution gap to 80\% of cuDNN efficiency, with the remaining deficit attributed to absent Winograd support. Our kernel suite, profiling scripts, and raw results are publicly available at \url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/}.
-
-Modern GPU domain-specific languages (DSLs), such as Triton and TileLang, seek to make high-performance kernel development accessible without requiring deep expertise in CUDA or hardware-specific optimization.
-However, despite their increasing adoption, it remains unclear how closely DSL-written kernels approach the performance of highly optimized vendor libraries and what factors limit that performance.
-
-We present the first empirical study of the performance gap between DSL-written kernels and library implementations across 22 GPU kernels spanning five operator categories: GEMM, attention, convolution, normalization, and element-wise or reduction operators. Our benchmark suite is built from TritonBench, TileLang examples, and additional implementations for missing configurations. Across these workloads, we find that DSL performance is highly uneven across operator classes. Triton reaches 33--93\% of library performance on GEMM and 95--116\% on element-wise kernels, but only 19\% on convolution. TileLang reaches up to 80\% of cuBLAS throughput on large GEMM shapes, yet remains below 13\% of cuDNN throughput on convolution. We also observe a severe normalization anomaly in TileLang, where large LayerNorm runs at only 0.1\% of PyTorch throughput (more than 1000$\times$ slower).
-
-To explain these gaps, we combine end-to-end benchmarking with hardware counter analysis and identify the recurring causes of convolution underperformance: \textit{lack of vectorization for strided memory accesses} and \textit{mismatch between autotuning search spaces and convolution workloads}, together with a small contribution from \textit{absent Winograd-based algorithm support}; register pressure from large accumulations instead appears as a TileLang normalization spill rather than in Triton convolution.
-Guided by this analysis, we implement targeted fixes that restore TileLang normalization (LayerNorm and RMSNorm) to at least parity with PyTorch and substantially narrow the Triton convolution gap. The residual convolution gap reflects general cuDNN implicit-GEMM tuning, with absent Winograd support contributing only a small amount ($\approx$2--3\%; A100 determinism A/B delta 0.06\%).
-Our data is available at \url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/}.
+As a pragmatic alternative, we (i)~characterize how large and structured the hidden
+performance gap is and why it arises, separating user-space \emph{authoring} causes
+(which we show are largely reducible) from \emph{code-generation} and
+\emph{library-maturity} causes (which are not); and (ii)~distill the result into
+lightweight, partly baseline-independent evaluation heuristics and a small set of
+recurring optimization patterns that guide DSL kernel development when no ground-truth
+benchmark exists.
+We find that authoring idiom dominates the gap---a single reduction-primitive change
+recovers up to three orders of magnitude---while a residual structural gap persists on
+convolution, and that a roofline-anchored comparability check flags poor kernels that
+correctness-only benchmarks pass.
+Our kernel suite, profiling infrastructure, and analysis are publicly available at
+\url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/}.
