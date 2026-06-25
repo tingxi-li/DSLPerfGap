@@ -1,0 +1,221 @@
+kernel,size,impl,input_desc,latency_ms,peak_memory_mb
+add,small,pytorch,"x:(4096,) y:(4096,) fp16",0.0266,10091.19
+add,small,triton,"x:(4096,) y:(4096,) fp16",0.0705,10091.19
+add,small,triton_tuned,"x:(4096,) y:(4096,) fp16",0.0624,10091.19
+add,small,tilelang,"x:(4096,) y:(4096,) fp16",0.1112,10091.19
+add,small,tilelang_tuned,"x:(4096,) y:(4096,) fp16",0.0966,10091.19
+add,large,pytorch,"x:(64M,) y:(64M,) fp16",0.315,10219.18
+add,large,triton,"x:(64M,) y:(64M,) fp16",0.3519,10219.18
+add,large,triton_tuned,"x:(64M,) y:(64M,) fp16",0.3435,10219.18
+add,large,tilelang,"x:(64M,) y:(64M,) fp16",0.4229,10219.18
+add,large,tilelang_tuned,"x:(64M,) y:(64M,) fp16",0.4166,10219.18
+argmax,small,pytorch,"x:(1024,1024) dim=1 fp16",0.0312,10091.19
+argmax,small,triton,"x:(1024,1024) dim=1 fp16",0.3609,10091.19
+argmax,small,triton_tuned,"x:(1024,1024) dim=1 fp16",0.1203,10091.19
+argmax,small,tilelang,"x:(1024,1024) dim=1 fp16",0.2155,10095.2
+argmax,small,tilelang_tuned,"x:(1024,1024) dim=1 fp16",0.1463,10095.2
+argmax,large,pytorch,"x:(8192,32768) dim=1 fp16",0.6221,10091.25
+argmax,large,triton,"x:(8192,32768) dim=1 fp16",13.1798,10091.25
+argmax,large,triton_tuned,"x:(8192,32768) dim=1 fp16",2.4233,10091.25
+argmax,large,tilelang,"x:(8192,32768) dim=1 fp16",11.9696,11115.28
+argmax,large,tilelang_tuned,"x:(8192,32768) dim=1 fp16",10.4195,11115.28
+attention,small,pytorch,"QKV:(8,16,512,64) fp32",384.8015,10115.38
+attention,small,triton,"QKV:(8,16,512,64) fp32",1.0544,10147.31
+attention,small,triton_tuned,"QKV:(8,16,512,64) fp32",0.5438,10171.18
+attention,small,tilelang,"QKV:(8,16,512,64) fp32",685.7162,10107.23
+attention,small,tilelang_tuned,"QKV:(8,16,512,64) fp32",593.646,10107.23
+attention,large,pytorch,"QKV:(8,32,2048,128) fp32",3045.0332,10355.53
+attention,large,triton,"QKV:(8,32,2048,128) fp32",44.8258,11379.31
+attention,large,triton_tuned,"QKV:(8,32,2048,128) fp32",40.5625,12395.18
+attention,large,tilelang,"QKV:(8,32,2048,128) fp32",5458.9742,10347.34
+attention,large,tilelang_tuned,"QKV:(8,32,2048,128) fp32",4776.7875,10347.34
+batched_matmul,small,pytorch,"A:(64,128) B:(64,128,128) fp16",0.0787,10099.32
+batched_matmul,small,triton,"A:(64,128) B:(64,128,128) fp16",0.0959,10099.32
+batched_matmul,small,triton_tuned,"A:(64,128) B:(64,128,128) fp16",0.0961,10091.2
+batched_matmul,small,tilelang,"A:(64,128) B:(64,128,128) fp16",0.1338,10095.26
+batched_matmul,small,tilelang_tuned,"A:(64,128) B:(64,128,128) fp16",0.1247,10095.26
+batched_matmul,large,pytorch,"A:(128,2048) B:(128,2048,2048) fp16",0.8112,10099.81
+batched_matmul,large,triton,"A:(128,2048) B:(128,2048,2048) fp16",0.8731,10099.81
+batched_matmul,large,triton_tuned,"A:(128,2048) B:(128,2048,2048) fp16",0.8588,10091.68
+batched_matmul,large,tilelang,"A:(128,2048) B:(128,2048,2048) fp16",11.5457,12141.68
+batched_matmul,large,tilelang_tuned,"A:(128,2048) B:(128,2048,2048) fp16",11.5355,12141.68
+conv2d,small,pytorch,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.0705,10109.38
+conv2d,small,triton,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.161,10103.18
+conv2d,small,triton_tuned,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.1284,10094.25
+conv2d,small,tilelang,"x:(8,64,56,56) w:(64,64,3,3) fp16",1.086,10175.18
+conv2d,small,tilelang_tuned,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.9076,10175.18
+conv2d,large,pytorch,"x:(32,256,128,128) w:(256,256,3,3) fp16",3.4591,10869.31
+conv2d,large,triton,"x:(32,256,128,128) w:(256,256,3,3) fp16",17.8812,10355.31
+conv2d,large,triton_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",11.9786,10347.18
+conv2d,large,tilelang,"x:(32,256,128,128) w:(256,256,3,3) fp16",27.461,17003.18
+conv2d,large,tilelang_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",32.7766,17003.18
+cross_entropy,small,pytorch,"logits:(256,1024) fp32",0.7895,10103.34
+cross_entropy,small,triton,"logits:(256,1024) fp32",0.1237,10102.31
+cross_entropy,small,triton_tuned,"logits:(256,1024) fp32",0.0978,10094.18
+cross_entropy,small,tilelang,"logits:(256,1024) fp32",0.2066,10094.19
+cross_entropy,small,tilelang_tuned,"logits:(256,1024) fp32",0.1766,10094.19
+cross_entropy,large,pytorch,"logits:(4096,32768) fp32",5.5125,12150.52
+cross_entropy,large,triton,"logits:(4096,32768) fp32",0.4869,11635.31
+cross_entropy,large,triton_tuned,"logits:(4096,32768) fp32",0.4822,11627.18
+cross_entropy,large,tilelang,"logits:(4096,32768) fp32",4.9651,11627.2
+cross_entropy,large,tilelang_tuned,"logits:(4096,32768) fp32",4.9592,11627.2
+embedding,small,pytorch,"w:(8192,256) idx:(2048,) fp16",0.181,10102.33
+embedding,small,triton,"w:(8192,256) idx:(2048,) fp16",0.0856,10099.31
+embedding,small,triton_tuned,"w:(8192,256) idx:(2048,) fp16",0.0727,10091.18
+embedding,small,tilelang,"w:(8192,256) idx:(2048,) fp16",0.2754,10102.2
+embedding,small,tilelang_tuned,"w:(8192,256) idx:(2048,) fp16",0.231,10102.2
+embedding,large,pytorch,"w:(131072,1024) idx:(131072,) fp16",2.1323,10868.43
+embedding,large,triton,"w:(131072,1024) idx:(131072,) fp16",0.4825,10099.31
+embedding,large,triton_tuned,"w:(131072,1024) idx:(131072,) fp16",0.4578,10091.18
+embedding,large,tilelang,"w:(131072,1024) idx:(131072,) fp16",3.0397,11372.31
+embedding,large,tilelang_tuned,"w:(131072,1024) idx:(131072,) fp16",ERROR,ERROR
+index_select,small,pytorch,"src:(4096,512) idx:(256,) fp16",0.0592,10099.56
+index_select,small,triton,"src:(4096,512) idx:(256,) fp16",0.0974,10099.56
+index_select,small,triton_tuned,"src:(4096,512) idx:(256,) fp16",0.0934,10091.43
+index_select,small,tilelang,"src:(4096,512) idx:(256,) fp16",0.1392,10091.43
+index_select,small,tilelang_tuned,"src:(4096,512) idx:(256,) fp16",0.1173,10091.43
+index_select,large,pytorch,"src:(65536,2048) idx:(4096,) fp16",0.0769,10115.31
+index_select,large,triton,"src:(65536,2048) idx:(4096,) fp16",0.1271,10115.31
+index_select,large,triton_tuned,"src:(65536,2048) idx:(4096,) fp16",0.1498,10107.18
+index_select,large,tilelang,"src:(65536,2048) idx:(4096,) fp16",0.1394,10107.2
+index_select,large,tilelang_tuned,"src:(65536,2048) idx:(4096,) fp16",0.1227,10107.2
+layer_norm,small,pytorch,"x:(512,1024) bf16",0.0373,10100.31
+layer_norm,small,triton,"x:(512,1024) bf16",0.1657,10100.31
+layer_norm,small,triton_tuned,"x:(512,1024) bf16",0.1423,10092.19
+layer_norm,small,tilelang,"x:(512,1024) bf16",3.2015,10096.19
+layer_norm,small,tilelang_tuned,"x:(512,1024) bf16",0.97,10096.19
+layer_norm,large,pytorch,"x:(8192,8192) bf16",0.3353,10227.37
+layer_norm,large,triton,"x:(8192,8192) bf16",0.3782,10227.37
+layer_norm,large,triton_tuned,"x:(8192,8192) bf16",0.356,10219.25
+layer_norm,large,tilelang,"x:(8192,8192) bf16",364.0895,10731.25
+layer_norm,large,tilelang_tuned,"x:(8192,8192) bf16",97.258,10731.25
+leaky_relu,small,pytorch,"a:(4096,4096) b:(4096,4096) fp16",8.7708,10291.31
+leaky_relu,small,triton,"a:(4096,4096) b:(4096,4096) fp16",2.1142,10131.31
+leaky_relu,small,triton_tuned,"a:(4096,4096) b:(4096,4096) fp16",1.2544,10123.18
+leaky_relu,small,tilelang,"a:(4096,4096) b:(4096,4096) fp16",0.83,10123.18
+leaky_relu,small,tilelang_tuned,"a:(4096,4096) b:(4096,4096) fp16",0.8145,10123.18
+leaky_relu,large,pytorch,"a:(8192,8192) b:(8192,8192) fp16",68.0007,10867.31
+leaky_relu,large,triton,"a:(8192,8192) b:(8192,8192) fp16",15.8925,10227.31
+leaky_relu,large,triton_tuned,"a:(8192,8192) b:(8192,8192) fp16",9.9209,10219.18
+leaky_relu,large,tilelang,"a:(8192,8192) b:(8192,8192) fp16",5.4766,10219.18
+leaky_relu,large,tilelang_tuned,"a:(8192,8192) b:(8192,8192) fp16",6.0511,10219.18
+linear_activation,small,pytorch,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.6795,10125.81
+linear_activation,small,triton,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.5289,10101.31
+linear_activation,small,triton_tuned,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.1791,10093.18
+linear_activation,small,tilelang,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.4852,10128.69
+linear_activation,small,tilelang_tuned,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.4094,10128.69
+linear_activation,large,pytorch,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",36.0257,10691.32
+linear_activation,large,triton,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",49.7143,10163.31
+linear_activation,large,triton_tuned,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",19.4661,10155.18
+linear_activation,large,tilelang,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",6.5664,11035.2
+linear_activation,large,tilelang_tuned,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",7.6236,11035.2
+log_softmax,small,pytorch,"x:(512,1024) fp16",0.0268,10100.31
+log_softmax,small,triton,"x:(512,1024) fp16",0.1498,10100.31
+log_softmax,small,triton_tuned,"x:(512,1024) fp16",0.1252,10092.18
+log_softmax,small,tilelang,"x:(512,1024) fp16",0.1365,10096.18
+log_softmax,small,tilelang_tuned,"x:(512,1024) fp16",0.1304,10096.18
+log_softmax,large,pytorch,"x:(4096,32768) fp16",0.449,10355.31
+log_softmax,large,triton,"x:(4096,32768) fp16",1.0004,10355.31
+log_softmax,large,triton_tuned,"x:(4096,32768) fp16",0.995,10347.18
+log_softmax,large,tilelang,"x:(4096,32768) fp16",2.6452,11371.18
+log_softmax,large,tilelang_tuned,"x:(4096,32768) fp16",7.2478,11371.18
+logsumexp,small,pytorch,"x:(512,1024) fp32",0.1235,10101.31
+logsumexp,small,triton,"x:(512,1024) fp32",0.2413,10099.32
+logsumexp,small,triton_tuned,"x:(512,1024) fp32",0.2051,10091.19
+logsumexp,small,tilelang,"x:(512,1024) fp32",0.105,10091.19
+logsumexp,small,tilelang_tuned,"x:(512,1024) fp32",0.09,10091.19
+logsumexp,large,pytorch,"x:(8192,16384) fp32",2.4037,10611.37
+logsumexp,large,triton,"x:(8192,16384) fp32",0.5053,10099.43
+logsumexp,large,triton_tuned,"x:(8192,16384) fp32",0.492,10091.31
+logsumexp,large,tilelang,"x:(8192,16384) fp32",4.1753,10091.21
+logsumexp,large,tilelang_tuned,"x:(8192,16384) fp32",2.7686,10091.21
+matmul,small,pytorch,"A:(512,512) B:(512,512) fp16",0.0368,10099.81
+matmul,small,triton,"A:(512,512) B:(512,512) fp16",0.093,10099.81
+matmul,small,triton_tuned,"A:(512,512) B:(512,512) fp16",0.0798,10091.68
+matmul,small,tilelang,"A:(512,512) B:(512,512) fp16",0.0984,10091.68
+matmul,small,tilelang_tuned,"A:(512,512) B:(512,512) fp16",0.085,10091.68
+matmul,large,pytorch,"A:(16384,16384) B:(16384,16384) fp16",34.2362,10611.31
+matmul,large,triton,"A:(16384,16384) B:(16384,16384) fp16",104.342,10611.31
+matmul,large,triton_tuned,"A:(16384,16384) B:(16384,16384) fp16",56.1049,10603.18
+matmul,large,tilelang,"A:(16384,16384) B:(16384,16384) fp16",42.8043,10603.18
+matmul,large,tilelang_tuned,"A:(16384,16384) B:(16384,16384) fp16",42.7904,10603.18
+matrix_transpose,small,pytorch,"x:(1024,1024) fp16",0.043,10101.31
+matrix_transpose,small,triton,"x:(1024,1024) fp16",0.0831,10101.31
+matrix_transpose,small,triton_tuned,"x:(1024,1024) fp16",0.0692,10093.18
+matrix_transpose,small,tilelang,"x:(1024,1024) fp16",0.0918,10093.18
+matrix_transpose,small,tilelang_tuned,"x:(1024,1024) fp16",0.0813,10093.18
+matrix_transpose,large,pytorch,"x:(16384,16384) fp16",3.469,10611.31
+matrix_transpose,large,triton,"x:(16384,16384) fp16",1.0201,10611.31
+matrix_transpose,large,triton_tuned,"x:(16384,16384) fp16",1.0052,10603.18
+matrix_transpose,large,tilelang,"x:(16384,16384) fp16",3.2291,10603.18
+matrix_transpose,large,tilelang_tuned,"x:(16384,16384) fp16",5.4955,10603.18
+max_reduction,small,pytorch,"x:(1024,1024) dim=1 fp16",0.0363,10099.32
+max_reduction,small,triton,"x:(1024,1024) dim=1 fp16",0.1296,10099.32
+max_reduction,small,triton_tuned,"x:(1024,1024) dim=1 fp16",0.1227,10091.19
+max_reduction,small,tilelang,"x:(1024,1024) dim=1 fp16",0.2508,10095.2
+max_reduction,small,tilelang_tuned,"x:(1024,1024) dim=1 fp16",0.1761,10095.2
+max_reduction,large,pytorch,"x:(8192,32768) dim=1 fp16",0.5595,10099.39
+max_reduction,large,triton,"x:(8192,32768) dim=1 fp16",4.4144,10099.39
+max_reduction,large,triton_tuned,"x:(8192,32768) dim=1 fp16",4.3786,10091.26
+max_reduction,large,tilelang,"x:(8192,32768) dim=1 fp16",11.9591,11115.32
+max_reduction,large,tilelang_tuned,"x:(8192,32768) dim=1 fp16",10.4276,11115.32
+mean_reduction,small,pytorch,"x:(1024,1024) dim=1 fp32",0.0315,10099.31
+mean_reduction,small,triton,"x:(1024,1024) dim=1 fp32",0.0956,10099.31
+mean_reduction,small,triton_tuned,"x:(1024,1024) dim=1 fp32",0.0956,10091.19
+mean_reduction,small,tilelang,"x:(1024,1024) dim=1 fp32",0.1955,10091.19
+mean_reduction,small,tilelang_tuned,"x:(1024,1024) dim=1 fp32",0.1314,10091.19
+mean_reduction,large,pytorch,"x:(8192,32768) dim=1 fp32",0.7681,10099.34
+mean_reduction,large,triton,"x:(8192,32768) dim=1 fp32",1.06,10099.34
+mean_reduction,large,triton_tuned,"x:(8192,32768) dim=1 fp32",1.0452,10091.21
+mean_reduction,large,tilelang,"x:(8192,32768) dim=1 fp32",10.6478,10091.21
+mean_reduction,large,tilelang_tuned,"x:(8192,32768) dim=1 fp32",8.7976,10091.21
+mul,small,pytorch,"x:(4096,) fp16",0.0305,10099.32
+mul,small,triton,"x:(4096,) fp16",0.079,10099.32
+mul,small,triton_tuned,"x:(4096,) fp16",0.0683,10091.19
+mul,small,tilelang,"x:(4096,) fp16",0.0929,10091.19
+mul,small,tilelang_tuned,"x:(4096,) fp16",0.09,10091.19
+mul,large,pytorch,"x:(64M,) fp16",0.2165,10227.31
+mul,large,triton,"x:(64M,) fp16",0.3105,10227.31
+mul,large,triton_tuned,"x:(64M,) fp16",0.3064,10219.18
+mul,large,tilelang,"x:(64M,) fp16",0.3204,10219.18
+mul,large,tilelang_tuned,"x:(64M,) fp16",0.3163,10219.18
+relu,small,pytorch,"x:(4096,4096) fp16",0.0714,10131.31
+relu,small,triton,"x:(4096,4096) fp16",0.0958,10131.31
+relu,small,triton_tuned,"x:(4096,4096) fp16",0.0953,10123.18
+relu,small,tilelang,"x:(4096,4096) fp16",0.123,10123.18
+relu,small,tilelang_tuned,"x:(4096,4096) fp16",0.1123,10123.18
+relu,large,pytorch,"x:(16384,16384) fp16",0.7934,10611.31
+relu,large,triton,"x:(16384,16384) fp16",0.8316,10611.31
+relu,large,triton_tuned,"x:(16384,16384) fp16",0.82,10603.18
+relu,large,tilelang,"x:(16384,16384) fp16",1.1614,10603.18
+relu,large,tilelang_tuned,"x:(16384,16384) fp16",1.1538,10603.18
+rms_norm,small,pytorch,"x:(512,1024) w:(1024,) fp16",0.1652,10103.31
+rms_norm,small,triton,"x:(512,1024) w:(1024,) fp16",0.1071,10100.31
+rms_norm,small,triton_tuned,"x:(512,1024) w:(1024,) fp16",0.1027,10092.18
+rms_norm,small,tilelang,"x:(512,1024) w:(1024,) fp16",2.8647,10096.19
+rms_norm,small,tilelang_tuned,"x:(512,1024) w:(1024,) fp16",0.8742,10096.19
+rms_norm,large,pytorch,"x:(8192,8192) w:(8192,) fp16",2.5163,10611.37
+rms_norm,large,triton,"x:(8192,8192) w:(8192,) fp16",0.2954,10227.31
+rms_norm,large,triton_tuned,"x:(8192,8192) w:(8192,) fp16",0.2816,10219.18
+rms_norm,large,tilelang,"x:(8192,8192) w:(8192,) fp16",294.2667,10731.21
+rms_norm,large,tilelang_tuned,"x:(8192,8192) w:(8192,) fp16",80.4499,10731.21
+softmax,small,pytorch,"x:(512,1024) fp16",0.0264,10100.31
+softmax,small,triton,"x:(512,1024) fp16",0.0878,10100.31
+softmax,small,triton_tuned,"x:(512,1024) fp16",0.0776,10092.18
+softmax,small,tilelang,"x:(512,1024) fp16",3.5405,10096.18
+softmax,small,tilelang_tuned,"x:(512,1024) fp16",1.0866,10096.18
+softmax,large,pytorch,"x:(4096,32768) fp16",0.5435,10355.31
+softmax,large,triton,"x:(4096,32768) fp16",0.4685,10355.31
+softmax,large,triton_tuned,"x:(4096,32768) fp16",0.458,10347.18
+softmax,large,tilelang,"x:(4096,32768) fp16",2.8635,11115.18
+softmax,large,tilelang_tuned,"x:(4096,32768) fp16",2.8559,11115.18
+swiglu,small,pytorch,"xy:(512,8192) fp16",0.0654,10107.31
+swiglu,small,triton,"xy:(512,8192) fp16",0.124,10103.31
+swiglu,small,triton_tuned,"xy:(512,8192) fp16",0.1204,10095.18
+swiglu,small,tilelang,"xy:(512,8192) fp16",0.1682,10103.18
+swiglu,small,tilelang_tuned,"xy:(512,8192) fp16",0.1444,10103.18
+swiglu,large,pytorch,"xy:(4096,32768) fp16",1.1016,10355.31
+swiglu,large,triton,"xy:(4096,32768) fp16",0.4124,10227.31
+swiglu,large,triton_tuned,"xy:(4096,32768) fp16",0.3947,10219.18
+swiglu,large,tilelang,"xy:(4096,32768) fp16",1.0573,10475.18
+swiglu,large,tilelang_tuned,"xy:(4096,32768) fp16",1.0492,10475.18

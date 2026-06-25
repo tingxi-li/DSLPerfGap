@@ -120,23 +120,18 @@ Two additional kernels were optimized to assess generalizability across categori
 \textbf{Square matmul (Triton, FP16).}
 Adding \texttt{@triton.autotune} with an expanded set of tile configurations
 and a \texttt{GROUP\_SIZE\_M} L2 cache swizzle (which reorders output tiles to improve L2 data reuse across the $M$-dimension)
-reduces latency from 2.72~ms to 1.63~ms ($1.66\times$, $E_\text{lib} = 108\%$)
-on a $4096\times4096$ matmul after 6 iterations.
+reduces latency from 1.08~ms to 0.79~ms ($1.37\times$, $E_\text{lib} = 77\%$)
+on a $4096\times4096$ matmul, re-timed on the A100-SXM4;
+the same expanded search recovers $E_\text{lib}$ from $32.5\%$ to $81.8\%$ ($2.52\times$) at the RQ1 $16384^2$ shape.
+The original AKO4ALL campaign reported $1.66\times$ / $108\%$ at $4096^2$ on the RTX 4000 Ada,
+where the matmul mitigation slightly exceeded cuBLAS; on the faster A100 cuBLAS the gap narrows but does not close.
 Iterations 2--6 (persistent kernel, expanded configs, \texttt{max\_num\_imprecise\_acc}) converged without further gain,
 confirming that the expanded configuration set and L2 swizzle are the effective ceiling for this shape.
 This confirms RC2 as a contributor to the GEMM gap
-and demonstrates that search space expansion alone closes it for mid-size square shapes.
+and demonstrates that search-space expansion substantially narrows it for square shapes.
 This reconciles with the earlier default-grid finding that the stock 12-config autotune grid recovers $\Delta\approx0$pp:
 the gain here is a property of the \emph{expanded} search space
 (sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, and \texttt{num\_stages}), not of a different problem shape.
-% REVISION-NOTE-START id=Internal-N4 severity=Major decision=true
-\textcolor{red}{\textbf{[REVISION \#Internal-N4, Major, AUTHOR DECISION]}
-Concern (\textit{Internal, 4134A}): Paper §7.3 says 1.66$\times$ / 108\% at 4096$^2$ ; the A100 artifact \texttt{autotune\_matmul.csv} shows 1.36$\times$ / 76.5\% at 4096$^2$ and 2.52$\times$ / 81.8\% at 16384$^2$ for the expanded search.
-Evidence: \texttt{../experiments/results/NVIDIA\_A100-SXM4-40GB/autotune\_matmul.csv}.
-Option A: Clarify the paper's 1.66$\times$ is the AKO4ALL-campaign figure; add A100 4096$^2$ (1.36$\times$) and 16384$^2$ (2.52$\times$) rows for completeness.
-Option B: Replace 4096$^2$ headline with A100 16384$^2$ (2.52$\times$ / 81.8\%) --- better matches RQ1 framing.
-Decision needed before camera-ready.}
-% REVISION-NOTE-END id=Internal-N4
 
 \textbf{Argmax (TileLang, FP16).}
 Replacing global-memory element accesses with tiled shared-memory bulk loads
@@ -153,10 +148,11 @@ This addresses both RC0 (dtype cast overhead) and RC1 (non-vectorized global acc
 The two TileLang normalization mitigations recover most dramatically: correcting RC0 brings
 LayerNorm and RMSNorm to $124\%$ and $990\%$ of PyTorch ($1347\times$ and $1157\times$ over the
 unoptimized TileLang baseline), confirming RC0 is fully and mechanically correctable.
-The reduction and convolution mitigations recover large speedups over unoptimized DSL code
-(Argmax $5.2\times$, Conv2d $2.2\times$) but do not reach the A100's faster vendor baselines
-($27\%$ and $42\%$): on the data-center A100, \texttt{torch.argmax} and cuDNN are themselves
-substantially faster than on the RTX 4000 Ada where the original optimization campaign ran,
+The Triton matmul, reduction, and convolution mitigations recover real speedups over unoptimized
+DSL code (Matmul $1.37\times$, Argmax $5.2\times$, Conv2d $2.2\times$) but do not reach the A100's
+faster vendor baselines (Matmul $77\%$, Argmax $27\%$, Conv2d $42\%$): on the data-center A100,
+cuBLAS, \texttt{torch.argmax}, and cuDNN are themselves substantially faster than on the RTX 4000 Ada
+where the original optimization campaign ran (where the matmul mitigation even reached $108\%$),
 so the same DSL kernels reach a smaller fraction of the now-faster vendor baseline.
 Of the remaining gap on Conv2d, only $\approx$2--3\% is attributable to absent Winograd selection (RC4);
 the rest reflects general cuDNN implicit-GEMM tuning
@@ -174,7 +170,7 @@ the rest reflects general cuDNN implicit-GEMM tuning
     Kernel    & PyTorch & Before & After & $E_\text{lib}$ & Root cause \\
     \midrule
     \multicolumn{6}{l}{\textit{Triton}} \\
-    \quad Matmul    & 1.76 & 2.71  & \textbf{1.63}  & \textbf{108\%}    & RC2 \\
+    \quad Matmul    & 0.607 & 1.081 & 0.788          & 77.0\%            & RC2 \\
     \quad Conv2d    & 3.44 & 17.86 & 8.12           & 42.4\%            & RC1+RC2 \\
     \midrule
     \multicolumn{6}{l}{\textit{TileLang}} \\
@@ -186,9 +182,9 @@ the rest reflects general cuDNN implicit-GEMM tuning
   }
   \vspace{0.3em}
   {\small $^\dagger$ RMSNorm $E_\text{lib} > 100\%$ due to kernel fusion; see \cref{tab:mitig:norm}.
-  Conv2d and the TileLang rows are re-timed on the A100-SXM4 (locked clocks); Matmul is the
-  AKO4ALL-campaign figure (see \S7.3 reconciliation). Conv2d \emph{Before}/\emph{After} are the
-  baseline vs.\ implicit-GEMM Triton at $3\times3$ (cf.\ \cref{tab:mitig:conv}).}
+  All Triton and TileLang rows are re-timed on the A100-SXM4 (locked clocks). \emph{Before} is the
+  unoptimized DSL kernel (Matmul: plain Triton; Conv2d: baseline vs.\ implicit-GEMM Triton at $3\times3$,
+  cf.\ \cref{tab:mitig:conv}); Matmul at $4096^2$.}
 
 \end{table}
 The normalization, reduction, and convolution mitigations in \cref{tab:mitigation} are re-timed on the

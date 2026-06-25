@@ -439,5 +439,158 @@
   "swiglu/tilelang/H100_80GB_HBM3": {
     "block_M": 16,
     "threads": 256
+  },
+  "add/triton/A100-SXM4-40GB": {
+    "BLOCK_SIZE": 4096
+  },
+  "add/tilelang/A100-SXM4-40GB": {
+    "block_N": 2048,
+    "threads": 128
+  },
+  "argmax/triton/A100-SXM4-40GB": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 256
+  },
+  "argmax/tilelang/A100-SXM4-40GB": {
+    "block_M": 16,
+    "block_K": 16,
+    "threads": 128
+  },
+  "attention/triton/A100-SXM4-40GB": {
+    "BT": 16,
+    "num_warps": 8
+  },
+  "attention/tilelang/A100-SXM4-40GB": {
+    "block_M": 16,
+    "block_N": 16,
+    "block_K": 16,
+    "threads": 128
+  },
+  "batched_matmul/triton/A100-SXM4-40GB": {
+    "block_m": 16,
+    "block_n": 16,
+    "block_k": 64
+  },
+  "batched_matmul/tilelang/A100-SXM4-40GB": {
+    "block_N": 64,
+    "block_K": 32,
+    "threads": 128
+  },
+  "conv2d/triton/A100-SXM4-40GB": {
+    "BLOCK_SIZE_BATCH_HEIGHT_WIDTH": 128,
+    "BLOCK_SIZE_IN_FEAT": 16,
+    "BLOCK_SIZE_OUT_FEAT": 64
+  },
+  "conv2d/tilelang/A100-SXM4-40GB": {
+    "BLOCK_M": 32,
+    "BLOCK_N": 64,
+    "BLOCK_K": 16,
+    "NUM_STAGES": 2
+  },
+  "cross_entropy/triton/A100-SXM4-40GB": {
+    "BLOCK_SIZE": 256
+  },
+  "cross_entropy/tilelang/A100-SXM4-40GB": {
+    "threads": 32
+  },
+  "embedding/triton/A100-SXM4-40GB": {
+    "BLOCK_N": 32,
+    "num_warps": 4
+  },
+  "embedding/tilelang/A100-SXM4-40GB": {
+    "block_N": 2,
+    "block_D": 256,
+    "threads": 256
+  },
+  "index_select/triton/A100-SXM4-40GB": {
+    "BLOCK_SIZE_COL": 128
+  },
+  "index_select/tilelang/A100-SXM4-40GB": {
+    "block_N": 32,
+    "threads": 128
+  },
+  "layer_norm/triton/A100-SXM4-40GB": {
+    "RBLOCK": 1024
+  },
+  "layer_norm/tilelang/A100-SXM4-40GB": {
+    "threads": 32
+  },
+  "leaky_relu/triton/A100-SXM4-40GB": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 128,
+    "BLOCK_SIZE_K": 32,
+    "GROUP_SIZE_M": 8
+  },
+  "leaky_relu/tilelang/A100-SXM4-40GB": {
+    "block_M": 128,
+    "block_N": 64,
+    "block_K": 32,
+    "num_stages": 2
+  },
+  "linear_activation/triton/A100-SXM4-40GB": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 64,
+    "BLOCK_SIZE_K": 32
+  },
+  "linear_activation/tilelang/A100-SXM4-40GB": {
+    "block_M": 64,
+    "block_N": 128,
+    "block_K": 16,
+    "num_stages": 2
+  },
+  "log_softmax/triton/A100-SXM4-40GB": {
+    "BLOCK_M": 8
+  },
+  "log_softmax/tilelang/A100-SXM4-40GB": {
+    "threads": 32
+  },
+  "logsumexp/triton/A100-SXM4-40GB": {
+    "num_warps": 16
+  },
+  "logsumexp/tilelang/A100-SXM4-40GB": {
+    "block_M": 8,
+    "threads": 128
+  },
+  "matmul/triton/A100-SXM4-40GB": {
+    "BLOCK_SIZE_M": 64,
+    "BLOCK_SIZE_N": 128,
+    "BLOCK_SIZE_K": 64
+  },
+  "matrix_transpose/tilelang/A100-SXM4-40GB": {
+    "block_M": 32,
+    "block_N": 128,
+    "threads": 128
+  },
+  "max_reduction/triton/A100-SXM4-40GB": {
+    "BLOCK_M": 32
+  },
+  "max_reduction/tilelang/A100-SXM4-40GB": {
+    "block_M": 16,
+    "block_K": 32,
+    "threads": 128
+  },
+  "mean_reduction/tilelang/A100-SXM4-40GB": {
+    "block_M": 16,
+    "block_K": 16,
+    "threads": 128
+  },
+  "relu/tilelang/A100-SXM4-40GB": {
+    "block_N": 2048,
+    "threads": 256
+  },
+  "rms_norm/triton/A100-SXM4-40GB": {
+    "num_warps": 8
+  },
+  "rms_norm/tilelang/A100-SXM4-40GB": {
+    "threads": 32
+  },
+  "softmax/triton/A100-SXM4-40GB": {
+    "num_warps": 2
+  },
+  "softmax/tilelang/A100-SXM4-40GB": {
+    "threads": 32
+  },
+  "swiglu/triton/A100-SXM4-40GB": {
+    "BLOCK_N": 1024
   }
 }
