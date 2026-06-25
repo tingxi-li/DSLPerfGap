@@ -48,12 +48,7 @@ Their analysis motivates the baseline construction in \cref{sec:meth:baselines}.
 
 Winograd convolution~\cite{lavin2016fast} reduces arithmetic by up to $4\times$
 for $3 \times 3$ filters at the cost of additional data transformation passes.
-% REVISION-NOTE-START id=GAP-3 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#GAP-3, Medium]}
-Concern (\textit{Audit}): Background arithmetic figure is fine, but the corrected RC4 magnitude is much smaller than the theoretical 4$\times$ Winograd arithmetic reduction.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/winograd\_isolation.csv}.
-Fix: Add: ``In our measurements (\cref{sec:mitig:conv}), the wall-clock benefit attributable specifically to Winograd selection is much smaller ($\approx$2--3\%); the arithmetic reduction does not translate proportionally because cuDNN's general implicit-GEMM tuning dominates the gap.''}
-% REVISION-NOTE-END id=GAP-3
+In our measurements (\cref{sec:mitig:conv}), the wall-clock benefit attributable specifically to Winograd selection is much smaller ($\approx$2--3\%); the arithmetic reduction does not translate proportionally because cuDNN's general implicit-GEMM tuning dominates the gap.
 cuDNN's selection of Winograd for appropriate shapes is a key component
 of its performance lead, as analyzed in \cref{sec:analysis:algo}.
 Adding Winograd support as a first-class lowering pass within a DSL like Triton

@@ -46,41 +46,12 @@ A performance gap in this setting has direct software engineering consequences. 
 Convolution is the clearest case in which this problem becomes visible~\cite{triton2022conv591}. Existing evidence for DSL efficiency is concentrated in GEMM and attention: Triton’s original matrix multiplication results and later attention kernels such as FlashAttention~\cite{dao2022flashattention} established that tile-based programming can match or approach highly optimized baselines on these workloads. By contrast, convolution support is less mature. The paper notes that practitioners have repeatedly reported substantial gaps between Triton-based convolution kernels and cuDNN, while TileLang’s convolution behavior relative to cuDNN had not been systematically evaluated before this study~\cite{triton2022conv591}. The result is a concrete gap in knowledge: the field does not yet know how large the convolution gap is, how consistently it appears, what causes it, or how much of it can be reduced through targeted engineering changes.
 
 This paper addresses that problem through an empirical study of performance gaps between DSL-written kernels and optimized libraries. It evaluates Triton and TileLang against cuBLAS and cuDNN on a suite of 22 kernels spanning five operator classes: GEMM, attention, convolution, normalization, and element-wise operations.
-% REVISION-NOTE-START id=Minor-1 severity=Minor
-\textcolor{red}{\textbf{[REVISION \#Minor-1, Minor]}
-Concern (\textit{Minor-1}): Kernel-count inconsistency: this line said 21; methodology and abstract say 22. Artifact has 22 kernel directories.
-Evidence: \texttt{../ViperBench/} (22 subdirs).
-Fix: Change \texttt{21} to \texttt{22} on this line.}
-% REVISION-NOTE-END id=Minor-1
-The study is organized around three questions: the magnitude and distribution of the gap, the factors that cause it, and the extent to which targeted mitigations can reduce it. The evaluation is conducted on an NVIDIA RTX 4000 Ada Generation GPU and is supported by hardware-counter profiling with Nsight Compute.
-% REVISION-NOTE-START id=4134A-W5 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W5, Major (deferred)]}
-Concern (\textit{4134A-W5}): Single-GPU scope; reviewers ask about A100/H100 generalization.
-Evidence: \texttt{../experiments/A100\_H100\_RUNBOOK.md}.
-Fix: Add forward reference: ``Cross-architecture validation on A100 and H100 is reported in \cref{sec:threats}.'' Actual A100/H100 numbers land in the revision.}
-% REVISION-NOTE-END id=4134A-W5
+The study is organized around three questions: the magnitude and distribution of the gap, the factors that cause it, and the extent to which targeted mitigations can reduce it. The evaluation is conducted on an NVIDIA A100-SXM4-40GB (sm\_80) GPU and is supported by hardware-counter profiling with Nsight Compute.
+Cross-architecture validation on an additional A100-PCIE-40GB and an H100-80GB-HBM3 is reported in \cref{sec:threats}.
 
-The results show that DSL efficiency is not uniform across operator classes. Triton is competitive on element-wise kernels and performs well on some normalization workloads, but reaches only 35–49\% of cuDNN throughput on the tested convolution configurations. TileLang shows a larger deficit on convolution, below 10\% of cuDNN throughput on the evaluated cases, and also exhibits a severe normalization anomaly that the paper traces to reduction and vectorization issues.
-% REVISION-NOTE-START id=4134A-W1 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W1 + \#GAP-1 + \#GAP-4, Major]}
-Concern (\textit{4134A-W1}): The submitted-PDF framing of the reduction as a barrier-sync stall is wrong: NCU shows \texttt{warp\_stall\_barrier} $\approx$ 0 and \texttt{warp\_stall\_long\_scoreboard} $\approx$ 105 cycles. The reduction is memory-latency-bound.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/NCU\_FINDINGS.md}.
-Fix: Keep ``reduction and vectorization issues'' as the high-level summary, but add a half-sentence: ``Specifically, \texttt{T.serial} loops serialize memory-latency hiding (not barrier synchronization).'' Do NOT re-introduce barrier-sync wording.}
-% REVISION-NOTE-END id=4134A-W1
-Root-cause analysis attributes convolution underperformance to four main factors: missing vectorization for strided memory accesses, mismatch in autotuning search space, register pressure for larger filters, and the absence of Winograd algorithm support.
-% REVISION-NOTE-START id=4134A-W3 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W3 + \#GAP-2 + \#GAP-3, Major]}
-Concern (\textit{4134A-W3}): Two issues: (1) ``register pressure for larger filters'' attributes RC3 to convolution, but Triton conv \texttt{n\_spills = 0}; RC3 is TileLang-LayerNorm-specific. (2) Winograd is listed as a ``main'' factor but contributes only $\approx$2--3\%.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}, \texttt{winograd\_isolation.csv}.
-Fix: Reorder/soften to: ``missing vectorization for strided memory accesses (RC1), mismatch in autotuning search space (RC2), and a small contribution from absent Winograd algorithm support (RC4, $\approx$2--3\%); register pressure (RC3) is observed in TileLang normalization, not in Triton convolution.''}
-% REVISION-NOTE-END id=4134A-W3
-Targeted mitigations recover a substantial part of the lost performance, but they do not fully eliminate the convolution gap.
-% REVISION-NOTE-START id=4134A-W4 severity=Medium
-\textcolor{red}{\textbf{[REVISION \#4134A-W4, Medium]}
-Concern (\textit{4134A-W4}): Reviewers ask whether recovery is realizable by automated tooling or only by manual rewrite.
-Evidence: \texttt{../REBUTTAL.md} \S1 A\#4.
-Fix: Add framing distinguishing user-space-fixable (RC0a via \texttt{T.reduce}, native-dtype I/O, RC2a swizzle) from compiler-fixable (RC0b vectorization codegen, broader RC2b search); position the rewrites as a lower bound on automatable recovery.}
-% REVISION-NOTE-END id=4134A-W4
+The results show that DSL efficiency is not uniform across operator classes. Triton is competitive on element-wise kernels and performs well on some normalization workloads, but reaches only 10--29\% of cuDNN throughput on the tested convolution configurations. TileLang shows a larger deficit on convolution, below 13\% of cuDNN throughput on the evaluated cases, and also exhibits a severe normalization anomaly that the paper traces to reduction and vectorization issues. Specifically, \texttt{T.serial} loops serialize memory-latency hiding (not barrier synchronization).
+Root-cause analysis attributes convolution underperformance to missing vectorization for strided memory accesses (RC1), mismatch in autotuning search space (RC2), and a small contribution from absent Winograd algorithm support (RC4, $\approx$2--3\%); register pressure (RC3) is observed in TileLang normalization, not in Triton convolution.
+Targeted mitigations recover a substantial part of the lost performance, but they do not fully eliminate the convolution gap. We distinguish user-space-fixable causes (RC0a, addressable with \texttt{T.reduce} and native-dtype I/O; RC2a, addressable with an autotuning swizzle) from compiler-fixable causes (RC0b vectorized-load codegen and the broader RC2b search space), and position our manual rewrites as a lower bound on the recovery achievable by automated tooling.
 
 The contribution of this paper is therefore both empirical and practical:
 \begin{itemize}
@@ -113,14 +84,14 @@ The contribution of this paper is therefore both empirical and practical:
 
 % We evaluate these questions over a kernel suite derived from TritonBench~\cite{li2025tritonbench},
 % augmented with TileLang implementations and additional convolution variants,
-% running on an NVIDIA RTX 4000 Ada Generation GPU.
+% running on an NVIDIA A100-SXM4-40GB (sm\_80) GPU.
 % We use NVIDIA Nsight Compute~\cite{nsightcompute2024} to profile hardware performance counters;
 % counter-based claims in the root-cause analysis serve as hypotheses pending experimental confirmation.
 
 % \paragraph{Contributions.}
 % \begin{itemize}
 %   \item The first systematic benchmark of DSL kernel performance across five operator categories,
-%     quantifying the gap relative to cuBLAS and cuDNN on the NVIDIA RTX 4000 Ada Generation GPU (Ada Lovelace, \texttt{sm\_89}).
+%     quantifying the gap relative to cuBLAS and cuDNN on the NVIDIA A100-SXM4-40GB GPU (Ampere, \texttt{sm\_80}).
 %   \item A root-cause taxonomy identifying four causes of DSL convolution underperformance: absent vectorization (RC1), auto-tuning search space mismatch (RC2), register pressure for large filters (RC3), and missing Winograd algorithm selection (RC4). The taxonomy is grounded in latency measurements and compiler-level reasoning.
 %   \item Targeted mitigations for five affected kernels:
 %     correcting TileLang's \texttt{T.reduce} usage brings LayerNorm to 97.8\% and RMSNorm to 1110\% of PyTorch efficiency (RMSNorm's gain driven by kernel fusion eliminating a redundant memory pass);

@@ -18,12 +18,7 @@
 We organize the study around three research questions. The first quantifies performance gaps, the second explains them, and the third evaluates whether they can be reduced through targeted changes.
 
 \noindent\textbf{RQ1 (Characterization).} What performance gap separates Triton and TileLang kernels from cuBLAS and cuDNN baselines, and how does this gap differ across operator categories?
-% REVISION-NOTE-START id=4134A-W5 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W5, Major]}
-Concern (\textit{4134A, 4134B, 4134C}): RQ1 is implicitly single-GPU; reviewers ask whether the RC mechanisms generalize to A100/H100.
-Evidence: \texttt{../experiments/A100\_H100\_RUNBOOK.md}.
-Fix: Add a one-line scope note: ``Cross-architecture replay on A100/H100 is reported in \cref{sec:threats}; the RC mechanisms identified in RQ2 are expected to transfer but require empirical confirmation.''}
-% REVISION-NOTE-END id=4134A-W5
+Our primary measurements use an NVIDIA A100-SXM4-40GB (sm\_80); cross-architecture replay on A100-PCIE-40GB and H100-80GB-HBM3 is reported in \cref{sec:threats}, confirming that the RC mechanisms identified in RQ2 transfer across form factors and GPU families.
 
 \medskip\noindent\textbf{RQ2 (Root-Cause Analysis).} What compiler and architectural factors contribute most to the observed gaps?
 

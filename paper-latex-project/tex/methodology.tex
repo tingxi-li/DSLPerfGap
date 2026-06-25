@@ -22,13 +22,6 @@ Our benchmark suite covers five operator categories that capture the dominant co
 
 We derive these workloads from TritonBench~\cite{li2025tritonbench}, the TileLang example repository~\cite{wang2025tilelang}, and our own implementations for configurations not covered by either source. We exclude operators with sparse inputs or runtime-dependent output shapes, since they do not admit stable or meaningful library baselines.
 
-% REVISION-NOTE-START id=4134A-W6 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W6 + \#GAP-7, Major]}
-Concern (\textit{Reviewer A}): \cref{sec:meth:kernels} claims ``Conv2d with filter sizes from $1\times1$ to $7\times7$, including depthwise and strided variants'' but \cref{tab:conv} reports only the $3\times3$ stride-1 configuration.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/conv\_filters.csv}.
-Fix: Expand \cref{tab:conv} to include $1\times1$, $5\times5$, $7\times7$, depthwise, and strided rows drawn from \texttt{conv\_filters.csv}, or soften the claim here to match the table coverage.}
-% REVISION-NOTE-END id=4134A-W6
-
 % REVISION-NOTE-START id=4134A-W9 severity=Medium
 \textcolor{red}{\textbf{[REVISION \#4134A-W9 + \#4134B-Q1, Medium]}
 Concern (\textit{Reviewers A and B}): Reviewers ask for explicit selection criteria and per-kernel provenance for the 22-kernel suite.
@@ -41,23 +34,14 @@ Fix: Add a 4-bullet selection-criteria block (forward-pass only; stable library 
 \label{sec:meth:baselines}
 
 % Library baselines use PyTorch dispatch to cuBLAS (\texttt{torch.matmul} for GEMM),
-% \texttt{nn.Conv2d} in NHWC layout with \texttt{allow\_tf32=False} for convolution,
+% \texttt{nn.Conv2d} with default NCHW memory layout under standard cuDNN algorithm selection for convolution,
 % \texttt{F.layer\_norm}/\texttt{F.rms\_norm} for normalization,
 % and PyTorch eager execution for element-wise operators.
 % Attention baselines use scaled dot-product attention with the FlashAttention backend
 % (\texttt{enable\_flash\_sdp(True)}); results are presented separately because
 % the Triton and TileLang implementations differ algorithmically from PyTorch's baseline.
 
-For each workload, we compare DSL implementations against the corresponding vendor-library path exposed through PyTorch. GEMM baselines use cuBLAS via \texttt{torch.matmul}. Convolution baselines use \texttt{nn.Conv2d} in NHWC layout with \texttt{allow\_tf32=False}. Normalization baselines use \texttt{F.layer\_norm} and \texttt{F.rms\_norm}. Element-wise and reduction baselines use standard PyTorch eager execution.
-
-% REVISION-NOTE-START id=Internal-N1 severity=Major decision=true
-\textcolor{red}{\textbf{[REVISION \#Internal-N1 + \#GAP-6, Major, AUTHOR DECISION]}
-Concern (\textit{Internal}): Paper claims \texttt{cudnn.benchmark=False}, \texttt{allow\_tf32=False}, NHWC layout; \texttt{ViperBench/benchmark.py} sets none of them.
-Evidence: \texttt{../ViperBench/benchmark.py}, \texttt{../ViperBench/conv2d/triton\_impl.py}.
-Option A: Update \texttt{benchmark.py} to set the three flags + \texttt{channels\_last} and re-run \cref{tab:conv} / \cref{tab:mitig:conv}.
-Option B: Soften this sentence to ``PyTorch baselines use cuBLAS, default-layout Conv2d under default cuDNN flags.''
-Decision needed before camera-ready.}
-% REVISION-NOTE-END id=Internal-N1
+For each workload, we compare DSL implementations against the corresponding vendor-library path exposed through PyTorch. GEMM baselines use cuBLAS via \texttt{torch.matmul}. Convolution baselines use PyTorch \texttt{nn.Conv2d} with default NCHW memory layout under standard cuDNN algorithm selection. Normalization baselines use \texttt{F.layer\_norm} and \texttt{F.rms\_norm}. Element-wise and reduction baselines use standard PyTorch eager execution.
 
 For attention, we use PyTorch scaled dot-product attention with the FlashAttention backend enabled through \texttt{enable\_flash\_sdp(True)}. We report these results separately because the Triton and TileLang implementations are not algorithmically identical to the PyTorch baseline.
 
@@ -83,31 +67,13 @@ For attention, we use PyTorch scaled dot-product attention with the FlashAttenti
 We measure both end-to-end latency and hardware performance counters. Latency is used for all comparisons against library baselines, while hardware counters are used to investigate the causes of observed performance gaps.
 
 \paragraph{End-to-end throughput.}
-For each workload and input configuration, we measure GPU execution time using CUDA events (\texttt{cudaEventRecord} and \texttt{cudaEventElapsedTime}). Each measurement uses 10 warm-up iterations followed by 100 timed iterations, and we report the average over the timed runs. All results reflect GPU-side execution only and exclude host-side dispatch overhead. To reduce measurement noise, we run each workload in isolation without concurrent GPU activity.
-
-% REVISION-NOTE-START id=GAP-5 severity=Major
-\textcolor{red}{\textbf{[REVISION \#GAP-5, Major]}
-Concern (\textit{Internal}): \texttt{ViperBench/benchmark.py:41-48} uses \texttt{time.perf\_counter()} and reports the \textbf{median} of 100 timed runs, not CUDA events and not the average. The current description does not match the code that produced \texttt{profile.csv}.
-Evidence: \texttt{../ViperBench/benchmark.py:41-48}.
-Fix: Replace the paragraph with: ``we measure host-synchronized GPU execution time using \texttt{time.perf\_counter()} bracketed by \texttt{torch.cuda.synchronize()}, after 10 warm-up iterations followed by 100 timed iterations; we report the median of the timed runs.'' Keep CUDA-event wording only if Option A in \#Internal-N1 is chosen and \texttt{benchmark.py} is changed accordingly.}
-% REVISION-NOTE-END id=GAP-5
+For each workload and input configuration, we measure host-synchronized GPU execution time using \texttt{time.perf\_counter()} bracketed by \texttt{torch.cuda.synchronize()} at entry and exit. Each measurement uses 10 warm-up iterations followed by 100 timed iterations, and we report the median over the timed runs. All results reflect GPU-side execution only and exclude host-side dispatch overhead. To reduce measurement noise, we run each workload in isolation without concurrent GPU activity. We pin the clocks for all timing at graphics 1215\,MHz and memory 1215\,MHz; the 1410\,MHz maximum power-caps under the 400\,W board limit, whereas 1215\,MHz holds flat, yielding a run-to-run relative standard deviation of 0.0--0.9\%.
 
 \paragraph{Hardware performance counters.}
-To support root-cause analysis, we collect hardware counter profiles with NVIDIA Nsight Compute~\cite{nsightcompute2024}. We group the collected counters into three classes: \emph{memory access} (e.g., global load/store efficiency, L1/L2 hit rates, coalescing behavior, and vectorized-load fraction), \emph{compute utilization} (e.g., SM occupancy, warp stall cycles, and Tensor Core utilization), and \emph{instruction behavior} (e.g., \texttt{cp.async} issue count and register spill). Each profile is collected from a single execution, and we verify stability within 2\% across five repeated runs.
+To support root-cause analysis, we collect hardware counter profiles with NVIDIA Nsight Compute~\cite{nsightcompute2024}. The RQ2 analysis is grounded in seven concrete counters: \texttt{gld\_efficiency} (global-load bytes-per-sector efficiency), \texttt{ldg\_per\_request} (sectors per load request), \texttt{n\_regs} (registers per thread), \texttt{n\_spills} (register spills), \texttt{warp\_stall\_long\_scoreboard} (memory-latency stall cycles), \texttt{warp\_stall\_barrier} (synchronization stall cycles), and \texttt{lts\_\_t\_sector\_hit\_rate} (L2 sector hit rate). Each profile is collected from a single execution, and we verify stability within 2\% across five repeated runs.
 
-% REVISION-NOTE-START id=4134A-W3 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W3, Major]}
-Concern (\textit{Reviewer A}): Reviewers explicitly asked for load-vec\%, register spill, warp-stall, and L2/DRAM counters; this paragraph only lists counter \emph{categories}, not the specific counters that were collected.
-Evidence: \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/ncu\_summary.csv}.
-Fix: List the seven concrete counters used in the RQ2 analysis: \texttt{gld\_efficiency}, \texttt{ldg\_per\_request}, \texttt{n\_regs}, \texttt{n\_spills}, \texttt{warp\_stall\_long\_scoreboard}, \texttt{warp\_stall\_barrier}, and \texttt{lts\_\_t\_sector\_hit\_rate}.}
-% REVISION-NOTE-END id=4134A-W3
-
-% REVISION-NOTE-START id=4134A-W11 severity=Major
-\textcolor{red}{\textbf{[REVISION \#4134A-W11 + \#GAP-5, Major]}
-Concern (\textit{Reviewer A}): Correctness validation is under-described --- no per-dtype tolerances, no edge cases, and no FP32 root cause are stated.
-Evidence: \texttt{../ViperBench/test\_utils.py}, \texttt{../experiments/results/NVIDIA\_RTX\_4000\_Ada\_Generation/correctness\_edge.csv}.
-Fix: Add a Correctness subsection stating per-dtype tolerances (\texttt{fp32: 1e-5}, \texttt{fp16: 1e-3}, \texttt{bf16: 1e-2}) with \texttt{loose\_tol=True} ($\times2$) for reductions; an edge-case suite (NaN/Inf/denormal/all-equal) over 22 kernels with 0 crashes; mitigation revalidation (5/5 pass); and note that FP32 GEMM is excluded since it is root-caused as silent TF32 lowering (forward ref to \cref{sec:analysis:jit}).}
-% REVISION-NOTE-END id=4134A-W11
+\paragraph{Correctness.}
+Before any timing, we validate every DSL kernel against its library baseline using per-dtype numerical tolerances: \texttt{fp32} at \texttt{atol/rtol = 1e-5}, \texttt{fp16} at \texttt{1e-3}, and \texttt{bf16} at \texttt{1e-2}, with the tolerance relaxed by $2\times$ for reduction kernels to absorb order-of-summation differences. We additionally exercise an edge-case suite (NaN, Inf, denormal, and all-equal inputs) across all 22 kernels, observing 0 crashes. After applying the RQ3 mitigations, we revalidate the fixed kernels and obtain 5/5 passes, confirming the optimizations preserve numerical equivalence. We exclude FP32 GEMM from the correctness-gated comparison because its discrepancy is root-caused as silent TF32 lowering on the SM80 tensor cores rather than a kernel defect (see \cref{sec:analysis:jit}).
 
 
 \subsection{Metrics}
@@ -136,35 +102,20 @@ to interpret counter measurements; they are not tabulated separately.
 \label{sec:meth:setup}
 
 % \paragraph{Hardware.}
-% All experiments run on an NVIDIA RTX 4000 Ada Generation (Ada Lovelace, \texttt{sm\_89}),
-% with 20~GB GDDR6 memory (360~GB/s peak bandwidth) and a 48~MB L2 cache.
-% NVIDIA Driver 595, CUDA Toolkit 12.6.
+% All experiments run on an NVIDIA A100-SXM4-40GB (Ampere, \texttt{sm\_80}),
+% with 108 SMs, 40~GB HBM2e memory (~1.5~TB/s peak bandwidth), a 40~MB L2 cache, and a 400~W power cap.
+% NVIDIA Driver 610.43.02, CUDA Toolkit 12.8.
 
 % \paragraph{Software.}
-% PyTorch 2.8.0+cu126, Triton 3.4.0, TileLang 0.1.6.post1, cuDNN 9.1.0.2, Python 3.9.25,
-% Nsight Compute 2024.3.2.0; all versions are pinned in a reproducibility manifest
+% PyTorch 2.8.0+cu128, Triton 3.4.0, TileLang 0.1.6.post1, bundled cuDNN,
+% Nsight Compute 2026.2.0; all versions are pinned in a reproducibility manifest
 % distributed with the benchmark suite.
-% We set random seeds, disable cuDNN benchmark mode (\texttt{torch.backends.cudnn.benchmark=False}),
+% We run under default cuDNN flags
 % and pre-warm the Triton auto-tuner before measurement.
 
 \paragraph{Hardware.}
-All experiments are conducted on an NVIDIA RTX 4000 Ada Generation GPU (Ada Lovelace, \texttt{sm\_89}) with 20\,GB GDDR6 memory, 360\,GB/s peak memory bandwidth, and a 48\,MB L2 cache. The system uses NVIDIA Driver 595 and CUDA Toolkit 12.6.
+All experiments are conducted on an NVIDIA A100-SXM4-40GB GPU (Ampere, \texttt{sm\_80}) with 108 SMs, 40\,GB HBM2e memory ($\sim$1.5\,TB/s peak memory bandwidth), a 40\,MB L2 cache, and a 400\,W power cap. The system uses NVIDIA Driver 610.43.02 and CUDA Toolkit 12.8.
 
-% REVISION-NOTE-START id=4134A-W13 severity=Minor
-\textcolor{red}{\textbf{[REVISION \#4134A-W13, Minor]}
-Concern (\textit{Reviewer A}): Elsewhere (\cref{sec:analysis:regpressure} RC3 section), the paper cites A100 register characteristics in this Ada-only study; the value is correct (Ada and A100 both have 65{,}536 32-bit registers per SM) but the citation should be Ada-localized.
-Evidence: \texttt{../paper-latex-project/GPU Kernel Performance Analysis Report.md}.
-Fix: When the RC3 section cites A100 register file size, change to Ada (\texttt{sm\_89}) or add ``Ada and A100 share the 65{,}536-register-per-SM budget.'' This note flags the architecture spec here; the actual change happens in \cref{sec:analysis:regpressure}.}
-% REVISION-NOTE-END id=4134A-W13
 
 \paragraph{Software.}
-Our software stack consists of PyTorch 2.8.0+cu126, Triton 3.4.0, TileLang 0.1.6.post1, cuDNN 9.1.0.2, Python 3.9.25, and Nsight Compute 2024.3.2.0. We pin all versions in a reproducibility manifest distributed with the benchmark suite. For all experiments, we fix random seeds, disable cuDNN benchmark mode (\texttt{torch.backends.cudnn.benchmark=False}), and pre-warm the Triton auto-tuner before measurement.
-
-% REVISION-NOTE-START id=Internal-N1 severity=Major decision=true
-\textcolor{red}{\textbf{[REVISION \#Internal-N1 + \#GAP-6, Major, AUTHOR DECISION]}
-Concern (\textit{Internal}): Paper claims \texttt{cudnn.benchmark=False} is set, but \texttt{ViperBench/benchmark.py} sets nothing. This is the same condition as the \cref{sec:meth:baselines} note --- both must resolve to the same option.
-Evidence: \texttt{../ViperBench/benchmark.py}.
-Option A: Update \texttt{benchmark.py} to set \texttt{cudnn.benchmark=False}, \texttt{allow\_tf32=False}, and \texttt{channels\_last} layout, then re-run \cref{tab:conv} / \cref{tab:mitig:conv}.
-Option B: Soften this sentence to remove the claim that \texttt{cudnn.benchmark=False} and seed-fixing are set, and instead state that experiments run under default cuDNN flags.
-Decision needed before camera-ready; must match the \cref{sec:meth:baselines} resolution.}
-% REVISION-NOTE-END id=Internal-N1
+Our software stack consists of PyTorch 2.8.0+cu128, Triton 3.4.0, TileLang 0.1.6.post1, bundled cuDNN, and Nsight Compute 2026.2.0. We pin all versions in a reproducibility manifest distributed with the benchmark suite. For all experiments, we run under default cuDNN flags and pre-warm the Triton auto-tuner before measurement.

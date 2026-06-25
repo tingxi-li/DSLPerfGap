@@ -5,7 +5,9 @@ Library efficiency (%) = t_lib / t_DSL * 100 for all benchmark kernels,
 grouped by kernel category and DSL (Triton vs. TileLang).
 
 Data hard-coded from evaluation tables in tex/evaluation.tex.
-Run: python figures/gen_overview.py
+All values below are the NVIDIA A100-SXM4-40GB per-kernel E_lib figures
+(re-derived for the A100 revision; see AUTHORITATIVE_NUMBERS.md).
+Regenerate the PDF after any table edit with: python figures/gen_overview.py
 """
 
 import os
@@ -24,23 +26,23 @@ import matplotlib.patches as mpatches
 #                     plotted separately so it does not distort the box.
 # ---------------------------------------------------------------------------
 fair = {
-    # GEMM: 16384^2, batched 64x128^2, batched 128x2048^2, fused linear+act
-    ("GEMM",         "Triton"):   [77.1, 58.2, 52.0, 31.7],
-    ("GEMM",         "TileLang"): [199.7, 56.4, 26.5, 10.7],
+    # GEMM: 16384^2 square, batched 64x128^2, batched 128x2048^2, fused linear+act
+    ("GEMM",         "Triton"):   [32.8, 92.7, 92.9, 72.5],
+    ("GEMM",         "TileLang"): [80.0, 7.0, 548.6],
     # Conv2d: 8x64x56x56 3x3, 32x256x128x128 3x3
-    ("Conv2d",       "Triton"):   [49.1, 34.9],
-    ("Conv2d",       "TileLang"): [8.1,  9.5],
-    # Normalization: LayerNorm only (RMSNorm 1099% is an unfused-baseline artifact)
-    ("Norm.",        "Triton"):   [94.6],
-    ("Norm.",        "TileLang"): [0.32, 5.3],
+    ("Conv2d",       "Triton"):   [44.87, 19.33],
+    ("Conv2d",       "TileLang"): [4.12,  12.62],
+    # Normalization: LayerNorm only (RMSNorm 851.8% is an unfused-baseline artifact)
+    ("Norm.",        "Triton"):   [88.7],
+    ("Norm.",        "TileLang"): [0.1, 0.9],
     # Element-wise: relu, add
-    ("Element-wise", "Triton"):   [103.4, 103.4],
-    ("Element-wise", "TileLang"): [68.7,  77.3],
+    ("Element-wise", "Triton"):   [95.4, 89.5],
+    ("Element-wise", "TileLang"): [68.3,  74.5],
 }
 
 # Rendered as hollow-diamond markers (unfair-baseline outlier)
 unfair_outliers = {
-    ("Norm.", "Triton"): 1099.0,   # RMSNorm: PyTorch eager path is unfused
+    ("Norm.", "Triton"): 851.8,   # RMSNorm: PyTorch eager path is unfused
 }
 
 CATEGORIES = ["GEMM", "Conv2d", "Norm.", "Element-wise"]
@@ -156,23 +158,23 @@ norm_idx   = CATEGORIES.index("Norm.")
 triton_idx = DSLS.index("Triton")
 x_rms = x_centers[norm_idx] + offsets[triton_idx]
 ax.annotate(
-    "1099%\n(unfused\nbaseline)",
-    xy=(x_rms, 1099),
-    xytext=(x_rms - 0.9, 700),
+    "852%\n(unfused\nbaseline)",
+    xy=(x_rms, 851.8),
+    xytext=(x_rms - 0.9, 550),
     fontsize=5.5,
     color=COLORS["Triton"],
     arrowprops=dict(arrowstyle="->", lw=0.6, color=COLORS["Triton"]),
     ha="center", va="center",
 )
 
-# TileLang fused linear+activation = 199.7 % (GEMM category) — annotate below the flier
+# TileLang fused linear+activation = 548.6 % (GEMM category) — annotate below the flier
 gemm_idx     = CATEGORIES.index("GEMM")
 tilelang_idx = DSLS.index("TileLang")
 x_fused = x_centers[gemm_idx] + offsets[tilelang_idx]
 ax.annotate(
-    "200%\n(kernel\nfusion)",
-    xy=(x_fused, 199.7),
-    xytext=(x_fused - 0.55, 130),
+    "549%\n(kernel\nfusion)",
+    xy=(x_fused, 548.6),
+    xytext=(x_fused - 0.55, 250),
     fontsize=5.5,
     color=COLORS["TileLang"],
     arrowprops=dict(arrowstyle="->", lw=0.6, color=COLORS["TileLang"]),

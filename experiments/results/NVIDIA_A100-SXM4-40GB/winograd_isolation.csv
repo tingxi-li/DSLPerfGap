@@ -1,0 +1,16 @@
+gpu_name,sm,timestamp_utc,measurement,config,impl,winograd_eligible,median_ms,mean_ms,std_ms,gap_vs_cudnn,e_vs_cudnn,note
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=False,True,3.44371,3.44416,0.00296,,,nondeterministic(Winograd allowed)
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,cudnn_determinism_ab,3x3_s1,cudnn_deterministic=True,True,3.44166,3.44254,0.00696,,,deterministic(Winograd mostly OFF)
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,cudnn_determinism_ab,3x3_s1,DELTA_det_minus_nondet,True,-0.00205,,,,0.9994,upper bound on Winograd benefit (det - nondet)
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,3x3_s1,cudnn,True,3.45395,3.45588,0.01084,1.0,100.0,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,3x3_s1,triton,True,17.94662,17.94953,0.03128,5.196,19.25,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,3x3_s1,tilelang,True,27.34285,27.36945,0.1986,7.916,12.63,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,3x3_s2,cudnn,False,1.24518,1.24559,0.00285,1.0,100.0,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,3x3_s2,triton,False,7.35027,7.36068,0.04788,5.903,16.94,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,3x3_s2,tilelang,False,7.51514,7.51647,0.00594,6.035,16.57,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,5x5_s1,cudnn,False,7.59501,7.59595,0.00333,1.0,100.0,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,5x5_s1,triton,False,56.2729,56.27589,0.03039,7.409,13.5,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,5x5_s1,tilelang,False,69.28691,69.28785,0.01986,9.123,10.96,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,7x7_s1,cudnn,False,13.81376,13.81966,0.01927,1.0,100.0,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,7x7_s1,triton,False,140.74573,140.7514,0.07067,10.189,9.81,
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-25T03:06:25+00:00,eligible_vs_ineligible,7x7_s1,tilelang,False,128.77209,128.77597,0.07649,9.322,10.73,

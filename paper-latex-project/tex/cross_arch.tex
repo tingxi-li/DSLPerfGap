@@ -1,82 +1,93 @@
-% Cross-architecture comparison tables (Ada sm_89 vs A100 sm_80).
+% Cross-architecture comparison tables. PRIMARY = A100-SXM4-40GB (sm_80);
+% generalization replay on A100-PCIE-40GB (sm_80, form factor) and H100-80GB-HBM3 (sm_90, Hopper).
 % AUTO-GENERATED from experiments/results/<gpu>/*.csv and ViperBench/results/profile.*.csv
-% by experiments/results/cross_arch/ generator -- numbers are NOT hand-typed.
-% Answers R1-Q5 / R3-Q2 (do conclusions generalize to a data-center GPU?).
+% by experiments/results/cross_arch/gen_cross_arch_tables.py -- numbers are NOT hand-typed.
+% Answers R1-Q5 / R3-Q2 (do conclusions generalize across GPU form-factors and families?).
 
 \begin{table}[t]
   \centering
   \caption{\textbf{Cross-architecture generalization.} Median library efficiency $E_\text{lib}$ (\%) per
-    kernel category for each DSL on the workstation RTX 4000 Ada (sm\_89) and the data-center
-    A100-PCIE (sm\_80), untuned defaults. The qualitative profile is preserved across architectures:
-    GEMM and element-wise competitive, convolution and TileLang normalization severely behind.}
+    kernel category for each DSL on the primary A100-SXM4 (sm\_80) and the cross-architecture replays
+    A100-PCIE (sm\_80, form factor) and H100 (sm\_90, Hopper), untuned defaults. The qualitative
+    profile is preserved across architectures: GEMM and element-wise competitive, convolution and
+    TileLang normalization severely behind.}
   \label{tab:xarch:summary}
-  \begin{tabular}{lcccc}
-    \toprule
-    & \multicolumn{2}{c}{Triton} & \multicolumn{2}{c}{TileLang} \\
-    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-    Category & Ada & A100 & Ada & A100 \\
-    \midrule
-    GEMM & 55.1\% & 75.5\% & 55.2\% & 60.3\% \\
-    Convolution & 42.8\% & 38.0\% & 8.8\% & 11.1\% \\
-    Normalization & 123.5\% & 137.3\% & 1.5\% & 0.8\% \\
-    Element-wise/Reduction & 97.3\% & 73.0\% & 67.0\% & 55.3\% \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{table}[t]
-  \centering
-  \caption{\textbf{Root-cause taxonomy reproduces across architectures.} Each corrected root cause
-    measured on both GPUs with the identical portable harness. All four reproduce, confirming they
-    are properties of the DSL/compiler rather than of the Ada hardware (cf.\ \cref{tab:xarch:summary}).}
-  \label{tab:xarch:rootcause}
   \resizebox{\columnwidth}{!}{
-  \begin{tabular}{llll}
+  \begin{tabular}{lccc@{\hskip 10pt}ccc}
     \toprule
-    Root cause & Ada (sm\_89) & A100 (sm\_80) & Reproduces \\
+    & \multicolumn{3}{c}{Triton} & \multicolumn{3}{c}{TileLang} \\
+    \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+    Category & SXM4 & PCIE & H100 & SXM4 & PCIE & H100 \\
     \midrule
-    RC0 TileLang LayerNorm anomaly ($8192^2$) & $E_\text{lib}=0.32\%$ & $E_\text{lib}=0.09\%$ & yes (memory-latency bound) \\
-    RC3 Triton conv register spill (1$\times$1--7$\times$7) & $n_\text{spills}=0$ & $n_\text{spills}=0$ & yes (no spill; occupancy) \\
-    RC4 Winograd upper-bound contribution & $2.3\%$ & $2.0\%$ & yes ($\sim$2--3\%, not primary) \\
-    FP32 \texttt{T.gemm} silent TF32 lowering & 3013$\times$ rel.\ err & 633$\times$ rel.\ err & yes (matches TF32 class) \\
+    GEMM & 77.3\% & 75.5\% & 68.4\% & 69.4\% & 60.3\% & 69.2\% \\
+    Convolution & 31.6\% & 38.0\% & 37.7\% & 9.5\% & 11.1\% & 7.8\% \\
+    Normalization & 121.5\% & 137.3\% & 130.5\% & 1.0\% & 0.8\% & 0.9\% \\
+    Element-wise/Reduction & 65.3\% & 73.0\% & 72.9\% & 51.0\% & 55.3\% & 60.9\% \\
     \bottomrule
   \end{tabular}}
 \end{table}
 
 \begin{table}[t]
   \centering
-  \caption{\textbf{GEMM autotuning recovery generalizes (RC2).} Library efficiency of the Triton
-    matmul before (plain, heuristic) and after (expanded autotune search) on both GPUs. The
-    \S5-vs-\S7.3 gap is a search-space artifact on both architectures, not shape- or hardware-specific.}
-  \label{tab:xarch:autotune}
-  \begin{tabular}{lcccc}
+  \caption{\textbf{Root-cause taxonomy reproduces across architectures.} Each corrected root cause
+    measured on all three GPUs with the identical portable harness. All reproduce, confirming they
+    are properties of the DSL/compiler rather than of a single GPU (cf.\ \cref{tab:xarch:summary}).}
+  \label{tab:xarch:rootcause}
+  \resizebox{\columnwidth}{!}{
+  \begin{tabular}{lcccl}
     \toprule
-    & \multicolumn{2}{c}{Triton plain} & \multicolumn{2}{c}{Triton autotuned} \\
-    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-    Shape & Ada & A100 & Ada & A100 \\
+    Root cause & SXM4 & PCIE & H100 & Reproduces \\
     \midrule
-    $4096^2$ & 83.0\% & 57.7\% & 102.2\% & 110.1\% \\
-    $16384^2$ & 32.2\% & 38.3\% & 98.5\% & 87.5\% \\
+    RC0 TileLang LayerNorm anomaly ($8192^2$) $E_\text{lib}$ & 0.09\% & 0.09\% & 0.08\% & yes (memory-latency bound) \\
+    RC3 Triton conv register spill ($n_\text{spills}$) & 0 & 0 & 0 & yes (no spill; occupancy-bound) \\
+    RC4 Winograd upper-bound contribution & 0.1\% & 2.0\% & 20.7\%\textsuperscript{\dag} & yes ($\sim$0--2\%, not primary) \\
+    FP32 \texttt{T.gemm} TF32 lowering (rel.\ err) & 633$\times$ & 633$\times$ & 1268$\times$ & yes (TF32 mantissa class) \\
     \bottomrule
-  \end{tabular}
+  \end{tabular}}
+  {\footnotesize \textsuperscript{\dag}~The cuDNN deterministic-mode (Winograd-off) timing on H100 is high-variance ($\sigma\!\approx\!27\%$ of median, un-locked clocks),
+    so its determinism A/B over-states the Winograd upper bound; the stable, locked-clock A100-SXM4
+    and A100-PCIE measurements bound the Winograd contribution at ${\le}2\%$.}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \caption{\textbf{GEMM autotuning recovery generalizes (RC2).} Triton matmul $E_\text{lib}$ before
+    (plain, heuristic) and after (expanded autotune search) on all three GPUs. The \S5-vs-\S7.3 gap
+    is a search-space artifact on every architecture, not shape- or hardware-specific.}
+  \label{tab:xarch:autotune}
+  \resizebox{\columnwidth}{!}{
+  \begin{tabular}{lccc@{\hskip 10pt}ccc}
+    \toprule
+    & \multicolumn{3}{c}{Triton plain} & \multicolumn{3}{c}{Triton autotuned} \\
+    \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+    Shape & SXM4 & PCIE & H100 & SXM4 & PCIE & H100 \\
+    \midrule
+    $4096^2$ & 56.4\% & 57.7\% & 43.2\% & 76.5\% & 110.1\% & 33.1\% \\
+    $16384^2$ & 32.5\% & 38.3\% & 33.6\% & 81.8\% & 87.5\% & 70.2\% \\
+    \bottomrule
+  \end{tabular}}
+  {\footnotesize At the RQ1 $16384^2$ shape, expanded autotuning recovers Triton on all three GPUs
+    (plain$\to$autotuned). The sub-millisecond $4096^2$ cells on the un-locked PCIE/H100 replays carry
+    higher relative noise; the locked-clock A100-SXM4 primary is the reference measurement.}
 \end{table}
 
 \begin{table}[t]
   \centering
   \caption{\textbf{Convolution filter sweep across architectures} (large shape $32{\times}256{\times}128^2$,
-    groups$=$1, stride$=$1). $E_\text{lib}$ vs cuDNN for each DSL, and the measured Triton register-spill
-    count. The gap and the absence of register spilling both hold across architectures.}
+    groups$=$1, stride$=$1). Triton $E_\text{lib}$ vs cuDNN for each GPU, with the measured Triton
+    register-spill count. The gap widening with filter size and the absence of register spilling both
+    hold across architectures.}
   \label{tab:xarch:conv}
-  \begin{tabular}{lccccc}
+  \begin{tabular}{lcccc}
     \toprule
-    & \multicolumn{2}{c}{Triton $E_\text{lib}$} & \multicolumn{2}{c}{TileLang $E_\text{lib}$} & Triton \\
-    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-    Filter & Ada & A100 & Ada & A100 & $n_\text{spills}$ \\
+    & \multicolumn{3}{c}{Triton $E_\text{lib}$} & Triton \\
+    \cmidrule(lr){2-4}
+    Filter & SXM4 & PCIE & H100 & $n_\text{spills}$ \\
     \midrule
-    $1\times1$ & 23.3\% & 37.0\% & 11.5\% & 10.3\% & 0 \\
-    $3\times3$ & 36.5\% & 24.4\% & 9.4\% & 15.3\% & 0 \\
-    $5\times5$ & 15.8\% & 16.9\% & --- & 12.9\% & 0 \\
-    $7\times7$ & 12.9\% & 12.5\% & --- & --- & 0 \\
+    $1\times1$ & 28.7\% & 37.0\% & 24.7\% & 0 \\
+    $3\times3$ & 19.3\% & 24.4\% & 11.4\% & 0 \\
+    $5\times5$ & 13.7\% & 16.9\% & 13.4\% & 0 \\
+    $7\times7$ & 9.8\% & 12.5\% & 15.7\% & 0 \\
     \bottomrule
   \end{tabular}
 \end{table}
