@@ -1,0 +1,6 @@
+kernel,dtype,shape,naive_elib_pct,naive_tilelang_ms,pytorch_ms,optimized_ms,optimized_elib_pct,recovery_x,max_abs_err,correct
+mean_reduction,fp32,8192x32768,7.2,10.6478,0.7681,0.7656,99.5,13.9,4.7e-9,True
+max_reduction,fp16,8192x32768,4.7,11.9696,0.5595,0.4183,131.6,28.6,0.0,True
+logsumexp,fp32,8192x16384,57.6,4.1753,2.4037,0.4118,581.7,10.1,1.9e-6,True
+softmax,fp16,4096x32768,19.0,2.8635,0.5385,0.6258,86.1,4.6,4.8e-7,True
+log_softmax,fp16,4096x32768,17.0,2.6452,0.4421,0.624,70.8,4.2,7.8e-3,True
