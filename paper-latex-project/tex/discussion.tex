@@ -104,7 +104,7 @@ Our conclusions should be interpreted within the scope of the study.
 We evaluate forward-pass kernels only. Backward kernels introduce different computation and memory patterns, including larger temporary state and more complex accumulation behavior, and may expose additional bottlenecks not captured here.
 
 \textbf{Hardware scope.}
-Our primary measurements are conducted on an NVIDIA A100-SXM4-40GB (sm\_80) GPU, with cross-architecture replay on A100-PCIE-40GB (same sm\_80) and H100-80GB-HBM3 (sm\_90) confirming that the gaps generalize across form factors and GPU families. The results nonetheless characterize NVIDIA datacenter platforms rather than all accelerators; in particular, we do not evaluate ROCm or Intel XPU backends, although these are important targets for future work.
+Our primary measurements span two architectures, the NVIDIA A100-SXM4-40GB (Ampere, sm\_80) and the NVIDIA GH200 (Grace Hopper, sm\_90), with cross-architecture replay on the A100-PCIE-40GB (same sm\_80) and H100-80GB-HBM3 confirming that the gaps generalize across form factors and GPU families. The results nonetheless characterize NVIDIA datacenter platforms rather than all accelerators; in particular, we do not evaluate ROCm or Intel XPU backends, although these are important targets for future work.
 
 \textbf{Software snapshot.}
 Both Triton and TileLang are evolving systems. The measurements in this paper reflect the software versions listed in \cref{sec:meth:setup}; later compiler or runtime changes may reduce some of the gaps we report. Our released benchmark suite is intended to support such re-evaluation.

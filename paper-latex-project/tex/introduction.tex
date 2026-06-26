@@ -23,7 +23,7 @@ And the obvious remedy, a benchmark comprehensive enough to span every operator,
 This paper studies that evaluation problem directly.
 We ask three questions: (RQ1) whether existing benchmarks can distinguish well-written DSL kernels from performance-poor ones, and where they fall short; (RQ2) for kernels that pass such benchmarks, how large and structured the hidden performance gap to vendor libraries actually is, and what causes it; and (RQ3) how to guide DSL kernel development when a comprehensive benchmark is infeasible.
 We evaluate Triton and TileLang against PyTorch with cuBLAS/cuDNN on 22 kernels spanning five operator classes---GEMM, attention, convolution, normalization, and element-wise/reduction---with hardware-counter profiling via Nsight Compute.
-Primary measurements use an NVIDIA GH200 (Hopper); cross-architecture replay on A100-SXM4 and RTX~4000~Ada is reported in \cref{sec:threats}.% TODO(revision): finalize primary/cross GPU list after the multi-GPU re-baseline.
+Primary measurements span two datacenter architectures---the NVIDIA A100-SXM4-40GB (Ampere) and the NVIDIA GH200 (Grace Hopper)---with further cross-architecture replay on the A100-PCIE-40GB and H100-80GB-HBM3 reported in \cref{sec:threats}.
 
 Our findings are threefold.
 First, the evaluation gap is real and large: naive-but-correct kernels pass the gate while running 17--1293$\times$ slower than the library, and the dominant existing benchmarks neither gate on performance nor cover enough of the space to catch it.

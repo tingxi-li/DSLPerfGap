@@ -24,6 +24,4 @@ reliably flag poor kernels and guide fixes? Is there a single dominant fix, and 
 are DSLs genuinely limited?
 
 \medskip\noindent
-Our primary measurements use an NVIDIA GH200 (Hopper); cross-architecture replay on
-A100-SXM4 and RTX~4000~Ada is reported in \cref{sec:threats}, confirming that the
-mechanisms identified in RQ2 transfer across GPU families.% TODO(revision): finalize GPU list + sm versions after the multi-GPU re-baseline.
+Our primary measurements span two datacenter architectures, the NVIDIA A100-SXM4-40GB (Ampere, \texttt{sm\_80}) and the NVIDIA GH200 (Grace Hopper, \texttt{sm\_90}); further cross-architecture replay on the A100-PCIE-40GB and H100-80GB-HBM3 is reported in \cref{sec:threats}, confirming that the mechanisms identified in RQ2 transfer across GPU families.

@@ -124,7 +124,7 @@ To compute the roofline anchor (RQ3), we model each kernel's essential work---by
 % and pre-warm the Triton auto-tuner before measurement.
 
 \paragraph{Hardware.}
-The primary suite is run on an NVIDIA A100-SXM4-40GB GPU (Ampere, \texttt{sm\_80}) with 108 SMs, 40\,GB HBM2e memory ($\sim$1.5\,TB/s peak memory bandwidth), a 40\,MB L2 cache, and a 400\,W power cap, using NVIDIA Driver 610.43.02 and CUDA Toolkit 12.8. The evaluation-gap demonstrations (\cref{sec:eval:passesslow}) and the roofline measurements (\cref{tab:roofline}) additionally run on an NVIDIA GH200 (Grace Hopper, \texttt{sm\_90}; 96\,GB HBM3 at $\sim$4.0\,TB/s, $\sim$989.5\,TFLOP/s FP16 Tensor-Core); a full single-GPU re-baseline on the GH200 is in progress.
+We measure on two primary datacenter architectures. The first is an NVIDIA A100-SXM4-40GB GPU (Ampere, \texttt{sm\_80}) with 108 SMs, 40\,GB HBM2e memory ($\sim$1.5\,TB/s peak memory bandwidth), a 40\,MB L2 cache, and a 400\,W power cap (NVIDIA Driver 610.43.02, CUDA 12.8), on which we measure the suite magnitude (\cref{sec:evaluation}) and root-cause counters (\cref{sec:analysis}). The second is an NVIDIA GH200 (Grace Hopper, \texttt{sm\_90}; 96\,GB HBM3 at $\sim$4.0\,TB/s, $\sim$989.5\,TFLOP/s FP16 Tensor-Core, clocks locked at 1320/2619\,MHz), on which we run the evaluation-gap demonstration (\cref{sec:eval:passesslow}) and validate the roofline heuristic (\cref{tab:roofline}). Per-architecture magnitudes are reported where they differ.
 
 
 \paragraph{Software.}

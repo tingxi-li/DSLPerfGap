@@ -266,7 +266,7 @@ To show that this gap is not hypothetical, we run idiomatic but unoptimized DSL 
 On the GH200, the naive TileLang LayerNorm kernel passes the gate on all five correctness shapes yet runs $1293\times$ slower than PyTorch at the large shape ($176.4$~ms vs.\ $0.136$~ms); naive TileLang RMSNorm passes and is $117\times$ slower; naive TileLang argmax passes and is $16.7\times$ slower.
 In every case the gate returns \texttt{correct=True} and the more-than-$10\times$ reward-hacking guard never triggers, because the kernels are slow, not fast.
 These are not adversarial constructions: they are the reduction kernels shipped as idiomatic TileLang, differing from a competent implementation only in the reduction primitive (\cref{sec:analysis:jit}).
-The same kernels show the same qualitative gap on the A100 suite below (TileLang LayerNorm $1087\times$, \cref{tab:norm}); we report per-architecture magnitudes throughout and note where they differ.% TODO(revision): re-baseline the suite tables to the GH200 primary so headline magnitudes match the passes-but-slow demonstration.
+The same kernels show the same qualitative gap on the A100 suite below (TileLang LayerNorm $1087\times$, \cref{tab:norm}), with the suite magnitude and root-cause analysis measured on the A100 and the evaluation-gap and roofline results on the GH200; we report per-architecture magnitudes throughout and note where they differ.
 
 \subsection{The Hidden Gap These Benchmarks Admit}
 \label{sec:eval:overview}
