@@ -1,0 +1,5 @@
+gpu_name,sm,timestamp_utc,M,N,shared_mem_kb,exceeds_48kb,intree_ms,opt_ms,torch_ms,intree_slowdown_x,opt_slowdown_x,intree_correct,opt_correct,intree_maxabs_err,opt_maxabs_err
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-26T23:29:04+00:00,4096,8192,16.0,False,5.505,0.1423,0.2724,20.2,0.52,True,True,6.97e-06,6.97e-06
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-26T23:29:04+00:00,4096,16384,32.0,False,16.1014,0.3113,0.2581,62.4,1.21,True,True,3.70e-06,3.70e-06
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-26T23:29:04+00:00,4096,24576,48.0,False,30.9617,0.4762,0.3963,78.1,1.2,True,True,1.75e-06,1.75e-06
+NVIDIA A100-SXM4-40GB,sm_80,2026-06-26T23:29:04+00:00,4096,32768,64.0,True,60.0719,0.6257,0.5407,111.1,1.16,True,True,1.86e-06,1.86e-06

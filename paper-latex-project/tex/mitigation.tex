@@ -239,6 +239,14 @@ Of the residual Conv2d gap, only $\approx$2--3\% is attributable to absent Winog
 the rest reflects general cuDNN implicit-GEMM tuning
 (kernel selection across data layouts, split-K, and shared-mem tile sizing) that the Triton kernel does not match.
 
+\paragraph{Cross-architecture portability is itself an authoring concern.}
+Two kernels show that a \emph{correct, hand-optimized} DSL kernel can pass on one GPU yet collapse on another, so single-GPU or single-shape benchmarking cannot certify it.
+\texttt{logsumexp} is one direction---fast on the A100 but register-spilling on the GH200 (\cref{tab:mitigation}); the in-tree TileLang Softmax is the other, and its cause is purely an authoring choice.
+That kernel caches the entire row in shared memory, so its per-block footprint grows with the row width ($2N$ bytes at fp16); on the A100 this monotonically erodes occupancy---the kernel is $20\times$ slower than PyTorch at $N{=}8192$ (16~KB of shared memory) and $111\times$ slower at $N{=}32768$ (64~KB, past the $48$~KB static budget), while staying numerically correct at every size (\texttt{softmax\_authoring.csv}).
+The identical kernel runs at PyTorch parity on the GH200, whose larger shared-memory budget absorbs the allocation, so the defect is invisible to a GH200 or small-$N$ benchmark even though the kernel is two orders of magnitude slow on the A100 at scale.
+The streaming variant---tiling the reduction over fixed $4$~KB blocks instead of caching the whole row---holds parity across the sweep ($\rho{=}0.55$, \cref{tab:roofline}).
+``Stream the reduction; do not cache the full row'' is thus a portable authoring pattern, and the collapse is a concrete instance of the evaluation gap whose root cause is authoring rather than the language or the hardware.
+
 \begin{table}[t]
   \centering
   \caption{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better);
