@@ -139,7 +139,7 @@ These document the prior review round; deleting them loses the record.
 - [x] Canonical framing locked (this file)
 - [x] `abstract.tex`, `RQ_summary.tex` rewritten to new framing
 - [x] repo `CLAUDE.md` pivot banner
-- [ ] `introduction.tex` rewrite (thesis-bearing — next)
+- [x] `introduction.tex` rewrite (thesis-bearing) — DONE; uses `\cite{kernelbench}` (bib entry TODO)
 - [ ] `evaluation.tex` → split RQ1 (eval gap) evidence vs RQ2 (gap) data
 - [ ] `methodology.tex` → add benchmark-survey + heuristic-definition methodology
 - [ ] `analysis.tex` (RQ2) — light edits (already counter-grounded)
