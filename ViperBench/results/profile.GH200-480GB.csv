@@ -1,0 +1,133 @@
+kernel,size,impl,input_desc,latency_ms,peak_memory_mb
+add,small,pytorch,"x:(4096,) y:(4096,) fp16",0.0127,10091.19
+add,small,triton,"x:(4096,) y:(4096,) fp16",0.0334,10091.19
+add,small,tilelang,"x:(4096,) y:(4096,) fp16",0.0595,10091.19
+add,large,pytorch,"x:(64M,) y:(64M,) fp16",0.1234,10219.18
+add,large,triton,"x:(64M,) y:(64M,) fp16",0.1383,10219.18
+add,large,tilelang,"x:(64M,) y:(64M,) fp16",0.182,10219.18
+argmax,small,pytorch,"x:(1024,1024) dim=1 fp16",0.022,10091.19
+argmax,small,triton,"x:(1024,1024) dim=1 fp16",0.0698,10091.19
+argmax,small,tilelang,"x:(1024,1024) dim=1 fp16",0.0941,10095.2
+argmax,large,pytorch,"x:(8192,32768) dim=1 fp16",0.3149,10091.25
+argmax,large,triton,"x:(8192,32768) dim=1 fp16",1.1431,10091.25
+argmax,large,tilelang,"x:(8192,32768) dim=1 fp16",5.2363,11115.28
+attention,small,pytorch,"QKV:(8,16,512,64) fp32",341.551,10139.25
+attention,small,triton,"QKV:(8,16,512,64) fp32",0.1762,10203.18
+attention,small,tilelang,"QKV:(8,16,512,64) fp32",330.5853,10107.23
+attention,large,pytorch,"QKV:(8,32,2048,128) fp32",2753.1692,10379.41
+attention,large,triton,"QKV:(8,32,2048,128) fp32",14.2493,12427.18
+attention,large,tilelang,"QKV:(8,32,2048,128) fp32",2599.8468,10347.34
+batched_matmul,small,pytorch,"A:(64,128) B:(64,128,128) fp16",0.067,10123.2
+batched_matmul,small,triton,"A:(64,128) B:(64,128,128) fp16",0.0566,10123.2
+batched_matmul,small,tilelang,"A:(64,128) B:(64,128,128) fp16",0.1059,10095.23
+batched_matmul,large,pytorch,"A:(128,2048) B:(128,2048,2048) fp16",0.3509,10123.68
+batched_matmul,large,triton,"A:(128,2048) B:(128,2048,2048) fp16",0.5349,10123.68
+batched_matmul,large,tilelang,"A:(128,2048) B:(128,2048,2048) fp16",0.3178,10091.68
+conv2d,small,pytorch,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.0526,10132.44
+conv2d,small,triton,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.0686,10126.25
+conv2d,small,tilelang,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.6339,10175.18
+conv2d,large,pytorch,"x:(32,256,128,128) w:(256,256,3,3) fp16",1.3523,10893.18
+conv2d,large,triton,"x:(32,256,128,128) w:(256,256,3,3) fp16",9.813,10379.18
+conv2d,large,tilelang,"x:(32,256,128,128) w:(256,256,3,3) fp16",2.2591,10613.06
+cross_entropy,small,pytorch,"logits:(256,1024) fp32",0.5406,10127.21
+cross_entropy,small,triton,"logits:(256,1024) fp32",0.0782,10126.18
+cross_entropy,small,tilelang,"logits:(256,1024) fp32",0.1269,10094.19
+cross_entropy,large,pytorch,"logits:(4096,32768) fp32",2.3228,12174.39
+cross_entropy,large,triton,"logits:(4096,32768) fp32",0.1964,11659.18
+cross_entropy,large,tilelang,"logits:(4096,32768) fp32",4.8327,11627.2
+embedding,small,pytorch,"w:(8192,256) idx:(2048,) fp16",0.1071,10126.2
+embedding,small,triton,"w:(8192,256) idx:(2048,) fp16",0.0339,10123.18
+embedding,small,tilelang,"w:(8192,256) idx:(2048,) fp16",0.1886,10102.2
+embedding,large,pytorch,"w:(131072,1024) idx:(131072,) fp16",1.725,10892.31
+embedding,large,triton,"w:(131072,1024) idx:(131072,) fp16",0.1839,10123.18
+embedding,large,tilelang,"w:(131072,1024) idx:(131072,) fp16",ERROR,ERROR
+index_select,small,pytorch,"src:(4096,512) idx:(256,) fp16",0.025,10123.43
+index_select,small,triton,"src:(4096,512) idx:(256,) fp16",0.0467,10123.43
+index_select,small,tilelang,"src:(4096,512) idx:(256,) fp16",0.0726,10091.43
+index_select,large,pytorch,"src:(65536,2048) idx:(4096,) fp16",0.0798,10139.18
+index_select,large,triton,"src:(65536,2048) idx:(4096,) fp16",0.0825,10139.18
+index_select,large,tilelang,"src:(65536,2048) idx:(4096,) fp16",0.069,10107.2
+layer_norm,small,pytorch,"x:(512,1024) bf16",0.0184,10124.19
+layer_norm,small,triton,"x:(512,1024) bf16",0.0656,10124.19
+layer_norm,small,tilelang,"x:(512,1024) bf16",0.5406,10096.19
+layer_norm,large,pytorch,"x:(8192,8192) bf16",0.1402,10251.25
+layer_norm,large,triton,"x:(8192,8192) bf16",0.1875,10251.25
+layer_norm,large,tilelang,"x:(8192,8192) bf16",46.131,10731.25
+leaky_relu,small,pytorch,"a:(4096,4096) b:(4096,4096) fp16",2.9032,10315.18
+leaky_relu,small,triton,"a:(4096,4096) b:(4096,4096) fp16",0.567,10155.18
+leaky_relu,small,tilelang,"a:(4096,4096) b:(4096,4096) fp16",0.418,10123.18
+leaky_relu,large,pytorch,"a:(8192,8192) b:(8192,8192) fp16",22.131,10891.18
+leaky_relu,large,triton,"a:(8192,8192) b:(8192,8192) fp16",4.7492,10251.18
+leaky_relu,large,tilelang,"a:(8192,8192) b:(8192,8192) fp16",2.9806,10219.18
+linear_activation,small,pytorch,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.3617,10149.69
+linear_activation,small,triton,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.1205,10125.18
+linear_activation,small,tilelang,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.3082,10128.69
+linear_activation,large,pytorch,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",12.4848,10715.2
+linear_activation,large,triton,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",7.3489,10187.18
+linear_activation,large,tilelang,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",7.661,11035.2
+log_softmax,small,pytorch,"x:(512,1024) fp16",0.0177,10124.18
+log_softmax,small,triton,"x:(512,1024) fp16",0.0546,10124.18
+log_softmax,small,tilelang,"x:(512,1024) fp16",0.0488,10092.18
+log_softmax,large,pytorch,"x:(4096,32768) fp16",0.2103,10379.18
+log_softmax,large,triton,"x:(4096,32768) fp16",0.4928,10379.18
+log_softmax,large,tilelang,"x:(4096,32768) fp16",0.2401,10347.18
+logsumexp,small,pytorch,"x:(512,1024) fp32",0.0844,10125.19
+logsumexp,small,triton,"x:(512,1024) fp32",0.1599,10123.19
+logsumexp,small,tilelang,"x:(512,1024) fp32",0.0604,10091.19
+logsumexp,large,pytorch,"x:(8192,16384) fp32",1.0475,10635.25
+logsumexp,large,triton,"x:(8192,16384) fp32",0.231,10123.31
+logsumexp,large,tilelang,"x:(8192,16384) fp32",2.4582,10091.21
+matmul,small,pytorch,"A:(512,512) B:(512,512) fp16",0.0318,10123.68
+matmul,small,triton,"A:(512,512) B:(512,512) fp16",0.0388,10123.68
+matmul,small,tilelang,"A:(512,512) B:(512,512) fp16",0.0525,10091.68
+matmul,large,pytorch,"A:(16384,16384) B:(16384,16384) fp16",13.7137,10635.18
+matmul,large,triton,"A:(16384,16384) B:(16384,16384) fp16",24.3372,10635.18
+matmul,large,tilelang,"A:(16384,16384) B:(16384,16384) fp16",22.9647,10603.18
+matrix_transpose,small,pytorch,"x:(1024,1024) fp16",0.0274,10125.18
+matrix_transpose,small,triton,"x:(1024,1024) fp16",0.0328,10125.18
+matrix_transpose,small,tilelang,"x:(1024,1024) fp16",0.0512,10093.18
+matrix_transpose,large,pytorch,"x:(16384,16384) fp16",1.6549,10635.18
+matrix_transpose,large,triton,"x:(16384,16384) fp16",0.392,10635.18
+matrix_transpose,large,tilelang,"x:(16384,16384) fp16",2.5195,10603.18
+max_reduction,small,pytorch,"x:(1024,1024) dim=1 fp16",0.0236,10123.19
+max_reduction,small,triton,"x:(1024,1024) dim=1 fp16",0.0544,10123.19
+max_reduction,small,tilelang,"x:(1024,1024) dim=1 fp16",0.0934,10091.2
+max_reduction,large,pytorch,"x:(8192,32768) dim=1 fp16",0.2779,10123.26
+max_reduction,large,triton,"x:(8192,32768) dim=1 fp16",0.2288,10123.26
+max_reduction,large,tilelang,"x:(8192,32768) dim=1 fp16",0.3319,10091.32
+mean_reduction,small,pytorch,"x:(1024,1024) dim=1 fp32",0.0177,10123.19
+mean_reduction,small,triton,"x:(1024,1024) dim=1 fp32",0.0458,10123.19
+mean_reduction,small,tilelang,"x:(1024,1024) dim=1 fp32",0.0481,10091.19
+mean_reduction,large,pytorch,"x:(8192,32768) dim=1 fp32",0.3029,10123.21
+mean_reduction,large,triton,"x:(8192,32768) dim=1 fp32",0.649,10123.21
+mean_reduction,large,tilelang,"x:(8192,32768) dim=1 fp32",0.3146,10091.21
+mul,small,pytorch,"x:(4096,) fp16",0.0158,10123.19
+mul,small,triton,"x:(4096,) fp16",0.0383,10123.19
+mul,small,tilelang,"x:(4096,) fp16",0.0578,10091.19
+mul,large,pytorch,"x:(64M,) fp16",0.0889,10251.18
+mul,large,triton,"x:(64M,) fp16",0.1342,10251.18
+mul,large,tilelang,"x:(64M,) fp16",0.1429,10219.18
+relu,small,pytorch,"x:(4096,4096) fp16",0.034,10155.18
+relu,small,triton,"x:(4096,4096) fp16",0.0428,10155.18
+relu,small,tilelang,"x:(4096,4096) fp16",0.061,10123.18
+relu,large,pytorch,"x:(16384,16384) fp16",0.3197,10635.18
+relu,large,triton,"x:(16384,16384) fp16",0.327,10635.18
+relu,large,tilelang,"x:(16384,16384) fp16",0.4838,10603.18
+rms_norm,small,pytorch,"x:(512,1024) w:(1024,) fp16",0.104,10127.19
+rms_norm,small,triton,"x:(512,1024) w:(1024,) fp16",0.0493,10124.18
+rms_norm,small,tilelang,"x:(512,1024) w:(1024,) fp16",0.4824,10096.19
+rms_norm,large,pytorch,"x:(8192,8192) w:(8192,) fp16",1.2762,10635.25
+rms_norm,large,triton,"x:(8192,8192) w:(8192,) fp16",0.118,10251.18
+rms_norm,large,tilelang,"x:(8192,8192) w:(8192,) fp16",38.8712,10731.21
+softmax,small,pytorch,"x:(512,1024) fp16",0.0164,10124.18
+softmax,small,triton,"x:(512,1024) fp16",0.0359,10124.18
+softmax,small,tilelang,"x:(512,1024) fp16",0.0351,10092.18
+softmax,large,pytorch,"x:(4096,32768) fp16",0.254,10379.18
+softmax,large,triton,"x:(4096,32768) fp16",0.2155,10379.18
+softmax,large,tilelang,"x:(4096,32768) fp16",0.2966,10347.18
+swiglu,small,pytorch,"xy:(512,8192) fp16",0.0419,10131.18
+swiglu,small,triton,"xy:(512,8192) fp16",0.0565,10127.18
+swiglu,small,tilelang,"xy:(512,8192) fp16",0.1019,10103.18
+swiglu,large,pytorch,"xy:(4096,32768) fp16",0.5802,10379.18
+swiglu,large,triton,"xy:(4096,32768) fp16",0.1643,10251.18
+swiglu,large,tilelang,"xy:(4096,32768) fp16",0.5125,10475.18
