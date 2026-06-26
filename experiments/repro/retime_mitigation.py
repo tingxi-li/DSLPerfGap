@@ -13,10 +13,20 @@ GOTCHA baked in: TileLang JIT needs the venv's bundled nvidia libs on LD_LIBRARY
 Run with:  /home/ubuntu/dslperf-venv/bin/python experiments/repro/retime_mitigation.py
 """
 import os, sys, csv, time, importlib.util, math
-_NV = "/home/ubuntu/dslperf-venv/lib/python3.10/site-packages/nvidia"
-os.environ["LD_LIBRARY_PATH"] = ":".join(
-    [f"{_NV}/{p}/lib" for p in ("cuda_nvrtc", "cuda_runtime", "cublas", "cudnn")]
-    + [os.environ.get("LD_LIBRARY_PATH", "")])
+# Portable nvidia-lib injection for TileLang's JIT (libnvrtc/libcudart): locate the
+# active interpreter's `nvidia` namespace package at runtime so this works on both the
+# x86 dslperf-venv and GH200 aarch64 (~/.local site-packages), instead of a hardcoded
+# x86 path that does not exist on aarch64.
+try:
+    import nvidia as _nv_pkg
+    _NV = list(_nv_pkg.__path__)[0]
+except Exception:
+    _NV = "/home/ubuntu/dslperf-venv/lib/python3.10/site-packages/nvidia"
+if os.path.isdir(_NV):
+    _libdirs = [f"{_NV}/{p}/lib" for p in ("cuda_nvrtc", "cuda_runtime", "cublas", "cudnn")
+                if os.path.isdir(f"{_NV}/{p}/lib")]
+    if _libdirs:
+        os.environ["LD_LIBRARY_PATH"] = ":".join(_libdirs + [os.environ.get("LD_LIBRARY_PATH", "")])
 os.environ["_LSE_REEXEC"] = "1"; os.environ["_SOFTMAX_REEXEC"] = "1"  # skip opt-kernel re-exec shims
 import torch, torch.nn.functional as F
 

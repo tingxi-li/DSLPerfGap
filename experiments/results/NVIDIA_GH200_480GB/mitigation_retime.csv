@@ -1,0 +1,10 @@
+kernel,naive_ms,pytorch_ms,optimized_ms,naive_elib_pct,optimized_elib_pct,recovery_x,max_abs_err,correct,note
+layer_norm,46.1310,0.1402,0.1186,0.3,118.2,388.9,6.25e-02,True,AKO4ALL T.reduce+native bf16
+rms_norm,38.8712,1.2762,0.1040,3.3,1227.5,373.9,7.81e-03,True,AKO4ALL T.reduce+native fp16
+argmax,5.2363,0.3149,1.3807,6.0,22.8,3.8,0.00e+00,True,AKO4ALL tiled (returns indices)
+matmul,0.3286,0.2541,0.2662,77.3,95.5,1.2,0.00e+00,True,AKO4ALL autotune+L2 swizzle @4096^2
+mean_reduction,0.3146,0.3029,0.3064,96.3,98.9,1.0,3.73e-09,True,opt_kernels T.reduce + tiled streaming
+max_reduction,0.3319,0.2779,0.1740,83.7,159.7,1.9,0.00e+00,True,opt_kernels T.reduce + tiled streaming
+logsumexp,2.4582,1.0475,106.7465,42.6,1.0,0.0,1.91e-06,True,opt_kernels T.reduce + tiled streaming
+softmax,0.2966,0.2540,0.2480,85.6,102.4,1.2,4.77e-07,True,opt_kernels T.reduce + tiled streaming
+log_softmax,0.2401,0.2103,0.2352,87.6,89.4,1.0,7.81e-03,True,opt_kernels T.reduce + tiled streaming

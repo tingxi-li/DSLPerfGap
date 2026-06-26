@@ -305,8 +305,8 @@ These figures are for the \emph{idiomatic} kernels shipped in each DSL's example
 \phantomsection\label{sec:eval:gemm}
 
 
-\medskip\noindent\textbf{Finding: Triton achieves 32.8--92.9\% of PyTorch/cuBLAS throughput on GEMM depending on shape;
-TileLang achieves 7.0--80.0\% with a complementary strength profile.
+\medskip\noindent\textbf{Finding: On the A100-SXM4, Triton achieves 32.8--92.9\% of PyTorch/cuBLAS throughput on GEMM depending on shape;
+TileLang achieves 7.0--80.0\% with a complementary strength profile that reorders on the GH200 (\cref{tab:summary}).
 TileLang achieves 548.6\% on fused linear+activation by fusing two passes into one kernel,
 while Triton degrades to 32.8\% on the $16384^2$ square matmul
 where its auto-tune search space is under-populated.}
@@ -316,7 +316,8 @@ for FP16 matrix multiplication across representative shapes.
 
 \begin{table}[t]
   \centering
-  \caption{GEMM-family kernels (FP16) latency (ms, lower is better).
+  \caption{GEMM-family kernels (FP16) latency (ms, lower is better), per configuration
+    on the A100-SXM4 and GH200 (both unlocked tuned profile).
     $E_\text{lib}$ = library efficiency relative to PyTorch/cuBLAS baseline.
     \textbf{Bold} marks best DSL result per row.}
   \label{tab:gemm}
@@ -325,15 +326,20 @@ for FP16 matrix multiplication across representative shapes.
     \toprule
     Configuration & PyTorch & Triton & $E_{\text{lib}}$ & TileLang & $E_\text{lib}$ \\
     \midrule
-    \multicolumn{6}{l}{\textit{Square matmul}} \\[2pt]
-    \quad $16384^2$         & 34.24 & 104.34 & 32.8\%        & \textbf{42.80} & \textbf{80.0\%} \\
+    \multicolumn{6}{l}{\textit{Square matmul} $16384^2$} \\[2pt]
+    \quad A100  & 34.24 & 104.34 & 32.8\% & \textbf{42.80} & \textbf{80.0\%} \\
+    \quad GH200 & 13.71 & 24.34 & 56.3\% & \textbf{22.96} & \textbf{59.7\%} \\
     \midrule
-    \multicolumn{6}{l}{\textit{Batched matmul}} \\[2pt]
-    \quad $64\times128^2$   & 0.0787 & \textbf{0.0959} & \textbf{82.1\%} & 0.1338 & 58.8\% \\
-    \quad $128\times2048^2$ & 0.811 & \textbf{0.873}  & \textbf{92.9\%}         & 11.55 & 7.0\% \\
+    \multicolumn{6}{l}{\textit{Batched matmul} $64\times128^2$} \\[2pt]
+    \quad A100  & 0.0787 & \textbf{0.0959} & \textbf{82.1\%} & 0.1338 & 58.8\% \\
+    \quad GH200 & 0.0670 & \textbf{0.0566} & \textbf{118.4\%} & 0.1059 & 63.3\% \\
+    \multicolumn{6}{l}{\textit{Batched matmul} $128\times2048^2$} \\[2pt]
+    \quad A100  & 0.811 & \textbf{0.873} & \textbf{92.9\%} & 11.55 & 7.0\% \\
+    \quad GH200 & 0.351 & 0.535 & 65.6\% & \textbf{0.318} & \textbf{110.4\%} \\
     \midrule
-    \multicolumn{6}{l}{\textit{Fused linear+activation}} \\[2pt]
-    \quad $1\times2048\to16384$ & 36.03 & 49.71 & 72.5\% & \textbf{6.57} & \textbf{548.6\%} \\
+    \multicolumn{6}{l}{\textit{Fused linear+activation} $1\times2048\to16384$} \\[2pt]
+    \quad A100  & 36.03 & 49.71 & 72.5\% & \textbf{6.57} & \textbf{548.6\%} \\
+    \quad GH200 & 12.48 & 7.35 & \textbf{169.9\%} & 7.66 & 163.0\% \\
     \bottomrule
   \end{tabular}
   }
@@ -372,34 +378,37 @@ Inputs follow the NCHW layout (PyTorch's default arrangement).
 
 \begin{table*}[t]
   \centering
-  \caption{Conv2d library efficiency ($E_\text{lib}$, \%) on NVIDIA A100-SXM4-40GB.
+  \caption{Conv2d library efficiency ($E_\text{lib}$, \%) on the A100-SXM4 (small and large shapes)
+    and GH200 (large shape; unlocked tuned profile).
     NCHW layout (PyTorch default), FP16, padding ``same''.
     $E_\text{lib}$ relative to PyTorch/cuDNN baseline (higher is better).
     \textbf{Bold} marks the best DSL per cell.}
   \label{tab:conv}
-  \begin{tabular}{lrrrr}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{lrrrrrr}
     \toprule
-    & \multicolumn{2}{c}{$8\times64\times56\times56$} & \multicolumn{2}{c}{$32\times256\times128\times128$} \\
-    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-    Filter & Triton & TileLang & Triton & TileLang \\
+    & \multicolumn{2}{c}{A100 $8\times64\times56^2$} & \multicolumn{2}{c}{A100 $32\times256\times128^2$} & \multicolumn{2}{c}{GH200 $32\times256\times128^2$} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+    Filter & Triton & TileLang & Triton & TileLang & Triton & TileLang \\
     \midrule
-    $1\times1$           & \textbf{44.09\%} & 5.28\% & \textbf{28.69\%} & 7.15\%  \\
-    $3\times3$           & \textbf{44.87\%} & 4.12\% & \textbf{19.33\%} & 12.62\% \\
-    $5\times5$           & \textbf{30.19\%} & 7.58\% & \textbf{13.67\%} & 11.16\% \\
-    $7\times7$           & \textbf{20.53\%} & 9.05\% & \textbf{9.79\%}  & ---\,(OOM) \\
-    depthwise $3\times3$ & \textbf{5.40\%}  & 0.05\% & \textbf{1.16\%}  & 0.05\%  \\
-    $3\times3$ stride 2  & \textbf{46.34\%} & 4.17\% & \textbf{17.17\%} & 16.77\% \\
+    $1\times1$           & \textbf{44.09\%} & 5.28\% & \textbf{28.69\%} & 7.15\%  & 28.97\% & \textbf{32.89\%} \\
+    $3\times3$           & \textbf{44.87\%} & 4.12\% & \textbf{19.33\%} & 12.62\% & 12.14\% & \textbf{54.05\%} \\
+    $5\times5$           & \textbf{30.19\%} & 7.58\% & \textbf{13.67\%} & 11.16\% & 8.08\%  & \textbf{49.48\%} \\
+    $7\times7$           & \textbf{20.53\%} & 9.05\% & \textbf{9.79\%}  & ---\,(OOM) & 9.77\% & \textbf{71.70\%} \\
+    depthwise $3\times3$ & \textbf{5.40\%}  & 0.05\% & \textbf{1.16\%}  & 0.05\%  & \textbf{0.84\%} & 0.04\% \\
+    $3\times3$ stride 2  & \textbf{46.34\%} & 4.17\% & \textbf{17.17\%} & 16.77\% & \textbf{13.28\%} & 7.24\% \\
     \bottomrule
-  \end{tabular}\\[2pt]
-  {\footnotesize PyTorch/cuDNN large-shape ($32\times256\times128\times128$) baseline latencies (ms):
+  \end{tabular}}\\[2pt]
+  {\footnotesize PyTorch/cuDNN A100 large-shape ($32\times256\times128\times128$) baseline latencies (ms):
     $1\times1$ 0.518, $3\times3$ 3.445, $5\times5$ 7.716, $7\times7$ 13.846, depthwise 0.776, stride-2 1.261.
-    TileLang $7\times7$ at the large shape runs out of memory (OOM).}
+    TileLang $7\times7$ OOMs on the A100 (40\,GB) but not on the GH200, where it reaches 71.7\%.}
 \end{table*}
 
 At the large shape Triton efficiency on the standard $1\times1$--$7\times7$ filters falls monotonically from 28.7\% ($1\times1$) through 19.3\% ($3\times3$), 13.7\% ($5\times5$), to 9.8\% ($7\times7$); the gap widens precisely on the Winograd-ineligible larger filters (\cref{sec:analysis}).
 TileLang holds a narrow 7.1--12.6\% band over the same filters.
 Depthwise convolution, which both DSLs lower to $N$ per-group GEMM launches, collapses to $\le$5.4\% for Triton and to $\sim$0.05\% for TileLang.
 Nsight Compute shows the conv gap is occupancy- and coalescing-bound (RC1 + RC2), not a register-spill problem: \texttt{n\_spills = 0} at every filter size for both DSLs.
+On the GH200, Triton convolution stays comparably weak (12.1\% at $3\times3$, $\le$9.8\% at the larger filters), but TileLang convolution is far stronger than on the A100 (32.9--71.7\% across $1\times1$--$7\times7$; \cref{tab:conv}), so the TileLang convolution collapse is largely an Ampere-specific scheduling artifact rather than intrinsic to the DSL---the persistent residual is the \emph{Triton} convolution gap, which holds on both architectures.
 The root causes of these gaps are analyzed in \cref{sec:analysis}.
 
 \phantomsection\label{sec:eval:norm}
@@ -427,12 +436,16 @@ and serialized memory-latency exposure under \texttt{T.serial} reduction loops (
     \toprule
     Kernel & Shape & PyTorch(ms) & Triton(ms) & $E_\text{lib}$ & TileLang(ms) & $E_\text{lib}$ \\
     \midrule
-    LayerNorm & $8192\times8192$ (BF16) & 0.335 & \textbf{0.378} & \textbf{88.7\%}  & 364.09 & 0.1\% \\
-    RMSNorm   & $8192\times8192$ (FP16) & 2.516 & \textbf{0.295} & \textbf{851.8\%} & 294.27 & 0.9\% \\
+    LayerNorm & $8192^2$ BF16, A100  & 0.335 & \textbf{0.378} & \textbf{88.7\%}  & 364.09 & 0.1\% \\
+    LayerNorm & $8192^2$ BF16, GH200 & 0.140 & \textbf{0.188} & \textbf{74.8\%}  & 46.13  & 0.3\% \\
+    RMSNorm   & $8192^2$ FP16, A100  & 2.516 & \textbf{0.295} & \textbf{851.8\%} & 294.27 & 0.9\% \\
+    RMSNorm   & $8192^2$ FP16, GH200 & 1.276 & \textbf{0.118} & \textbf{1081\%}  & 38.87  & 3.3\% \\
     \bottomrule
   \end{tabular}\\[2pt]
-  {\footnotesize Locked-clock re-timing (graphics 1215\,MHz / memory 1215\,MHz) over 100 runs shows
-    run-to-run relative std-dev 0.0--0.9\% on near-parity kernels; the gaps are statistically significant.}
+  {\footnotesize A100 rows are the unlocked tuned profile; locked-clock re-timing (graphics 1215\,MHz / memory 1215\,MHz)
+    over 100 runs shows run-to-run relative std-dev 0.0--0.9\% on near-parity kernels, so the gaps are statistically
+    significant. GH200 rows are the unlocked tuned profile; TileLang LayerNorm there is 0.3\% ($329\times$), matching
+    the locked-clock $323\times$ in \cref{sec:eval:passesslow} within run-to-run noise.}
 \end{table*}
 
 \phantomsection\label{sec:eval:tuning}
@@ -462,21 +475,23 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
 
 \begin{table}[t]
   \centering
-  \caption{Median library efficiency (\%) per kernel category and DSL,
-    computed over large-size benchmark configurations.
+  \caption{Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200
+    (both unlocked tuned profile), computed over large-size benchmark configurations.
     Attention excluded from Overall; see text.}
   \label{tab:summary}
-  \begin{tabular}{lcc}
+  \begin{tabular}{lcccc}
     \toprule
-    Kernel category    & Triton      & TileLang    \\
+    & \multicolumn{2}{c}{A100-SXM4} & \multicolumn{2}{c}{GH200} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    Kernel category    & Triton & TileLang & Triton & TileLang \\
     \midrule
-    GEMM               & 32.8--92.9\%  & 7.0--80.0\% \\
-    Attention          & \multicolumn{2}{c}{\textit{see text --- baselines non-equivalent}} \\
-    Convolution        & 19.3\%        & 12.6\%        \\
-    Normalization      & 88.7\%\rlap{$^\ddagger$} & 0.1--0.9\%\rlap{$^\ddagger$} \\
-    Element-wise       & $\sim$95--116\%       & $\sim$67--74\% \\
+    GEMM               & 32.8--92.9\% & 7.0--80.0\% & 56--170\% & 60--163\% \\
+    Attention          & \multicolumn{4}{c}{\textit{see text --- baselines non-equivalent}} \\
+    Convolution        & 19.3\% & 12.6\% & 12.1\% & 54.1\% \\
+    Normalization      & 88.7\%\rlap{$^\ddagger$} & 0.1--0.9\%\rlap{$^\ddagger$} & 74.8\% & 0.3--3.3\% \\
+    Element-wise       & $\sim$95--116\% & $\sim$67--74\% & $\sim$66--98\% & $\sim$62--68\% \\
     \midrule
-    \textbf{Overall (excl.\ attn.)} & \textbf{$\sim$73\%}\rlap{$^\S$} & \textbf{$\sim$29\%}\rlap{$^\S$} \\
+    \textbf{Overall (excl.\ attn.)} & \textbf{$\sim$73\%}\rlap{$^\S$} & \textbf{$\sim$29\%}\rlap{$^\S$} & \textbf{$\sim$98\%} & \textbf{$\sim$67\%} \\
     \bottomrule
   \end{tabular}
   {\footnotesize
@@ -490,13 +505,14 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
 \end{table}
 
 The most striking asymmetry is TileLang's normalization collapse:
-a $1087\times$ slowdown on large LayerNorm (\cref{sec:analysis:jit}) attributable to three compounding deficiencies (RC0).
-Triton is broadly competitive with PyTorch for element-wise ($\sim$95--116\%) and normalization (88.7\%) kernels
+a $1087\times$ slowdown on large LayerNorm (\cref{sec:analysis:jit}) attributable to three compounding deficiencies (RC0), and it persists across architectures ($329\times$ on the GH200, \cref{tab:norm}).
+On the A100, Triton is broadly competitive with PyTorch for element-wise ($\sim$95--116\%) and normalization (88.7\%) kernels
 but exhibits a persistent gap on convolution (19.3\%) and large square GEMM (32.8\%).
-TileLang shows competitive throughput only on fused linear+activation (548.6\%)
+TileLang on the A100 shows competitive throughput only on fused linear+activation (548.6\%)
 and large square matmul (80.0\%);
-all other TileLang results trail PyTorch substantially,
+all other A100 TileLang results trail PyTorch substantially,
 with element-wise operations at $\sim$67--74\% and batched GEMM at 7.0\%.
+The GH200 reorders this strength profile (\cref{tab:summary}): TileLang is markedly more competitive there---batched GEMM $110\%$, convolution $54\%$, square matmul $60\%$, overall median $\sim$67\% versus $\sim$29\% on the A100---so the two gaps that survive on \emph{both} architectures are the TileLang normalization collapse and the Triton convolution residual ($\le$13\% at $3\times3$), not a fixed per-DSL ranking. This hardware-dependence is itself the point: a DSL kernel's competitiveness cannot be read off one GPU.
 
 \Cref{tab:ew} reports per-kernel library efficiency for the 15 element-wise and reduction kernels individually at the large input size.
 Entries above 100\% (marked $^\dagger$) reflect kernel fusion or an unfused/eager PyTorch baseline rather than genuine speedups over a vendor library, and should not be read as pure DSL wins.
