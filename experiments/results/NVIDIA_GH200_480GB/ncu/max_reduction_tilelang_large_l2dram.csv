@@ -1,3 +1,7 @@
-==PROF== Connected to process 228449 (/usr/bin/python3.10)
-==PROF== Disconnected from process 228449
-==ERROR== The application returned an error code (1).
+==PROF== Connected to process 262238 (/usr/bin/python3.10)
+==PROF== Disconnected from process 262238
+"ID","Process ID","Process Name","Host Name","thread Domain:Push/Pop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Id:Domain:Start/Stop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Kernel Name","Context","Stream","Block Size","Grid Size","Device","CC","Section Name","Metric Name","Metric Unit","Metric Value"
+"0","262238","python3.10","127.0.0.1","262238  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","dram__bytes_read.sum","byte","536888576"
+"0","262238","python3.10","127.0.0.1","262238  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","dram__throughput.avg.pct_of_peak_sustained_elapsed","%","93.49"
+"0","262238","python3.10","127.0.0.1","262238  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","gpu__time_duration.sum","ns","143456"
+"0","262238","python3.10","127.0.0.1","262238  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","lts__t_sector_hit_rate.pct","%","0.60"

@@ -1,3 +1,8 @@
-==PROF== Connected to process 228150 (/usr/bin/python3.10)
-==PROF== Disconnected from process 228150
-==ERROR== The application returned an error code (1).
+==PROF== Connected to process 261863 (/usr/bin/python3.10)
+==PROF== Disconnected from process 261863
+"ID","Process ID","Process Name","Host Name","thread Domain:Push/Pop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Id:Domain:Start/Stop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Kernel Name","Context","Stream","Block Size","Grid Size","Device","CC","Section Name","Metric Name","Metric Unit","Metric Value"
+"0","261863","python3.10","127.0.0.1","261863  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum","byte","0"
+"0","261863","python3.10","127.0.0.1","261863  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum","byte","0"
+"0","261863","python3.10","127.0.0.1","261863  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","launch__occupancy_limit_registers","block","4"
+"0","261863","python3.10","127.0.0.1","261863  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","launch__registers_per_thread","register/thread","52"
+"0","261863","python3.10","127.0.0.1","261863  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","func_kernel","1","7","(256, 1, 1)","(8192, 1, 1)","0","9.0","Command line profiler metrics","sm__warps_active.avg.pct_of_peak_sustained_active","%","48.76"
