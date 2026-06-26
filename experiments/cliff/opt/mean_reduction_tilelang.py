@@ -1,0 +1,140 @@
+import tilelang
+import tilelang.language as T
+import torch
+import math
+
+try:
+    import sys as _sys, os as _os
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(__file__), '..'))
+    from tuning.cache import get_best_config as _get_best_config
+    _TUNED = _get_best_config("mean_reduction", "tilelang") or {}
+except Exception:
+    _TUNED = {}
+
+
+@tilelang.jit
+def _mean_reduction_kernel(m, n, k, bM=_TUNED.get("block_M", 32), bK=_TUNED.get("block_K", 32), threads=_TUNED.get("threads", 128)):
+    @T.prim_func
+    def func(
+        A: T.Tensor((m, n, k), "float32"),
+        Out: T.Tensor((m, k), "float32"),
+    ):
+        with T.Kernel(T.ceildiv(k, bK), T.ceildiv(m, bM), threads=threads) as (bx, by):
+            sum_val = T.alloc_fragment((bM, bK), "float32")
+            cur_val = T.alloc_fragment((bM, bK), "float32")
+            T.clear(sum_val)
+            for ni in T.serial(n):
+                for i, j in T.Parallel(bM, bK):
+                    cur_val[i, j] = A[by * bM + i, ni, bx * bK + j]
+                for i, j in T.Parallel(bM, bK):
+                    sum_val[i, j] = sum_val[i, j] + cur_val[i, j]
+            for i, j in T.Parallel(bM, bK):
+                sum_val[i, j] = sum_val[i, j] / T.float32(n)
+            T.copy(sum_val, Out[by * bM, bx * bK])
+    return func
+
+
+@tilelang.jit
+def _mean_row_kernel(M, N, blk, threads):
+    """Fast row reduction (reduce over the contiguous last dim, K==1).
+
+    One block per row; stream the row in tiles of `blk` and accumulate a
+    per-tile parallel reduction (T.reduce) rather than a serial element loop.
+    Bandwidth-bound; matches/beats torch.mean on large rows.
+    """
+    nt = N // blk
+
+    @T.prim_func
+    def func(A: T.Tensor((M, N), "float32"), Out: T.Tensor((M,), "float32")):
+        with T.Kernel(M, threads=threads) as bx:
+            tile = T.alloc_fragment((blk,), "float32")
+            part = T.alloc_fragment((1,), "float32")
+            acc = T.alloc_fragment((1,), "float32")
+            T.clear(acc)
+            for t in T.serial(nt):
+                for j in T.Parallel(blk):
+                    tile[j] = A[bx, t * blk + j]
+                T.reduce(tile, part, "sum", dim=0, clear=True)
+                acc[0] = acc[0] + part[0]
+            Out[bx] = acc[0] / T.float32(N)
+    return func
+
+
+def _mean_single_dim(x: torch.Tensor, dim: int, keepdim: bool = False) -> torch.Tensor:
+    """Mean reduction along a single dim using TileLang."""
+    dim = dim % x.ndim
+    shape = x.shape
+    N = shape[dim]
+    M = math.prod(shape[:dim]) if dim > 0 else 1
+    K = x.numel() // M // N
+
+    x_3d = x.contiguous().float().view(M, N, K)
+
+    # Fast path: reduction over the contiguous last dim (K == 1). Uses a
+    # bandwidth-bound tiled T.reduce kernel (one block per row).
+    if K == 1:
+        blk = min(2048, N)
+        if blk > 0 and N % blk == 0 and (blk & (blk - 1)) == 0:
+            x_2d = x_3d.view(M, N)
+            out = torch.empty(M, device=x.device, dtype=torch.float32)
+            _mean_row_kernel(M, N, blk, 128)(x_2d, out)
+            result = out.view(M, 1)
+            shape_list = list(shape)
+            shape_list[dim] = 1
+            result = result.view(shape_list)
+            if not keepdim:
+                result = result.squeeze(dim)
+            return result
+
+    block_M = min(_TUNED.get("block_M", 32), M)
+    block_K = min(_TUNED.get("block_K", 32), K)
+    M_pad = ((M + block_M - 1) // block_M) * block_M
+    K_pad = ((K + block_K - 1) // block_K) * block_K
+
+    if M_pad != M or K_pad != K:
+        x_pad = torch.zeros(M_pad, N, K_pad, device=x.device, dtype=torch.float32)
+        x_pad[:M, :, :K] = x_3d
+        out_pad = torch.zeros(M_pad, K_pad, device=x.device, dtype=torch.float32)
+    else:
+        x_pad = x_3d
+        out_pad = torch.zeros(M, K, device=x.device, dtype=torch.float32)
+
+    func = _mean_reduction_kernel(M_pad, N, K_pad, bM=block_M, bK=block_K)
+    func(x_pad, out_pad)
+
+    result = out_pad[:M, :K]
+    shape_list = list(shape)
+    shape_list[dim] = 1
+    result = result.view(shape_list)
+    if not keepdim:
+        result = result.squeeze(dim)
+    return result
+
+
+def mean_reduction(input_tensor, dim, keepdim=False, dtype=None):
+    """
+    Computes the mean value along specified dimensions using TileLang.
+    Matches the signature of pytorch_impl.mean_reduction.
+    """
+    if dtype is None:
+        out_dtype = input_tensor.dtype
+    else:
+        out_dtype = dtype
+
+    if isinstance(dim, int):
+        dims = [dim % input_tensor.ndim]
+    else:
+        dims = sorted([d % input_tensor.ndim for d in dim])
+
+    # For multi-dim reduction, reduce dims one at a time from highest to lowest
+    # so that earlier dim indices remain valid.
+    result = input_tensor
+    for d in reversed(sorted(dims)):
+        result = _mean_single_dim(result, d, keepdim=True)
+
+    if not keepdim:
+        # Squeeze all reduced dims (squeeze from highest to lowest)
+        for d in reversed(sorted(dims)):
+            result = result.squeeze(d)
+
+    return result.to(out_dtype)
