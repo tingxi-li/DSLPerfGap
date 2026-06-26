@@ -144,7 +144,7 @@ These document the prior review round; deleting them loses the record.
 - [ ] `methodology.tex` → add benchmark-survey + heuristic-definition methodology
 - [x] `analysis.tex` (RQ2) — added the pivot framing tie (kernels pass benchmarks yet lag; causes split by where the fix belongs: authoring / codegen / library-maturity). RC0-RC4 body already counter-grounded; corrected labels preserved.
 - [x] `mitigation.tex` → recast as RQ3 guidance: prepended heuristics subsection (comparability screen + roofline anchor) + `tab:roofline` (GH200 cliff/ρ/E_lib, authoring-artifact vs structural-residual dichotomy, judgment-band honesty); existing campaigns kept as the optimization-pattern evidence.
-- [ ] `background.tex` → add KernelBench/TritonBench + LLM-kernel-gen
+- [x] `background.tex` → §2.5 recast as "Benchmarking DSL and LLM-Generated Kernels": added KernelBench (correctness-gated, fast-only guard) + LLM-kernel-gen framing alongside TritonBench; sets up the RQ1 evaluation gap.
 - [ ] `related_work.tex`, `discussion.tex`, `conclusion.tex`, `threats.tex`
 - [~] `main.tex` title — DEFERRED by author decision (keep current title for now); ancillary docs (`README`, `AKO4ALL/README`); drops
 - [ ] New experiments (benchmark survey, passes-but-slow demo, heuristic validation, GH200 re-baseline)

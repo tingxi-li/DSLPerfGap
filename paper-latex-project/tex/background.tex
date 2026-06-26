@@ -53,16 +53,16 @@ cuDNN~\cite{chetlur2014cudnn,cudnn2024} covers the full set of deep learning pri
 convolution (forward and backward passes), pooling, normalization, recurrent layers, and attention.
 cuDNN selects among implicit GEMM, Winograd ($3\times3$ filters), FFT (large filters), and direct convolution at runtime via \texttt{cudnnFind}, benchmarking all candidates per configuration.
 
-\subsection{TritonBench}
+\subsection{Benchmarking DSL and LLM-Generated Kernels}
 \label{sec:bg:tritonbench}
 
-TritonBench~\cite{li2025tritonbench} is a comprehensive collection of production-grade Triton kernels
-curated from high-starred open-source repositories,
-covering attention variants, GEMM, softmax, normalization,
-and fused operations.
-It provides both functional correctness metrics and efficiency metrics
---- memory bandwidth utilization and GPU efficiency as a fraction of theoretical peak TFLOPS ---
-making it a natural starting point for a performance gap study.
-Our kernel suite is derived from TritonBench's
-GitHub channel (184 kernels from 95 repositories),
-supplemented with TileLang re-implementations and additional convolution configurations.
+Custom GPU kernels are increasingly produced not by hand but by automated tools: \texttt{torch.compile} lowers operators to Triton~\cite{li2023torchcompile}, and a growing body of work uses LLMs to generate kernels directly~\cite{kernelbench,li2025tritonforge}.
+This has made kernel \emph{benchmarks} the de-facto arbiters of kernel quality, and two dominate the DSL and LLM-generated setting.
+
+TritonBench~\cite{li2025tritonbench} is a collection of production-grade Triton kernels curated from high-starred open-source repositories, covering attention variants, GEMM, softmax, normalization, and fused operations.
+It reports both functional correctness and efficiency metrics---memory-bandwidth utilization and GPU efficiency as a fraction of theoretical peak TFLOPS---though for Triton only, on a single GPU, and for one data type and shape per operator.
+Our kernel suite is derived from TritonBench's GitHub channel (184 kernels from 95 repositories), supplemented with TileLang re-implementations and additional convolution configurations.
+
+KernelBench~\cite{kernelbench} is the de-facto benchmark for LLM kernel generation: each task poses a PyTorch reference module and accepts a generated kernel---CUDA in the original, and Triton/TileLang via the same harness in our artifact---that reproduces the reference output on randomized inputs.
+It records a speedup over the eager baseline but \emph{gates on correctness alone}, and its sole reward-hacking guard flags only kernels that run implausibly \emph{fast}.
+Neither benchmark rejects a kernel for being slow, and neither spans more than a narrow slice of the (DSL $\times$ data type $\times$ shape $\times$ architecture) space---the evaluation gap we quantify in \cref{sec:evaluation}.
