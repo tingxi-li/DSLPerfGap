@@ -102,7 +102,7 @@ def main():
     # readable table grouped by target
     order = ["matmul_pytorch_large", "matmul_triton_large", "conv2d_triton_large",
              "layer_norm_tilelang_large", "argmax_tilelang_large",
-             "max_reduction_tilelang_large"]
+             "max_reduction_tilelang_large", "logsumexp_tilelang_opt_large"]
     targets = [t for t in order if t in data] + [t for t in data if t not in order]
 
     def g(target, metric):

@@ -208,6 +208,9 @@ gpu__time_duration.sum"
 #   layer_norm tilelang  -- RC0b scalar 16-bit loads (the central LayerNorm anomaly)
 #   argmax tilelang      -- RC0a stalled_barrier (24 __syncthreads/fragment story)
 #   max_reduction tilelang -- RC0a sibling reduction kernel
+#   logsumexp tilelang_opt -- RC3 register spill: the *optimized* reduction kernel
+#                             that recovers on the A100 but spills on sm_90 (Hopper),
+#                             loaded from experiments/opt_kernels/logsumexp_opt.py.
 # All at "large" (the paper shapes). Override with TARGETS="kernel:impl:size ...".
 # ---------------------------------------------------------------------------
 DEFAULT_TARGETS=(
@@ -217,6 +220,7 @@ DEFAULT_TARGETS=(
   "layer_norm:tilelang:large"
   "argmax:tilelang:large"
   "max_reduction:tilelang:large"
+  "logsumexp:tilelang_opt:large"
 )
 
 # Allow override:  TARGETS="matmul:triton:large conv2d:triton:large" bash ncu_counters.sh
@@ -247,8 +251,8 @@ set_metrics() {  # $1 = A|B|C|D
 #   Portable: same names on A100/H100 (TileLang/Triton recompile per-arch).
 kernel_filter_for() {  # $1 = impl  ->  echoes an ncu --kernel-name regex, or empty
   case "$1" in
-    tilelang) echo "func_kernel" ;;
-    *)        echo "" ;;
+    tilelang|tilelang_opt) echo "func_kernel" ;;
+    *)                     echo "" ;;
   esac
 }
 

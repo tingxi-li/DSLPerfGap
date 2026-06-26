@@ -47,6 +47,22 @@ layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stall
 layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0,inst
 layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,0.00,inst
 layer_norm_tilelang_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,1.45,inst
+logsumexp_tilelang_opt_large,func_kernel,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,136167361024,byte
+logsumexp_tilelang_opt_large,func_kernel,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,63.51,%
+logsumexp_tilelang_opt_large,func_kernel,l2dram,ref,gpu__time_duration.sum,kernel time (ns),107873504,ns
+logsumexp_tilelang_opt_large,func_kernel,l2dram,RC2b,lts__t_sector_hit_rate.pct,L2 hit %,51.14,%
+logsumexp_tilelang_opt_large,func_kernel,loads,RC1,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,sectors/req (↑=less vectorized),2,sector
+logsumexp_tilelang_opt_large,func_kernel,loads,RC1,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,bytes/sector load eff %,12.50,%
+logsumexp_tilelang_opt_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,local-ld bytes (spill),140173639680,byte
+logsumexp_tilelang_opt_large,func_kernel,regs,RC3,l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,local-st bytes (spill),140146376704,byte
+logsumexp_tilelang_opt_large,func_kernel,regs,RC3,launch__occupancy_limit_registers,occ limit (reg) %,2,block
+logsumexp_tilelang_opt_large,func_kernel,regs,RC3,launch__registers_per_thread,regs/thread,255,register/thread
+logsumexp_tilelang_opt_large,func_kernel,regs,RC3,sm__warps_active.avg.pct_of_peak_sustained_active,achieved occ %,12.36,%
+logsumexp_tilelang_opt_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio,stall barrier (sync),0,inst
+logsumexp_tilelang_opt_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio,stall long_scoreboard,26.17,inst
+logsumexp_tilelang_opt_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_membar_per_issue_active.ratio,stall membar,0,inst
+logsumexp_tilelang_opt_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio,stall mio_throttle,0.00,inst
+logsumexp_tilelang_opt_large,func_kernel,stalls,RC0,smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio,stall short_scoreboard,0.23,inst
 matmul_pytorch_large,nvjet_hsh_192x192_64x3_2x1_v_bz_coopB_NNN,l2dram,RC2b,dram__bytes_read.sum,DRAM read bytes,18458875904,byte
 matmul_pytorch_large,nvjet_hsh_192x192_64x3_2x1_v_bz_coopB_NNN,l2dram,RC2b,dram__throughput.avg.pct_of_peak_sustained_elapsed,DRAM thru %,41.87,%
 matmul_pytorch_large,nvjet_hsh_192x192_64x3_2x1_v_bz_coopB_NNN,l2dram,ref,gpu__time_duration.sum,kernel time (ns),11276992,ns

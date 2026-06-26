@@ -206,8 +206,8 @@ the identical shape (\texttt{max\_reduction}) reaches $132\%$, isolating the res
 Re-timing the same optimized kernels on the GH200 confirms the pattern transfers---LayerNorm $120\%$,
 RMSNorm $1303\%$, MeanReduction $97\%$, MaxReduction $84\%$, Softmax $87\%$, LogSoftmax $90\%$
 (\cref{tab:mitigation,tab:roofline})---with one instructive exception: \texttt{logsumexp}, whose
-A100-tuned wide fp32 fragment register-spills on \texttt{sm\_90} (255~registers, ${\sim}2.2$B local-memory
-ops, $12\%$ occupancy by Nsight Compute), collapsing to $1.0\%$. The spill is an RC3-class effect, not
+A100-tuned wide fp32 fragment register-spills on \texttt{sm\_90} (255~registers, ${\sim}280$~GB of
+local-memory spill traffic, $12\%$ occupancy by Nsight Compute, \texttt{ncu\_summary.csv}), collapsing to $1.0\%$. The spill is an RC3-class effect, not
 the RC0 reduction idiom: retuning the fragment width recovers it only to $63\%$, so on the GH200
 \texttt{logsumexp} is a genuine residual. That an ``optimized'' kernel validated on one GPU can be
 $100\times$ off on another, with no correctness signal, is precisely the evaluation gap this paper
@@ -271,9 +271,9 @@ the rest reflects general cuDNN implicit-GEMM tuning
   \vspace{0.3em}
   {\small $^\dagger$ RMSNorm $E_\text{lib} > 100\%$ due to kernel fusion; see \cref{tab:mitig:norm}.
   $^\ddagger$ LogSumExp is the one family kernel whose optimized config does \emph{not} transfer to the GH200:
-  its A100-tuned wide fp32 fragment register-spills on sm\_90 (255~regs, ${\sim}2.2$B local-memory load/store
-  ops $\to$ $1.0\%$); even retuned to the GH200-optimal fragment width it caps at $63\%$, an RC3-class residual
-  rather than an authoring artifact.
+  its A100-tuned wide fp32 fragment register-spills on sm\_90 (255~regs, ${\sim}280$~GB local-memory spill
+  traffic, $12\%$ occupancy; GH200 \texttt{ncu\_summary.csv}) $\to$ $1.0\%$; even retuned to the GH200-optimal
+  fragment width it caps at $63\%$, an RC3-class residual rather than an authoring artifact.
   A100 \emph{ms} columns are re-timed on the A100-SXM4 (locked clocks); the memory-latency-bound norm/reduction
   \emph{Before} kernels are clock-invariant and match the unlocked profile. GH200 $E_\text{lib}$ is the
   optimized-kernel efficiency from \cref{tab:roofline} (unlocked). \emph{Before} is the
