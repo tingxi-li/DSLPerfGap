@@ -21,7 +21,8 @@
   file:line.
 
 **Terminology caution (fairness).** "TritonBench" denotes **two distinct artifacts**: (a) the academic
-LLM-Triton-generation benchmark of Hong et al. (arXiv:2502.14752), and (b) Meta's `tritonbench` operator
+LLM-Triton-generation benchmark of Li et al. (arXiv:2502.14752, ACL Findings 2025; first author Jianling Li —
+this is the entry cited as `li2025tritonbench` in `references.bib`), and (b) Meta's `tritonbench` operator
 **performance** harness. This survey treats (a) as the benchmark parallel to KernelBench, and flags (b) where
 relevant. Conflating them would be a strawman.
 
@@ -98,7 +99,7 @@ emit a `ModelNew` that reproduces its output faster. Strengths relevant to *perf
 
 ---
 
-## 2. TritonBench (Hong et al., arXiv:2502.14752)
+## 2. TritonBench (Li et al., arXiv:2502.14752 / ACL Findings 2025)
 
 ### 2.1 What it is and what it does well
 
@@ -120,6 +121,12 @@ Strengths relevant to *performance* evaluation:
   RQ3, so TritonBench is partial corroboration, not just a foil.)
 - **Realistic, difficulty-graded operator distribution** drawn from production Triton code, plus per-operator
   multi-branch correctness tests (avg ≈3.6 test branches/operator) to exercise code paths.
+- **Robust, plausibility-checked timing.** Latency uses `triton.testing.do_bench`, escalating warmup/repetition
+  until the measured time stabilizes (the paper notes most operators end up run "hundreds of thousands of
+  times"), and the efficiency stage rejects physically impossible results: `EVAL/eval_G/2_efficiency.py` asserts
+  out any run that reports `efficiency >= 100` (≥100% of the A100's theoretical peak) or `ms >= 10`. This is a
+  genuine — if narrow — guard against the "too-good-to-be-true" timing artifacts that pure speedup protocols
+  miss.
 - **Honest about its own limits**: the paper states evaluation is on a **single NVIDIA A100** and flags hardware
   generalization as a limitation.
 
@@ -136,9 +143,25 @@ Strengths relevant to *performance* evaluation:
 - **Speedup is reference-relative, and the reference is the curated/PyTorch op, not necessarily the best vendor
   library.** TritonBench-G speedup is gen-vs-the-GitHub-reference-Triton-kernel; TritonBench-T is
   gen-vs-PyTorch. Neither pins the candidate to a tuned vendor library (cuBLAS/cuDNN/CUTLASS) as the bar.
-- **Dtype coverage is not specified in the paper text we retrieved** — `[UNVERIFIED]`: the paper section
-  fetched does not enumerate fp32/fp16/bf16 coverage; operator tests inherit each operator's native dtype, so
-  dtype breadth is per-operator and not a controlled axis.
+- **Dtype is a per-operator property, never a swept axis.** Neither the paper (arXiv:2502.14752) nor the repo
+  README enumerates fp16/bf16/fp32/fp8 coverage; instead each operator's test block hardcodes its own native
+  dtype, inherited from the curated GitHub source. Inspecting the operator files confirms a *heterogeneous* mix
+  rather than a controlled dimension: `data/TritonBench_G_v1/flash_attn.py` builds Q/K/V with
+  `dtype=torch.float16`, whereas `matmul_triton1.py` (bare `torch.randn` → fp32) and `layer_norm_triton.py`
+  (explicit `dtype=torch.float32`) run in fp32. The GPU-efficiency metric is itself anchored to the A100's
+  fp16/bf16 tensor-core peak (312 TFLOPS) and HBM peak (2039 GB/s) in `EVAL/eval_G/2_efficiency.py`, so the
+  low-precision tensor-core regime *is* exercised — by the operators that natively use it — but the benchmark
+  never runs one operator across multiple dtypes, so it cannot isolate per-dtype kernel-quality differences. No
+  fp8 operators were observed.
+- **No adversarial anti-reward-hacking suite; correctness is exact stdout-string equality.** Unlike
+  KernelBench's committed adversarial tests, **no anti-reward-hacking mechanism is documented in the paper or
+  repo** beyond the single plausibility assert above (reject ≥100%-of-peak / `ms >= 10`). Execution accuracy is
+  computed by running the reference and the generated operator as separate subprocesses and comparing their
+  *printed stdout* for exact string equality (`EVAL/eval_G/1_exe_acc.py`: `return output1 == output2`) — there
+  is no `torch.allclose`/tolerance and no input-override hardening in the harness itself; numerical robustness
+  rests on whatever each operator script rounds-and-prints. So, as with KernelBench, performance is reported
+  rather than gated and a slow-but-correct kernel still passes the correctness stage; there is no defense
+  against memory-reuse / dropped-computation hacks of the kind catalogued by the Sakana episode.
 - **Shape coverage is per-operator correctness branches, not a controlled performance shape-sweep** — the
   "≈3.6 branches/operator" figure is about exercising code paths for *correctness*, not systematically
   measuring per-shape performance collapse.
@@ -154,12 +177,12 @@ the load-bearing RQ1 question: *does a functionally-correct but slow kernel pass
 | Dimension | **KernelBench** | **TritonBench** (acad., 2502.14752) | **ViperBench** (our probe) |
 |---|---|---|---|
 | **DSL coverage** | CUDA + PyTorch-ext at launch; `main` now adds **Triton, CuTe, TileLang, ThunderKittens** (Issue #74) | **Triton only** | PyTorch (ref) + **Triton + TileLang**, 22 kernels × 3 backends |
-| **Dtype coverage** | fp32 default (reported results fp32); fp16/bf16 supported | `[UNVERIFIED]` — not enumerated; per-operator native dtype | fp32 / fp16 / bf16 (per-kernel, e.g. matmul fp16, layer_norm bf16) |
+| **Dtype coverage** | fp32 default (reported results fp32); fp16/bf16 supported | Per-operator native dtype, **not a swept axis**: e.g. fp16 (`flash_attn.py`), fp32 (`matmul`, `layer_norm`); efficiency anchored to A100 fp16 tensor-core peak (312 TFLOPS); no fp8 observed | fp32 / fp16 / bf16 (per-kernel, e.g. matmul fp16, layer_norm bf16) |
 | **Shape coverage** | **1 hardcoded shape per task** (e.g. matmul `N=4096`) | per-operator correctness branches (avg ≈3.6), single A100 sizing | multiple shapes per kernel (small→large + 3-D/edge; matmul 64→4096) |
 | **Hardware coverage** | 1 GPU per run vs that GPU's baseline file (H100/etc. baselines shipped) | **single A100** (stated limitation) | 4–5 GPU classes namespaced: RTX4000Ada, A100-PCIe, A100-SXM4, H100 (+GH200) |
 | **Baseline** | **PyTorch eager + `torch.compile` (Inductor)** committed baselines | reference op (curated Triton for -G; PyTorch for -T) | PyTorch eager / cuDNN built-ins (`torch.compile` arm in `experiments/`) |
 | **Performance gate (does slow-but-correct pass?)** | **YES, it passes.** Correctness is the only hard gate; `fast_0`=correctness; speed is a continuous `fast_p`; vendored exit code = correctness only (`bench.py:1009`) | **YES, it passes.** No perf gate; speed/efficiency reported beside correctness | **YES it "passes" correctness** — but ViperBench's job is to *measure & report* the gap (`slow_kernels.csv`), exposing what the others would have admitted |
-| **Reward-hacking prevention** | **Partial:** all-trials `allclose` over 5 random seeds + adversarial suite (cache-reuse, input-mod, stream-timing); excessive-speedup (>10×) **warns only**, "experimental" | Multi-branch correctness; cold-cache timing; no published anti-cheat taxonomy `[UNVERIFIED]` | Unified-API contract + shared harness; reference *raises* on unsupported args. Hand-written kernels, not a generation target → reward-hacking largely N/A |
+| **Reward-hacking prevention** | **Partial:** all-trials `allclose` over 5 random seeds + adversarial suite (cache-reuse, input-mod, stream-timing); excessive-speedup (>10×) **warns only**, "experimental" | **Minimal:** robust `do_bench` timing + a ≥100%-of-peak plausibility assert (`2_efficiency.py`); correctness = exact stdout-string match (`1_exe_acc.py`), no `allclose`/tolerance; **no adversarial anti-cheat suite documented** | Unified-API contract + shared harness; reference *raises* on unsupported args. Hand-written kernels, not a generation target → reward-hacking largely N/A |
 
 ---
 
@@ -235,9 +258,14 @@ RQ3.
 - Sakana "Robust KBench" paper: <https://pub.sakana.ai/static/paper.pdf> · repo: <https://github.com/SakanaAI/robust-kbench>
 - Memory-reuse exploit / dropped-conv example (miru): <https://x.com/miru_why/status/1892703900425486539>
 
-**TritonBench — primary**
+**TritonBench — primary** (cited in `references.bib` as `li2025tritonbench`; first author Jianling Li — *not* "Hong et al.")
 - arXiv abstract / HTML / PDF (2502.14752): <https://arxiv.org/abs/2502.14752> · <https://arxiv.org/html/2502.14752v1>
 - ACL Findings 2025: <https://aclanthology.org/2025.findings-acl.1183/>
+- GitHub repo (the academic benchmark): <https://github.com/thunlp/TritonBench>
+- Correctness harness — execution accuracy = exact stdout-string equality (`return output1 == output2`), no `allclose`/tolerance: <https://github.com/thunlp/TritonBench/blob/main/EVAL/eval_G/1_exe_acc.py>
+- Efficiency harness — GPU efficiency vs A100 peak (`/2039` GB/s, `/312` TFLOPS) + plausibility assert (`efficiency >= 100 or ms >= 10`): <https://github.com/thunlp/TritonBench/blob/main/EVAL/eval_G/2_efficiency.py>
+- Per-operator native dtype (heterogeneous, not swept): `data/TritonBench_G_v1/flash_attn.py` (`dtype=torch.float16`), `matmul_triton1.py` (default fp32), `layer_norm_triton.py` (`dtype=torch.float32`): <https://github.com/thunlp/TritonBench/tree/main/data/TritonBench_G_v1>
+- Efficiency = ratio of measured GB/s & TFLOPs to A100 theoretical peak; speedup = t_ref/t_gen; eval on a single A100 (paper §3.5 + Appendix B + Limitations)
 - (Distinct) Meta performance suite of the same name: <https://github.com/meta-pytorch/tritonbench>
 
 **Repo (vendored evidence)**
@@ -245,7 +273,23 @@ RQ3.
 - `AKO4ALL/bench/kernelbench/GUIDE.md` — tolerance table 67–75 (fp32 1e-4, fp16/bf16 1e-2) — **diverges from the code above**.
 - `ViperBench/` — 22 kernel dirs × {pytorch,triton,tilelang}_impl.py; per-kernel multi-shape `test.py` (e.g. `matmul/test.py` 5 shapes 64→4096; `layer_norm/test.py` 6 shapes incl. 3-D); GPU-namespaced `results/profile.<gpu>.csv` (RTX4000Ada, A100-PCIE-40GB, A100-SXM4-40GB, H100-80GB-HBM3); `results/slow_kernels.csv`.
 
-**`[UNVERIFIED]` flags (double-check before citing in the paper)**
-1. TritonBench **dtype coverage** — not enumerated in the paper text retrieved; treat as "per-operator native dtype, not a controlled axis."
-2. TritonBench **published anti-reward-hacking measures** — none surfaced in the fetched sections; absence-of-evidence, not confirmed absence.
-3. A secondary write-up's claim that **KernelBench uses 3–5 shapes/problem with geomean** is **contradicted** by the actual problem files (single hardcoded shape) — do **not** repeat it; flagged here so it isn't reintroduced.
+**Previously-`[UNVERIFIED]` items — now resolved against primary sources**
+1. **TritonBench dtype coverage — RESOLVED.** Dtype is not specified in the paper (arXiv:2502.14752) or repo
+   README; it is a **per-operator native property, not a controlled/swept axis.** Verified by inspecting the
+   operator files: `flash_attn.py` runs fp16 (`dtype=torch.float16`), while `matmul_triton1.py` (default
+   `torch.randn` → fp32) and `layer_norm_triton.py` (`dtype=torch.float32`) run fp32; the efficiency metric is
+   anchored to the A100 fp16/bf16 tensor-core peak (312 TFLOPS) and HBM peak (2039 GB/s) in
+   `EVAL/eval_G/2_efficiency.py`. No fp8 operators observed. → fp16 and fp32 are both exercised (per operator);
+   the benchmark never sweeps one operator across dtypes.
+2. **TritonBench anti-reward-hacking measures — RESOLVED (definitive absence).** **No anti-reward-hacking
+   mechanism is documented in the paper or the `thunlp/TritonBench` repo** beyond a single physical-plausibility
+   assert (`efficiency >= 100 or ms >= 10` → `assert False`, `EVAL/eval_G/2_efficiency.py`). Correctness is exact
+   stdout-string equality between reference and generated runs (`EVAL/eval_G/1_exe_acc.py`:
+   `return output1 == output2`) with no `allclose`/tolerance and no input-override; timing uses robust
+   `triton.testing.do_bench`. There is **no adversarial test suite** analogous to KernelBench's cache-reuse /
+   input-mod / stream-timing tests — performance is reported, not gated, so a slow-but-correct kernel passes.
+3. **"KernelBench uses 3–5 shapes/problem with geomean" — CONFIRMED DEBUNKED, sourced.** The actual problem
+   files define a **single hardcoded shape**: e.g. Level-1 `1_Square_matrix_multiplication_.py` sets `N = 2048 *
+   2` and `get_inputs()` returns two `torch.rand(N, N)` (i.e. one 4096² shape, no shape list, no geomean) —
+   <https://github.com/ScalingIntelligence/KernelBench/blob/main/KernelBench/level1/1_Square_matrix_multiplication_.py>.
+   The draft's correction stands; do **not** reintroduce the 3–5-shapes claim.
