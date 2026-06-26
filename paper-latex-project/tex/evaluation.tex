@@ -246,11 +246,29 @@
 
 
 
-This section answers RQ1:
-\textit{What is the magnitude and distribution of the performance gap
-between DSLs (Triton, TileLang) and cuBLAS/cuDNN across kernel categories?}
+This section answers RQ1: \emph{do existing benchmarks distinguish well-written DSL kernels from performance-poor ones, and along which dimensions do they fall short?}
+We survey what the prevailing DSL and LLM-generated-kernel benchmarks measure (\cref{sec:eval:survey}), show that a correct-but-slow kernel passes their gate unflagged (\cref{sec:eval:passesslow}), and then quantify the hidden performance gap this gate admits across the 22-kernel suite (\cref{sec:eval:overview} onward).
 
-\subsection{Overview}
+\subsection{What Existing Benchmarks Measure}
+\label{sec:eval:survey}
+
+The two benchmarks that dominate DSL and LLM-generated GPU-kernel evaluation are KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}, and both treat performance as a \emph{reported outcome} rather than an \emph{acceptance criterion}.
+KernelBench, the de-facto target for LLM kernel generation, accepts a candidate on \emph{correctness alone}: its evaluator runs the kernel against a randomized-input PyTorch reference and the task passes if the outputs match within tolerance, with measured speedup recorded but never gated.
+Its only guard against reward hacking is a heuristic warning when a kernel runs more than $10\times$ faster than the reference---so it fires only on suspiciously \emph{fast} kernels and is silent on the slow ones, which are the failure mode we study here.\footnote{We exercise this evaluator directly: the KernelBench-style harness in our artifact (\texttt{eval\_kernel\_against\_ref}) overrides the candidate's input generators with the reference's and warns on more-than-$10\times$ speedups, the same anti-cheat logic shipped upstream.}
+TritonBench is Triton-only and, to its credit, reports a roofline-anchored GPU-efficiency metric (achieved fraction of hardware peak)---a precedent we build on in \cref{sec:mitigation}---but it likewise reports rather than gates on that metric, applies no anti-cheat, and fixes one data type and shape per operator on a single GPU.
+Neither benchmark covers more than a narrow slice of the (DSL $\times$ data type $\times$ shape $\times$ architecture) space, and neither rejects a kernel for being slow.
+A kernel that ``passes'' therefore certifies correctness, not quality.
+
+\subsection{Passing Is Not Fast}
+\label{sec:eval:passesslow}
+
+To show that this gap is not hypothetical, we run idiomatic but unoptimized DSL kernels---the kind a developer or an LLM generator would plausibly produce---through the KernelBench-style correctness gate and then time them.
+On the GH200, the naive TileLang LayerNorm kernel passes the gate on all five correctness shapes yet runs $1293\times$ slower than PyTorch at the large shape ($176.4$~ms vs.\ $0.136$~ms); naive TileLang RMSNorm passes and is $117\times$ slower; naive TileLang argmax passes and is $16.7\times$ slower.
+In every case the gate returns \texttt{correct=True} and the more-than-$10\times$ reward-hacking guard never triggers, because the kernels are slow, not fast.
+These are not adversarial constructions: they are the reduction kernels shipped as idiomatic TileLang, differing from a competent implementation only in the reduction primitive (\cref{sec:analysis:jit}).
+The same kernels show the same qualitative gap on the A100 suite below (TileLang LayerNorm $1087\times$, \cref{tab:norm}); we report per-architecture magnitudes throughout and note where they differ.% TODO(revision): re-baseline the suite tables to the GH200 primary so headline magnitudes match the passes-but-slow demonstration.
+
+\subsection{The Hidden Gap These Benchmarks Admit}
 \label{sec:eval:overview}
 
 \Cref{fig:overview} summarizes library efficiency (\%) for all kernels in the suite, broken down by DSL (Triton, TileLang) and kernel category.

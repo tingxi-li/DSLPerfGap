@@ -140,7 +140,7 @@ These document the prior review round; deleting them loses the record.
 - [x] `abstract.tex`, `RQ_summary.tex` rewritten to new framing
 - [x] repo `CLAUDE.md` pivot banner
 - [x] `introduction.tex` rewrite (thesis-bearing) — DONE; uses `\cite{kernelbench}` (bib entry TODO)
-- [ ] `evaluation.tex` → split RQ1 (eval gap) evidence vs RQ2 (gap) data
+- [x] `evaluation.tex` → §5 retitled "The Evaluation Gap (RQ1)"; prepended benchmark survey + passes-but-slow demo; magnitude tables kept in place reframed as "the hidden gap these benchmarks admit". main.tex §5/§6/§7 retitled. `kernelbench` bib entry added. (Tables NOT moved — labels global, lower risk.)
 - [ ] `methodology.tex` → add benchmark-survey + heuristic-definition methodology
 - [ ] `analysis.tex` (RQ2) — light edits (already counter-grounded)
 - [ ] `mitigation.tex` → recast as RQ3 patterns + heuristics
