@@ -1,7 +1,7 @@
-==PROF== Connected to process 103551 (/usr/bin/python3.10)
-==PROF== Disconnected from process 103551
+==PROF== Connected to process 52589 (/usr/bin/python3.10)
+==PROF== Disconnected from process 52589
 "ID","Process ID","Process Name","Host Name","thread Domain:Push/Pop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Id:Domain:Start/Stop_Range:PL_Type:PL_Value:CLR_Type:Color:Msg_Type:Msg","Kernel Name","Context","Stream","Block Size","Grid Size","Device","CC","Section Name","Metric Name","Metric Unit","Metric Value"
-"0","103551","python3.10","127.0.0.1","103551  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 256, 1)","0","8.0","Command line profiler metrics","dram__bytes_read.sum","byte","139056157952"
-"0","103551","python3.10","127.0.0.1","103551  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 256, 1)","0","8.0","Command line profiler metrics","dram__throughput.avg.pct_of_peak_sustained_elapsed","%","85.92"
-"0","103551","python3.10","127.0.0.1","103551  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 256, 1)","0","8.0","Command line profiler metrics","gpu__time_duration.sum","ns","104473472"
-"0","103551","python3.10","127.0.0.1","103551  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 256, 1)","0","8.0","Command line profiler metrics","lts__t_sector_hit_rate.pct","%","49.43"
+"0","52589","python3.10","127.0.0.1","52589  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 128, 1)","0","8.0","Command line profiler metrics","dram__bytes_read.sum","byte","70591609856"
+"0","52589","python3.10","127.0.0.1","52589  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 128, 1)","0","8.0","Command line profiler metrics","dram__throughput.avg.pct_of_peak_sustained_elapsed","%","80.76"
+"0","52589","python3.10","127.0.0.1","52589  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 128, 1)","0","8.0","Command line profiler metrics","gpu__time_duration.sum","ns","56632320"
+"0","52589","python3.10","127.0.0.1","52589  ""<default domain>:TARGET:none:none:none:none:none:none"" ","","matmul_kernel","1","7","(128, 1, 1)","(256, 128, 1)","0","8.0","Command line profiler metrics","lts__t_sector_hit_rate.pct","%","61.63"

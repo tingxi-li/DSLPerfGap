@@ -383,7 +383,7 @@ most diagnostic for its detection.
     RC1: Strided access, scalar LD  & Conv2d ($K > 1$), Triton      & $2.57\times$ with RC2   & Load bytes/sector eff.\ (12.55\%) \\
     RC2a: Auto-tuning mismatch      & Matmul, Conv2d, Depthwise     & $1.66\times$ (Matmul)   & TFLOPS vs.\ swept configs       \\
     RC2b: L2 cache residency        & Matmul $\geq 16384^2$         & ---                     & L2 hit rate, DRAM throughput    \\
-    RC3: TileLang LayerNorm spill   & TileLang LayerNorm (large)    & ---                     & \texttt{sm\_\_register\_spill} / occupancy \\
+    RC3: TileLang LayerNorm spill   & TileLang LayerNorm (large)    & ---                     & \texttt{local\_op} spill / occupancy (A100: 51.5\,GB ld, 254 regs, 12\% occ) \\
     RC4: No Winograd                & Conv2d $3\times3$             & ${\approx}2$--$3\%$     & SM utilization delta            \\
     \bottomrule
   \end{tabular}
