@@ -263,10 +263,10 @@ A kernel that ``passes'' therefore certifies correctness, not quality.
 \label{sec:eval:passesslow}
 
 To show that this gap is not hypothetical, we run idiomatic but unoptimized DSL kernels---the kind a developer or an LLM generator would plausibly produce---through the KernelBench-style correctness gate and then time them.
-On the GH200, the naive TileLang LayerNorm kernel passes the gate on all five correctness shapes yet runs $1293\times$ slower than PyTorch at the large shape ($176.4$~ms vs.\ $0.136$~ms); naive TileLang RMSNorm passes and is $117\times$ slower; naive TileLang argmax passes and is $16.7\times$ slower.
+On the GH200, the live shipped TileLang LayerNorm kernel passes the gate on all five correctness shapes yet runs $323\times$ slower than PyTorch at the large shape under locked clocks ($51.5$~ms vs.\ $0.16$~ms); shipped TileLang RMSNorm passes and is $117\times$ slower. A deliberately constructed worst-case LayerNorm variant---fp32 internal I/O and a zero-initialized output buffer---is slower still, reaching $1293\times$ ($176.4$~ms, unlocked); even a naive argmax passes and is $16.7\times$ slower.
 In every case the gate returns \texttt{correct=True} and the more-than-$10\times$ reward-hacking guard never triggers, because the kernels are slow, not fast.
-These are not adversarial constructions: they are the reduction kernels shipped as idiomatic TileLang, differing from a competent implementation only in the reduction primitive (\cref{sec:analysis:jit}).
-The same kernels show the same qualitative gap on the A100 suite below (TileLang LayerNorm $1087\times$, \cref{tab:norm}), with the suite magnitude and root-cause analysis measured on the A100 and the evaluation-gap and roofline results on the GH200; we report per-architecture magnitudes throughout and note where they differ.
+The shipped kernels are not adversarial constructions: they are the reduction kernels shipped as idiomatic TileLang, differing from a competent implementation only in the reduction primitive (\cref{sec:analysis:jit}).
+The same authoring idiom shows the same qualitative gap on the A100 suite below, where the live shipped TileLang LayerNorm is $1087\times$ slower (\cref{tab:norm}; A100-SXM4, unlocked profile), with the suite magnitude and root-cause analysis measured on the A100 and the evaluation-gap and roofline results on the GH200; we report per-architecture magnitudes throughout and note where they differ.
 
 \subsection{The Hidden Gap These Benchmarks Admit}
 \label{sec:eval:overview}

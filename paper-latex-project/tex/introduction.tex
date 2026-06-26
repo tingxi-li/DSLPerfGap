@@ -16,7 +16,7 @@ This makes performance deficits hard to predict and hard to correct, which is a 
 
 The benchmarks practitioners actually rely on do not close this gap.
 The prevailing benchmarks for DSL and LLM-generated kernels---KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}---gate on \emph{correctness}, reporting performance as an outcome rather than enforcing it as an acceptance criterion.
-As a result they admit performance-poor kernels: in our measurements a naive but idiomatic TileLang kernel passes the KernelBench-style correctness gate while running more than 1000$\times$ slower than PyTorch, and the gate's one reward-hacking guard never fires because it only flags suspiciously \emph{fast} kernels.
+As a result they admit performance-poor kernels: in our measurements a naive but idiomatic TileLang kernel passes the KernelBench-style correctness gate while running more than $300\times$ slower than PyTorch, and the gate's one reward-hacking guard never fires because it only flags suspiciously \emph{fast} kernels.
 These benchmarks also cover a narrow slice of the space---often a single DSL, data type, shape, and GPU per task---so a kernel that passes tells a developer little about whether it is well written.
 And the obvious remedy, a benchmark comprehensive enough to span every operator, data type, shape, and architecture, is combinatorially infeasible to build and maintain.
 
@@ -26,9 +26,9 @@ We evaluate Triton and TileLang against PyTorch with cuBLAS/cuDNN on 22 kernels 
 Primary measurements span two datacenter architectures---the NVIDIA A100-SXM4-40GB (Ampere) and the NVIDIA GH200 (Grace Hopper)---with further cross-architecture replay on the A100-PCIE-40GB and H100-80GB-HBM3 reported in \cref{sec:threats}.
 
 Our findings are threefold.
-First, the evaluation gap is real and large: naive-but-correct kernels pass the gate while running 17--1293$\times$ slower than the library, and the dominant existing benchmarks neither gate on performance nor cover enough of the space to catch it.
+First, the evaluation gap is real and large: naive-but-correct kernels pass the gate while running hundreds of times slower than the library---the live shipped TileLang LayerNorm is $323\times$ slower under locked clocks, with deliberately constructed worst-case kernels reaching $1293\times$---and the dominant existing benchmarks neither gate on performance nor cover enough of the space to catch it.
 Second, the hidden gap is highly structured.
-Much of it is an \emph{authoring} artifact---a single reduction-primitive change (\texttt{T.serial}$\rightarrow$\texttt{T.reduce}) with native-dtype I/O closes a 1500$\times$ cliff on TileLang normalization and brings it to or above library parity---while a residual gap on convolution is structural, reflecting cuDNN's implicit-GEMM maturity (absent Winograd support contributes only $\approx$2--3\%).
+Much of it is an \emph{authoring} artifact---a single reduction-primitive change (\texttt{T.serial}$\rightarrow$\texttt{T.reduce}) with native-dtype I/O closes a 1500$\times$ authoring cliff (GH200; naive-to-optimized) on TileLang normalization and brings it to or above library parity---while a residual gap on convolution is structural, reflecting cuDNN's implicit-GEMM maturity (absent Winograd support contributes only $\approx$2--3\%).
 We separate causes by \emph{where the fix belongs}: user-space authoring (RC0a), code generation (RC0b/RC1/RC2b), and library maturity.
 Third, absent a comprehensive benchmark, lightweight heuristics suffice to flag poor kernels: a comparability check against the library, anchored by a baseline-independent roofline fraction, cleanly separates well-written kernels (0.6--0.9 of roofline, at or above parity) from poor ones (below 0.2 of roofline, far from parity), and a small set of recurring optimization patterns guides the fixes.
 

@@ -243,8 +243,8 @@ First, the original TileLang normalization kernels implement the reduction over 
 For LayerNorm, which accumulates 8 bfloat16 partial statistics per thread (sum and sum-of-squares for the mean and variance passes), this means the reduction is computed in 8 sequential steps with no inter-thread parallelism.
 The native alternative, \texttt{T.reduce}, lowers to a parallel butterfly reduction via \texttt{tl::AllReduce}.
 A \emph{butterfly reduction} is a logarithmic communication pattern in which threads exchange partial results in $\log_2 N$ rounds (here $\log_2(256/32)$ rounds over 256 threads grouped into warps of 32).
-This algorithmic structure, however, is not where the cost lies: on the A100, the performance gain from \texttt{T.reduce} comes from better memory-latency hiding---\texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$---not from removing barriers, since \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both the \texttt{T.serial} and \texttt{T.reduce} kernels.
-Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: in our experiments, LayerNorm drops from 1090~ms to 0.89~ms ($1224\times$ improvement, \cref{sec:mitig:norm}).
+This algorithmic structure, however, is not where the cost lies: on the A100, the performance gain from \texttt{T.reduce} comes from better memory-latency hiding---\texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$---not from removing barriers, since \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both the \texttt{T.serial} and \texttt{T.reduce} kernels. The GH200 \texttt{ncu} counters confirm the same signature on \texttt{sm\_90}: \texttt{warp\_stall\_barrier}${=}0$ with \texttt{warp\_stall\_long\_scoreboard}${=}49.95$ dominating, alongside a $34$\,GB local-store register spill (RC3).
+Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: on the A100, LayerNorm drops from 364~ms to 0.270~ms ($1347\times$ improvement, \cref{sec:mitig:norm}).
 
 \paragraph{RC0b: Absent Vectorized Loads (Compiler Codegen).}
 Second, TileLang's compiled normalization kernels do not issue 128-bit vectorized loads
@@ -372,13 +372,13 @@ most diagnostic for its detection.
 
 \begin{table*}[t]
   \centering
-  \caption{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref{sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 \texttt{ncu\_summary.csv}.}
+  \caption{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref{sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 and GH200 \texttt{ncu\_summary.csv} files, which agree on the RC signatures.}
   \label{tab:rootcauses}
   \begin{tabular}{p{5cm}p{3.5cm}p{2.2cm}p{4.5cm}}
     \toprule
     Root cause                     & Affected kernels              & Contribution & Diagnostic counter              \\
     \midrule
-    RC0a: \texttt{T.serial} instead of \texttt{T.reduce} & All TileLang reductions, norm & $1224\times$ (LayerNorm) & \texttt{warp\_stall\_long\_scoreboard} (barrier ${\approx}0$) \\
+    RC0a: \texttt{T.serial} instead of \texttt{T.reduce} & All TileLang reductions, norm & $1347\times$ (LayerNorm, A100) & \texttt{warp\_stall\_long\_scoreboard} (barrier ${\approx}0$) \\
     RC0b: Absent vectorized loads / dtype cast            & TileLang norm                 & ---                     & \texttt{l1tex} bytes/sector     \\
     RC1: Strided access, scalar LD  & Conv2d ($K > 1$), Triton      & $2.57\times$ with RC2   & Load bytes/sector eff.\ (12.55\%) \\
     RC2a: Auto-tuning mismatch      & Matmul, Conv2d, Depthwise     & $1.66\times$ (Matmul)   & TFLOPS vs.\ swept configs       \\
