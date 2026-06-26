@@ -24,6 +24,7 @@
 #   A100-SXM4-40GB (sm_80, 400 W): -lgc 1215 -lmc 1215  (1410 power-caps; 1215 holds flat)
 #   H100-SXM5-80GB (sm_90, 700 W): query first -- 1980 MAY hold (more power headroom);
 #                                   if it caps under load, re-lock at the sustained value.
+#   GH200 480GB (sm_90, 900 W):    -lgc 1320 -lmc 2619  (1980 max power-caps under load; 1320 holds flat; mem at its 2619 max)
 set -u
 IDX=0
 VENV="${PYTHON:-/home/ubuntu/dslperf-venv/bin/python}"

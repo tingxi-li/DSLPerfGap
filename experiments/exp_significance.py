@@ -19,6 +19,7 @@ lock below max (e.g. for thermal headroom).
   # RTX 4000 Ada (sm_89): sudo nvidia-smi -i 0 -lmc 9001 -lgc 1400
   # A100 SXM4-80GB (sm_80): sudo nvidia-smi -i 0 -lmc 1593 -lgc 1410
   # H100 SXM5 (sm_90):      sudo nvidia-smi -i 0 -lmc 2619 -lgc 1980
+  # GH200 480GB (sm_90):    sudo nvidia-smi -i 0 -lmc 2619 -lgc 1320   (1980 max power-caps; 1320 sustained -- run WITH --lock-gr-mhz 1320 --lock-mem-mhz 2619, else the max-clock default aborts)
   sudo nvidia-smi -i 0 -pm 1
   sudo nvidia-smi -i 0 -lmc <mem-mhz> -lgc <gr-mhz>
   python experiments/exp_significance.py            # uses GPU's max clocks

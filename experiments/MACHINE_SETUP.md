@@ -44,7 +44,9 @@ be captured and committed or it is lost on the move. In order:
    `cd ViperBench && python -m tuning.sweep --all` then re-run `benchmark_tuned.py`.
 3. **Record the sustained clock.** Add this GPU's verified `gr,mem` clock row to
    `repro/lock_clocks.sh` and `experiments/exp_significance.py` (Ada/A100/H100 rows exist;
-   GH200/Hopper is **not** yet recorded — discovery mode must find it).
+   **GH200 480GB is now recorded: `-lgc 1320 -lmc 2619`** — 1980 max power-caps under load,
+   1320 holds flat, mem at its 2619 max. Run `exp_significance.py` on GH200 WITH
+   `--lock-gr-mhz 1320 --lock-mem-mhz 2619`, else the max-clock default aborts).
 4. **Commit everything.** `git add experiments/results/<slug>/ ViperBench/results/*.json`
    and commit. Check `git status` is clean for results before powering down the box.
 5. **Confirm the `gpu_slug`** (`python -c "import torch;print(torch.cuda.get_device_name(0))"`)
@@ -55,8 +57,10 @@ be captured and committed or it is lost on the move. In order:
 - `experiments/results/` has committed dirs for: `NVIDIA_RTX_4000_Ada_Generation`,
   `A100-SXM4-40GB`, `A100-PCIE-40GB`, `H100_80GB_HBM3`, **and now `NVIDIA_GH200_480GB`**
   (RC suite captured + committed; `exp_fused_baselines` failed on a numpy/`np.int` quirk).
-- `tuning_cache.json` has keys for the 4 x86 archs (143 keys). **No GH200 key yet** (sweep pending).
+- `tuning_cache.json` now has the 4 x86 archs **plus 35 `GH200_480GB` keys** (sweep done + committed).
 - The GH200 round-2 `*_tilelang.json` results are **committed**.
+- GH200 pivot evidence committed: passes-but-slow, cliff/roofline, RC suite, `profile.GH200-480GB.csv`.
+- GH200 clocks locked at **1320/2619** for locked-clock timing (the user set this 2026-06-26).
 
 ## Parallel multi-machine run playbook
 
