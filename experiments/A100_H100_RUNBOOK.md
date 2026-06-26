@@ -23,12 +23,20 @@ collide. No source edits are required for a new GPU.
 > The committed H100/A100-PCIE replays were collected **un-locked** earlier (noisier at
 > sub-ms shapes); re-running section (0) under locked clocks supersedes them.
 
-> **NOTE (2026-06-25): GH200 is the current source box and is NOT covered below.**
-> The GH200 is **aarch64** with a different stack (torch 2.7.0 / triton 3.3.0 / tilelang
-> 0.1.11) — see **`MACHINE_SETUP.md`** for its install path, the per-GPU stack table, and
-> the **pre-move checklist** (capture + commit results, sweep tuning, record the sustained
-> clock) to run **before** releasing this box. As of now there is **no
-> `results/NVIDIA_GH200*/` directory and no GH200 tuning key** — its evidence is uncaptured.
+> **NOTE (updated 2026-06-26): GH200 is now CAPTURED and is a co-primary GPU.**
+> The GH200 (aarch64; torch 2.7.0 / triton 3.3.0 / tilelang 0.1.11 in `~/.local` — see
+> **`MACHINE_SETUP.md`**) now has a full `results/NVIDIA_GH200_480GB/` artifact set, a tuning
+> key, and a **locked-clock** significance run (gr=1320 / mem=2619). The paper's five suite +
+> mitigation tables are now **dual-arch** (A100 + GH200); see memory `gh200-dual-primary-tables`.
+> GH200-specific deltas to the section-(0) sequence below: use `PYTHON=/usr/bin/python3` (NOT the
+> x86 `dslperf-venv`); `retime_mitigation.py` is now portable (locates the active interpreter's
+> `nvidia` package — no hardcoded venv path); `ncu` needs `sudo` (the script self-heals
+> `HOME`/user-site so TileLang imports under root), and its target list now includes
+> `logsumexp:tilelang_opt:large` (the sm_90 RC3 register spill, via the `tilelang_opt` impl in
+> `run_one_kernel.py` that loads `opt_kernels/<k>_opt.py`).
+> **Open cross-arch item:** re-running section (0) on an A100 auto-profiles that same
+> `logsumexp_opt` kernel and settles whether its A100 581.7% is genuine or a spill artifact
+> (see memory `logsumexp-gh200-nontransfer`).
 
 ---
 

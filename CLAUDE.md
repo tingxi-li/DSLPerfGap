@@ -132,6 +132,8 @@ Other pieces:
   5. `matmul` Triton FP16 — 2.72 → 1.63 ms (**1.66×**, RC2a + L2 swizzle)
 
   Dominant TileLang win pattern: replace `T.serial` reduction loops with `T.reduce`, do native-dtype I/O, use `torch.empty` over `torch.zeros`. `optimization_results.csv` schema: `kernel,dsl,precision,input_desc,pytorch_ms,before_ms,before_vs_pytorch,after_ms,after_vs_pytorch,speedup_gained,iterations,strategy`.
+
+  **Dual-arch (2026-06-26):** the five campaigns are A100/Ada-origin; they were re-timed on the GH200 (`experiments/results/NVIDIA_GH200_480GB/mitigation_retime.csv`) and `tab:mitigation` now carries a GH200 `E_lib` column (sourced from `cliff_roofline.csv` for consistency with `tab:roofline`, **not** from the fresher retime CSV). The norm/reduction family recovers on the GH200 too **except `logsumexp`**, whose optimized kernel register-spills on sm_90 (RC3-class; ~280 GB local spill / 255 regs) — see memory `logsumexp-gh200-nontransfer`. Do **not** re-introduce an unqualified "entire family recovers" claim; on the GH200 it is "every family kernel but `logsumexp`".
 - `.gitignore` excludes per-run AKO4ALL artifacts: `scripts/`, `trajectory/`, `_bench_output.txt`, `.claude/`. Note the artifact root itself is **not** a git repo — the AKO4ALL workflow initializes/uses git only within its own run.
 
 ## Post-submission rebuttal experiments (`experiments/`)
@@ -148,7 +150,7 @@ This directory is the **rebuttal evidence base** (RQ2 root-cause, plus correctne
 | `exp_winograd_isolation.py` | RC4 — Winograd-eligible vs not | `winograd_isolation.csv` + `cudnn_winograd_3x3.log` |
 | `exp_correctness_edge.py` | R3 / W11 — NaN/Inf/denormal/all-equal edge inputs | `correctness_edge.csv` |
 | `exp_significance.py` | R1 — clock-locked re-timing near-parity kernels | `significance.csv`, `significance_smoke.csv`, `clock_lock.txt` |
-| `ncu_counters.sh` (drives `run_one_kernel.py`) | R1 — Nsight Compute counter sweep | `ncu/<kernel>_<impl>_<size>_{loads,regs,stalls,l2dram}.csv` |
+| `ncu_counters.sh` (drives `run_one_kernel.py`) | R1 — Nsight Compute counter sweep (GH200: **7 targets** incl. `logsumexp:tilelang_opt:large`, the sm_90 RC3 spill; `run_one_kernel.py` impl `tilelang_opt` loads the optimized kernel from `opt_kernels/<k>_opt.py`) | `ncu/<kernel>_<impl>_<size>_{loads,regs,stalls,l2dram}.csv` |
 | `consolidate_ncu.py` | roll-up | `ncu_summary.csv` + stdout RC table |
 | `run_all.sh` | serial master runner | `run_all.log` |
 
@@ -197,6 +199,8 @@ Use this when a paper claim/table/figure needs to be re-derived or re-verified. 
 | §10 Threats to Validity | `tex/threats.tex` | — |
 
 ### Tables → data
+
+> **Dual-arch update (2026-06-26):** `tab:gemm`, `tab:conv`, `tab:norm`, `tab:summary`, and `tab:mitigation` now carry **GH200 columns** alongside A100. GH200 suite numbers come from `ViperBench/results/profile.GH200-480GB.csv` (unlocked tuned — matching the A100 suite methodology; do **not** locked-re-baseline the GH200 suite or it mismatches A100). `tab:mitigation`'s GH200 `E_lib` column comes from `experiments/results/NVIDIA_GH200_480GB/cliff_roofline.csv` (= `tab:roofline`), **not** `mitigation_retime.csv`. The `tex/*.tex:NNN` line numbers below have shifted from these edits — grep the `\label{}` to relocate.
 
 | Label | Location | Source data |
 |---|---|---|
