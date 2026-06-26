@@ -32,6 +32,9 @@ echo "### [2/6] Timing + correctness suite (run_all.sh) ###"
 echo "### [3/6] NCU hardware counters (sudo; root bypasses RmProfilingAdminOnly=1) ###"
 ( cd "$HERE" && sudo env PYTHON="$VENV" NCU="$NCU" bash ncu_counters.sh ); echo "ncu exit: $?"
 sudo chown -R "$(id -un):$(id -gn)" "${OUT}/ncu" 2>/dev/null || true
+# ncu_counters.sh recovers the user's HOME under sudo so TileLang imports; if that
+# triggered a (re)compile it may leave root-owned files in ~/.tilelang -- give them back.
+sudo chown -R "$(id -un):$(id -gn)" "${HOME}/.tilelang" 2>/dev/null || true
 
 echo "### [4/6] Consolidate ncu -> ncu_summary.csv ###"
 ( cd "$HERE" && "$VENV" consolidate_ncu.py ); echo "consolidate exit: $?"

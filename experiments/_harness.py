@@ -25,6 +25,22 @@ from pathlib import Path
 
 import torch
 
+# --- numpy<2 compatibility shim --------------------------------------------
+# numpy>=1.24 removed the np.int/np.float/np.bool/... aliases, but some deps
+# (torch.compile's inductor + the Triton autotuner) still read them at runtime,
+# which aborts the fused-baseline timings on GH200's numpy 1.26 with
+# "module 'numpy' has no attribute 'int'".  Restore the aliases as soon as the
+# harness is imported -- this runs before any torch.compile / JIT in every
+# experiment entry point that uses the harness.
+import warnings as _warnings
+import numpy as _np_compat
+with _warnings.catch_warnings():
+    _warnings.simplefilter("ignore")
+    for _alias, _builtin in (("int", int), ("float", float),
+                             ("bool", bool), ("complex", complex)):
+        if not hasattr(_np_compat, _alias):
+            setattr(_np_compat, _alias, _builtin)
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VIPER_DIR = REPO_ROOT / "ViperBench"
 RESULTS_ROOT = Path(__file__).resolve().parent / "results"

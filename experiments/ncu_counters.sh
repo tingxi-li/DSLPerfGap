@@ -39,6 +39,23 @@ PARAMS_FILE="/proc/driver/nvidia/params"
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 
 # ---------------------------------------------------------------------------
+# sudo TileLang recovery.  ncu needs root (RmProfilingAdminOnly=1), but under
+# sudo HOME=/root, which hides the invoking user's ~/.local site-packages -->
+# `import tilelang` (installed in ~user/.local on aarch64/GH200) fails rc=1,
+# while system-installed Triton/cuBLAS still load.  That silently dropped the
+# layer_norm/argmax/max_reduction TileLang RC0 targets.  Recover the invoking
+# user's HOME + user-site so those targets profile instead of aborting.
+if [[ "$(id -u)" == "0" && -n "${SUDO_USER:-}" ]]; then
+  _U_HOME="$(getent passwd "${SUDO_USER}" | cut -d: -f6)"
+  if [[ -n "${_U_HOME}" && -d "${_U_HOME}/.local" ]]; then
+    export HOME="${_U_HOME}"
+    _U_PYVER="$("${PYTHON}" -c 'import sys;print("python%d.%d"%sys.version_info[:2])' 2>/dev/null)"
+    export PYTHONPATH="${_U_HOME}/.local/lib/${_U_PYVER}/site-packages:${PYTHONPATH:-}"
+    echo "[ncu_counters] sudo detected -> recovered HOME=${HOME} + user-site for ${SUDO_USER} (TileLang import)"
+  fi
+fi
+
+# ---------------------------------------------------------------------------
 # Step 0 banner: how an admin unblocks counters (printed every run, on top).
 # ---------------------------------------------------------------------------
 print_unblock() {
