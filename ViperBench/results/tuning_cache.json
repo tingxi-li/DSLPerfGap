@@ -592,5 +592,147 @@
   },
   "swiglu/triton/A100-SXM4-40GB": {
     "BLOCK_N": 1024
+  },
+  "add/triton/GH200_480GB": {
+    "BLOCK_SIZE": 512
+  },
+  "add/tilelang/GH200_480GB": {
+    "block_N": 512,
+    "threads": 128
+  },
+  "argmax/triton/GH200_480GB": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 256
+  },
+  "argmax/tilelang/GH200_480GB": {
+    "block_M": 16,
+    "block_K": 16,
+    "threads": 128
+  },
+  "attention/triton/GH200_480GB": {
+    "BT": 16,
+    "num_warps": 4
+  },
+  "attention/tilelang/GH200_480GB": {
+    "block_M": 32,
+    "block_N": 32,
+    "block_K": 32,
+    "threads": 128
+  },
+  "batched_matmul/triton/GH200_480GB": {
+    "block_m": 16,
+    "block_n": 16,
+    "block_k": 32
+  },
+  "conv2d/tilelang/GH200_480GB": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 32,
+    "BLOCK_K": 16,
+    "NUM_STAGES": 3
+  },
+  "cross_entropy/tilelang/GH200_480GB": {
+    "threads": 64
+  },
+  "embedding/triton/GH200_480GB": {
+    "BLOCK_N": 32,
+    "num_warps": 2
+  },
+  "embedding/tilelang/GH200_480GB": {
+    "block_N": 2,
+    "block_D": 256,
+    "threads": 128
+  },
+  "index_select/triton/GH200_480GB": {
+    "BLOCK_SIZE_COL": 128
+  },
+  "layer_norm/triton/GH200_480GB": {
+    "RBLOCK": 4096
+  },
+  "layer_norm/tilelang/GH200_480GB": {
+    "threads": 32
+  },
+  "leaky_relu/triton/GH200_480GB": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 128,
+    "BLOCK_SIZE_K": 64,
+    "GROUP_SIZE_M": 8
+  },
+  "linear_activation/triton/GH200_480GB": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 64,
+    "BLOCK_SIZE_K": 32
+  },
+  "linear_activation/tilelang/GH200_480GB": {
+    "block_M": 128,
+    "block_N": 64,
+    "block_K": 16,
+    "num_stages": 2
+  },
+  "log_softmax/triton/GH200_480GB": {
+    "BLOCK_M": 4
+  },
+  "log_softmax/tilelang/GH200_480GB": {
+    "threads": 128
+  },
+  "logsumexp/triton/GH200_480GB": {
+    "num_warps": 4
+  },
+  "matmul/triton/GH200_480GB": {
+    "BLOCK_SIZE_M": 64,
+    "BLOCK_SIZE_N": 128,
+    "BLOCK_SIZE_K": 64
+  },
+  "matrix_transpose/triton/GH200_480GB": {
+    "BLOCK_ROWS": 64,
+    "BLOCK_COLS": 16
+  },
+  "matrix_transpose/tilelang/GH200_480GB": {
+    "block_M": 32,
+    "block_N": 128,
+    "threads": 128
+  },
+  "max_reduction/triton/GH200_480GB": {
+    "BLOCK_M": 32
+  },
+  "max_reduction/tilelang/GH200_480GB": {
+    "block_M": 16,
+    "block_K": 16,
+    "threads": 256
+  },
+  "mean_reduction/triton/GH200_480GB": {
+    "BLOCK_M": 4,
+    "BLOCK_N": 8
+  },
+  "mean_reduction/tilelang/GH200_480GB": {
+    "block_M": 16,
+    "block_K": 16,
+    "threads": 128
+  },
+  "mul/tilelang/GH200_480GB": {
+    "block_N": 2048,
+    "threads": 128
+  },
+  "relu/triton/GH200_480GB": {
+    "BLOCK_SIZE": 8192
+  },
+  "relu/tilelang/GH200_480GB": {
+    "block_N": 2048,
+    "threads": 128
+  },
+  "rms_norm/triton/GH200_480GB": {
+    "num_warps": 2
+  },
+  "rms_norm/tilelang/GH200_480GB": {
+    "threads": 32
+  },
+  "softmax/tilelang/GH200_480GB": {
+    "threads": 128
+  },
+  "swiglu/triton/GH200_480GB": {
+    "BLOCK_N": 32
+  },
+  "swiglu/tilelang/GH200_480GB": {
+    "block_M": 16,
+    "threads": 256
   }
 }
