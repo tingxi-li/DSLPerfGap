@@ -227,6 +227,10 @@
 %   \end{tabular}
 % \end{table*}
 
+The kernels in \cref{sec:evaluation} pass existing correctness benchmarks (\cref{sec:eval:survey}) yet lag the vendor library by the margins reported there.
+This section identifies the causes of that hidden gap, separated by where the fix belongs: user-space \emph{authoring} (RC0a), compiler \emph{code generation} (RC0b, RC1, RC2a), and \emph{library maturity}---the tuning and algorithm selection a mature vendor library provides (RC2b, RC4).
+This separation is what makes the gap actionable: authoring causes a developer can fix today, code-generation causes require compiler work, and library-maturity causes bound what any DSL kernel can currently reach.
+
 \noindent\textit{The following root causes are motivated by latency measurements (\cref{sec:evaluation}) and community reports~\cite{triton2022conv591}.}
 
 \phantomsection\label{sec:analysis:jit}
