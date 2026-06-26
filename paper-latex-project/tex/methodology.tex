@@ -102,6 +102,12 @@ Secondary metrics: throughput ($T = 2 \cdot \text{FLOPs}/t$), hardware efficienc
 ($B = \text{bytes}/({t \cdot B_\text{peak}})$)---are used qualitatively in root-cause analysis (RQ2)
 to interpret counter measurements; they are not tabulated separately.
 
+\subsection{Evaluation-Gap and Heuristic Measurement}
+\label{sec:meth:evalgap}
+
+To test whether existing benchmarks admit slow kernels (RQ1), we run each naive DSL kernel through a KernelBench-style evaluator (\texttt{eval\_kernel\_against\_ref}), which overrides the candidate's input generators with the reference's, checks output equivalence on randomized inputs, and warns only when a kernel exceeds $10\times$ the reference speed; we record the pass/fail verdict and the measured slowdown against the PyTorch baseline.
+To compute the roofline anchor (RQ3), we model each kernel's essential work---bytes moved for memory-bound kernels (input plus output tensors) or FLOPs for compute-bound kernels---and divide the achieved work-rate by the relevant hardware peak (HBM bandwidth or FP16 Tensor-Core throughput) for the measured GPU; the peak assumed for each kernel is recorded alongside its measurement.
+
 \subsection{Experimental Setup}
 \label{sec:meth:setup}
 
@@ -118,7 +124,7 @@ to interpret counter measurements; they are not tabulated separately.
 % and pre-warm the Triton auto-tuner before measurement.
 
 \paragraph{Hardware.}
-All experiments are conducted on an NVIDIA A100-SXM4-40GB GPU (Ampere, \texttt{sm\_80}) with 108 SMs, 40\,GB HBM2e memory ($\sim$1.5\,TB/s peak memory bandwidth), a 40\,MB L2 cache, and a 400\,W power cap. The system uses NVIDIA Driver 610.43.02 and CUDA Toolkit 12.8.
+The primary suite is run on an NVIDIA A100-SXM4-40GB GPU (Ampere, \texttt{sm\_80}) with 108 SMs, 40\,GB HBM2e memory ($\sim$1.5\,TB/s peak memory bandwidth), a 40\,MB L2 cache, and a 400\,W power cap, using NVIDIA Driver 610.43.02 and CUDA Toolkit 12.8. The evaluation-gap demonstrations (\cref{sec:eval:passesslow}) and the roofline measurements (\cref{tab:roofline}) additionally run on an NVIDIA GH200 (Grace Hopper, \texttt{sm\_90}; 96\,GB HBM3 at $\sim$4.0\,TB/s, $\sim$989.5\,TFLOP/s FP16 Tensor-Core); a full single-GPU re-baseline on the GH200 is in progress.
 
 
 \paragraph{Software.}

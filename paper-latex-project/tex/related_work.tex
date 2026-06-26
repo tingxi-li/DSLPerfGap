@@ -2,8 +2,10 @@ This section situates our work in the literature on GPU kernel DSLs (\cref{sec:r
 convolution optimization algorithms (\cref{sec:rel:conv}),
 performance analysis tools (\cref{sec:rel:profiling}),
 and GPU benchmarking frameworks (\cref{sec:rel:bench}).
-Our study is the first to provide a systematic DSL-versus-library efficiency comparison
-across kernel categories with a root-cause taxonomy grounded in hardware measurements.
+Our study is the first to show that prevailing DSL and LLM-generated-kernel benchmarks admit
+performance-poor kernels, to characterize the resulting hidden gap with a hardware-grounded
+root-cause taxonomy, and to distill evaluation heuristics that flag poor kernels absent a
+comprehensive benchmark.
 
 \subsection{GPU Kernel DSLs}
 \label{sec:rel:dsls}
@@ -75,13 +77,15 @@ at the scale and granularity of our study are absent from the literature.
 \subsection{Benchmarking GPU Software}
 \label{sec:rel:bench}
 
-TritonBench~\cite{li2025tritonbench} is the most closely related benchmark suite.
-It evaluates Triton kernel generation by LLMs,
-measuring functional correctness and GPU efficiency.
-Our work differs in three ways:
-we compare DSL kernels against library baselines (not against each other),
-we use hardware performance counters for root-cause analysis,
-and we propose and evaluate mitigations.
+The benchmarks closest to our setting evaluate DSL and LLM-generated kernels.
+TritonBench~\cite{li2025tritonbench} evaluates Triton kernel generation by LLMs,
+measuring functional correctness and GPU efficiency as a fraction of hardware peak---
+a roofline-anchored metric that predates and motivates the anchor we adopt in \cref{sec:mitig:heuristics}, and which we build on rather than introduce.
+KernelBench~\cite{kernelbench} is the de-facto benchmark for LLM kernel generation,
+but it gates on correctness alone and reports speedup only as an outcome;
+its single reward-hacking guard flags only implausibly fast kernels, a weakness automated generators have exploited.
+Both evaluate only a narrow slice of the (DSL, data type, shape, hardware) space.
+Our work differs in object and claim: we do not propose another benchmark, but show that the prevailing ones admit performance-poor kernels (\cref{sec:evaluation}), characterize the resulting hidden gap with hardware counters, and distill evaluation heuristics and optimization patterns that guide development absent a comprehensive benchmark.
 
 MLPerf Inference~\cite{reddi2020mlperf} benchmarks end-to-end inference throughput
 but treats the computation stack as a black box.

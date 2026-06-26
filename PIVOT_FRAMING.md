@@ -141,10 +141,10 @@ These document the prior review round; deleting them loses the record.
 - [x] repo `CLAUDE.md` pivot banner
 - [x] `introduction.tex` rewrite (thesis-bearing) — DONE; uses `\cite{kernelbench}` (bib entry TODO)
 - [x] `evaluation.tex` → §5 retitled "The Evaluation Gap (RQ1)"; prepended benchmark survey + passes-but-slow demo; magnitude tables kept in place reframed as "the hidden gap these benchmarks admit". main.tex §5/§6/§7 retitled. `kernelbench` bib entry added. (Tables NOT moved — labels global, lower risk.)
-- [ ] `methodology.tex` → add benchmark-survey + heuristic-definition methodology
+- [x] `methodology.tex` → added "Evaluation-Gap and Heuristic Measurement" subsection (passes-but-slow harness + roofline essential-work model) and GH200 to the hardware setup.
 - [x] `analysis.tex` (RQ2) — added the pivot framing tie (kernels pass benchmarks yet lag; causes split by where the fix belongs: authoring / codegen / library-maturity). RC0-RC4 body already counter-grounded; corrected labels preserved.
 - [x] `mitigation.tex` → recast as RQ3 guidance: prepended heuristics subsection (comparability screen + roofline anchor) + `tab:roofline` (GH200 cliff/ρ/E_lib, authoring-artifact vs structural-residual dichotomy, judgment-band honesty); existing campaigns kept as the optimization-pattern evidence.
 - [x] `background.tex` → §2.5 recast as "Benchmarking DSL and LLM-Generated Kernels": added KernelBench (correctness-gated, fast-only guard) + LLM-kernel-gen framing alongside TritonBench; sets up the RQ1 evaluation gap.
-- [ ] `related_work.tex`, `discussion.tex`, `conclusion.tex`, `threats.tex`
+- [x] `related_work.tex` (eval-gap novelty + KernelBench, TritonBench roofline cited as precedent not novel), `discussion.tex` (benchmark-design implication: gate on performance), `conclusion.tex` (full eval-gap reframe), `threats.tex` (probe-not-benchmark per guardrail 3 + roofline-assumption + GPU-mix threats)
 - [~] `main.tex` title — DEFERRED by author decision (keep current title for now); ancillary docs (`README`, `AKO4ALL/README`); drops
 - [ ] New experiments (benchmark survey, passes-but-slow demo, heuristic validation, GH200 re-baseline)

@@ -72,6 +72,10 @@ DSL kernels should not be assumed to match library performance by default. In ou
 The mitigation results suggest a practical workflow for diagnosing underperforming DSL kernels. For TileLang reductions and normalization, developers should first replace serial \texttt{T.serial} accumulation with \texttt{T.reduce} (RC0a), since the dominant cost is exposed memory latency rather than thread synchronization; this is also where register pressure and spill should be inspected (RC3), which on our hardware appears in TileLang normalization rather than in convolution. For convolution, developers should check whether memory accesses are vectorized into wide \texttt{LDG.128} loads (RC1), then evaluate whether the tuning configuration space is too narrow for the target shape, distinguishing a config that is merely absent from the default grid (RC2a, fixable by expanding the search) from one that needs a broader search strategy (RC2b). For $3\times3$ filters, Winograd selection (RC4) is worth considering, but only as a small ($\approx$2--3\%) contributor. This sequence provides a compact checklist for performance debugging in Triton and TileLang.
 
 
+\textbf{Benchmarks should gate on performance, not just correctness.}
+The passes-but-slow result (\cref{sec:eval:passesslow}) carries a concrete recommendation for benchmark designers: a correctness gate is necessary but not sufficient, and a kernel benchmark that reports speedup without gating on it certifies the wrong property. A lightweight, baseline-independent roofline check (\cref{sec:mitig:heuristics}) is a practical acceptance criterion that needs no curated fast reference, and would have flagged every passes-but-slow kernel in our study.
+
+
 \subsection{Limitations}
 \label{sec:disc:limitations}
 
