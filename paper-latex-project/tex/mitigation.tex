@@ -1,14 +1,58 @@
-This section answers RQ3:
-\textit{What techniques can close the performance gap,
-and how much of the shortfall do they recover?}
+This section answers RQ3: \emph{absent a comprehensive benchmark, can lightweight evaluation heuristics and a small set of recurring optimization patterns reliably flag performance-poor DSL kernels and guide their repair?}
+RQ1 (\cref{sec:evaluation}) showed that a comprehensive performance benchmark is infeasible and that correctness gates admit slow kernels; RQ2 (\cref{sec:analysis}) explained why the gaps arise.
+We now distill that evidence into developer-facing guidance: a two-part \emph{evaluation heuristic} for deciding whether a kernel is well written (\cref{sec:mitig:heuristics}), and the \emph{optimization patterns} that repair the gaps it flags (\cref{sec:mitig:norm} onward), validated by optimizing kernels across the suite on the A100-SXM4 and GH200.
+The central result is a clean dichotomy: most of the dramatic gaps are \emph{authoring artifacts} that one dominant pattern fully repairs, while a minority are \emph{genuine residuals} that survive best-effort optimization---and the heuristic tells the two apart without a ground-truth benchmark.
+We position the user-space fixes (RC0a, RC2a, the matmul L2-swizzle) as lower bounds on automatable recovery; RC0b and the broader RC2b search space require compiler support.
 
-Motivated by the root causes identified in \cref{sec:analysis},
-we apply targeted fixes to five kernels across three categories on the NVIDIA A100-SXM4-40GB GPU.
-We organize results by root cause addressed rather than by the technique applied,
-since the most dramatic recoveries come from correcting compiler deficiencies (RC0 in normalization kernels)
-rather than from the convolution-focused mitigations (RC1+RC2) originally hypothesized.
-We position these mitigations as lower bounds on automatable recovery:
-RC0a, RC2a, and the matmul L2-swizzle are user-space-fixable today, while RC0b and broader RC2b require compiler fixes.
+\subsection{Evaluation Heuristics: Is This Kernel Well Written?}
+\label{sec:mitig:heuristics}
+
+We propose two complementary checks a developer can apply without a curated benchmark.
+
+\paragraph{A comparability screen (pragmatic, baseline-relative).}
+A well-written DSL kernel should (i) come within a small factor of the vendor/PyTorch baseline on representative shapes, (ii) be at least at parity---ideally faster---at large input sizes where launch and framework overheads amortize, and (iii) show no catastrophic per-shape collapse.
+This screen is cheap and catches gross failures: the idiomatic TileLang LayerNorm that runs over $1000\times$ slower (\cref{sec:eval:passesslow}) fails it immediately.
+Its limitation is circularity---PyTorch is simultaneously the baseline and the de-facto definition of ``good,'' so the screen cannot certify a kernel that merely matches an already-slow baseline, and it can be fooled into crediting a kernel that beats an \emph{unfused} eager path for the wrong reason (the RMSNorm $851\%$ ``win'' in \cref{tab:norm} is a fusion artifact, not headroom).
+It is therefore a screen, not a certificate.
+
+\paragraph{A roofline anchor (baseline-independent).}
+To break that circularity we anchor quality to the hardware rather than to PyTorch: for a kernel whose essential work is $W$ (bytes moved if memory-bound, FLOPs if compute-bound) and whose optimized time is $t$, the achieved roofline fraction is $\rho = W / (t \cdot P)$, where $P$ is the relevant hardware peak~\cite{williams2009roofline}.
+TritonBench reports an analogous achieved-peak metric~\cite{li2025tritonbench}; we use it not as a leaderboard score but as a \emph{decision signal}---a kernel near the memory or compute roof is well written \emph{regardless} of what the library does.
+\Cref{tab:roofline} reports $\rho$ for the optimized kernels on the GH200, alongside their PyTorch-relative efficiency $E_\text{lib}$ and the \emph{cliff} (naive-to-optimized speedup) that measures how much authoring headroom each kernel hid.
+The anchor does two things the comparability screen cannot.
+First, it confirms the genuine residuals are genuinely far from the hardware: optimized Triton Conv2d reaches only $\rho=0.16$ and index-returning argmax only $\rho=0.10$, so their shortfall is real headroom, not merely a fast baseline.
+Second, it de-inflates baseline-relative outliers: the RMSNorm kernel that looks like a $13\times$ ``win'' over PyTorch sits at $\rho=0.69$---well written, but not $13\times$ beyond what the hardware allows.
+The recovered normalization and reduction family lands at $\rho=0.41$--$0.87$, while the residual convolution and argmax kernels sit at $\rho\le0.28$ even after best-effort optimization; the cliff column shows these are not the same axis---LayerNorm hid a $1541\times$ authoring artifact that the dominant pattern fully recovers, whereas Conv2d's $8.2\times$ cliff still leaves it at $\rho=0.28$, a structural ceiling the rewrite cannot lift.
+We present the two checks together because neither suffices alone, and they disagree exactly in a judgment band near $\rho\approx0.5$: Softmax and Matmul both achieve $\rho=0.47$, yet Softmax is at parity ($E_\text{lib}=0.87$) while Matmul trails cuBLAS ($E_\text{lib}=0.68$)---only the two checks together make the call.
+
+\begin{table}[t]
+  \centering
+  \caption{Evaluation heuristics on the GH200: optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}. Source: \texttt{experiments/results/NVIDIA\_GH200\_480GB/cliff\_roofline.csv}.}
+  \label{tab:roofline}
+  \begin{tabular}{llcrrr}
+    \toprule
+    Kernel & DSL & Bound & $\rho$ & $E_\text{lib}$ & Cliff \\
+    \midrule
+    \multicolumn{6}{l}{\textit{Recovered family (authoring artifacts)}} \\
+    \quad LayerNorm      & TileLang & mem  & 0.59 & 1.20  & $1541\times$ \\
+    \quad RMSNorm        & TileLang & mem  & 0.69 & 13.0  & $1520\times$ \\
+    \quad MeanReduction  & TileLang & mem  & 0.87 & 0.97  & $13.9\times$ \\
+    \quad BatchedMatmul  & TileLang & mem  & 0.86 & 1.11  & $20.2\times$ \\
+    \quad MaxReduction   & Triton   & mem  & 0.59 & 1.20  & $6.4\times$  \\
+    \quad MaxReduction   & TileLang & mem  & 0.41 & 0.84  & $16.2\times$ \\
+    \quad LogSoftmax     & TileLang & mem  & 0.58 & 0.90  & $5.2\times$  \\
+    \quad Softmax        & TileLang & mem  & 0.47 & 0.87  & $4.0\times^\ddagger$ \\
+    \midrule
+    \multicolumn{6}{l}{\textit{Structural residuals (survive best-effort optimization)}} \\
+    \quad Matmul         & Triton   & comp & 0.47 & 0.68  & $1.3\times$  \\
+    \quad Conv2d         & TileLang & comp & 0.28 & 0.63  & $8.2\times$  \\
+    \quad Conv2d         & Triton   & comp & 0.16 & 0.34  & $2.5\times$  \\
+    \quad Argmax         & TileLang & mem  & 0.10 & 0.22  & $3.8\times$  \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.3em}
+  {\small $^\ddagger$ The naive Softmax falls back to \texttt{torch.softmax} at this large shape, so its cliff is not a pure TileLang authoring comparison; the optimized $\rho$ and $E_\text{lib}$ are unaffected.}
+\end{table}
 
 \subsection{Normalization Kernels: Correcting RC0}
 \label{sec:mitig:norm}
