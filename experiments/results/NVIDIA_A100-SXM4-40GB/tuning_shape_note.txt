@@ -1,0 +1,7 @@
+3 triton configs RE-TUNED at the benchmark large shape (not the sweep's small _make_inputs shape),
+because the small-shape sweep picked configs worse than (or no better than) the default at the shape
+that actually runs. Evidence: experiments/results/NVIDIA_A100-SXM4-40GB/tuning_shape_tradeoff.csv.
+  batched_matmul/triton : {block_m8,n64,k128} (1.33ms, +54% vs default) -> {block_m8,n32,k128} (0.81ms, -6%)
+  mean_reduction/triton : {BLOCK_M8,N4}        (2.46ms, +136%)          -> {BLOCK_M8,N32}        (0.82ms, -22%)
+  attention/triton      : {BT32,warps4}        (44.6ms, =default)       -> {BT32,warps8}         (33.5ms, -25%)
+All other 27 swept configs were left at their fresh small-shape-sweep values (they did not degrade).

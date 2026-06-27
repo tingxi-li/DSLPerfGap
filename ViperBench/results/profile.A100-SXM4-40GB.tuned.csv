@@ -1,221 +1,221 @@
 kernel,size,impl,input_desc,latency_ms,peak_memory_mb
-add,small,pytorch,"x:(4096,) y:(4096,) fp16",0.0211,10091.19
-add,small,triton,"x:(4096,) y:(4096,) fp16",0.0617,10091.19
-add,small,triton_tuned,"x:(4096,) y:(4096,) fp16",0.0643,10091.19
-add,small,tilelang,"x:(4096,) y:(4096,) fp16",0.0976,10091.19
-add,small,tilelang_tuned,"x:(4096,) y:(4096,) fp16",0.0954,10091.19
-add,large,pytorch,"x:(64M,) y:(64M,) fp16",0.3109,10219.18
-add,large,triton,"x:(64M,) y:(64M,) fp16",0.3448,10219.18
-add,large,triton_tuned,"x:(64M,) y:(64M,) fp16",0.3454,10219.18
-add,large,tilelang,"x:(64M,) y:(64M,) fp16",0.4181,10219.18
-add,large,tilelang_tuned,"x:(64M,) y:(64M,) fp16",0.418,10219.18
-argmax,small,pytorch,"x:(1024,1024) dim=1 fp16",0.0265,10091.19
-argmax,small,triton,"x:(1024,1024) dim=1 fp16",0.1218,10091.19
-argmax,small,triton_tuned,"x:(1024,1024) dim=1 fp16",0.1232,10091.19
-argmax,small,tilelang,"x:(1024,1024) dim=1 fp16",0.146,10095.2
-argmax,small,tilelang_tuned,"x:(1024,1024) dim=1 fp16",0.1469,10095.2
-argmax,large,pytorch,"x:(8192,32768) dim=1 fp16",0.6216,10091.25
-argmax,large,triton,"x:(8192,32768) dim=1 fp16",2.4393,10091.25
-argmax,large,triton_tuned,"x:(8192,32768) dim=1 fp16",2.4412,10091.25
-argmax,large,tilelang,"x:(8192,32768) dim=1 fp16",10.4982,11115.28
-argmax,large,tilelang_tuned,"x:(8192,32768) dim=1 fp16",10.4889,11115.28
-attention,small,pytorch,"QKV:(8,16,512,64) fp32",315.4446,10115.38
-attention,small,triton,"QKV:(8,16,512,64) fp32",0.5541,10179.31
-attention,small,triton_tuned,"QKV:(8,16,512,64) fp32",0.5486,10171.18
-attention,small,tilelang,"QKV:(8,16,512,64) fp32",594.7296,10107.23
-attention,small,tilelang_tuned,"QKV:(8,16,512,64) fp32",601.1712,10107.23
-attention,large,pytorch,"QKV:(8,32,2048,128) fp32",2516.8274,10355.53
-attention,large,triton,"QKV:(8,32,2048,128) fp32",40.606,12403.31
-attention,large,triton_tuned,"QKV:(8,32,2048,128) fp32",40.2168,12395.18
-attention,large,tilelang,"QKV:(8,32,2048,128) fp32",4670.1557,10347.34
-attention,large,tilelang_tuned,"QKV:(8,32,2048,128) fp32",4815.0455,10347.34
-batched_matmul,small,pytorch,"A:(64,128) B:(64,128,128) fp16",0.0677,10099.32
-batched_matmul,small,triton,"A:(64,128) B:(64,128,128) fp16",0.0982,10099.32
-batched_matmul,small,triton_tuned,"A:(64,128) B:(64,128,128) fp16",0.0988,10091.2
-batched_matmul,small,tilelang,"A:(64,128) B:(64,128,128) fp16",0.1437,10095.23
-batched_matmul,small,tilelang_tuned,"A:(64,128) B:(64,128,128) fp16",0.147,10095.23
-batched_matmul,large,pytorch,"A:(128,2048) B:(128,2048,2048) fp16",0.8021,10099.81
-batched_matmul,large,triton,"A:(128,2048) B:(128,2048,2048) fp16",0.8643,10099.81
-batched_matmul,large,triton_tuned,"A:(128,2048) B:(128,2048,2048) fp16",0.8652,10091.68
-batched_matmul,large,tilelang,"A:(128,2048) B:(128,2048,2048) fp16",0.8503,10091.68
-batched_matmul,large,tilelang_tuned,"A:(128,2048) B:(128,2048,2048) fp16",0.8513,10091.68
-conv2d,small,pytorch,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.0666,10109.38
-conv2d,small,triton,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.1311,10103.18
-conv2d,small,triton_tuned,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.1311,10094.25
-conv2d,small,tilelang,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.9146,10175.18
-conv2d,small,tilelang_tuned,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.9237,10175.18
-conv2d,large,pytorch,"x:(32,256,128,128) w:(256,256,3,3) fp16",3.4762,10869.31
-conv2d,large,triton,"x:(32,256,128,128) w:(256,256,3,3) fp16",12.1014,10355.31
-conv2d,large,triton_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",12.0968,10347.18
-conv2d,large,tilelang,"x:(32,256,128,128) w:(256,256,3,3) fp16",5.8583,10613.06
-conv2d,large,tilelang_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",5.8616,10613.06
-cross_entropy,small,pytorch,"logits:(256,1024) fp32",0.649,10103.34
-cross_entropy,small,triton,"logits:(256,1024) fp32",0.0996,10102.31
-cross_entropy,small,triton_tuned,"logits:(256,1024) fp32",0.0991,10094.18
-cross_entropy,small,tilelang,"logits:(256,1024) fp32",0.1797,10094.19
-cross_entropy,small,tilelang_tuned,"logits:(256,1024) fp32",0.1748,10094.19
-cross_entropy,large,pytorch,"logits:(4096,32768) fp32",5.5086,12150.52
-cross_entropy,large,triton,"logits:(4096,32768) fp32",0.4616,11635.31
-cross_entropy,large,triton_tuned,"logits:(4096,32768) fp32",0.4613,11627.18
-cross_entropy,large,tilelang,"logits:(4096,32768) fp32",4.9213,11627.2
-cross_entropy,large,tilelang_tuned,"logits:(4096,32768) fp32",4.918,11627.2
-embedding,small,pytorch,"w:(8192,256) idx:(2048,) fp16",0.1471,10102.33
-embedding,small,triton,"w:(8192,256) idx:(2048,) fp16",0.0744,10099.31
-embedding,small,triton_tuned,"w:(8192,256) idx:(2048,) fp16",0.0724,10091.18
-embedding,small,tilelang,"w:(8192,256) idx:(2048,) fp16",0.2327,10102.2
-embedding,small,tilelang_tuned,"w:(8192,256) idx:(2048,) fp16",0.2322,10102.2
-embedding,large,pytorch,"w:(131072,1024) idx:(131072,) fp16",2.1121,10868.43
-embedding,large,triton,"w:(131072,1024) idx:(131072,) fp16",0.4623,10099.31
-embedding,large,triton_tuned,"w:(131072,1024) idx:(131072,) fp16",0.4632,10091.18
+add,small,pytorch,"x:(4096,) y:(4096,) fp16",0.021,10091.19
+add,small,triton,"x:(4096,) y:(4096,) fp16",0.0622,10091.19
+add,small,triton_tuned,"x:(4096,) y:(4096,) fp16",0.064,10091.19
+add,small,tilelang,"x:(4096,) y:(4096,) fp16",0.0968,10091.19
+add,small,tilelang_tuned,"x:(4096,) y:(4096,) fp16",0.0938,10091.19
+add,large,pytorch,"x:(64M,) y:(64M,) fp16",0.3112,10219.18
+add,large,triton,"x:(64M,) y:(64M,) fp16",0.3429,10219.18
+add,large,triton_tuned,"x:(64M,) y:(64M,) fp16",0.3409,10219.18
+add,large,tilelang,"x:(64M,) y:(64M,) fp16",0.4176,10219.18
+add,large,tilelang_tuned,"x:(64M,) y:(64M,) fp16",0.4173,10219.18
+argmax,small,pytorch,"x:(1024,1024) dim=1 fp16",0.0267,10091.19
+argmax,small,triton,"x:(1024,1024) dim=1 fp16",0.1222,10091.19
+argmax,small,triton_tuned,"x:(1024,1024) dim=1 fp16",0.1217,10091.19
+argmax,small,tilelang,"x:(1024,1024) dim=1 fp16",0.147,10095.2
+argmax,small,tilelang_tuned,"x:(1024,1024) dim=1 fp16",0.1448,10095.2
+argmax,large,pytorch,"x:(8192,32768) dim=1 fp16",0.6212,10091.25
+argmax,large,triton,"x:(8192,32768) dim=1 fp16",2.4409,10091.25
+argmax,large,triton_tuned,"x:(8192,32768) dim=1 fp16",2.4379,10091.25
+argmax,large,tilelang,"x:(8192,32768) dim=1 fp16",10.4902,11115.28
+argmax,large,tilelang_tuned,"x:(8192,32768) dim=1 fp16",10.4965,11115.28
+attention,small,pytorch,"QKV:(8,16,512,64) fp32",322.0374,10115.38
+attention,small,triton,"QKV:(8,16,512,64) fp32",0.6484,10147.31
+attention,small,triton_tuned,"QKV:(8,16,512,64) fp32",0.6478,10139.18
+attention,small,tilelang,"QKV:(8,16,512,64) fp32",588.2843,10107.23
+attention,small,tilelang_tuned,"QKV:(8,16,512,64) fp32",592.7029,10107.23
+attention,large,pytorch,"QKV:(8,32,2048,128) fp32",2559.7504,10355.53
+attention,large,triton,"QKV:(8,32,2048,128) fp32",33.2809,11379.31
+attention,large,triton_tuned,"QKV:(8,32,2048,128) fp32",33.2652,11371.18
+attention,large,tilelang,"QKV:(8,32,2048,128) fp32",4710.8244,10347.34
+attention,large,tilelang_tuned,"QKV:(8,32,2048,128) fp32",4670.675,10347.34
+batched_matmul,small,pytorch,"A:(64,128) B:(64,128,128) fp16",0.0675,10099.32
+batched_matmul,small,triton,"A:(64,128) B:(64,128,128) fp16",0.0977,10099.32
+batched_matmul,small,triton_tuned,"A:(64,128) B:(64,128,128) fp16",0.0949,10091.2
+batched_matmul,small,tilelang,"A:(64,128) B:(64,128,128) fp16",0.1463,10095.23
+batched_matmul,small,tilelang_tuned,"A:(64,128) B:(64,128,128) fp16",0.1423,10095.23
+batched_matmul,large,pytorch,"A:(128,2048) B:(128,2048,2048) fp16",0.8024,10099.81
+batched_matmul,large,triton,"A:(128,2048) B:(128,2048,2048) fp16",0.82,10099.81
+batched_matmul,large,triton_tuned,"A:(128,2048) B:(128,2048,2048) fp16",0.8198,10091.68
+batched_matmul,large,tilelang,"A:(128,2048) B:(128,2048,2048) fp16",0.8519,10091.68
+batched_matmul,large,tilelang_tuned,"A:(128,2048) B:(128,2048,2048) fp16",0.85,10091.68
+conv2d,small,pytorch,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.0665,10109.38
+conv2d,small,triton,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.1351,10103.18
+conv2d,small,triton_tuned,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.1292,10094.25
+conv2d,small,tilelang,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.93,10175.18
+conv2d,small,tilelang_tuned,"x:(8,64,56,56) w:(64,64,3,3) fp16",0.9011,10175.18
+conv2d,large,pytorch,"x:(32,256,128,128) w:(256,256,3,3) fp16",3.4531,10869.31
+conv2d,large,triton,"x:(32,256,128,128) w:(256,256,3,3) fp16",12.0907,10355.31
+conv2d,large,triton_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",12.0957,10347.18
+conv2d,large,tilelang,"x:(32,256,128,128) w:(256,256,3,3) fp16",5.855,10613.06
+conv2d,large,tilelang_tuned,"x:(32,256,128,128) w:(256,256,3,3) fp16",5.8603,10613.06
+cross_entropy,small,pytorch,"logits:(256,1024) fp32",0.6414,10103.34
+cross_entropy,small,triton,"logits:(256,1024) fp32",0.0983,10102.31
+cross_entropy,small,triton_tuned,"logits:(256,1024) fp32",0.0986,10094.18
+cross_entropy,small,tilelang,"logits:(256,1024) fp32",0.1749,10094.19
+cross_entropy,small,tilelang_tuned,"logits:(256,1024) fp32",0.1728,10094.19
+cross_entropy,large,pytorch,"logits:(4096,32768) fp32",5.5059,12150.52
+cross_entropy,large,triton,"logits:(4096,32768) fp32",0.4865,11635.31
+cross_entropy,large,triton_tuned,"logits:(4096,32768) fp32",0.4621,11627.18
+cross_entropy,large,tilelang,"logits:(4096,32768) fp32",4.9142,11627.2
+cross_entropy,large,tilelang_tuned,"logits:(4096,32768) fp32",4.9189,11627.2
+embedding,small,pytorch,"w:(8192,256) idx:(2048,) fp16",0.1464,10102.33
+embedding,small,triton,"w:(8192,256) idx:(2048,) fp16",0.073,10099.31
+embedding,small,triton_tuned,"w:(8192,256) idx:(2048,) fp16",0.0717,10091.18
+embedding,small,tilelang,"w:(8192,256) idx:(2048,) fp16",0.2289,10102.2
+embedding,small,tilelang_tuned,"w:(8192,256) idx:(2048,) fp16",0.2297,10102.2
+embedding,large,pytorch,"w:(131072,1024) idx:(131072,) fp16",2.113,10868.43
+embedding,large,triton,"w:(131072,1024) idx:(131072,) fp16",0.4717,10099.31
+embedding,large,triton_tuned,"w:(131072,1024) idx:(131072,) fp16",0.4684,10091.18
 embedding,large,tilelang,"w:(131072,1024) idx:(131072,) fp16",ERROR,ERROR
 embedding,large,tilelang_tuned,"w:(131072,1024) idx:(131072,) fp16",ERROR,ERROR
-index_select,small,pytorch,"src:(4096,512) idx:(256,) fp16",0.0505,10099.56
-index_select,small,triton,"src:(4096,512) idx:(256,) fp16",0.0956,10099.56
-index_select,small,triton_tuned,"src:(4096,512) idx:(256,) fp16",0.0944,10091.43
-index_select,small,tilelang,"src:(4096,512) idx:(256,) fp16",0.1184,10091.43
-index_select,small,tilelang_tuned,"src:(4096,512) idx:(256,) fp16",0.12,10091.43
-index_select,large,pytorch,"src:(65536,2048) idx:(4096,) fp16",0.0723,10115.31
-index_select,large,triton,"src:(65536,2048) idx:(4096,) fp16",0.1495,10115.31
-index_select,large,triton_tuned,"src:(65536,2048) idx:(4096,) fp16",0.1498,10107.18
-index_select,large,tilelang,"src:(65536,2048) idx:(4096,) fp16",0.1276,10107.2
-index_select,large,tilelang_tuned,"src:(65536,2048) idx:(4096,) fp16",0.1246,10107.2
-layer_norm,small,pytorch,"x:(512,1024) bf16",0.0312,10100.31
-layer_norm,small,triton,"x:(512,1024) bf16",0.143,10100.31
-layer_norm,small,triton_tuned,"x:(512,1024) bf16",0.1435,10092.19
-layer_norm,small,tilelang,"x:(512,1024) bf16",0.9837,10096.19
-layer_norm,small,tilelang_tuned,"x:(512,1024) bf16",0.9852,10096.19
-layer_norm,large,pytorch,"x:(8192,8192) bf16",0.3221,10227.37
-layer_norm,large,triton,"x:(8192,8192) bf16",0.361,10227.37
-layer_norm,large,triton_tuned,"x:(8192,8192) bf16",0.3591,10219.25
-layer_norm,large,tilelang,"x:(8192,8192) bf16",97.0218,10731.25
-layer_norm,large,tilelang_tuned,"x:(8192,8192) bf16",97.0817,10731.25
-leaky_relu,small,pytorch,"a:(4096,4096) b:(4096,4096) fp16",8.837,10291.31
-leaky_relu,small,triton,"a:(4096,4096) b:(4096,4096) fp16",1.2646,10131.31
-leaky_relu,small,triton_tuned,"a:(4096,4096) b:(4096,4096) fp16",1.2639,10123.18
-leaky_relu,small,tilelang,"a:(4096,4096) b:(4096,4096) fp16",0.8235,10123.18
-leaky_relu,small,tilelang_tuned,"a:(4096,4096) b:(4096,4096) fp16",0.8242,10123.18
-leaky_relu,large,pytorch,"a:(8192,8192) b:(8192,8192) fp16",68.7174,10867.31
-leaky_relu,large,triton,"a:(8192,8192) b:(8192,8192) fp16",10.0007,10227.31
-leaky_relu,large,triton_tuned,"a:(8192,8192) b:(8192,8192) fp16",10.0048,10219.18
-leaky_relu,large,tilelang,"a:(8192,8192) b:(8192,8192) fp16",6.0884,10219.18
-leaky_relu,large,tilelang_tuned,"a:(8192,8192) b:(8192,8192) fp16",6.0605,10219.18
-linear_activation,small,pytorch,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.6376,10125.81
-linear_activation,small,triton,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.1813,10101.31
-linear_activation,small,triton_tuned,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.1804,10093.18
-linear_activation,small,tilelang,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.4072,10128.69
-linear_activation,small,tilelang_tuned,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.4116,10128.69
-linear_activation,large,pytorch,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",36.207,10691.32
-linear_activation,large,triton,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",19.4774,10163.31
-linear_activation,large,triton_tuned,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",19.4739,10155.18
-linear_activation,large,tilelang,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",7.6514,11035.2
-linear_activation,large,tilelang_tuned,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",7.6444,11035.2
-log_softmax,small,pytorch,"x:(512,1024) fp16",0.0212,10100.31
-log_softmax,small,triton,"x:(512,1024) fp16",0.1306,10100.31
-log_softmax,small,triton_tuned,"x:(512,1024) fp16",0.1306,10092.18
-log_softmax,small,tilelang,"x:(512,1024) fp16",0.0832,10092.18
-log_softmax,small,tilelang_tuned,"x:(512,1024) fp16",0.0878,10092.18
-log_softmax,large,pytorch,"x:(4096,32768) fp16",0.4471,10355.31
-log_softmax,large,triton,"x:(4096,32768) fp16",0.9869,10355.31
-log_softmax,large,triton_tuned,"x:(4096,32768) fp16",0.9994,10347.18
-log_softmax,large,tilelang,"x:(4096,32768) fp16",12.2987,10347.18
-log_softmax,large,tilelang_tuned,"x:(4096,32768) fp16",12.2896,10347.18
-logsumexp,small,pytorch,"x:(512,1024) fp32",0.0967,10101.31
-logsumexp,small,triton,"x:(512,1024) fp32",0.2058,10099.32
-logsumexp,small,triton_tuned,"x:(512,1024) fp32",0.2085,10091.19
-logsumexp,small,tilelang,"x:(512,1024) fp32",0.0909,10091.19
-logsumexp,small,tilelang_tuned,"x:(512,1024) fp32",0.095,10091.19
-logsumexp,large,pytorch,"x:(8192,16384) fp32",2.4005,10611.37
-logsumexp,large,triton,"x:(8192,16384) fp32",0.4985,10099.43
-logsumexp,large,triton_tuned,"x:(8192,16384) fp32",0.4971,10091.31
-logsumexp,large,tilelang,"x:(8192,16384) fp32",0.8877,10091.21
-logsumexp,large,tilelang_tuned,"x:(8192,16384) fp32",0.891,10091.21
-matmul,small,pytorch,"A:(512,512) B:(512,512) fp16",0.0303,10099.81
-matmul,small,triton,"A:(512,512) B:(512,512) fp16",0.0831,10099.81
-matmul,small,triton_tuned,"A:(512,512) B:(512,512) fp16",0.0817,10091.68
-matmul,small,tilelang,"A:(512,512) B:(512,512) fp16",0.0846,10091.68
-matmul,small,tilelang_tuned,"A:(512,512) B:(512,512) fp16",0.087,10091.68
-matmul,large,pytorch,"A:(16384,16384) B:(16384,16384) fp16",33.483,10611.31
-matmul,large,triton,"A:(16384,16384) B:(16384,16384) fp16",56.0395,10611.31
-matmul,large,triton_tuned,"A:(16384,16384) B:(16384,16384) fp16",56.0518,10603.18
-matmul,large,tilelang,"A:(16384,16384) B:(16384,16384) fp16",42.8693,10603.18
-matmul,large,tilelang_tuned,"A:(16384,16384) B:(16384,16384) fp16",42.8433,10603.18
-matrix_transpose,small,pytorch,"x:(1024,1024) fp16",0.0396,10101.31
-matrix_transpose,small,triton,"x:(1024,1024) fp16",0.0752,10101.31
-matrix_transpose,small,triton_tuned,"x:(1024,1024) fp16",0.073,10093.18
-matrix_transpose,small,tilelang,"x:(1024,1024) fp16",0.0794,10093.18
-matrix_transpose,small,tilelang_tuned,"x:(1024,1024) fp16",0.0834,10093.18
-matrix_transpose,large,pytorch,"x:(16384,16384) fp16",3.467,10611.31
-matrix_transpose,large,triton,"x:(16384,16384) fp16",1.0119,10611.31
-matrix_transpose,large,triton_tuned,"x:(16384,16384) fp16",1.011,10603.18
-matrix_transpose,large,tilelang,"x:(16384,16384) fp16",5.5171,10603.18
-matrix_transpose,large,tilelang_tuned,"x:(16384,16384) fp16",5.4937,10603.18
-max_reduction,small,pytorch,"x:(1024,1024) dim=1 fp16",0.0306,10099.32
-max_reduction,small,triton,"x:(1024,1024) dim=1 fp16",0.1229,10099.32
-max_reduction,small,triton_tuned,"x:(1024,1024) dim=1 fp16",0.118,10091.19
-max_reduction,small,tilelang,"x:(1024,1024) dim=1 fp16",0.1466,10091.2
-max_reduction,small,tilelang_tuned,"x:(1024,1024) dim=1 fp16",0.1495,10091.2
+index_select,small,pytorch,"src:(4096,512) idx:(256,) fp16",0.0496,10099.56
+index_select,small,triton,"src:(4096,512) idx:(256,) fp16",0.0969,10099.56
+index_select,small,triton_tuned,"src:(4096,512) idx:(256,) fp16",0.0942,10091.43
+index_select,small,tilelang,"src:(4096,512) idx:(256,) fp16",0.1208,10091.43
+index_select,small,tilelang_tuned,"src:(4096,512) idx:(256,) fp16",0.1175,10091.43
+index_select,large,pytorch,"src:(65536,2048) idx:(4096,) fp16",0.073,10115.31
+index_select,large,triton,"src:(65536,2048) idx:(4096,) fp16",0.1234,10115.31
+index_select,large,triton_tuned,"src:(65536,2048) idx:(4096,) fp16",0.123,10107.18
+index_select,large,tilelang,"src:(65536,2048) idx:(4096,) fp16",0.1289,10107.2
+index_select,large,tilelang_tuned,"src:(65536,2048) idx:(4096,) fp16",0.1253,10107.2
+layer_norm,small,pytorch,"x:(512,1024) bf16",0.0297,10100.31
+layer_norm,small,triton,"x:(512,1024) bf16",0.1425,10100.31
+layer_norm,small,triton_tuned,"x:(512,1024) bf16",0.139,10092.19
+layer_norm,small,tilelang,"x:(512,1024) bf16",0.9852,10096.19
+layer_norm,small,tilelang_tuned,"x:(512,1024) bf16",0.9839,10096.19
+layer_norm,large,pytorch,"x:(8192,8192) bf16",0.3239,10227.37
+layer_norm,large,triton,"x:(8192,8192) bf16",0.359,10227.37
+layer_norm,large,triton_tuned,"x:(8192,8192) bf16",0.3595,10219.25
+layer_norm,large,tilelang,"x:(8192,8192) bf16",97.0052,10731.25
+layer_norm,large,tilelang_tuned,"x:(8192,8192) bf16",97.1537,10731.25
+leaky_relu,small,pytorch,"a:(4096,4096) b:(4096,4096) fp16",8.8347,10291.31
+leaky_relu,small,triton,"a:(4096,4096) b:(4096,4096) fp16",1.2701,10131.31
+leaky_relu,small,triton_tuned,"a:(4096,4096) b:(4096,4096) fp16",1.2699,10123.18
+leaky_relu,small,tilelang,"a:(4096,4096) b:(4096,4096) fp16",0.8244,10123.18
+leaky_relu,small,tilelang_tuned,"a:(4096,4096) b:(4096,4096) fp16",0.8236,10123.18
+leaky_relu,large,pytorch,"a:(8192,8192) b:(8192,8192) fp16",68.5274,10867.31
+leaky_relu,large,triton,"a:(8192,8192) b:(8192,8192) fp16",9.9367,10227.31
+leaky_relu,large,triton_tuned,"a:(8192,8192) b:(8192,8192) fp16",9.9406,10219.18
+leaky_relu,large,tilelang,"a:(8192,8192) b:(8192,8192) fp16",6.0861,10219.18
+leaky_relu,large,tilelang_tuned,"a:(8192,8192) b:(8192,8192) fp16",6.0598,10219.18
+linear_activation,small,pytorch,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.6457,10125.81
+linear_activation,small,triton,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.1822,10101.31
+linear_activation,small,triton_tuned,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.1795,10093.18
+linear_activation,small,tilelang,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.3945,10128.69
+linear_activation,small,tilelang_tuned,"x:(1,256,1024) w1/w3:(4096,1024) fp16",0.4012,10128.69
+linear_activation,large,pytorch,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",36.124,10691.32
+linear_activation,large,triton,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",19.4738,10163.31
+linear_activation,large,triton_tuned,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",19.4669,10155.18
+linear_activation,large,tilelang,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",7.711,11035.2
+linear_activation,large,tilelang_tuned,"x:(1,2048,4096) w1/w3:(16384,4096) fp16",7.7212,11035.2
+log_softmax,small,pytorch,"x:(512,1024) fp16",0.0205,10100.31
+log_softmax,small,triton,"x:(512,1024) fp16",0.1309,10100.31
+log_softmax,small,triton_tuned,"x:(512,1024) fp16",0.1281,10092.18
+log_softmax,small,tilelang,"x:(512,1024) fp16",0.0873,10092.18
+log_softmax,small,tilelang_tuned,"x:(512,1024) fp16",0.084,10092.18
+log_softmax,large,pytorch,"x:(4096,32768) fp16",0.4468,10355.31
+log_softmax,large,triton,"x:(4096,32768) fp16",0.9863,10355.31
+log_softmax,large,triton_tuned,"x:(4096,32768) fp16",0.9988,10347.18
+log_softmax,large,tilelang,"x:(4096,32768) fp16",12.2819,10347.18
+log_softmax,large,tilelang_tuned,"x:(4096,32768) fp16",12.2937,10347.18
+logsumexp,small,pytorch,"x:(512,1024) fp32",0.0961,10101.31
+logsumexp,small,triton,"x:(512,1024) fp32",0.2061,10099.32
+logsumexp,small,triton_tuned,"x:(512,1024) fp32",0.2025,10091.19
+logsumexp,small,tilelang,"x:(512,1024) fp32",0.0943,10091.19
+logsumexp,small,tilelang_tuned,"x:(512,1024) fp32",0.0908,10091.19
+logsumexp,large,pytorch,"x:(8192,16384) fp32",2.401,10611.37
+logsumexp,large,triton,"x:(8192,16384) fp32",0.4957,10099.43
+logsumexp,large,triton_tuned,"x:(8192,16384) fp32",0.4934,10091.31
+logsumexp,large,tilelang,"x:(8192,16384) fp32",0.4384,10091.21
+logsumexp,large,tilelang_tuned,"x:(8192,16384) fp32",0.436,10091.21
+matmul,small,pytorch,"A:(512,512) B:(512,512) fp16",0.03,10099.81
+matmul,small,triton,"A:(512,512) B:(512,512) fp16",0.082,10099.81
+matmul,small,triton_tuned,"A:(512,512) B:(512,512) fp16",0.0814,10091.68
+matmul,small,tilelang,"A:(512,512) B:(512,512) fp16",0.0868,10091.68
+matmul,small,tilelang_tuned,"A:(512,512) B:(512,512) fp16",0.083,10091.68
+matmul,large,pytorch,"A:(16384,16384) B:(16384,16384) fp16",33.4861,10611.31
+matmul,large,triton,"A:(16384,16384) B:(16384,16384) fp16",56.0513,10611.31
+matmul,large,triton_tuned,"A:(16384,16384) B:(16384,16384) fp16",56.0543,10603.18
+matmul,large,tilelang,"A:(16384,16384) B:(16384,16384) fp16",42.8489,10603.18
+matmul,large,tilelang_tuned,"A:(16384,16384) B:(16384,16384) fp16",42.8544,10603.18
+matrix_transpose,small,pytorch,"x:(1024,1024) fp16",0.0397,10101.31
+matrix_transpose,small,triton,"x:(1024,1024) fp16",0.0729,10101.31
+matrix_transpose,small,triton_tuned,"x:(1024,1024) fp16",0.0721,10093.18
+matrix_transpose,small,tilelang,"x:(1024,1024) fp16",0.0836,10093.18
+matrix_transpose,small,tilelang_tuned,"x:(1024,1024) fp16",0.0823,10093.18
+matrix_transpose,large,pytorch,"x:(16384,16384) fp16",3.4676,10611.31
+matrix_transpose,large,triton,"x:(16384,16384) fp16",1.0116,10611.31
+matrix_transpose,large,triton_tuned,"x:(16384,16384) fp16",1.0104,10603.18
+matrix_transpose,large,tilelang,"x:(16384,16384) fp16",5.1439,10603.18
+matrix_transpose,large,tilelang_tuned,"x:(16384,16384) fp16",5.1264,10603.18
+max_reduction,small,pytorch,"x:(1024,1024) dim=1 fp16",0.0307,10099.32
+max_reduction,small,triton,"x:(1024,1024) dim=1 fp16",0.1203,10099.32
+max_reduction,small,triton_tuned,"x:(1024,1024) dim=1 fp16",0.1188,10091.19
+max_reduction,small,tilelang,"x:(1024,1024) dim=1 fp16",0.1499,10091.2
+max_reduction,small,tilelang_tuned,"x:(1024,1024) dim=1 fp16",0.1451,10091.2
 max_reduction,large,pytorch,"x:(8192,32768) dim=1 fp16",0.556,10099.39
-max_reduction,large,triton,"x:(8192,32768) dim=1 fp16",0.5075,10099.39
-max_reduction,large,triton_tuned,"x:(8192,32768) dim=1 fp16",0.5053,10091.26
-max_reduction,large,tilelang,"x:(8192,32768) dim=1 fp16",0.8272,10091.32
-max_reduction,large,tilelang_tuned,"x:(8192,32768) dim=1 fp16",0.8273,10091.32
-mean_reduction,small,pytorch,"x:(1024,1024) dim=1 fp32",0.0259,10099.31
-mean_reduction,small,triton,"x:(1024,1024) dim=1 fp32",0.0993,10099.31
-mean_reduction,small,triton_tuned,"x:(1024,1024) dim=1 fp32",0.0974,10091.19
-mean_reduction,small,tilelang,"x:(1024,1024) dim=1 fp32",0.081,10091.19
-mean_reduction,small,tilelang_tuned,"x:(1024,1024) dim=1 fp32",0.0839,10091.19
-mean_reduction,large,pytorch,"x:(8192,32768) dim=1 fp32",0.7655,10099.34
-mean_reduction,large,triton,"x:(8192,32768) dim=1 fp32",1.0518,10099.34
-mean_reduction,large,triton_tuned,"x:(8192,32768) dim=1 fp32",1.0535,10091.21
-mean_reduction,large,tilelang,"x:(8192,32768) dim=1 fp32",0.784,10091.21
-mean_reduction,large,tilelang_tuned,"x:(8192,32768) dim=1 fp32",0.7853,10091.21
-mul,small,pytorch,"x:(4096,) fp16",0.0253,10099.32
-mul,small,triton,"x:(4096,) fp16",0.072,10099.32
-mul,small,triton_tuned,"x:(4096,) fp16",0.0714,10091.19
-mul,small,tilelang,"x:(4096,) fp16",0.0917,10091.19
-mul,small,tilelang_tuned,"x:(4096,) fp16",0.0921,10091.19
-mul,large,pytorch,"x:(64M,) fp16",0.2136,10227.31
-mul,large,triton,"x:(64M,) fp16",0.3077,10227.31
-mul,large,triton_tuned,"x:(64M,) fp16",0.3079,10219.18
-mul,large,tilelang,"x:(64M,) fp16",0.3188,10219.18
-mul,large,tilelang_tuned,"x:(64M,) fp16",0.3185,10219.18
-relu,small,pytorch,"x:(4096,4096) fp16",0.0677,10131.31
+max_reduction,large,triton,"x:(8192,32768) dim=1 fp16",0.5071,10099.39
+max_reduction,large,triton_tuned,"x:(8192,32768) dim=1 fp16",0.5027,10091.26
+max_reduction,large,tilelang,"x:(8192,32768) dim=1 fp16",0.8275,10091.32
+max_reduction,large,tilelang_tuned,"x:(8192,32768) dim=1 fp16",0.825,10091.32
+mean_reduction,small,pytorch,"x:(1024,1024) dim=1 fp32",0.0263,10099.31
+mean_reduction,small,triton,"x:(1024,1024) dim=1 fp32",0.0979,10099.31
+mean_reduction,small,triton_tuned,"x:(1024,1024) dim=1 fp32",0.0955,10091.19
+mean_reduction,small,tilelang,"x:(1024,1024) dim=1 fp32",0.0829,10091.19
+mean_reduction,small,tilelang_tuned,"x:(1024,1024) dim=1 fp32",0.0799,10091.19
+mean_reduction,large,pytorch,"x:(8192,32768) dim=1 fp32",0.7651,10099.34
+mean_reduction,large,triton,"x:(8192,32768) dim=1 fp32",0.8256,10099.34
+mean_reduction,large,triton_tuned,"x:(8192,32768) dim=1 fp32",0.8239,10091.21
+mean_reduction,large,tilelang,"x:(8192,32768) dim=1 fp32",0.7854,10091.21
+mean_reduction,large,tilelang_tuned,"x:(8192,32768) dim=1 fp32",0.7831,10091.21
+mul,small,pytorch,"x:(4096,) fp16",0.024,10099.32
+mul,small,triton,"x:(4096,) fp16",0.07,10099.32
+mul,small,triton_tuned,"x:(4096,) fp16",0.07,10091.19
+mul,small,tilelang,"x:(4096,) fp16",0.092,10091.19
+mul,small,tilelang_tuned,"x:(4096,) fp16",0.0904,10091.19
+mul,large,pytorch,"x:(64M,) fp16",0.214,10227.31
+mul,large,triton,"x:(64M,) fp16",0.308,10227.31
+mul,large,triton_tuned,"x:(64M,) fp16",0.3074,10219.18
+mul,large,tilelang,"x:(64M,) fp16",0.319,10219.18
+mul,large,tilelang_tuned,"x:(64M,) fp16",0.3196,10219.18
+relu,small,pytorch,"x:(4096,4096) fp16",0.0681,10131.31
 relu,small,triton,"x:(4096,4096) fp16",0.0962,10131.31
-relu,small,triton_tuned,"x:(4096,4096) fp16",0.0967,10123.18
-relu,small,tilelang,"x:(4096,4096) fp16",0.1147,10123.18
-relu,small,tilelang_tuned,"x:(4096,4096) fp16",0.1144,10123.18
-relu,large,pytorch,"x:(16384,16384) fp16",0.7901,10611.31
-relu,large,triton,"x:(16384,16384) fp16",0.8262,10611.31
-relu,large,triton_tuned,"x:(16384,16384) fp16",0.8254,10603.18
-relu,large,tilelang,"x:(16384,16384) fp16",1.1582,10603.18
-relu,large,tilelang_tuned,"x:(16384,16384) fp16",1.1587,10603.18
-rms_norm,small,pytorch,"x:(512,1024) w:(1024,) fp16",0.1303,10103.31
-rms_norm,small,triton,"x:(512,1024) w:(1024,) fp16",0.1081,10100.31
-rms_norm,small,triton_tuned,"x:(512,1024) w:(1024,) fp16",0.1066,10092.18
-rms_norm,small,tilelang,"x:(512,1024) w:(1024,) fp16",0.896,10096.19
-rms_norm,small,tilelang_tuned,"x:(512,1024) w:(1024,) fp16",0.8867,10096.19
-rms_norm,large,pytorch,"x:(8192,8192) w:(8192,) fp16",2.5148,10611.37
-rms_norm,large,triton,"x:(8192,8192) w:(8192,) fp16",0.2871,10227.31
-rms_norm,large,triton_tuned,"x:(8192,8192) w:(8192,) fp16",0.2843,10219.18
-rms_norm,large,tilelang,"x:(8192,8192) w:(8192,) fp16",79.9525,10731.21
-rms_norm,large,tilelang_tuned,"x:(8192,8192) w:(8192,) fp16",80.0167,10731.21
-softmax,small,pytorch,"x:(512,1024) fp16",0.0234,10100.31
-softmax,small,triton,"x:(512,1024) fp16",0.0774,10100.31
-softmax,small,triton_tuned,"x:(512,1024) fp16",0.0801,10092.18
-softmax,small,tilelang,"x:(512,1024) fp16",0.1441,10092.18
-softmax,small,tilelang_tuned,"x:(512,1024) fp16",0.1446,10092.18
-softmax,large,pytorch,"x:(4096,32768) fp16",0.5451,10355.31
-softmax,large,triton,"x:(4096,32768) fp16",0.4666,10355.31
+relu,small,triton_tuned,"x:(4096,4096) fp16",0.0961,10123.18
+relu,small,tilelang,"x:(4096,4096) fp16",0.115,10123.18
+relu,small,tilelang_tuned,"x:(4096,4096) fp16",0.1135,10123.18
+relu,large,pytorch,"x:(16384,16384) fp16",0.7905,10611.31
+relu,large,triton,"x:(16384,16384) fp16",0.8258,10611.31
+relu,large,triton_tuned,"x:(16384,16384) fp16",0.8245,10603.18
+relu,large,tilelang,"x:(16384,16384) fp16",1.1609,10603.18
+relu,large,tilelang_tuned,"x:(16384,16384) fp16",1.1608,10603.18
+rms_norm,small,pytorch,"x:(512,1024) w:(1024,) fp16",0.131,10103.31
+rms_norm,small,triton,"x:(512,1024) w:(1024,) fp16",0.1045,10100.31
+rms_norm,small,triton_tuned,"x:(512,1024) w:(1024,) fp16",0.1045,10092.18
+rms_norm,small,tilelang,"x:(512,1024) w:(1024,) fp16",0.8979,10096.19
+rms_norm,small,tilelang_tuned,"x:(512,1024) w:(1024,) fp16",0.8835,10096.19
+rms_norm,large,pytorch,"x:(8192,8192) w:(8192,) fp16",2.5151,10611.37
+rms_norm,large,triton,"x:(8192,8192) w:(8192,) fp16",0.2881,10227.31
+rms_norm,large,triton_tuned,"x:(8192,8192) w:(8192,) fp16",0.2833,10219.18
+rms_norm,large,tilelang,"x:(8192,8192) w:(8192,) fp16",79.9027,10731.21
+rms_norm,large,tilelang_tuned,"x:(8192,8192) w:(8192,) fp16",80.1466,10731.21
+softmax,small,pytorch,"x:(512,1024) fp16",0.0232,10100.31
+softmax,small,triton,"x:(512,1024) fp16",0.0785,10100.31
+softmax,small,triton_tuned,"x:(512,1024) fp16",0.0792,10092.18
+softmax,small,tilelang,"x:(512,1024) fp16",0.1448,10092.18
+softmax,small,tilelang_tuned,"x:(512,1024) fp16",0.1657,10092.18
+softmax,large,pytorch,"x:(4096,32768) fp16",0.5444,10355.31
+softmax,large,triton,"x:(4096,32768) fp16",0.4644,10355.31
 softmax,large,triton_tuned,"x:(4096,32768) fp16",0.4621,10347.18
-softmax,large,tilelang,"x:(4096,32768) fp16",59.9114,10347.18
-softmax,large,tilelang_tuned,"x:(4096,32768) fp16",60.0282,10347.18
-swiglu,small,pytorch,"xy:(512,8192) fp16",0.0615,10107.31
-swiglu,small,triton,"xy:(512,8192) fp16",0.1256,10103.31
-swiglu,small,triton_tuned,"xy:(512,8192) fp16",0.125,10095.18
-swiglu,small,tilelang,"xy:(512,8192) fp16",0.142,10103.18
-swiglu,small,tilelang_tuned,"xy:(512,8192) fp16",0.1443,10103.18
-swiglu,large,pytorch,"xy:(4096,32768) fp16",1.0992,10355.31
-swiglu,large,triton,"xy:(4096,32768) fp16",0.4025,10227.31
-swiglu,large,triton_tuned,"xy:(4096,32768) fp16",0.3987,10219.18
-swiglu,large,tilelang,"xy:(4096,32768) fp16",1.0522,10475.18
-swiglu,large,tilelang_tuned,"xy:(4096,32768) fp16",1.056,10475.18
+softmax,large,tilelang,"x:(4096,32768) fp16",59.9703,10347.18
+softmax,large,tilelang_tuned,"x:(4096,32768) fp16",60.0359,10347.18
+swiglu,small,pytorch,"xy:(512,8192) fp16",0.0613,10107.31
+swiglu,small,triton,"xy:(512,8192) fp16",0.1244,10103.31
+swiglu,small,triton_tuned,"xy:(512,8192) fp16",0.1219,10095.18
+swiglu,small,tilelang,"xy:(512,8192) fp16",0.1459,10103.18
+swiglu,small,tilelang_tuned,"xy:(512,8192) fp16",0.1428,10103.18
+swiglu,large,pytorch,"xy:(4096,32768) fp16",1.0986,10355.31
+swiglu,large,triton,"xy:(4096,32768) fp16",0.4031,10227.31
+swiglu,large,triton_tuned,"xy:(4096,32768) fp16",0.3989,10219.18
+swiglu,large,tilelang,"xy:(4096,32768) fp16",1.0531,10475.18
+swiglu,large,tilelang_tuned,"xy:(4096,32768) fp16",1.0542,10475.18
