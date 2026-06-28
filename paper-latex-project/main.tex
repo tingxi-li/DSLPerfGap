@@ -15,11 +15,27 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{cleveref}
-\usepackage{textcase}
-\usepackage{caption}
-% Table captions in ALL CAPS (IEEE style); skips math, protects \NoCaseChange{}.
-\DeclareCaptionTextFormat{allcaps}{\MakeTextUppercase{#1}}
-\captionsetup[table]{textformat=allcaps}
+
+% Override IEEEtran's table-caption format to drop the default small-caps
+% (\scshape) so table caption text renders in normal sentence case.
+% Copied verbatim from IEEEtran.cls (traditional noncompsoc \@makecaption),
+% with \scshape removed from the table branch only; figure branch unchanged.
+\makeatletter
+\long\def\@makecaption#1#2{%
+\ifx\@captype\@IEEEtablestring%
+\footnotesize\bgroup\par\centering\@IEEEtabletopskipstrut{\normalfont\footnotesize #1}\\{\normalfont\footnotesize #2}\par\addvspace{0.5\baselineskip}\egroup%
+\@IEEEtablecaptionsepspace
+\else
+\@IEEEfigurecaptionsepspace
+\setbox\@tempboxa\hbox{\normalfont\footnotesize {#1.}\nobreakspace\nobreakspace #2}%
+\ifdim \wd\@tempboxa >\hsize%
+\setbox\@tempboxa\hbox{\normalfont\footnotesize {#1.}\nobreakspace\nobreakspace}%
+\parbox[t]{\hsize}{\normalfont\footnotesize\noindent\unhbox\@tempboxa#2}%
+\else%
+\ifCLASSOPTIONconference \hbox to\hsize{\normalfont\footnotesize\hfil\box\@tempboxa\hfil}%
+\else \hbox to\hsize{\normalfont\footnotesize\box\@tempboxa\hfil}%
+\fi\fi\fi}
+\makeatother
 
 %%
 %% Macros

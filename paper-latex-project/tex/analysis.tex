@@ -210,7 +210,7 @@
 
 % \begin{table*}[t]
 %   \centering
-%   \caption{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\NoCaseChange{\cref{sec:mitigation}}); ``---'' indicates no direct mitigation experiment conducted. RC0a and RC0b are TileLang-specific; RC1--RC4 affect both DSLs.}
+%   \caption{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref{sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a and RC0b are TileLang-specific; RC1--RC4 affect both DSLs.}
 %   \label{tab:rootcauses}
 %   \begin{tabular}{p{5cm}p{3.5cm}p{2.2cm}p{4.5cm}}
 %     \toprule
@@ -325,7 +325,7 @@ compared to 92.9\% on a $128\times2048^2$ batched GEMM
 where the auto-tuner has well-populated configurations.
 The convolution gap (19.3\% for the $32\times256\times128\times128$, $3\times3$ configuration)
 follows the same pattern at an even larger scale.
-Expanding the search beyond the default 12-config block-tile grid (sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, and \texttt{num\_stages}) recovers Triton from 32.5\% to 81.8\% of cuBLAS at $16384^2$ (a $2.52\times$ gain) and from 56.4\% to 76.5\% at $4096^2$, confirming that the missing configurations---not an exhausted search budget---bound default performance (\NoCaseChange{\cref{sec:mitigation}}).
+Expanding the search beyond the default 12-config block-tile grid (sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, and \texttt{num\_stages}) recovers Triton from 32.5\% to 81.8\% of cuBLAS at $16384^2$ (a $2.52\times$ gain) and from 56.4\% to 76.5\% at $4096^2$, confirming that the missing configurations---not an exhausted search budget---bound default performance (\cref{sec:mitigation}).
 
 \paragraph{RC2b: L2 Cache Residency.}
 For the $16384^2$ matmul, the combined A, B, C footprint (${\approx}1.6$~GB) vastly exceeds the A100's 40~MB L2 cache; cuBLAS employs hardware-specific cache-blocking (via \texttt{cuBLASLt}'s plan selector) while Triton's generic \texttt{tl.dot} compilation lacks equivalent heuristics, producing the ${\approx}3\times$ latency penalty observed ($34.24$~ms vs.\ $104.34$~ms).
@@ -372,7 +372,7 @@ most diagnostic for its detection.
 
 \begin{table*}[t]
   \centering
-  \caption{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\NoCaseChange{\cref{sec:mitigation}}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 and GH200 \NoCaseChange{\texttt{ncu\_summary.csv}} files, which agree on the RC signatures.}
+  \caption{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref{sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 and GH200 \texttt{ncu\_summary.csv} files, which agree on the RC signatures.}
   \label{tab:rootcauses}
   \begin{tabular}{p{5cm}p{3.5cm}p{2.2cm}p{4.5cm}}
     \toprule
