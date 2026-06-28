@@ -1,57 +1,19 @@
-\subsection{Tile-Based GPU Programming}
-\label{sec:bg:tile}
+\subsection{Tile-Based GPU DSLs}
+\label{sec:bg:dsls}
 
-A GPU executes thousands of threads organized into \emph{thread blocks},
-each occupying a \emph{streaming multiprocessor} (SM) with fast programmer-managed scratchpad (\emph{shared memory}).
-The roofline model~\cite{williams2009roofline} captures the two performance limits:
-arithmetic throughput (TFLOPS) and memory bandwidth (GB/s);
-high-performance kernels tile data~\cite{wolfe1989more} to maximize shared memory reuse and stay compute-bound.
+A GPU executes thousands of threads grouped into \emph{thread blocks}, each resident on a \emph{streaming multiprocessor} with fast programmer-managed scratchpad (\emph{shared memory}); high-performance kernels \emph{tile} data~\cite{wolfe1989more} to reuse that scratchpad and stay compute-bound under the roofline model~\cite{williams2009roofline}.
+Two Python-embedded DSLs raise this tiling abstraction above hand-written CUDA, and our study targets both.
 
-\subsection{Triton}
-\label{sec:bg:triton}
+Triton~\cite{tillet2019triton} makes the \emph{tile}---a statically shaped, multi-dimensional array operated on by all threads in a program instance---the unit of computation.
+Its MLIR-based compiler~\cite{lattner2021mlir} performs memory coalescing, shared-memory allocation, thread swizzling, and software pipelining automatically while targeting NVIDIA PTX, and programmers tune tile configurations through \texttt{@triton.autotune}.
+Triton is the default lowering target for \texttt{torch.compile} since PyTorch 2.0~\cite{li2023torchcompile}.
+Its convolution support is less mature: an im2col-style lowering exists but falls substantially short of cuDNN on common workloads~\cite{triton2022conv591}.
 
-Triton~\cite{tillet2019triton} is a Python-embedded DSL and compiler
-in which the unit of computation is a \emph{tile}:
-a statically shaped, multi-dimensional array operated on by all threads in a program instance.
-The Triton compiler performs memory coalescing, shared memory allocation,
-thread swizzling, and software pipelining automatically,
-targeting NVIDIA PTX through an MLIR-based compilation pipeline~\cite{lattner2021mlir}.
-Triton exposes performance tuning via \texttt{@triton.autotune},
-sweeping programmer-specified tile configurations and caching the fastest per problem shape.
-Triton has been integrated as the default lowering target for \texttt{torch.compile}
-since PyTorch 2.0~\cite{li2023torchcompile}.
+TileLang~\cite{wang2025tilelang} separates the \emph{algorithm} (what to compute) from the \emph{schedule} (how to map computation onto GPU resources) more explicitly than Triton, letting the programmer tune memory staging, thread layout, and pipeline depth without changing the functional description.
+It compiles through Apache TVM with explicit hardware-intrinsic support on NVIDIA and AMD architectures.
+Its convolution performance relative to cuDNN has not been systematically evaluated prior to this work.
 
-Triton's support for convolution is less mature:
-an im2col-style lowering exists but has been observed to fall substantially short
-of cuDNN performance on common workloads~\cite{triton2022conv591}.
-
-\subsection{TileLang}
-\label{sec:bg:tilelang}
-
-TileLang~\cite{wang2025tilelang} is a DSL developed at Microsoft Research
-that separates the \emph{algorithm} (what to compute) from the \emph{schedule} (how to map computation onto GPU resources) more explicitly than Triton,
-allowing the programmer to independently tune memory staging, thread layout, and pipeline depth without changing the functional description.
-TileLang compiles through Apache TVM's infrastructure with explicit hardware intrinsic support on NVIDIA and AMD architectures.
-TileLang's convolution support and its performance relative to cuDNN
-have not been systematically evaluated prior to this work.
-
-\subsection{cuBLAS and cuDNN}
-\label{sec:bg:libs}
-
-%\paragraph{cuBLAS}
-cuBLAS~\cite{cublas2024} is NVIDIA's BLAS implementation for CUDA,
-providing highly optimized routines for dense linear algebra,
-with \texttt{cuBLASLt} offering a flexible GEMM API
-with configurable layouts and compute types (FP32, FP16, BF16, FP8, INT8).
-cuBLAS dispatches the fastest GEMM implementation via a runtime heuristic recommender
-trained on problem shapes and hardware generation.
-The underlying template library, CUTLASS~\cite{cutlass2023},
-is publicly available and serves as a reference for DSL performance comparisons.
-
-%\paragraph{cuDNN}
-cuDNN~\cite{chetlur2014cudnn,cudnn2024} covers the full set of deep learning primitives:
-convolution (forward and backward passes), pooling, normalization, recurrent layers, and attention.
-cuDNN selects among implicit GEMM, Winograd ($3\times3$ filters), FFT (large filters), and direct convolution at runtime via \texttt{cudnnFind}, benchmarking all candidates per configuration.
+Throughout, we compare both DSLs against the vendor libraries they aim to displace: cuBLAS~\cite{cublas2024} for dense GEMM and cuDNN~\cite{chetlur2014cudnn,cudnn2024} for convolution and the other deep-learning primitives, each of which dispatches the fastest implementation per problem shape via a runtime selector~\cite{cutlass2023}.
 
 \subsection{Benchmarking DSL and LLM-Generated Kernels}
 \label{sec:bg:tritonbench}

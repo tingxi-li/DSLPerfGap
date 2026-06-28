@@ -26,42 +26,33 @@
 \@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{section.1}\protected@file@percent }
 \newlabel{sec:introduction}{{I}{1}{Introduction}{section.1}{}}
 \newlabel{sec:introduction@cref}{{[section][1][]I}{[1][1][]1}}
-\citation{williams2009roofline}
 \citation{wolfe1989more}
+\citation{williams2009roofline}
 \citation{tillet2019triton}
 \citation{lattner2021mlir}
 \citation{li2023torchcompile}
 \citation{triton2022conv591}
 \citation{wang2025tilelang}
 \citation{cublas2024}
-\citation{cutlass2023}
 \citation{chetlur2014cudnn,cudnn2024}
+\citation{cutlass2023}
 \citation{li2023torchcompile}
 \citation{kernelbench,li2025tritonforge}
+\citation{li2025tritonbench}
+\citation{kernelbench}
 \@writefile{toc}{\contentsline {section}{\numberline {II}Background}{2}{section.2}\protected@file@percent }
 \newlabel{sec:background}{{II}{2}{Background}{section.2}{}}
 \newlabel{sec:background@cref}{{[section][2][]II}{[1][2][]2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Tile-Based GPU Programming}{2}{subsection.2.1}\protected@file@percent }
-\newlabel{sec:bg:tile}{{\mbox  {II-A}}{2}{Tile-Based GPU Programming}{subsection.2.1}{}}
-\newlabel{sec:bg:tile@cref}{{[subsection][1][2]\mbox  {II-A}}{[1][2][]2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Triton}{2}{subsection.2.2}\protected@file@percent }
-\newlabel{sec:bg:triton}{{\mbox  {II-B}}{2}{Triton}{subsection.2.2}{}}
-\newlabel{sec:bg:triton@cref}{{[subsection][2][2]\mbox  {II-B}}{[1][2][]2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}TileLang}{2}{subsection.2.3}\protected@file@percent }
-\newlabel{sec:bg:tilelang}{{\mbox  {II-C}}{2}{TileLang}{subsection.2.3}{}}
-\newlabel{sec:bg:tilelang@cref}{{[subsection][3][2]\mbox  {II-C}}{[1][2][]2}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-D}}cuBLAS and cuDNN}{2}{subsection.2.4}\protected@file@percent }
-\newlabel{sec:bg:libs}{{\mbox  {II-D}}{2}{cuBLAS and cuDNN}{subsection.2.4}{}}
-\newlabel{sec:bg:libs@cref}{{[subsection][4][2]\mbox  {II-D}}{[1][2][]2}}
-\citation{li2025tritonbench}
-\citation{kernelbench}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Tile-Based GPU DSLs}{2}{subsection.2.1}\protected@file@percent }
+\newlabel{sec:bg:dsls}{{\mbox  {II-A}}{2}{Tile-Based GPU DSLs}{subsection.2.1}{}}
+\newlabel{sec:bg:dsls@cref}{{[subsection][1][2]\mbox  {II-A}}{[1][2][]2}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Benchmarking DSL and LLM-Generated Kernels}{2}{subsection.2.2}\protected@file@percent }
+\newlabel{sec:bg:tritonbench}{{\mbox  {II-B}}{2}{Benchmarking DSL and LLM-Generated Kernels}{subsection.2.2}{}}
+\newlabel{sec:bg:tritonbench@cref}{{[subsection][2][2]\mbox  {II-B}}{[1][2][]2}}
 \citation{li2025tritonbench}
 \citation{wang2025tilelang}
 \citation{li2025tritonbench}
 \citation{nsightcompute2024}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-E}}Benchmarking DSL and LLM-Generated Kernels}{3}{subsection.2.5}\protected@file@percent }
-\newlabel{sec:bg:tritonbench}{{\mbox  {II-E}}{3}{Benchmarking DSL and LLM-Generated Kernels}{subsection.2.5}{}}
-\newlabel{sec:bg:tritonbench@cref}{{[subsection][5][2]\mbox  {II-E}}{[1][2][]3}}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Methodology}{3}{section.3}\protected@file@percent }
 \newlabel{sec:methodology}{{III}{3}{Methodology}{section.3}{}}
 \newlabel{sec:methodology@cref}{{[section][3][]III}{[1][3][]3}}
@@ -76,8 +67,10 @@
 \newlabel{sec:meth:profiling}{{\mbox  {III-C}}{3}{Profiling Setup}{subsection.3.3}{}}
 \newlabel{sec:meth:profiling@cref}{{[subsection][3][3]\mbox  {III-C}}{[1][3][]3}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0a}End-to-end throughput.}{3}{paragraph.3.3.0.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0b}Hardware performance counters.}{4}{paragraph.3.3.0.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0c}Correctness.}{4}{paragraph.3.3.0.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0b}Hardware performance counters.}{3}{paragraph.3.3.0.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0c}Correctness.}{3}{paragraph.3.3.0.3}\protected@file@percent }
+\citation{kernelbench}
+\citation{li2025tritonbench}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Metrics}{4}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:meth:metrics}{{\mbox  {III-D}}{4}{Metrics}{subsection.3.4}{}}
 \newlabel{sec:meth:metrics@cref}{{[subsection][4][3]\mbox  {III-D}}{[1][4][]4}}
@@ -95,51 +88,50 @@
 \@writefile{toc}{\contentsline {section}{\numberline {V}The Evaluation Gap (RQ1)}{4}{section.5}\protected@file@percent }
 \newlabel{sec:evaluation}{{V}{4}{The Evaluation Gap (RQ1)}{section.5}{}}
 \newlabel{sec:evaluation@cref}{{[section][5][]V}{[1][4][]4}}
-\citation{kernelbench}
-\citation{li2025tritonbench}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}What Existing Benchmarks Measure}{5}{subsection.5.1}\protected@file@percent }
-\newlabel{sec:eval:survey}{{\mbox  {V-A}}{5}{What Existing Benchmarks Measure}{subsection.5.1}{}}
-\newlabel{sec:eval:survey@cref}{{[subsection][1][5]\mbox  {V-A}}{[1][5][]5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}What Existing Benchmarks Measure}{4}{subsection.5.1}\protected@file@percent }
+\newlabel{sec:eval:survey}{{\mbox  {V-A}}{4}{What Existing Benchmarks Measure}{subsection.5.1}{}}
+\newlabel{sec:eval:survey@cref}{{[subsection][1][5]\mbox  {V-A}}{[1][4][]4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Passing Is Not Fast}{5}{subsection.5.2}\protected@file@percent }
 \newlabel{sec:eval:passesslow}{{\mbox  {V-B}}{5}{Passing Is Not Fast}{subsection.5.2}{}}
 \newlabel{sec:eval:passesslow@cref}{{[subsection][2][5]\mbox  {V-B}}{[1][5][]5}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt  {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \cref  {tab:norm}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt  {fused linear+activation}, a valid DSL advantage through kernel fusion; see \cref  {sec:eval:gemm}. Attention excluded; see \cref  {sec:eval:gemm}.}}{5}{figure.1}\protected@file@percent }
-\newlabel{fig:overview}{{1}{5}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \cref {tab:norm}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt {fused linear+activation}, a valid DSL advantage through kernel fusion; see \cref {sec:eval:gemm}. Attention excluded; see \cref {sec:eval:gemm}}{figure.1}{}}
-\newlabel{fig:overview@cref}{{[figure][1][]1}{[1][5][]5}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}The Hidden Gap These Benchmarks Admit}{5}{subsection.5.3}\protected@file@percent }
 \newlabel{sec:eval:overview}{{\mbox  {V-C}}{5}{The Hidden Gap These Benchmarks Admit}{subsection.5.3}{}}
 \newlabel{sec:eval:overview@cref}{{[subsection][3][5]\mbox  {V-C}}{[1][5][]5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt  {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \cref  {tab:norm}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt  {fused linear+activation}, a valid DSL advantage through kernel fusion; see \cref  {sec:eval:gemm}. Attention excluded; see \cref  {sec:eval:gemm}.}}{5}{figure.1}\protected@file@percent }
+\newlabel{fig:overview}{{1}{5}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \cref {tab:norm}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt {fused linear+activation}, a valid DSL advantage through kernel fusion; see \cref {sec:eval:gemm}. Attention excluded; see \cref {sec:eval:gemm}}{figure.1}{}}
+\newlabel{fig:overview@cref}{{[figure][1][]1}{[1][5][]5}}
 \newlabel{sec:eval:gemm}{{\mbox  {V-C}}{5}{The Hidden Gap These Benchmarks Admit}{section*.1}{}}
 \newlabel{sec:eval:gemm@cref}{{[subsection][3][5]\mbox  {V-C}}{[1][5][]5}}
 \citation{dao2023flashattention2}
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces GEMM-family kernels (FP16) latency (ms, lower is better), per configuration on the A100-SXM4 and GH200 (both unlocked tuned profile). $E_\text  {lib}$ = library efficiency relative to PyTorch/cuBLAS baseline. \textbf  {Bold} marks best DSL result per row.}}{6}{table.1}\protected@file@percent }
 \newlabel{tab:gemm}{{I}{6}{GEMM-family kernels (FP16) latency (ms, lower is better), per configuration on the A100-SXM4 and GH200 (both unlocked tuned profile). $E_\text {lib}$ = library efficiency relative to PyTorch/cuBLAS baseline. \textbf {Bold} marks best DSL result per row}{table.1}{}}
-\newlabel{tab:gemm@cref}{{[table][1][]I}{[1][6][]6}}
+\newlabel{tab:gemm@cref}{{[table][1][]I}{[1][5][]6}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-C}0a}Attention.}{6}{paragraph.5.3.0.1}\protected@file@percent }
+\newlabel{sec:eval:conv}{{\mbox  {V-C}0a}{6}{Attention}{section*.2}{}}
+\newlabel{sec:eval:conv@cref}{{[paragraph][1][5,3,0]\mbox  {V-C}0a}{[1][6][]6}}
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Conv2d library efficiency ($E_\text  {lib}$, \%) on the A100-SXM4 (small and large shapes) and GH200 (large shape; unlocked tuned profile). NCHW layout (PyTorch default), FP16, padding ``same''. $E_\text  {lib}$ relative to PyTorch/cuDNN baseline (higher is better). \textbf  {Bold} marks the best DSL per cell.}}{6}{table.2}\protected@file@percent }
 \newlabel{tab:conv}{{II}{6}{Conv2d library efficiency ($E_\text {lib}$, \%) on the A100-SXM4 (small and large shapes) and GH200 (large shape; unlocked tuned profile). NCHW layout (PyTorch default), FP16, padding ``same''. $E_\text {lib}$ relative to PyTorch/cuDNN baseline (higher is better). \textbf {Bold} marks the best DSL per cell}{table.2}{}}
 \newlabel{tab:conv@cref}{{[table][2][]II}{[1][6][]6}}
-\newlabel{sec:eval:conv}{{\mbox  {V-C}0a}{6}{Attention}{section*.2}{}}
-\newlabel{sec:eval:conv@cref}{{[paragraph][1][5,3,0]\mbox  {V-C}0a}{[1][6][]6}}
 \newlabel{sec:eval:norm}{{\mbox  {V-C}0a}{6}{Attention}{section*.3}{}}
 \newlabel{sec:eval:norm@cref}{{[paragraph][1][5,3,0]\mbox  {V-C}0a}{[1][6][]6}}
+\newlabel{sec:eval:tuning}{{\mbox  {V-C}0a}{6}{Attention}{section*.4}{}}
+\newlabel{sec:eval:tuning@cref}{{[paragraph][1][5,3,0]\mbox  {V-C}0a}{[1][6][]6}}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Normalization latency (lower is better). $E_\text  {lib}$ relative to PyTorch eager baseline.}}{7}{table.3}\protected@file@percent }
 \newlabel{tab:norm}{{III}{7}{Normalization latency (lower is better). $E_\text {lib}$ relative to PyTorch eager baseline}{table.3}{}}
-\newlabel{tab:norm@cref}{{[table][3][]III}{[1][7][]7}}
-\newlabel{sec:eval:tuning}{{\mbox  {V-C}0a}{7}{Attention}{section*.4}{}}
-\newlabel{sec:eval:tuning@cref}{{[paragraph][1][5,3,0]\mbox  {V-C}0a}{[1][7][]7}}
+\newlabel{tab:norm@cref}{{[table][3][]III}{[1][6][]7}}
 \newlabel{sec:eval:summary}{{\mbox  {V-C}0a}{7}{Attention}{section*.5}{}}
 \newlabel{sec:eval:summary@cref}{{[paragraph][1][5,3,0]\mbox  {V-C}0a}{[1][7][]7}}
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200 (both unlocked tuned profile), computed over large-size benchmark configurations. Attention excluded from Overall; see text.}}{7}{table.4}\protected@file@percent }
 \newlabel{tab:summary}{{IV}{7}{Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200 (both unlocked tuned profile), computed over large-size benchmark configurations. Attention excluded from Overall; see text}{table.4}{}}
 \newlabel{tab:summary@cref}{{[table][4][]IV}{[1][7][]7}}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Per-kernel library efficiency ($E_\text  {lib}$, \%) for the 15 element-wise and reduction kernels at the large input size, NVIDIA A100-SXM4-40GB. $^\dagger $ marks entries $>$100\%, which reflect kernel fusion or an unfused/eager PyTorch baseline (not pure DSL speedups over a vendor library).}}{7}{table.5}\protected@file@percent }
+\newlabel{tab:ew}{{V}{7}{Per-kernel library efficiency ($E_\text {lib}$, \%) for the 15 element-wise and reduction kernels at the large input size, NVIDIA A100-SXM4-40GB. $^\dagger $ marks entries $>$100\%, which reflect kernel fusion or an unfused/eager PyTorch baseline (not pure DSL speedups over a vendor library)}{table.5}{}}
+\newlabel{tab:ew@cref}{{[table][5][]V}{[1][7][]7}}
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Root Causes of the Hidden Gap (RQ2)}{7}{section.6}\protected@file@percent }
 \newlabel{sec:analysis}{{VI}{7}{Root Causes of the Hidden Gap (RQ2)}{section.6}{}}
 \newlabel{sec:analysis@cref}{{[section][6][]VI}{[1][7][]7}}
 \citation{triton2022conv591}
-\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Per-kernel library efficiency ($E_\text  {lib}$, \%) for the 15 element-wise and reduction kernels at the large input size, NVIDIA A100-SXM4-40GB. $^\dagger $ marks entries $>$100\%, which reflect kernel fusion or an unfused/eager PyTorch baseline (not pure DSL speedups over a vendor library).}}{8}{table.5}\protected@file@percent }
-\newlabel{tab:ew}{{V}{8}{Per-kernel library efficiency ($E_\text {lib}$, \%) for the 15 element-wise and reduction kernels at the large input size, NVIDIA A100-SXM4-40GB. $^\dagger $ marks entries $>$100\%, which reflect kernel fusion or an unfused/eager PyTorch baseline (not pure DSL speedups over a vendor library)}{table.5}{}}
-\newlabel{tab:ew@cref}{{[table][5][]V}{[1][7][]8}}
+\citation{triton2022conv591}
 \newlabel{sec:analysis:jit}{{VI}{8}{Root Causes of the Hidden Gap (RQ2)}{section*.6}{}}
 \newlabel{sec:analysis:jit@cref}{{[section][6][]VI}{[1][8][]8}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-}0a}RC0: TileLang Compiler-Level Deficiencies.}{8}{paragraph.6.0.0.1}\protected@file@percent }
@@ -149,7 +141,6 @@
 \newlabel{sec:analysis:vec}{{\mbox  {VI-}0d}{8}{TileLang float32 lowering to TF32}{section*.7}{}}
 \newlabel{sec:analysis:vec@cref}{{[paragraph][4][6,0,0]\mbox  {VI-}0d}{[1][8][]8}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-}0e}RC1: Absent Vectorization of Strided Memory Accesses.}{8}{paragraph.6.0.0.5}\protected@file@percent }
-\citation{triton2022conv591}
 \citation{tillet2019triton}
 \newlabel{sec:analysis:autotune}{{\mbox  {VI-}0e}{9}{RC1: Absent Vectorization of Strided Memory Accesses}{section*.8}{}}
 \newlabel{sec:analysis:autotune@cref}{{[paragraph][5][6,0,0]\mbox  {VI-}0e}{[1][9][]9}}
@@ -165,7 +156,7 @@
 \citation{li2025tritonbench}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Summary of Root Causes}{10}{subsection.6.1}\protected@file@percent }
 \newlabel{sec:analysis:summary}{{\mbox  {VI-A}}{10}{Summary of Root Causes}{subsection.6.1}{}}
-\newlabel{sec:analysis:summary@cref}{{[subsection][1][6]\mbox  {VI-A}}{[1][10][]10}}
+\newlabel{sec:analysis:summary@cref}{{[subsection][1][6]\mbox  {VI-A}}{[1][9][]10}}
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Guidance Without a Comprehensive Benchmark (RQ3)}{10}{section.7}\protected@file@percent }
 \newlabel{sec:mitigation}{{VII}{10}{Guidance Without a Comprehensive Benchmark (RQ3)}{section.7}{}}
 \newlabel{sec:mitigation@cref}{{[section][7][]VII}{[1][10][]10}}
@@ -188,30 +179,33 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Convolution: Partial Recovery via Implicit GEMM}{11}{subsection.7.3}\protected@file@percent }
 \newlabel{sec:mitig:conv}{{\mbox  {VII-C}}{11}{Convolution: Partial Recovery via Implicit GEMM}{subsection.7.3}{}}
 \newlabel{sec:mitig:conv@cref}{{[subsection][3][7]\mbox  {VII-C}}{[1][11][]11}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VII-C}0a}Finding: Restructuring Conv2d as an implicit GEMM with FP16 Tensor Core acceleration, input padding to 16-byte alignment (addressing RC1), and an expanded autotune configuration space (addressing RC2) yields a $2.57\times $ latency reduction ($32.1\nobreakspace  {}\text  {ms} \to 12.5\nobreakspace  {}\text  {ms}$) in the AKO4ALL optimization campaign. On the A100-SXM4, where cuDNN is substantially faster, the same implicit-GEMM restructuring holds 36--76\% of PyTorch/cuDNN efficiency across the $1\times 1$--$7\times 7$ filter family (all correct)--- the gap is narrowed but not closed.}{11}{paragraph.7.3.0.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Normalization kernel latency (ms, lower is better) before and after RC0 correction, re-timed on the A100-SXM4 (locked clocks). $E_\text  {lib}$ = library efficiency after fix, relative to PyTorch. \emph  {Before} is the unoptimized TileLang kernel (cf.\ \cref  {tab:norm}); \emph  {After} is the AKO4ALL-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph  {Before} matches the unlocked profile in \cref  {tab:norm} to within noise. Input shape: $8192 \times 8192$.}}{12}{table.8}\protected@file@percent }
 \newlabel{tab:mitig:norm}{{VIII}{12}{Normalization kernel latency (ms, lower is better) before and after RC0 correction, re-timed on the A100-SXM4 (locked clocks). $E_\text {lib}$ = library efficiency after fix, relative to PyTorch. \emph {Before} is the unoptimized TileLang kernel (cf.\ \cref {tab:norm}); \emph {After} is the AKO4ALL-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph {Before} matches the unlocked profile in \cref {tab:norm} to within noise. Input shape: $8192 \times 8192$}{table.8}{}}
 \newlabel{tab:mitig:norm@cref}{{[table][8][]VIII}{[1][11][]12}}
 \@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Convolution mitigation across the filter family on the A100-SXM4 (optimized implicit-GEMM Triton, FP16; input $32\times 256\times 128\times 128$). $E_\text  {lib}$ = library efficiency relative to PyTorch/cuDNN; the mitigation holds 36--76\% across the $1\times 1$--$7\times 7$ filter family, all correct.}}{12}{table.9}\protected@file@percent }
 \newlabel{tab:mitig:conv}{{IX}{12}{Convolution mitigation across the filter family on the A100-SXM4 (optimized implicit-GEMM Triton, FP16; input $32\times 256\times 128\times 128$). $E_\text {lib}$ = library efficiency relative to PyTorch/cuDNN; the mitigation holds 36--76\% across the $1\times 1$--$7\times 7$ filter family, all correct}{table.9}{}}
 \newlabel{tab:mitig:conv@cref}{{[table][9][]IX}{[1][12][]12}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VII-C}0a}Finding: Restructuring Conv2d as an implicit GEMM with FP16 Tensor Core acceleration, input padding to 16-byte alignment (addressing RC1), and an expanded autotune configuration space (addressing RC2) yields a $2.57\times $ latency reduction ($32.1\nobreakspace  {}\text  {ms} \to 12.5\nobreakspace  {}\text  {ms}$) in the AKO4ALL optimization campaign. On the A100-SXM4, where cuDNN is substantially faster, the same implicit-GEMM restructuring holds 36--76\% of PyTorch/cuDNN efficiency across the $1\times 1$--$7\times 7$ filter family (all correct)--- the gap is narrowed but not closed.}{12}{paragraph.7.3.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-D}}GEMM and Reduction Kernels}{12}{subsection.7.4}\protected@file@percent }
 \newlabel{sec:mitig:other}{{\mbox  {VII-D}}{12}{GEMM and Reduction Kernels}{subsection.7.4}{}}
 \newlabel{sec:mitig:other@cref}{{[subsection][4][7]\mbox  {VII-D}}{[1][12][]12}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-E}}Summary and Remaining Gap}{13}{subsection.7.5}\protected@file@percent }
 \newlabel{sec:mitig:summary}{{\mbox  {VII-E}}{13}{Summary and Remaining Gap}{subsection.7.5}{}}
-\newlabel{sec:mitig:summary@cref}{{[subsection][5][7]\mbox  {VII-E}}{[1][13][]13}}
+\newlabel{sec:mitig:summary@cref}{{[subsection][5][7]\mbox  {VII-E}}{[1][12][]13}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VII-E}0a}Cross-architecture portability is itself an authoring concern.}{13}{paragraph.7.5.0.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{13}{table.10}\protected@file@percent }
 \newlabel{tab:mitigation}{{X}{13}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.10}{}}
 \newlabel{tab:mitigation@cref}{{[table][10][]X}{[1][13][]13}}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Discussion}{13}{section.8}\protected@file@percent }
+\newlabel{sec:discussion}{{VIII}{13}{Discussion}{section.8}{}}
+\newlabel{sec:discussion@cref}{{[section][8][]VIII}{[1][13][]13}}
 \citation{zheng2020ansor}
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Discussion}{14}{section.8}\protected@file@percent }
-\newlabel{sec:discussion}{{VIII}{14}{Discussion}{section.8}{}}
-\newlabel{sec:discussion@cref}{{[section][8][]VIII}{[1][14][]14}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}Implications for DSL Developers}{14}{subsection.8.1}\protected@file@percent }
 \newlabel{sec:disc:dsl}{{\mbox  {VIII-A}}{14}{Implications for DSL Developers}{subsection.8.1}{}}
 \newlabel{sec:disc:dsl@cref}{{[subsection][1][8]\mbox  {VIII-A}}{[1][14][]14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-B}}Limitations}{14}{subsection.8.2}\protected@file@percent }
+\newlabel{sec:disc:limitations}{{\mbox  {VIII-B}}{14}{Limitations}{subsection.8.2}{}}
+\newlabel{sec:disc:limitations@cref}{{[subsection][2][8]\mbox  {VIII-B}}{[1][14][]14}}
 \citation{ragan-kelley2013halide}
 \citation{chen2018tvm}
 \citation{wang2025tilelang}
@@ -229,9 +223,7 @@
 \citation{cutlass2023}
 \citation{li2025tritonbench}
 \citation{kernelbench}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-B}}Limitations}{15}{subsection.8.2}\protected@file@percent }
-\newlabel{sec:disc:limitations}{{\mbox  {VIII-B}}{15}{Limitations}{subsection.8.2}{}}
-\newlabel{sec:disc:limitations@cref}{{[subsection][2][8]\mbox  {VIII-B}}{[1][15][]15}}
+\citation{reddi2020mlperf}
 \@writefile{toc}{\contentsline {section}{\numberline {IX}Related Work}{15}{section.9}\protected@file@percent }
 \newlabel{sec:related}{{IX}{15}{Related Work}{section.9}{}}
 \newlabel{sec:related@cref}{{[section][9][]IX}{[1][15][]15}}
@@ -247,10 +239,9 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-D}}Benchmarking GPU Software}{15}{subsection.9.4}\protected@file@percent }
 \newlabel{sec:rel:bench}{{\mbox  {IX-D}}{15}{Benchmarking GPU Software}{subsection.9.4}{}}
 \newlabel{sec:rel:bench@cref}{{[subsection][4][9]\mbox  {IX-D}}{[1][15][]15}}
-\citation{reddi2020mlperf}
 \@writefile{toc}{\contentsline {section}{\numberline {X}Threats to Validity}{16}{section.10}\protected@file@percent }
 \newlabel{sec:threats}{{X}{16}{Threats to Validity}{section.10}{}}
-\newlabel{sec:threats@cref}{{[section][10][]X}{[1][16][]16}}
+\newlabel{sec:threats@cref}{{[section][10][]X}{[1][15][]16}}
 \@writefile{toc}{\contentsline {section}{\numberline {XI}Conclusion}{16}{section.11}\protected@file@percent }
 \newlabel{sec:conclusion}{{XI}{16}{Conclusion}{section.11}{}}
 \newlabel{sec:conclusion@cref}{{[section][11][]XI}{[1][16][]16}}
@@ -267,23 +258,23 @@
 \bibcite{kernelbench}{9}
 \bibcite{gpuenergy}{10}
 \bibcite{li2025tritonbench}{11}
-\bibcite{williams2009roofline}{12}
-\bibcite{wolfe1989more}{13}
+\bibcite{wolfe1989more}{12}
+\bibcite{williams2009roofline}{13}
 \bibcite{tillet2019triton}{14}
 \bibcite{lattner2021mlir}{15}
 \bibcite{triton2022conv591}{16}
-\bibcite{cutlass2023}{17}
-\bibcite{chetlur2014cudnn}{18}
+\bibcite{chetlur2014cudnn}{17}
+\bibcite{cutlass2023}{18}
 \bibcite{li2025tritonforge}{19}
 \bibcite{nsightcompute2024}{20}
 \bibcite{dao2023flashattention2}{21}
 \bibcite{zhou2021implicit}{22}
 \bibcite{zheng2020ansor}{23}
-\@writefile{toc}{\contentsline {section}{References}{17}{section*.11}\protected@file@percent }
 \bibcite{ragan-kelley2013halide}{24}
 \bibcite{chen2018tvm}{25}
 \bibcite{spector2024thunderkittens}{26}
 \bibcite{bik2022mlir}{27}
+\@writefile{toc}{\contentsline {section}{References}{17}{section*.11}\protected@file@percent }
 \bibcite{vasilache2022composable}{28}
 \bibcite{lavin2016fast}{29}
 \bibcite{reddi2020mlperf}{30}

@@ -109,14 +109,6 @@ J.~Li, S.~Li, Z.~Gao, Q.~Shi, Y.~Li, Z.~Wang, J.~Huang, H.~Wang, J.~Wang,
   \url{https://aclanthology.org/2025.findings-acl.1183/}
 \BIBentrySTDinterwordspacing
 
-\bibitem{williams2009roofline}
-\BIBentryALTinterwordspacing
-S.~Williams, A.~Waterman, and D.~Patterson, ``Roofline: an insightful visual
-  performance model for multicore architectures,'' \emph{Commun. ACM}, vol.~52,
-  no.~4, p. 65–76, Apr. 2009. [Online]. Available:
-  \url{https://doi.org/10.1145/1498765.1498785}
-\BIBentrySTDinterwordspacing
-
 \bibitem{wolfe1989more}
 \BIBentryALTinterwordspacing
 M.~Wolfe, ``More iteration space tiling,'' in \emph{Proceedings of the 1989
@@ -124,6 +116,14 @@ M.~Wolfe, ``More iteration space tiling,'' in \emph{Proceedings of the 1989
   plus 0.5em minus 0.4em\relax New York, NY, USA: Association for Computing
   Machinery, 1989, p. 655–664. [Online]. Available:
   \url{https://doi.org/10.1145/76263.76337}
+\BIBentrySTDinterwordspacing
+
+\bibitem{williams2009roofline}
+\BIBentryALTinterwordspacing
+S.~Williams, A.~Waterman, and D.~Patterson, ``Roofline: an insightful visual
+  performance model for multicore architectures,'' \emph{Commun. ACM}, vol.~52,
+  no.~4, p. 65–76, Apr. 2009. [Online]. Available:
+  \url{https://doi.org/10.1145/1498765.1498785}
 \BIBentrySTDinterwordspacing
 
 \bibitem{tillet2019triton}
@@ -148,17 +148,17 @@ sebastienwood, ``Example conv2d in triton,'' GitHub Discussion \#591,
   \url{https://github.com/triton-lang/triton/discussions/591}, 2022, accessed:
   2026-03-25.
 
-\bibitem{cutlass2023}
-{NVIDIA Corporation}, ``{CUTLASS}: Cuda templates and python dsls for
-  high-performance linear algebra,'' \url{https://github.com/NVIDIA/cutlass},
-  2017.
-
 \bibitem{chetlur2014cudnn}
 \BIBentryALTinterwordspacing
 S.~Chetlur, C.~Woolley, P.~Vandermersch, J.~Cohen, J.~Tran, B.~Catanzaro, and
   E.~Shelhamer, ``cudnn: Efficient primitives for deep learning,'' 2014.
   [Online]. Available: \url{https://arxiv.org/abs/1410.0759}
 \BIBentrySTDinterwordspacing
+
+\bibitem{cutlass2023}
+{NVIDIA Corporation}, ``{CUTLASS}: Cuda templates and python dsls for
+  high-performance linear algebra,'' \url{https://github.com/NVIDIA/cutlass},
+  2017.
 
 \bibitem{li2025tritonforge}
 \BIBentryALTinterwordspacing
