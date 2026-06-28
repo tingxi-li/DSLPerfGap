@@ -31,7 +31,7 @@ TVM~\cite{chen2018tvm} and its auto-scheduler Ansor~\cite{zheng2020ansor}
 demonstrate that hierarchical program search
 substantially outperforms template-guided auto-tuning for irregular operator shapes,
 including convolution.
-This is consistent with RC2 in our analysis (\cref{sec:analysis:autotune}):
+This is consistent with RC2 in our analysis (\cref{sec:analysis}):
 the convolution search space is irregularly shaped relative to GEMM,
 and static configuration lists are insufficient.
 MLIR-based code generation~\cite{bik2022mlir,vasilache2022composable}
@@ -52,7 +52,7 @@ Winograd convolution~\cite{lavin2016fast} reduces arithmetic by up to $4\times$
 for $3 \times 3$ filters at the cost of additional data transformation passes.
 In our measurements (\cref{sec:mitig:conv}), the wall-clock benefit attributable specifically to Winograd selection is much smaller ($\approx$2--3\%); the arithmetic reduction does not translate proportionally because cuDNN's general implicit-GEMM tuning dominates the gap.
 cuDNN's selection of Winograd for appropriate shapes is a key component
-of its performance lead, as analyzed in \cref{sec:analysis:algo}.
+of its performance lead, as analyzed in \cref{sec:analysis}.
 Adding Winograd support as a first-class lowering pass within a DSL like Triton
 remains an open engineering problem; our analysis identifies it as future work (\cref{sec:mitig:conv}).
 
