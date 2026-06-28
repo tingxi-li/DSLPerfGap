@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  28 JUN 2026 12:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  28 JUN 2026 12:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -550,9 +550,14 @@ Package hyperref Info: Link coloring OFF on input line 50.
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 ))
-(./tex/introduction.tex
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
-8.
+(./tex/introduction.tex [1{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/u
+pdmap/pdftex.map}{/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.en
+c}
+
+
+]) (./tex/background.tex
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 8
+.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
@@ -561,11 +566,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `pcr' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
- [1{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/
-local/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}
-
-
-]) (./tex/background.tex)
+)
 (./tex/methodology.tex [2]
 Underfull \hbox (badness 2142) in paragraph at lines 108--110
 \OT1/ptm/m/n/10 (+20) style eval-u-a-tor (\OT1/pcr/m/n/10 eval_kernel_against_r
@@ -788,7 +789,7 @@ pe1/urw/courier/ucrro8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 /times/utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utm
 bi8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (16 pages, 412788 bytes).
+Output written on main.pdf (16 pages, 412858 bytes).
 PDF statistics:
  598 PDF objects out of 1000 (max. 8388607)
  517 compressed objects within 6 object streams

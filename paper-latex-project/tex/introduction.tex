@@ -11,13 +11,13 @@ execution time [1], [2]. Frameworks historically delegated these kernels to vend
 libraries such as cuBLAS and cuDNN [3], [4], but modern models increasingly need
 fused, specialized, and model-specific operators that fall outside the fixed
 functionality those libraries expose [5]. Writing efficient custom kernels is
-therefore now the bottleneck, and domain-specific languages (DSLs) such as
-Triton [6] and TileLang [7] have become the standard tool: they express computation
-at the tile level and delegate memory movement, scheduling, and code generation to a
-compiler. Their reach extends past hand-written code, as Triton is the lowering
-target for \texttt{torch.compile} [8] and DSLs are increasingly the output of
-LLM-based kernel generators [9]. The efficiency of DSL-generated kernels is thus a
-first-order concern.
+therefore now the bottleneck, and domain-specific languages (DSLs) such as Triton [6]
+and TileLang [7] have become the standard way to write them: the programmer expresses
+computation at the tile level and delegates memory movement, scheduling, and code
+generation to a compiler, in exchange for the promise of vendor-comparable
+performance at far lower effort. DSLs are increasingly the output of LLM-based kernel
+generators [9] rather than written by hand. Whether a given DSL kernel actually
+delivers on that promise is therefore a first-order concern.
 
 A developer, or a generator, who produces a functionally correct DSL kernel cannot
 tell whether it is performant. A correct kernel may match the vendor library or run
