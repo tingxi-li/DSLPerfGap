@@ -5,10 +5,11 @@ making them a popular choice for human developers and an increasingly common tar
 Yet developer-written or agent-generated DSL kernels can be \emph{functionally correct} but offer no dependable
 way to know whether they are \emph{performant}.
 We show that a kernel can pass the prevailing evaluation benchmarks and still run
-hundreds of times slower than the vendor-library baseline: across 22 kernels in five
- categories, naive-but-idiomatic DSL kernels that pass correctness
-gating range from competitive to more than two orders of magnitude slower than
-cuBLAS/cuDNN.
+hundreds of times slower than the vendor-library baseline across 22 kernels in five
+ categories.
+% naive-but-idiomatic DSL kernels that pass correctness
+% gating range from competitive to more than two orders of magnitude slower than
+% cuBLAS/cuDNN.
 
 The benchmarks practitioners rely on do not surface this.
 Prevailing benchmarks (e.g., KernelBench)
