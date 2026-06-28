@@ -4,38 +4,66 @@
 % Ouyang et al., Stanford ScalingIntelligence) and, if used, an LLM-kernel-generation
 % reward-hacking example. \cite{kernelbench} is currently undefined (non-fatal build warning).
 
-Deep learning systems are now widely deployed, and their efficiency depends heavily on a small number of GPU kernels that dominate execution time~\cite{acceleration_survey, optimization_survey}.
-Frameworks have historically delegated these kernels to vendor libraries such as cuBLAS and cuDNN~\cite{cublas2024, cudnn2024}, but modern architectures increasingly require fused operators, specialized kernels, and model-specific computations that fall outside the fixed functionality those libraries expose~\cite{kernelfusion}.
-Achieving high performance therefore now depends on the ability to generate efficient \emph{custom} kernels, and domain-specific languages (DSLs) such as Triton~\cite{openai2021triton} and TileLang~\cite{wang2025tilelang} have become the standard way to write them: they express kernels at the tile level while delegating memory movement, scheduling, and code generation to a compiler.
-Their reach extends well beyond hand-written code---Triton is the lowering target for \texttt{torch.compile}~\cite{li2023torchcompile}, and DSLs are increasingly the output of LLM-based kernel generators~\cite{kernelbench}---so the efficiency of DSL-generated kernels is now a first-order concern.
+% Section I: Introduction (condensed)
 
-The difficulty is that a developer, or an automated generator, who produces a \emph{functionally correct} DSL kernel has no reliable way to tell whether it is \emph{performant}.
-A correct kernel may be competitive with the vendor library, or it may be orders of magnitude slower, and nothing in the source makes the difference visible.
-When a DSL-generated kernel is correct yet much slower than the corresponding library routine, the developer must determine whether the loss arises from the algorithm, the schedule, or the compiler---and current toolchains offer little diagnostic support for that distinction~\cite{gpuenergy}.
-This makes performance deficits hard to predict and hard to correct, which is a software-engineering problem as much as a compiler one: a high-level kernel language is useful in practice only if its performance behavior is something developers can evaluate and reason about.
+Deep learning efficiency depends on a small number of GPU kernels that dominate
+execution time [1], [2]. Frameworks historically delegated these kernels to vendor
+libraries such as cuBLAS and cuDNN [3], [4], but modern models increasingly need
+fused, specialized, and model-specific operators that fall outside the fixed
+functionality those libraries expose [5]. Writing efficient custom kernels is
+therefore now the bottleneck, and domain-specific languages (DSLs) such as
+Triton [6] and TileLang [7] have become the standard tool: they express computation
+at the tile level and delegate memory movement, scheduling, and code generation to a
+compiler. Their reach extends past hand-written code, as Triton is the lowering
+target for \texttt{torch.compile} [8] and DSLs are increasingly the output of
+LLM-based kernel generators [9]. The efficiency of DSL-generated kernels is thus a
+first-order concern.
 
-The benchmarks practitioners actually rely on do not close this gap.
-The prevailing benchmarks for DSL and LLM-generated kernels---KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}---gate on \emph{correctness}, reporting performance as an outcome rather than enforcing it as an acceptance criterion.
-As a result they admit performance-poor kernels: in our measurements a naive but idiomatic TileLang kernel passes the KernelBench-style correctness gate while running more than $300\times$ slower than PyTorch, and the gate's one reward-hacking guard never fires because it only flags suspiciously \emph{fast} kernels.
-These benchmarks also cover a narrow slice of the space---often a single DSL, data type, shape, and GPU per task---so a kernel that passes tells a developer little about whether it is well written.
-And the obvious remedy, a benchmark comprehensive enough to span every operator, data type, shape, and architecture, is combinatorially infeasible to build and maintain.
+A developer, or a generator, who produces a functionally correct DSL kernel cannot
+tell whether it is performant. A correct kernel may match the vendor library or run
+orders of magnitude slower, and nothing in the source reveals which. When a kernel is
+correct but slow, the developer must still localize the loss to the algorithm, the
+schedule, or the compiler, and existing toolchains offer little diagnostic support
+for that distinction [10]. This is a software-engineering problem as much as a
+compiler one: a high-level kernel language is useful only if its performance behavior
+can be evaluated and reasoned about.
 
-This paper studies that evaluation problem directly.
-We ask three questions: (RQ1) whether existing benchmarks can distinguish well-written DSL kernels from performance-poor ones, and where they fall short; (RQ2) for kernels that pass such benchmarks, how large and structured the hidden performance gap to vendor libraries actually is, and what causes it; and (RQ3) how to guide DSL kernel development when a comprehensive benchmark is infeasible.
-We evaluate Triton and TileLang against PyTorch with cuBLAS/cuDNN on 22 kernels spanning five operator classes---GEMM, attention, convolution, normalization, and element-wise/reduction---with hardware-counter profiling via Nsight Compute.
-Primary measurements span two datacenter architectures---the NVIDIA A100-SXM4-40GB (Ampere) and the NVIDIA GH200 (Grace Hopper).
+The benchmarks practitioners rely on do not close this gap. The prevailing DSL and
+LLM-generated-kernel benchmarks, KernelBench [9] and TritonBench [11], gate on
+correctness and report performance as an outcome rather than enforcing it. They
+therefore admit performance-poor kernels: a naive but idiomatic TileLang kernel
+passes the KernelBench-style gate while running more than 300$\times$ slower than
+PyTorch, and the gate's lone reward-hacking guard never fires because it watches only
+for suspiciously fast kernels. These benchmarks also cover a narrow slice of the
+space, often one DSL, data type, shape, and GPU per task, so passing certifies little
+about quality. A benchmark comprehensive enough to span every operator, data type,
+shape, and architecture is combinatorially infeasible to build and maintain.
 
-Our findings are threefold.
-First, the evaluation gap is real and large: naive-but-correct kernels pass the gate while running hundreds of times slower than the library---the live shipped TileLang LayerNorm is $323\times$ slower under locked clocks, with deliberately constructed worst-case kernels reaching $1293\times$---and the dominant existing benchmarks neither gate on performance nor cover enough of the space to catch it.
-Second, the hidden gap is highly structured.
-Much of it is an \emph{authoring} artifact---a single reduction-primitive change (\texttt{T.serial}$\rightarrow$\texttt{T.reduce}) with native-dtype I/O closes a 1500$\times$ authoring cliff (GH200; naive-to-optimized) on TileLang normalization and brings it to or above library parity---while a residual gap on convolution is structural, reflecting cuDNN's implicit-GEMM maturity (absent Winograd support contributes only $\approx$2--3\%).
-We separate causes by \emph{where the fix belongs}: user-space authoring (RC0a), code generation (RC0b/RC1/RC2b), and library maturity.
-Third, absent a comprehensive benchmark, lightweight heuristics suffice to flag poor kernels: a comparability check against the library, anchored by a baseline-independent roofline fraction, cleanly separates well-written kernels (0.6--0.9 of roofline, at or above parity) from poor ones (below 0.2 of roofline, far from parity), and a small set of recurring optimization patterns guides the fixes.
+We study this evaluation problem through three research questions. \textbf{RQ1}: can
+existing benchmarks distinguish well-written DSL kernels from performance-poor ones,
+and where do they fall short? \textbf{RQ2}: for kernels that pass, how large and
+structured is the hidden gap to vendor libraries, and what causes it? \textbf{RQ3}:
+how can developers judge and improve DSL kernels when a comprehensive benchmark is
+infeasible? We answer these by evaluating Triton and TileLang against
+cuBLAS/cuDNN-backed PyTorch on 22 kernels across five operator classes, with Nsight
+Compute hardware-counter profiling on two datacenter architectures (Section III).
 
-\smallskip\noindent\textbf{Contributions.}
+This paper makes the following contributions:
 \begin{itemize}
-    \item \textbf{The evaluation gap (RQ1).} We show that prevailing DSL and LLM-generated-kernel benchmarks admit performance-poor kernels---demonstrated end-to-end against the actual evaluator---and survey their coverage and reward-hacking gaps.
-    \item \textbf{The hidden gap and its causes (RQ2).} We characterize the performance gap these benchmarks miss across 22 kernels and five operator classes on multiple GPU architectures, with hardware-counter root causes that separate authoring, code-generation, and library-maturity factors.
-    \item \textbf{Guidance without a benchmark (RQ3).} We propose and validate lightweight evaluation heuristics---a library-comparability screen plus a baseline-independent roofline anchor---and a set of recurring optimization patterns that guide DSL kernel development and recover most of the gap.
-    \item \textbf{Artifact.} We release the kernel suite, profiling infrastructure, and analysis to support reproducibility and follow-on work.
+  \item \textbf{Evaluation gap (RQ1).} We show, end-to-end against the actual
+  evaluator, that prevailing DSL and LLM-generated-kernel benchmarks admit
+  performance-poor kernels, and we characterize their coverage and reward-hacking
+  gaps.
+  \item \textbf{Hidden gap and causes (RQ2).} Across 22 kernels and five operator
+  classes on two GPU architectures, we characterize the performance gap these
+  benchmarks miss and trace it with hardware counters to authoring, code-generation,
+  and library-maturity causes. The dominant TileLang normalization gap is an
+  authoring artifact that a single reduction-primitive change removes, whereas
+  convolution and large GEMM are structural residuals.
+  \item \textbf{Guidance without a benchmark (RQ3).} We propose and validate two
+  lightweight heuristics, a library-comparability screen and a baseline-independent
+  roofline anchor, together with a small set of recurring optimization patterns that
+  flag poor kernels and recover most of the gap.
+  \item \textbf{Artifact.} We release the kernel suite, profiling infrastructure, and
+  analysis for reproducibility and follow-on work.
 \end{itemize}

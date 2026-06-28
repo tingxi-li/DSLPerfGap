@@ -21,94 +21,6 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{acceleration_survey}
-M.~M.~H. Shuvo, S.~K. Islam, J.~Cheng, and B.~I. Morshed, ``Efficient
-  acceleration of deep learning inference on resource-constrained edge devices:
-  A review,'' \emph{Proceedings of the IEEE}, vol. 111, no.~1, pp. 42--91,
-  2023.
-
-\bibitem{optimization_survey}
-\BIBentryALTinterwordspacing
-P.~Hijma, S.~Heldens, A.~Sclocco, B.~van Werkhoven, and H.~E. Bal,
-  ``Optimization techniques for gpu programming,'' \emph{ACM Comput. Surv.},
-  vol.~55, no.~11, Mar. 2023. [Online]. Available:
-  \url{https://doi.org/10.1145/3570638}
-\BIBentrySTDinterwordspacing
-
-\bibitem{cublas2024}
-{NVIDIA Corporation}, ``{cuBLAS}: Basic linear algebra on nvidia gpus,''
-  \url{https://docs.nvidia.com/cuda/cublas/}, 2026.
-
-\bibitem{cudnn2024}
-\BIBentryALTinterwordspacing
-S.~Chetlur, C.~Woolley, P.~Vandermersch, J.~Cohen, J.~Tran, B.~Catanzaro, and
-  E.~Shelhamer, ``cudnn: Efficient primitives for deep learning,'' 2014.
-  [Online]. Available: \url{https://arxiv.org/abs/1410.0759}
-\BIBentrySTDinterwordspacing
-
-\bibitem{kernelfusion}
-G.~Wang, Y.~Lin, and W.~Yi, ``Kernel fusion: An effective method for better
-  power efficiency on multithreaded gpu,'' in \emph{2010 IEEE/ACM Int'l
-  Conference on Green Computing and Communications \& Int'l Conference on
-  Cyber, Physical and Social Computing}, 2010, pp. 344--350.
-
-\bibitem{openai2021triton}
-{OpenAI}, ``Introducing {Triton}: Open-source {GPU} programming for neural
-  networks,'' \url{https://openai.com/index/triton/}, 2021.
-
-\bibitem{wang2025tilelang}
-\BIBentryALTinterwordspacing
-L.~Wang, Y.~Cheng, Y.~Shi, Z.~Mo, Z.~Tang, W.~Xie, T.~Wu, L.~Ma, Y.~Xia,
-  J.~Xue, F.~Yang, and Z.~Yang, ``Tilelang: Bridge programmability and
-  performance in modern neural kernels,'' in \emph{The Fourteenth International
-  Conference on Learning Representations}, 2026. [Online]. Available:
-  \url{https://openreview.net/forum?id=Jb1WkNSfUB}
-\BIBentrySTDinterwordspacing
-
-\bibitem{li2023torchcompile}
-\BIBentryALTinterwordspacing
-J.~Ansel, E.~Yang, H.~He, N.~Gimelshein, A.~Jain, M.~Voznesensky, B.~Bao,
-  P.~Bell, D.~Berard, E.~Burovski, G.~Chauhan, A.~Chourdia, W.~Constable,
-  A.~Desmaison, Z.~DeVito, E.~Ellison, W.~Feng, J.~Gong, M.~Gschwind, B.~Hirsh,
-  S.~Huang, K.~Kalambarkar, L.~Kirsch, M.~Lazos, M.~Lezcano, Y.~Liang,
-  J.~Liang, Y.~Lu, C.~K. Luk, B.~Maher, Y.~Pan, C.~Puhrsch, M.~Reso,
-  M.~Saroufim, M.~Y. Siraichi, H.~Suk, S.~Zhang, M.~Suo, P.~Tillet, X.~Zhao,
-  E.~Wang, K.~Zhou, R.~Zou, X.~Wang, A.~Mathews, W.~Wen, G.~Chanan, P.~Wu, and
-  S.~Chintala, ``Pytorch 2: Faster machine learning through dynamic python
-  bytecode transformation and graph compilation,'' in \emph{Proceedings of the
-  29th ACM International Conference on Architectural Support for Programming
-  Languages and Operating Systems, Volume 2}, ser. ASPLOS '24.\hskip 1em plus
-  0.5em minus 0.4em\relax New York, NY, USA: Association for Computing
-  Machinery, 2024, p. 929–947. [Online]. Available:
-  \url{https://doi.org/10.1145/3620665.3640366}
-\BIBentrySTDinterwordspacing
-
-\bibitem{kernelbench}
-\BIBentryALTinterwordspacing
-A.~Ouyang, S.~Guo, S.~Arora, A.~L. Zhang, W.~Hu, C.~R\'{e}, and A.~Mirhoseini,
-  ``{KernelBench}: Can {LLMs} write efficient {GPU} kernels?'' 2025. [Online].
-  Available: \url{https://arxiv.org/abs/2502.10517}
-\BIBentrySTDinterwordspacing
-
-\bibitem{gpuenergy}
-\BIBentryALTinterwordspacing
-S.~Mittal and J.~S. Vetter, ``A survey of methods for analyzing and improving
-  gpu energy efficiency,'' \emph{ACM Comput. Surv.}, vol.~47, no.~2, Aug. 2014.
-  [Online]. Available: \url{https://doi.org/10.1145/2636342}
-\BIBentrySTDinterwordspacing
-
-\bibitem{li2025tritonbench}
-\BIBentryALTinterwordspacing
-J.~Li, S.~Li, Z.~Gao, Q.~Shi, Y.~Li, Z.~Wang, J.~Huang, H.~Wang, J.~Wang,
-  X.~Han, Z.~Liu, and M.~Sun, ``{T}riton{B}ench: Benchmarking large language
-  model capabilities for generating triton operators,'' in \emph{Findings of
-  the Association for Computational Linguistics: ACL 2025}, W.~Che, J.~Nabende,
-  E.~Shutova, and M.~T. Pilehvar, Eds.\hskip 1em plus 0.5em minus 0.4em\relax
-  Vienna, Austria: Association for Computational Linguistics, Jul. 2025, pp.
-  23\,053--23\,066. [Online]. Available:
-  \url{https://aclanthology.org/2025.findings-acl.1183/}
-\BIBentrySTDinterwordspacing
-
 \bibitem{wolfe1989more}
 \BIBentryALTinterwordspacing
 M.~Wolfe, ``More iteration space tiling,'' in \emph{Proceedings of the 1989
@@ -143,10 +55,41 @@ C.~Lattner, M.~Amini, U.~Bondhugula, A.~Cohen, A.~Davis, J.~Pienaar, R.~Riddle,
   International Symposium on Code Generation and Optimization (CGO)}, 2021, pp.
   2--14.
 
+\bibitem{li2023torchcompile}
+\BIBentryALTinterwordspacing
+J.~Ansel, E.~Yang, H.~He, N.~Gimelshein, A.~Jain, M.~Voznesensky, B.~Bao,
+  P.~Bell, D.~Berard, E.~Burovski, G.~Chauhan, A.~Chourdia, W.~Constable,
+  A.~Desmaison, Z.~DeVito, E.~Ellison, W.~Feng, J.~Gong, M.~Gschwind, B.~Hirsh,
+  S.~Huang, K.~Kalambarkar, L.~Kirsch, M.~Lazos, M.~Lezcano, Y.~Liang,
+  J.~Liang, Y.~Lu, C.~K. Luk, B.~Maher, Y.~Pan, C.~Puhrsch, M.~Reso,
+  M.~Saroufim, M.~Y. Siraichi, H.~Suk, S.~Zhang, M.~Suo, P.~Tillet, X.~Zhao,
+  E.~Wang, K.~Zhou, R.~Zou, X.~Wang, A.~Mathews, W.~Wen, G.~Chanan, P.~Wu, and
+  S.~Chintala, ``Pytorch 2: Faster machine learning through dynamic python
+  bytecode transformation and graph compilation,'' in \emph{Proceedings of the
+  29th ACM International Conference on Architectural Support for Programming
+  Languages and Operating Systems, Volume 2}, ser. ASPLOS '24.\hskip 1em plus
+  0.5em minus 0.4em\relax New York, NY, USA: Association for Computing
+  Machinery, 2024, p. 929–947. [Online]. Available:
+  \url{https://doi.org/10.1145/3620665.3640366}
+\BIBentrySTDinterwordspacing
+
 \bibitem{triton2022conv591}
 sebastienwood, ``Example conv2d in triton,'' GitHub Discussion \#591,
   \url{https://github.com/triton-lang/triton/discussions/591}, 2022, accessed:
   2026-03-25.
+
+\bibitem{wang2025tilelang}
+\BIBentryALTinterwordspacing
+L.~Wang, Y.~Cheng, Y.~Shi, Z.~Mo, Z.~Tang, W.~Xie, T.~Wu, L.~Ma, Y.~Xia,
+  J.~Xue, F.~Yang, and Z.~Yang, ``Tilelang: Bridge programmability and
+  performance in modern neural kernels,'' in \emph{The Fourteenth International
+  Conference on Learning Representations}, 2026. [Online]. Available:
+  \url{https://openreview.net/forum?id=Jb1WkNSfUB}
+\BIBentrySTDinterwordspacing
+
+\bibitem{cublas2024}
+{NVIDIA Corporation}, ``{cuBLAS}: Basic linear algebra on nvidia gpus,''
+  \url{https://docs.nvidia.com/cuda/cublas/}, 2026.
 
 \bibitem{chetlur2014cudnn}
 \BIBentryALTinterwordspacing
@@ -155,10 +98,23 @@ S.~Chetlur, C.~Woolley, P.~Vandermersch, J.~Cohen, J.~Tran, B.~Catanzaro, and
   [Online]. Available: \url{https://arxiv.org/abs/1410.0759}
 \BIBentrySTDinterwordspacing
 
+\bibitem{cudnn2024}
+\BIBentryALTinterwordspacing
+------, ``cudnn: Efficient primitives for deep learning,'' 2014. [Online].
+  Available: \url{https://arxiv.org/abs/1410.0759}
+\BIBentrySTDinterwordspacing
+
 \bibitem{cutlass2023}
 {NVIDIA Corporation}, ``{CUTLASS}: Cuda templates and python dsls for
   high-performance linear algebra,'' \url{https://github.com/NVIDIA/cutlass},
   2017.
+
+\bibitem{kernelbench}
+\BIBentryALTinterwordspacing
+A.~Ouyang, S.~Guo, S.~Arora, A.~L. Zhang, W.~Hu, C.~R\'{e}, and A.~Mirhoseini,
+  ``{KernelBench}: Can {LLMs} write efficient {GPU} kernels?'' 2025. [Online].
+  Available: \url{https://arxiv.org/abs/2502.10517}
+\BIBentrySTDinterwordspacing
 
 \bibitem{li2025tritonforge}
 \BIBentryALTinterwordspacing
@@ -166,6 +122,18 @@ H.~Li, K.~Man, P.~Kanuparthy, H.~Chen, W.~Sun, S.~Tallam, C.~Zhu, K.~Zhu, and
   Z.~Qian, ``Tritonforge: Profiling-guided framework for automated triton
   kernel optimization,'' 2025. [Online]. Available:
   \url{https://arxiv.org/abs/2512.09196}
+\BIBentrySTDinterwordspacing
+
+\bibitem{li2025tritonbench}
+\BIBentryALTinterwordspacing
+J.~Li, S.~Li, Z.~Gao, Q.~Shi, Y.~Li, Z.~Wang, J.~Huang, H.~Wang, J.~Wang,
+  X.~Han, Z.~Liu, and M.~Sun, ``{T}riton{B}ench: Benchmarking large language
+  model capabilities for generating triton operators,'' in \emph{Findings of
+  the Association for Computational Linguistics: ACL 2025}, W.~Che, J.~Nabende,
+  E.~Shutova, and M.~T. Pilehvar, Eds.\hskip 1em plus 0.5em minus 0.4em\relax
+  Vienna, Austria: Association for Computational Linguistics, Jul. 2025, pp.
+  23\,053--23\,066. [Online]. Available:
+  \url{https://aclanthology.org/2025.findings-acl.1183/}
 \BIBentrySTDinterwordspacing
 
 \bibitem{nsightcompute2024}

@@ -20,45 +20,45 @@ Warning--empty booktitle in dao2023flashattention2
 Warning--empty booktitle in ragan-kelley2013halide
 
 Done.
-You've used 29 entries,
+You've used 24 entries,
             4087 wiz_defined-function locations,
-            991 strings with 16481 characters,
-and the built_in function-call counts, 24979 in all, are:
-= -- 1736
-> -- 1081
-< -- 82
-+ -- 550
-- -- 256
-* -- 1250
-:= -- 3503
-add.period$ -- 66
-call.type$ -- 29
-change.case$ -- 32
-chr.to.int$ -- 174
-cite$ -- 32
-duplicate$ -- 1820
-empty$ -- 2048
-format.name$ -- 273
-if$ -- 5837
+            963 strings with 15483 characters,
+and the built_in function-call counts, 21738 in all, are:
+= -- 1466
+> -- 1005
+< -- 62
++ -- 510
+- -- 241
+* -- 1090
+:= -- 2973
+add.period$ -- 56
+call.type$ -- 24
+change.case$ -- 27
+chr.to.int$ -- 138
+cite$ -- 27
+duplicate$ -- 1575
+empty$ -- 1785
+format.name$ -- 254
+if$ -- 5091
 int.to.chr$ -- 0
-int.to.str$ -- 29
-missing$ -- 453
-newline$ -- 148
-num.names$ -- 31
-pop$ -- 1237
+int.to.str$ -- 24
+missing$ -- 406
+newline$ -- 129
+num.names$ -- 26
+pop$ -- 1136
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1857
+skip$ -- 1602
 stack$ -- 0
-substring$ -- 552
-swap$ -- 1411
-text.length$ -- 24
+substring$ -- 463
+swap$ -- 1219
+text.length$ -- 16
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 29
+type$ -- 24
 warning$ -- 3
-while$ -- 63
-width$ -- 31
-write$ -- 334
+while$ -- 52
+width$ -- 26
+write$ -- 280
 (There were 5 warnings)
