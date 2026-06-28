@@ -172,16 +172,16 @@
 \newlabel{sec:mitig:norm}{{\mbox  {VII-B}}{10}{Normalization Kernels: Correcting RC0}{subsection.7.2}{}}
 \newlabel{sec:mitig:norm@cref}{{[subsection][2][7]\mbox  {VII-B}}{[1][10][]10}}
 \citation{zhou2021implicit}
-\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph  {mem}=HBM bandwidth, \emph  {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text  {lib}$, and the \emph  {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph  {authoring artifact}; a low $\rho $ that survives optimization marks a \emph  {structural residual}; the two architectures agree on every classification. Source: \texttt  {experiments/results/NVIDIA\_\{A100-SXM4-40GB,GH200\_480GB\}/cliff\_roofline.csv}.}}{11}{table.7}\protected@file@percent }
-\newlabel{tab:roofline}{{VII}{11}{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph {mem}=HBM bandwidth, \emph {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text {lib}$, and the \emph {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph {authoring artifact}; a low $\rho $ that survives optimization marks a \emph {structural residual}; the two architectures agree on every classification. Source: \texttt {experiments/results/NVIDIA\_\{A100-SXM4-40GB,GH200\_480GB\}/cliff\_roofline.csv}}{table.7}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph  {mem}=HBM bandwidth, \emph  {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text  {lib}$, and the \emph  {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph  {authoring artifact}; a low $\rho $ that survives optimization marks a \emph  {structural residual}; the two architectures agree on every classification. Source: \texttt  {experiments/\allowbreak  results/\allowbreak  NVIDIA\_\{A100-SXM4-40GB,\allowbreak  GH200\_480GB\}/\allowbreak  cliff\_roofline.csv}.}}{11}{table.7}\protected@file@percent }
+\newlabel{tab:roofline}{{VII}{11}{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph {mem}=HBM bandwidth, \emph {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text {lib}$, and the \emph {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph {authoring artifact}; a low $\rho $ that survives optimization marks a \emph {structural residual}; the two architectures agree on every classification. Source: \texttt {experiments/\allowbreak results/\allowbreak NVIDIA\_\{A100-SXM4-40GB,\allowbreak GH200\_480GB\}/\allowbreak cliff\_roofline.csv}}{table.7}{}}
 \newlabel{tab:roofline@cref}{{[table][7][]VII}{[1][10][]11}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VII-B}0a}Finding: Correcting RC0 with two optimizations (each necessary, neither sufficient alone) brings TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch throughput on the A100-SXM4--- a $1347\times $ and $1157\times $ reduction over the unoptimized TileLang baseline (\cref  {tab:norm}): (1) replacing \texttt  {T.serial} reduction loops with the native \texttt  {T.reduce} primitive (the dominant step; in the RTX 4000 Ada optimization campaign this change alone gave $208\times $); (2) switching to native bfloat16/float16 I/O and eliminating intermediate \texttt  {.float()} precision casts. These results confirm RC0 as the primary cause of TileLang's normalization deficit and as fully correctable in user space.}{11}{paragraph.7.2.0.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Convolution: Partial Recovery via Implicit GEMM}{11}{subsection.7.3}\protected@file@percent }
-\newlabel{sec:mitig:conv}{{\mbox  {VII-C}}{11}{Convolution: Partial Recovery via Implicit GEMM}{subsection.7.3}{}}
-\newlabel{sec:mitig:conv@cref}{{[subsection][3][7]\mbox  {VII-C}}{[1][11][]11}}
 \@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Normalization kernel latency (ms, lower is better) before and after RC0 correction, re-timed on the A100-SXM4 (locked clocks). $E_\text  {lib}$ = library efficiency after fix, relative to PyTorch. \emph  {Before} is the unoptimized TileLang kernel (cf.\ \cref  {tab:norm}); \emph  {After} is the AKO4ALL-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph  {Before} matches the unlocked profile in \cref  {tab:norm} to within noise. Input shape: $8192 \times 8192$.}}{11}{table.8}\protected@file@percent }
 \newlabel{tab:mitig:norm}{{VIII}{11}{Normalization kernel latency (ms, lower is better) before and after RC0 correction, re-timed on the A100-SXM4 (locked clocks). $E_\text {lib}$ = library efficiency after fix, relative to PyTorch. \emph {Before} is the unoptimized TileLang kernel (cf.\ \cref {tab:norm}); \emph {After} is the AKO4ALL-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph {Before} matches the unlocked profile in \cref {tab:norm} to within noise. Input shape: $8192 \times 8192$}{table.8}{}}
 \newlabel{tab:mitig:norm@cref}{{[table][8][]VIII}{[1][11][]11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-C}}Convolution: Partial Recovery via Implicit GEMM}{11}{subsection.7.3}\protected@file@percent }
+\newlabel{sec:mitig:conv}{{\mbox  {VII-C}}{11}{Convolution: Partial Recovery via Implicit GEMM}{subsection.7.3}{}}
+\newlabel{sec:mitig:conv@cref}{{[subsection][3][7]\mbox  {VII-C}}{[1][11][]11}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VII-C}0a}Finding: Restructuring Conv2d as an implicit GEMM with FP16 Tensor Core acceleration, input padding to 16-byte alignment (addressing RC1), and an expanded autotune configuration space (addressing RC2) yields a $2.57\times $ latency reduction ($32.1\nobreakspace  {}\text  {ms} \to 12.5\nobreakspace  {}\text  {ms}$) in the AKO4ALL optimization campaign. On the A100-SXM4, where cuDNN is substantially faster, the same implicit-GEMM restructuring holds 36--76\% of PyTorch/cuDNN efficiency across the $1\times 1$--$7\times 7$ filter family (all correct)--- the gap is narrowed but not closed.}{11}{paragraph.7.3.0.1}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Convolution mitigation across the filter family on the A100-SXM4 (optimized implicit-GEMM Triton, FP16; input $32\times 256\times 128\times 128$). $E_\text  {lib}$ = library efficiency relative to PyTorch/cuDNN; the mitigation holds 36--76\% across the $1\times 1$--$7\times 7$ filter family, all correct.}}{12}{table.9}\protected@file@percent }
 \newlabel{tab:mitig:conv}{{IX}{12}{Convolution mitigation across the filter family on the A100-SXM4 (optimized implicit-GEMM Triton, FP16; input $32\times 256\times 128\times 128$). $E_\text {lib}$ = library efficiency relative to PyTorch/cuDNN; the mitigation holds 36--76\% across the $1\times 1$--$7\times 7$ filter family, all correct}{table.9}{}}
@@ -206,6 +206,9 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-B}}Limitations}{14}{subsection.8.2}\protected@file@percent }
 \newlabel{sec:disc:limitations}{{\mbox  {VIII-B}}{14}{Limitations}{subsection.8.2}{}}
 \newlabel{sec:disc:limitations@cref}{{[subsection][2][8]\mbox  {VIII-B}}{[1][14][]14}}
+\@writefile{toc}{\contentsline {section}{\numberline {IX}Related Work}{14}{section.9}\protected@file@percent }
+\newlabel{sec:related}{{IX}{14}{Related Work}{section.9}{}}
+\newlabel{sec:related@cref}{{[section][9][]IX}{[1][14][]14}}
 \citation{ragan-kelley2013halide}
 \citation{chen2018tvm}
 \citation{wang2025tilelang}
@@ -222,9 +225,9 @@
 \citation{li2025tritonbench}
 \citation{kernelbench}
 \citation{reddi2020mlperf}
-\@writefile{toc}{\contentsline {section}{\numberline {IX}Related Work}{15}{section.9}\protected@file@percent }
-\newlabel{sec:related}{{IX}{15}{Related Work}{section.9}{}}
-\newlabel{sec:related@cref}{{[section][9][]IX}{[1][14][]15}}
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{acceleration_survey}{1}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IX-A}}GPU Kernel DSLs}{15}{subsection.9.1}\protected@file@percent }
 \newlabel{sec:rel:dsls}{{\mbox  {IX-A}}{15}{GPU Kernel DSLs}{subsection.9.1}{}}
 \newlabel{sec:rel:dsls@cref}{{[subsection][1][9]\mbox  {IX-A}}{[1][15][]15}}
@@ -237,9 +240,6 @@
 \@writefile{toc}{\contentsline {section}{\numberline {X}Conclusion}{15}{section.10}\protected@file@percent }
 \newlabel{sec:conclusion}{{X}{15}{Conclusion}{section.10}{}}
 \newlabel{sec:conclusion@cref}{{[section][10][]X}{[1][15][]15}}
-\bibstyle{IEEEtran}
-\bibdata{references}
-\bibcite{acceleration_survey}{1}
 \bibcite{optimization_survey}{2}
 \bibcite{cublas2024}{3}
 \bibcite{cudnn2024}{4}
