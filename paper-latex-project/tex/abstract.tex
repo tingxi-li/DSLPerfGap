@@ -16,18 +16,19 @@ Prevailing benchmarks (e.g., KernelBench and TritonBench)
 gate primarily on correctness and therefore
 admit performance-poor kernels, while under-covering DSLs, data types, shapes, and
 hardware and only partially preventing reward hacking.
+A benchmark comprehensive enough to close this gap is combinatorially infeasible.
 
 As a pragmatic alternative, we (i)~characterize how large and structured the hidden
 performance gap is and why it arises, separating user-space \emph{authoring} causes
 from \emph{code-generation} and
-\emph{library-maturity} causes (which are not); and (ii)~distill the result into
+\emph{library-maturity} causes; and (ii)~distill the result into
 lightweight, partly baseline-independent evaluation heuristics and a small set of
 recurring optimization patterns that guide DSL kernel development when no ground-truth
 benchmark exists.
-We find that authoring idiom dominates the gap---a single reduction-primitive change
-recovers the normalization and reduction family to library parity or better (with one hardware-specific
-exception we diagnose)---while a residual structural gap persists on
-convolution, and that a roofline-anchored comparability check flags poor kernels that
-correctness-only benchmarks pass.
+We find that authoring idiom dominates the gap: a single reduction-primitive change 
+recovers the normalization and reduction family to library parity or better 
+(with one hardware-specific exception we diagnose), while a residual structural gap 
+persists on convolution. We further show that a roofline-anchored comparability check 
+flags poor kernels that correctness-only benchmarks pass.
 Our kernel suite, profiling infrastructure, and analysis are publicly available at
 \url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/}.

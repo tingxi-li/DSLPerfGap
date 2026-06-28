@@ -32,7 +32,6 @@
 \citation{kernelbench}
 \citation{li2025tritonbench}
 \citation{wang2025tilelang}
-\citation{li2025tritonbench}
 \@writefile{toc}{\contentsline {section}{\numberline {II}Background}{2}{section.2}\protected@file@percent }
 \newlabel{sec:background}{{II}{2}{Background}{section.2}{}}
 \newlabel{sec:background@cref}{{[section][2][]II}{[1][2][]2}}
@@ -48,6 +47,7 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Kernel Suite}{2}{subsection.3.1}\protected@file@percent }
 \newlabel{sec:meth:kernels}{{\mbox  {III-A}}{2}{Kernel Suite}{subsection.3.1}{}}
 \newlabel{sec:meth:kernels@cref}{{[subsection][1][3]\mbox  {III-A}}{[1][2][]2}}
+\citation{li2025tritonbench}
 \citation{nsightcompute2024}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-A}0a}Selection criteria.}{3}{paragraph.3.1.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Baseline Construction}{3}{subsection.3.2}\protected@file@percent }
@@ -65,12 +65,12 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Evaluation-Gap and Heuristic Measurement}{3}{subsection.3.5}\protected@file@percent }
 \newlabel{sec:meth:evalgap}{{\mbox  {III-E}}{3}{Evaluation-Gap and Heuristic Measurement}{subsection.3.5}{}}
 \newlabel{sec:meth:evalgap@cref}{{[subsection][5][3]\mbox  {III-E}}{[1][3][]3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-F}}Experimental Setup}{3}{subsection.3.6}\protected@file@percent }
-\newlabel{sec:meth:setup}{{\mbox  {III-F}}{3}{Experimental Setup}{subsection.3.6}{}}
-\newlabel{sec:meth:setup@cref}{{[subsection][6][3]\mbox  {III-F}}{[1][3][]3}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-F}0a}Hardware.}{3}{paragraph.3.6.0.1}\protected@file@percent }
 \citation{kernelbench}
 \citation{li2025tritonbench}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-F}}Experimental Setup}{4}{subsection.3.6}\protected@file@percent }
+\newlabel{sec:meth:setup}{{\mbox  {III-F}}{4}{Experimental Setup}{subsection.3.6}{}}
+\newlabel{sec:meth:setup@cref}{{[subsection][6][3]\mbox  {III-F}}{[1][3][]4}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-F}0a}Hardware.}{4}{paragraph.3.6.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-F}0b}Software.}{4}{paragraph.3.6.0.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {IV}Research Questions}{4}{section.4}\protected@file@percent }
 \newlabel{sec:RQs}{{IV}{4}{Research Questions}{section.4}{}}
@@ -84,13 +84,13 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Passing Is Not Fast}{4}{subsection.5.2}\protected@file@percent }
 \newlabel{sec:eval:passesslow}{{\mbox  {V-B}}{4}{Passing Is Not Fast}{subsection.5.2}{}}
 \newlabel{sec:eval:passesslow@cref}{{[subsection][2][5]\mbox  {V-B}}{[1][4][]4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}The Hidden Gap These Benchmarks Admit}{4}{subsection.5.3}\protected@file@percent }
-\newlabel{sec:eval:overview}{{\mbox  {V-C}}{4}{The Hidden Gap These Benchmarks Admit}{subsection.5.3}{}}
-\newlabel{sec:eval:overview@cref}{{[subsection][3][5]\mbox  {V-C}}{[1][4][]4}}
 \citation{dao2023flashattention2}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt  {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \cref  {tab:norm}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt  {fused linear+activation}, a valid DSL advantage through kernel fusion; see \cref  {sec:eval:gemm}. Attention excluded; see \cref  {sec:eval:gemm}.}}{5}{figure.1}\protected@file@percent }
 \newlabel{fig:overview}{{1}{5}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \cref {tab:norm}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt {fused linear+activation}, a valid DSL advantage through kernel fusion; see \cref {sec:eval:gemm}. Attention excluded; see \cref {sec:eval:gemm}}{figure.1}{}}
 \newlabel{fig:overview@cref}{{[figure][1][]1}{[1][5][]5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}The Hidden Gap These Benchmarks Admit}{5}{subsection.5.3}\protected@file@percent }
+\newlabel{sec:eval:overview}{{\mbox  {V-C}}{5}{The Hidden Gap These Benchmarks Admit}{subsection.5.3}{}}
+\newlabel{sec:eval:overview@cref}{{[subsection][3][5]\mbox  {V-C}}{[1][4][]5}}
 \newlabel{sec:eval:gemm}{{\mbox  {V-C}}{5}{The Hidden Gap These Benchmarks Admit}{section*.1}{}}
 \newlabel{sec:eval:gemm@cref}{{[subsection][3][5]\mbox  {V-C}}{[1][5][]5}}
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces GEMM-family kernels (FP16) latency (ms, lower is better), per configuration on the A100-SXM4 and GH200 (both unlocked tuned profile). $E_\text  {lib}$ = library efficiency relative to PyTorch/cuBLAS baseline. \textbf  {Bold} marks best DSL result per row.}}{5}{table.1}\protected@file@percent }
@@ -118,16 +118,16 @@
 \@writefile{toc}{\contentsline {section}{\numberline {VI}Root Causes of the Hidden Gap (RQ2)}{7}{section.6}\protected@file@percent }
 \newlabel{sec:analysis}{{VI}{7}{Root Causes of the Hidden Gap (RQ2)}{section.6}{}}
 \newlabel{sec:analysis@cref}{{[section][6][]VI}{[1][7][]7}}
-\newlabel{sec:analysis:jit}{{VI}{7}{Root Causes of the Hidden Gap (RQ2)}{section*.6}{}}
-\newlabel{sec:analysis:jit@cref}{{[section][6][]VI}{[1][7][]7}}
 \@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Per-kernel library efficiency ($E_\text  {lib}$, \%) for the 15 element-wise and reduction kernels at the large input size, NVIDIA A100-SXM4-40GB. $^\dagger $ marks entries $>$100\%, which reflect kernel fusion or an unfused/eager PyTorch baseline (not pure DSL speedups over a vendor library).}}{7}{table.5}\protected@file@percent }
 \newlabel{tab:ew}{{V}{7}{Per-kernel library efficiency ($E_\text {lib}$, \%) for the 15 element-wise and reduction kernels at the large input size, NVIDIA A100-SXM4-40GB. $^\dagger $ marks entries $>$100\%, which reflect kernel fusion or an unfused/eager PyTorch baseline (not pure DSL speedups over a vendor library)}{table.5}{}}
 \newlabel{tab:ew@cref}{{[table][5][]V}{[1][7][]7}}
+\newlabel{sec:analysis:jit}{{VI}{7}{Root Causes of the Hidden Gap (RQ2)}{section*.6}{}}
+\newlabel{sec:analysis:jit@cref}{{[section][6][]VI}{[1][7][]7}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-}0a}RC0: TileLang Compiler-Level Deficiencies.}{7}{paragraph.6.0.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-}0b}RC0a: TileLang Reduction Authoring (\texttt  {T.serial} $\to $ \texttt  {T.reduce}).}{7}{paragraph.6.0.0.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-}0c}RC0b: Absent Vectorized Loads (Compiler Codegen).}{7}{paragraph.6.0.0.3}\protected@file@percent }
 \citation{triton2022conv591}
 \citation{tillet2019triton}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-}0c}RC0b: Absent Vectorized Loads (Compiler Codegen).}{8}{paragraph.6.0.0.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-}0d}TileLang float32 lowering to TF32.}{8}{paragraph.6.0.0.4}\protected@file@percent }
 \newlabel{sec:analysis:vec}{{\mbox  {VI-}0d}{8}{TileLang float32 lowering to TF32}{section*.7}{}}
 \newlabel{sec:analysis:vec@cref}{{[paragraph][4][6,0,0]\mbox  {VI-}0d}{[1][8][]8}}
