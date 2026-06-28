@@ -15,6 +15,11 @@
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{cleveref}
+\usepackage{textcase}
+\usepackage{caption}
+% Table captions in ALL CAPS (IEEE style); skips math, protects \NoCaseChange{}.
+\DeclareCaptionTextFormat{allcaps}{\MakeTextUppercase{#1}}
+\captionsetup[table]{textformat=allcaps}
 
 %%
 %% Macros

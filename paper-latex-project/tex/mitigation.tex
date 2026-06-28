@@ -12,7 +12,7 @@ We propose two complementary checks a developer can apply without a curated benc
 \paragraph{A comparability screen (pragmatic, baseline-relative).}
 A well-written DSL kernel should (i) come within a small factor of the vendor/PyTorch baseline on representative shapes, (ii) be at least at parity---ideally faster---at large input sizes where launch and framework overheads amortize, and (iii) show no catastrophic per-shape collapse.
 This screen is cheap and catches gross failures: the idiomatic TileLang LayerNorm that runs more than $300\times$ slower (\cref{sec:eval:passesslow}) fails it immediately.
-Its limitation is circularity---PyTorch is simultaneously the baseline and the de-facto definition of ``good,'' so the screen cannot certify a kernel that merely matches an already-slow baseline, and it can be fooled into crediting a kernel that beats an \emph{unfused} eager path for the wrong reason (the RMSNorm $851\%$ ``win'' in \cref{tab:norm} is a fusion artifact, not headroom).
+Its limitation is circularity---PyTorch is simultaneously the baseline and the de-facto definition of ``good,'' so the screen cannot certify a kernel that merely matches an already-slow baseline, and it can be fooled into crediting a kernel that beats an \emph{unfused} eager path for the wrong reason (the RMSNorm $851\%$ ``win'' in \NoCaseChange{\cref{tab:norm}} is a fusion artifact, not headroom).
 It is therefore a screen, not a certificate.
 
 \paragraph{A roofline anchor (baseline-independent).}
@@ -27,7 +27,7 @@ We present the two checks together because neither suffices alone, and they disa
 
 \begin{table*}[t]
   \centering
-  \caption{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}; the two architectures agree on every classification. Source: \texttt{experiments/results/NVIDIA\_\{A100-SXM4-40GB,GH200\_480GB\}/cliff\_roofline.csv}.}
+  \caption{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}; the two architectures agree on every classification. Source: \NoCaseChange{\texttt{experiments/results/NVIDIA\_\{A100-SXM4-40GB,GH200\_480GB\}/cliff\_roofline.csv}}.}
   \label{tab:roofline}
   \begin{tabular}{llc rrr rrr}
     \toprule
@@ -63,7 +63,7 @@ We present the two checks together because neither suffices alone, and they disa
 
 \paragraph{Finding: Correcting RC0 with two optimizations (each necessary, neither sufficient alone)
 brings TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch throughput on the A100-SXM4---
-a $1347\times$ and $1157\times$ reduction over the unoptimized TileLang baseline (\cref{tab:norm}):
+a $1347\times$ and $1157\times$ reduction over the unoptimized TileLang baseline (\NoCaseChange{\cref{tab:norm}}):
 (1) replacing \texttt{T.serial} reduction loops with the native \texttt{T.reduce} primitive
 (the dominant step; in the RTX 4000 Ada optimization campaign this change alone gave $208\times$);
 (2) switching to native bfloat16/float16 I/O and eliminating intermediate \texttt{.float()} precision casts.
@@ -93,8 +93,8 @@ without any algorithmic change.
   \centering
   \caption{Normalization kernel latency (ms, lower is better) before and after RC0 correction,
     re-timed on the A100-SXM4 (locked clocks). $E_\text{lib}$ = library efficiency after fix,
-    relative to PyTorch. \emph{Before} is the unoptimized TileLang kernel (cf.\ \cref{tab:norm});
-    \emph{After} is the AKO4ALL-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph{Before} matches the unlocked profile in \cref{tab:norm} to within noise. Input shape: $8192 \times 8192$.}
+    relative to PyTorch. \emph{Before} is the unoptimized TileLang kernel (cf.\ \NoCaseChange{\cref{tab:norm}});
+    \emph{After} is the AKO4ALL-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph{Before} matches the unlocked profile in \NoCaseChange{\cref{tab:norm}} to within noise. Input shape: $8192 \times 8192$.}
   \label{tab:mitig:norm}
   \begin{tabular}{lrrrr}
     \toprule
