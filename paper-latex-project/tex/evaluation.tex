@@ -376,7 +376,7 @@ Neither result constitutes a valid DSL-versus-library efficiency measurement for
 \Cref{tab:conv} reports library efficiency for representative Conv2d configurations across six filter shapes.
 Inputs follow the NCHW layout (PyTorch's default arrangement).
 
-\begin{table*}[t]
+\begin{table}[t]
   \centering
   \caption{Conv2d library efficiency ($E_\text{lib}$, \%) on the A100-SXM4 (small and large shapes)
     and GH200 (large shape; unlocked tuned profile).
@@ -384,7 +384,7 @@ Inputs follow the NCHW layout (PyTorch's default arrangement).
     $E_\text{lib}$ relative to PyTorch/cuDNN baseline (higher is better).
     \textbf{Bold} marks the best DSL per cell.}
   \label{tab:conv}
-  \resizebox{\textwidth}{!}{%
+  \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lrrrrrr}
     \toprule
     & \multicolumn{2}{c}{A100 $8\times64\times56^2$} & \multicolumn{2}{c}{A100 $32\times256\times128^2$} & \multicolumn{2}{c}{GH200 $32\times256\times128^2$} \\
@@ -402,7 +402,7 @@ Inputs follow the NCHW layout (PyTorch's default arrangement).
   {\footnotesize PyTorch/cuDNN A100 large-shape ($32\times256\times128\times128$) baseline latencies (ms):
     $1\times1$ 0.518, $3\times3$ 3.445, $5\times5$ 7.716, $7\times7$ 13.846, depthwise 0.776, stride-2 1.261.
     TileLang $7\times7$ OOMs on the A100 (40\,GB) but not on the GH200, where it reaches 71.7\%.}
-\end{table*}
+\end{table}
 
 At the large shape Triton efficiency on the standard $1\times1$--$7\times7$ filters falls monotonically from 28.7\% ($1\times1$) through 19.3\% ($3\times3$), 13.7\% ($5\times5$), to 9.8\% ($7\times7$); the gap widens precisely on the Winograd-ineligible larger filters (\cref{sec:analysis}).
 TileLang holds a narrow 7.1--12.6\% band over the same filters.
@@ -427,11 +427,12 @@ As analyzed in \cref{sec:analysis:jit}, this reflects a combination of
 per-launch JIT overhead, absent vectorized memory loads,
 and serialized memory-latency exposure under \texttt{T.serial} reduction loops (\texttt{warp\_stall\_long\_scoreboard} dominates; \texttt{warp\_stall\_barrier} $\approx$ 0).
 
-\begin{table*}[t]
+\begin{table}[t]
   \centering
   \caption{Normalization latency (lower is better).
     $E_\text{lib}$ relative to PyTorch eager baseline.}
   \label{tab:norm}
+  \resizebox{\columnwidth}{!}{%
   \begin{tabular}{llrrrrr}
     \toprule
     Kernel & Shape & PyTorch(ms) & Triton(ms) & $E_\text{lib}$ & TileLang(ms) & $E_\text{lib}$ \\
@@ -441,12 +442,12 @@ and serialized memory-latency exposure under \texttt{T.serial} reduction loops (
     RMSNorm   & $8192^2$ FP16, A100  & 2.516 & \textbf{0.295} & \textbf{851.8\%} & 294.27 & 0.9\% \\
     RMSNorm   & $8192^2$ FP16, GH200 & 1.276 & \textbf{0.118} & \textbf{1081\%}  & 38.87  & 3.3\% \\
     \bottomrule
-  \end{tabular}\\[2pt]
+  \end{tabular}}\\[2pt]
   {\footnotesize A100 rows are the unlocked tuned profile; locked-clock re-timing (graphics 1215\,MHz / memory 1215\,MHz)
     over 100 runs shows run-to-run relative std-dev 0.0--0.9\% on near-parity kernels, so the gaps are statistically
     significant. GH200 rows are the unlocked tuned profile; TileLang LayerNorm there is 0.3\% ($329\times$), matching
     the locked-clock $323\times$ in \cref{sec:eval:passesslow} within run-to-run noise.}
-\end{table*}
+\end{table}
 
 \phantomsection\label{sec:eval:tuning}
 
@@ -479,6 +480,7 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
     (both unlocked tuned profile), computed over large-size benchmark configurations.
     Attention excluded from Overall; see text.}
   \label{tab:summary}
+  \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lcccc}
     \toprule
     & \multicolumn{2}{c}{A100-SXM4} & \multicolumn{2}{c}{GH200} \\
@@ -493,7 +495,7 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
     \midrule
     \textbf{Overall (excl.\ attn.)} & \textbf{$\sim$73\%}\rlap{$^\S$} & \textbf{$\sim$29\%}\rlap{$^\S$} & \textbf{$\sim$98\%} & \textbf{$\sim$67\%} \\
     \bottomrule
-  \end{tabular}
+  \end{tabular}}%
   {\footnotesize
     $^\ddagger$ TileLang LayerNorm (large shape) is 0.1\% (1087$\times$ slower than PyTorch)
     due to serialized memory-latency exposure under \texttt{T.serial}

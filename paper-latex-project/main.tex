@@ -1,19 +1,4 @@
-\documentclass[sigconf,review,anonymous]{acmart}
-
-\AtBeginDocument{%
-  \providecommand\BibTeX{{%
-    Bib\TeX}}}
-
-%%
-%% Rights management information.
-%% Update these when you receive your rights confirmation email.
-%%
-%\setcopyright{acmlicensed}
-%\copyrightyear{2026}
-%\acmYear{2026}
-%\acmDOI{XXXXXXX.XXXXXXX}
-%\acmConference[ASE '26]{The 41st IEEE/ACM International Conference on Automated Software Engineering}{2026}{Sacramento, California, USA}
-%\acmISBN{978-1-4503-XXXX-X/2026/XX}
+\documentclass[10pt,conference]{IEEEtran}
 
 %%
 %% Packages
@@ -21,12 +6,15 @@
 \usepackage{booktabs}
 \usepackage{microtype}
 \usepackage{xspace}
-\usepackage{cleveref}
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage{xcolor}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 %%
 %% Macros
@@ -42,45 +30,19 @@
 
 \title{An Empirical Study of {GPU} Kernel Performance Gaps in Modern Domain-Specific Languages}
 
-\author{Anonymous Author(s)}
-\affiliation{%
-  \institution{Anonymous Institution}
-  \country{}}
+\author{\IEEEauthorblockN{Anonymous Author(s)}
+\IEEEauthorblockA{Anonymous Institution}}
+
+\maketitle
 
 \begin{abstract}
   \input{tex/abstract}
 \end{abstract}
 
-%%
-%% CCS Concepts: generate at https://dl.acm.org/ccs/ccs.cfm
-%%
-%\begin{CCSXML}
-%<ccs2012>
-%   <concept>
-%       <concept_id>10010520.10010521.10010537.10010540</concept_id>
-%       <concept_desc>Computer systems organization~Parallel architectures</concept_desc>
-%       <concept_significance>500</concept_significance>
-%   </concept>
-%   <concept>
-%       <concept_id>10011007.10011006.10011008.10011009.10011021</concept_id>
-%       <concept_desc>Software and its engineering~Domain specific languages</concept_desc>
-%       <concept_significance>500</concept_significance>
-%   </concept>
-%   <concept>
-%       <concept_id>10011007.10011074.10011099.10011692</concept_id>
-%       <concept_desc>Software and its engineering~Empirical software validation</concept_desc>
-%       <concept_significance>300</concept_significance>
-%   </concept>
-%</ccs2012>
-%\end{CCSXML}
-%\ccsdesc[500]{Computer systems organization~Parallel architectures}
-%\ccsdesc[500]{Software and its engineering~Domain specific languages}
-%\ccsdesc[300]{Software and its engineering~Empirical software validation}
-
-\keywords{GPU kernels, domain-specific languages, Triton, TileLang, cuBLAS, cuDNN,
-          empirical study, performance analysis, convolution}
-
-\maketitle
+\begin{IEEEkeywords}
+GPU kernels, domain-specific languages, Triton, TileLang, cuBLAS, cuDNN,
+empirical study, performance analysis, convolution
+\end{IEEEkeywords}
 
 %%% ------------------------------------------------------------------
 \section{Introduction}
@@ -156,11 +118,10 @@ The empirical results suggest that current GPU DSLs are not uniformly competitiv
 All data and scripts used in this study are publicly available in an anonymous repository archived on Zenodo at: \url{https://doi.org/10.5281/zenodo.19337858}. The repository includes the benchmark datasets, evaluation scripts, and a README file describing the contents and usage instructions.
 
 
-\begin{acks}
-  Acknowledgments hidden for review.
-\end{acks}
+\section*{Acknowledgment}
+Acknowledgments hidden for review.
 \newpage
-\bibliographystyle{ACM-Reference-Format}
+\bibliographystyle{IEEEtran}
 \bibliography{references}
 
 \end{document}

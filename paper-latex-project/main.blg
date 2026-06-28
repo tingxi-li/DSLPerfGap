@@ -1,82 +1,64 @@
-This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+This is BibTeX, Version 0.99d (TeX Live 2023)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
-The style file: ACM-Reference-Format.bst
+The style file: IEEEtran.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: references.bib
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
-Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
-Reallocated global_strs (elt_size=200001) to 20 items from 10.
-Reallocated glb_str_end (elt_size=4) to 20 items from 10.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Warning--no journal in chetlur2014cudnn
-Warning--no number and no volume in chetlur2014cudnn
-Warning--page numbers missing in both pages and numpages fields in chetlur2014cudnn
+Warning--entry type for "cublas2024" isn't style-file defined
+--line 74 of file references.bib
+Warning--entry type for "cutlass2023" isn't style-file defined
+--line 393 of file references.bib
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+Warning--empty journal in chetlur2014cudnn
 Warning--empty booktitle in dao2023flashattention2
-Warning--empty publisher in dao2023flashattention2
-Warning--empty address in dao2023flashattention2
-Warning--page numbers missing in both pages and numpages fields in dao2023flashattention2
-Warning--empty publisher in lattner2021mlir
-Warning--empty address in lattner2021mlir
-Warning--empty publisher in lavin2016fast
-Warning--empty address in lavin2016fast
-Warning--page numbers missing in both pages and numpages fields in lavin2016fast
 Warning--empty booktitle in ragan-kelley2013halide
-Warning--empty publisher in reddi2020mlperf
-Warning--empty address in reddi2020mlperf
-Warning--empty publisher in spector2024thunderkittens
-Warning--empty address in spector2024thunderkittens
-Warning--page numbers missing in both pages and numpages fields in spector2024thunderkittens
-Warning--empty publisher in kernelfusion
-Warning--empty address in kernelfusion
-Warning--empty publisher in wang2025tilelang
-Warning--empty address in wang2025tilelang
-Warning--page numbers missing in both pages and numpages fields in wang2025tilelang
-Warning--empty address in zheng2020ansor
-Warning--empty publisher in zhou2021implicit
-Warning--empty address in zhou2021implicit
+
+Done.
 You've used 30 entries,
-            6273 wiz_defined-function locations,
-            1733 strings with 28091 characters,
-and the built_in function-call counts, 39407 in all, are:
-= -- 4181
-> -- 2236
-< -- 0
-+ -- 790
-- -- 792
-* -- 3545
-:= -- 4418
-add.period$ -- 141
+            4087 wiz_defined-function locations,
+            997 strings with 16664 characters,
+and the built_in function-call counts, 25449 in all, are:
+= -- 1768
+> -- 1090
+< -- 82
++ -- 554
+- -- 258
+* -- 1271
+:= -- 3576
+add.period$ -- 68
 call.type$ -- 30
-change.case$ -- 374
-chr.to.int$ -- 28
-cite$ -- 56
-duplicate$ -- 3008
-empty$ -- 2083
-format.name$ -- 882
-if$ -- 8862
-int.to.chr$ -- 4
-int.to.str$ -- 1
-missing$ -- 98
-newline$ -- 331
-num.names$ -- 210
-pop$ -- 1336
+change.case$ -- 33
+chr.to.int$ -- 174
+cite$ -- 33
+duplicate$ -- 1862
+empty$ -- 2105
+format.name$ -- 276
+if$ -- 5948
+int.to.chr$ -- 0
+int.to.str$ -- 30
+missing$ -- 462
+newline$ -- 151
+num.names$ -- 32
+pop$ -- 1263
 preamble$ -- 1
-purify$ -- 604
-quote$ -- 0
-skip$ -- 1196
+purify$ -- 0
+quote$ -- 2
+skip$ -- 1894
 stack$ -- 0
-substring$ -- 2232
-swap$ -- 311
-text.length$ -- 0
+substring$ -- 553
+swap$ -- 1433
+text.length$ -- 24
 text.prefix$ -- 0
-top$ -- 0
-type$ -- 822
-warning$ -- 26
-while$ -- 152
-width$ -- 0
-write$ -- 657
-(There were 26 warnings)
+top$ -- 5
+type$ -- 30
+warning$ -- 3
+while$ -- 64
+width$ -- 32
+write$ -- 342
+(There were 5 warnings)
