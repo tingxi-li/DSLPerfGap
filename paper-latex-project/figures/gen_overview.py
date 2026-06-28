@@ -27,8 +27,8 @@ import matplotlib.patches as mpatches
 # ---------------------------------------------------------------------------
 fair = {
     # GEMM: 16384^2 square, batched 64x128^2, batched 128x2048^2, fused linear+act
-    ("GEMM",         "Triton"):   [32.8, 92.7, 92.9, 72.5],
-    ("GEMM",         "TileLang"): [80.0, 7.0, 548.6],
+    ("GEMM",         "Triton"):   [32.8, 82.1, 92.9, 72.5],
+    ("GEMM",         "TileLang"): [80.0, 58.8, 7.0, 548.6],
     # Conv2d: 8x64x56x56 3x3, 32x256x128x128 3x3
     ("Conv2d",       "Triton"):   [44.87, 19.33],
     ("Conv2d",       "TileLang"): [4.12,  12.62],
