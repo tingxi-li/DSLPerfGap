@@ -1,5 +1,5 @@
 This section situates our work in the literature on GPU kernel DSLs (\cref{sec:rel:dsls}),
-convolution optimization algorithms (\cref{sec:rel:conv}),
+%convolution optimization algorithms (\cref{sec:rel:conv}),
 performance analysis tools (\cref{sec:rel:profiling}),
 and GPU benchmarking frameworks (\cref{sec:rel:bench}).
 Our study is the first to show that prevailing DSL and LLM-generated-kernel benchmarks admit
@@ -39,22 +39,22 @@ offers a compiler-infrastructure approach to the same problem,
 generating near-peak-performance GEMM and fused-attention code
 through parametric Linalg transformations.
 
-\subsection{Convolution Optimization}
-\label{sec:rel:conv}
-
-Zhou~\etal~\cite{zhou2021implicit} provide a thorough characterization of
-the implicit GEMM convolution algorithm on GPU Tensor Cores,
-identifying the advantages of NHWC layout and on-the-fly tile formation
-over explicit im2col.
-Their analysis motivates the baseline construction in \cref{sec:meth:baselines}.
-
-Winograd convolution~\cite{lavin2016fast} reduces arithmetic by up to $4\times$
-for $3 \times 3$ filters at the cost of additional data transformation passes.
-In our measurements (\cref{sec:mitig:conv}), the wall-clock benefit attributable specifically to Winograd selection is much smaller ($\approx$2--3\%); the arithmetic reduction does not translate proportionally because cuDNN's general implicit-GEMM tuning dominates the gap.
-cuDNN's selection of Winograd for appropriate shapes is a key component
-of its performance lead, as analyzed in \cref{sec:analysis}.
-Adding Winograd support as a first-class lowering pass within a DSL like Triton
-remains an open engineering problem; our analysis identifies it as future work (\cref{sec:mitig:conv}).
+% \subsection{Convolution Optimization}
+% \label{sec:rel:conv}
+%
+% Zhou~\etal~\cite{zhou2021implicit} provide a thorough characterization of
+% the implicit GEMM convolution algorithm on GPU Tensor Cores,
+% identifying the advantages of NHWC layout and on-the-fly tile formation
+% over explicit im2col.
+% Their analysis motivates the baseline construction in \cref{sec:meth:baselines}.
+%
+% Winograd convolution~\cite{lavin2016fast} reduces arithmetic by up to $4\times$
+% for $3 \times 3$ filters at the cost of additional data transformation passes.
+% In our measurements (\cref{sec:mitig:conv}), the wall-clock benefit attributable specifically to Winograd selection is much smaller ($\approx$2--3\%); the arithmetic reduction does not translate proportionally because cuDNN's general implicit-GEMM tuning dominates the gap.
+% cuDNN's selection of Winograd for appropriate shapes is a key component
+% of its performance lead, as analyzed in \cref{sec:analysis}.
+% Adding Winograd support as a first-class lowering pass within a DSL like Triton
+% remains an open engineering problem; our analysis identifies it as future work (\cref{sec:mitig:conv}).
 
 \subsection{Performance Analysis and Profiling}
 \label{sec:rel:profiling}

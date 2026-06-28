@@ -246,11 +246,6 @@ N.~Vasilache, O.~Zinenko, A.~J.~C. Bik, M.~Ravishankar, T.~Raoux, A.~Belyaev,
   Available: \url{https://arxiv.org/abs/2202.03293}
 \BIBentrySTDinterwordspacing
 
-\bibitem{lavin2016fast}
-A.~Lavin and S.~Gray, ``Fast algorithms for convolutional neural networks,'' in
-  \emph{Proceedings of the IEEE Conference on Computer Vision and Pattern
-  Recognition (CVPR)}, June 2016.
-
 \bibitem{reddi2020mlperf}
 V.~J. Reddi, C.~Cheng, D.~Kanter, P.~Mattson, G.~Schmuelling, C.-J. Wu,
   B.~Anderson, M.~Breughe, M.~Charlebois, W.~Chou, R.~Chukka, C.~Coleman,
