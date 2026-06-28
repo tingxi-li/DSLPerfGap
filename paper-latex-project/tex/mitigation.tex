@@ -25,38 +25,61 @@ Second, it de-inflates baseline-relative outliers: the RMSNorm kernel that looks
 The recovered normalization and reduction family lands at $\rho=0.41$--$0.87$, while the residual convolution and argmax kernels sit at $\rho\le0.28$ even after best-effort optimization; the cliff column shows these are not the same axis---LayerNorm hid a $1541\times$ authoring artifact that the dominant pattern fully recovers, whereas Conv2d's $8.2\times$ cliff still leaves it at $\rho=0.28$, a structural ceiling the rewrite cannot lift.
 We present the two checks together because neither suffices alone, and they disagree exactly in a judgment band near $\rho\approx0.5$: Softmax and Matmul both achieve $\rho=0.47$, yet Softmax is at parity ($E_\text{lib}=0.87$) while Matmul trails cuBLAS ($E_\text{lib}=0.68$)---only the two checks together make the call.
 
-\begin{table*}[t]
+\begin{table}[t]
   \centering
-  \caption{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}; the two architectures agree on every classification. Source: \texttt{experiments/results/NVIDIA\_\{A100-SXM4-40GB,GH200\_480GB\}/cliff\_roofline.csv}.}
+  \caption{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}; the two architectures agree on every classification. Source: \texttt{experiments/\allowbreak results/\allowbreak NVIDIA\_\{A100-SXM4-40GB,\allowbreak GH200\_480GB\}/\allowbreak cliff\_roofline.csv}.}
   \label{tab:roofline}
-  \begin{tabular}{llc rrr rrr}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}llcrrr@{}}
     \toprule
-    & & & \multicolumn{3}{c}{A100-SXM4 (sm\_80)} & \multicolumn{3}{c}{GH200 (sm\_90)} \\
-    \cmidrule(lr){4-6}\cmidrule(lr){7-9}
-    Kernel & DSL & Bound & $\rho$ & $E_\text{lib}$ & Cliff & $\rho$ & $E_\text{lib}$ & Cliff \\
+    Kernel (DSL) & Bound & Arch & $\rho$ & $E_\text{lib}$ & Cliff \\
     \midrule
-    \multicolumn{9}{l}{\textit{Recovered family (authoring artifacts)}} \\
-    \quad LayerNorm      & TileLang & mem  & 0.67 & 1.25  & $380\times$  & 0.59 & 1.20  & $1541\times$ \\
-    \quad RMSNorm        & TileLang & mem  & 0.70 & 10.2  & $325\times$  & 0.69 & 13.0  & $1520\times$ \\
-    \quad MeanReduction  & TileLang & mem  & 0.89 & 1.04  & $13.7\times$ & 0.87 & 0.97  & $13.9\times$ \\
-    \quad BatchedMatmul  & TileLang & mem  & 0.82 & 0.94  & $23.9\times$ & 0.86 & 1.11  & $20.2\times$ \\
-    \quad MaxReduction   & Triton   & mem  & 0.69 & 1.13  & $8.8\times$  & 0.59 & 1.20  & $6.4\times$  \\
-    \quad MaxReduction   & TileLang & mem  & 0.42 & 0.68  & $12.8\times$ & 0.41 & 0.84  & $16.2\times$ \\
-    \quad LogSoftmax     & TileLang & mem  & 0.55$^\S$ & 0.71$^\S$ & ---$^\S$ & 0.58 & 0.90  & $5.2\times$  \\
-    \quad Softmax        & TileLang & mem  & 0.55$^\S$ & 0.86$^\S$ & ---$^{\S}$ & 0.47 & 0.87  & $4.0\times^\ddagger$ \\
+    \multicolumn{6}{@{}l}{\textit{Recovered family (authoring artifacts)}} \\
+    \multirow{2}{*}{LayerNorm (TL)}     & \multirow{2}{*}{mem}  & A100  & 0.67 & 1.25 & $380\times$  \\
+                                        &                       & GH200 & 0.59 & 1.20 & $1541\times$ \\
+    \addlinespace
+    \multirow{2}{*}{RMSNorm (TL)}       & \multirow{2}{*}{mem}  & A100  & 0.70 & 10.2 & $325\times$  \\
+                                        &                       & GH200 & 0.69 & 13.0 & $1520\times$ \\
+    \addlinespace
+    \multirow{2}{*}{MeanReduction (TL)} & \multirow{2}{*}{mem}  & A100  & 0.89 & 1.04 & $13.7\times$ \\
+                                        &                       & GH200 & 0.87 & 0.97 & $13.9\times$ \\
+    \addlinespace
+    \multirow{2}{*}{BatchedMatmul (TL)} & \multirow{2}{*}{mem}  & A100  & 0.82 & 0.94 & $23.9\times$ \\
+                                        &                       & GH200 & 0.86 & 1.11 & $20.2\times$ \\
+    \addlinespace
+    \multirow{2}{*}{MaxReduction (Tr)}  & \multirow{2}{*}{mem}  & A100  & 0.69 & 1.13 & $8.8\times$  \\
+                                        &                       & GH200 & 0.59 & 1.20 & $6.4\times$  \\
+    \addlinespace
+    \multirow{2}{*}{MaxReduction (TL)}  & \multirow{2}{*}{mem}  & A100  & 0.42 & 0.68 & $12.8\times$ \\
+                                        &                       & GH200 & 0.41 & 0.84 & $16.2\times$ \\
+    \addlinespace
+    \multirow{2}{*}{LogSoftmax (TL)}    & \multirow{2}{*}{mem}  & A100  & 0.55$^\S$ & 0.71$^\S$ & ---$^\S$ \\
+                                        &                       & GH200 & 0.58 & 0.90 & $5.2\times$  \\
+    \addlinespace
+    \multirow{2}{*}{Softmax (TL)}       & \multirow{2}{*}{mem}  & A100  & 0.55$^\S$ & 0.86$^\S$ & ---$^\S$ \\
+                                        &                       & GH200 & 0.47 & 0.87 & $4.0\times^\ddagger$ \\
     \midrule
-    \multicolumn{9}{l}{\textit{Structural residuals (survive best-effort optimization)}} \\
-    \quad Matmul         & Triton   & comp & 0.56 & 0.78  & $1.1\times$  & 0.47 & 0.68  & $1.3\times$  \\
-    \quad Conv2d         & TileLang & comp & 0.34 & 0.60  & $6.4\times$  & 0.28 & 0.63  & $8.2\times$  \\
-    \quad Conv2d         & Triton   & comp & 0.24 & 0.42  & $1.5\times$  & 0.16 & 0.34  & $2.5\times$  \\
-    \quad Argmax         & TileLang & mem  & 0.15 & 0.27  & $4.5\times$  & 0.10 & 0.22  & $3.8\times$  \\
+    \multicolumn{6}{@{}l}{\textit{Structural residuals (survive best-effort optimization)}} \\
+    \multirow{2}{*}{Matmul (Tr)}        & \multirow{2}{*}{comp} & A100  & 0.56 & 0.78 & $1.1\times$  \\
+                                        &                       & GH200 & 0.47 & 0.68 & $1.3\times$  \\
+    \addlinespace
+    \multirow{2}{*}{Conv2d (TL)}        & \multirow{2}{*}{comp} & A100  & 0.34 & 0.60 & $6.4\times$  \\
+                                        &                       & GH200 & 0.28 & 0.63 & $8.2\times$  \\
+    \addlinespace
+    \multirow{2}{*}{Conv2d (Tr)}        & \multirow{2}{*}{comp} & A100  & 0.24 & 0.42 & $1.5\times$  \\
+                                        &                       & GH200 & 0.16 & 0.34 & $2.5\times$  \\
+    \addlinespace
+    \multirow{2}{*}{Argmax (TL)}        & \multirow{2}{*}{mem}  & A100  & 0.15 & 0.27 & $4.5\times$  \\
+                                        &                       & GH200 & 0.10 & 0.22 & $3.8\times$  \\
     \bottomrule
   \end{tabular}
   \vspace{0.3em}
-  {\small $^\ddagger$ The naive Softmax falls back to \texttt{torch.softmax} at this large shape, so its cliff is not a pure TileLang authoring comparison; the optimized $\rho$ and $E_\text{lib}$ are unaffected.
+  {\footnotesize TL\,=\,TileLang, Tr\,=\,Triton.
+  $^\ddagger$ The naive Softmax falls back to \texttt{torch.softmax} at this large shape, so its cliff is not a pure TileLang authoring comparison; the optimized $\rho$ and $E_\text{lib}$ are unaffected.
   $^\S$ On the A100 stack (TileLang 0.1.6.post1) the in-tree TileLang Softmax/LogSoftmax variant's 64\,KB full-row shared-memory cache collapses occupancy ($\rho{=}0.006$/$0.028$ in \texttt{cliff\_roofline.csv}); we report the \texttt{opt\_kernels} streaming variant, which reaches parity on both architectures ($\rho{=}W/(t\,P)$ from its measured time, $E_\text{lib}$ from \texttt{mitigation\_retime.csv}); its cliff is omitted as the in-tree comparison does not transfer.
   \texttt{logsumexp} is omitted from the recovered family: its optimized kernel register-spills on \texttt{sm\_90} (GH200; $\rho<0.02$, $E_\text{lib}=1.0\%$) but \emph{not} on \texttt{sm\_80} (A100: $0$ spill, $93$ regs, $E_\text{lib}=582\%$, \texttt{ncu\_summary.csv})---an architecture-specific RC3-class residual discussed in \cref{sec:mitig:summary} and \cref{tab:mitigation}.}
-\end{table*}
+\end{table}
 
 \subsection{Normalization Kernels: Correcting RC0}
 \label{sec:mitig:norm}
