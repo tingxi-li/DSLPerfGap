@@ -12,15 +12,14 @@ gating range from competitive to more than two orders of magnitude slower than
 cuBLAS/cuDNN.
 
 The benchmarks practitioners rely on do not surface this.
-Prevailing DSL and LLM-generated-kernel benchmarks (e.g., KernelBench and TritonBench)
+Prevailing benchmarks (e.g., KernelBench and TritonBench)
 gate primarily on correctness and therefore
 admit performance-poor kernels, while under-covering DSLs, data types, shapes, and
 hardware and only partially preventing reward hacking.
-A benchmark comprehensive enough to close this gap is combinatorially infeasible.
 
 As a pragmatic alternative, we (i)~characterize how large and structured the hidden
 performance gap is and why it arises, separating user-space \emph{authoring} causes
-(which we show are largely reducible) from \emph{code-generation} and
+from \emph{code-generation} and
 \emph{library-maturity} causes (which are not); and (ii)~distill the result into
 lightweight, partly baseline-independent evaluation heuristics and a small set of
 recurring optimization patterns that guide DSL kernel development when no ground-truth
