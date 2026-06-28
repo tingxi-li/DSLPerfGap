@@ -7,13 +7,13 @@ Yet developer-written or agent-generated DSL kernels can be \emph{functionally c
 way to know whether they are \emph{performant}.
 We show that a kernel can pass the prevailing evaluation benchmarks and still run
 hundreds of times slower than the vendor-library baseline: across 22 kernels in five
-operator categories, naive-but-idiomatic DSL kernels that pass correctness
-gating range from competitive to 314$\times$ slower than
+ categories, naive-but-idiomatic DSL kernels that pass correctness
+gating range from competitive to more than two orders of magnitude slower than
 cuBLAS/cuDNN.
 
 The benchmarks practitioners rely on do not surface this.
 Prevailing DSL and LLM-generated-kernel benchmarks (e.g., KernelBench and TritonBench)
-gate primarily on correctness---at most a weak speedup-over-eager check---and therefore
+gate primarily on correctness and therefore
 admit performance-poor kernels, while under-covering DSLs, data types, shapes, and
 hardware and only partially preventing reward hacking.
 A benchmark comprehensive enough to close this gap is combinatorially infeasible.
