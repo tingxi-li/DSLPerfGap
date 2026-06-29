@@ -140,6 +140,11 @@ J.~Li, S.~Li, Z.~Gao, Q.~Shi, Y.~Li, Z.~Wang, J.~Huang, H.~Wang, J.~Wang,
 {NVIDIA Corporation}, ``{NVIDIA} nsight compute,''
   \url{https://developer.nvidia.com/nsight-compute}, 2024.
 
+\bibitem{ako2026}
+S.~Xie, S.~Xie, D.~Ran, W.~Yang, and T.~Xie, ``{AKO}: Agentic kernel
+  optimization,'' \url{https://tongminglaic.github.io/AKO}, 2026, technical
+  report.
+
 \bibitem{dao2023flashattention2}
 \BIBentryALTinterwordspacing
 T.~Dao, ``Flashattention-2: Faster attention with better parallelism and work

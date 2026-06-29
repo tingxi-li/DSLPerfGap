@@ -79,6 +79,14 @@ To support root-cause analysis, we collect hardware counter profiles with NVIDIA
 \paragraph{Correctness.}
 Before any timing, we validate every DSL kernel against its library baseline using per-dtype numerical tolerances: \texttt{fp32} at \texttt{atol/rtol = 1e-5}, \texttt{fp16} at \texttt{1e-3}, and \texttt{bf16} at \texttt{1e-2}, with the tolerance relaxed by $2\times$ for reduction kernels to absorb order-of-summation differences. We additionally exercise an edge-case suite (NaN, Inf, denormal, and all-equal inputs) across all 22 kernels, observing 0 crashes. After applying the RQ3 mitigations, we revalidate the fixed kernels and obtain 5/5 passes, confirming the optimizations preserve numerical equivalence. We exclude FP32 GEMM from the correctness-gated comparison because its discrepancy is root-caused as silent TF32 lowering on the SM80 tensor cores rather than a kernel defect (see \cref{sec:analysis:jit}).
 
+\subsection{RQ3 Optimization Methodology}
+\label{sec:meth:optimization}
+
+To produce the optimized kernels evaluated in \cref{sec:mitigation}, we employ an agentic AI kernel code generation tool~\cite{ako2026} that, under a fixed protocol (correctness-gated iterations, fixed large-input shapes, no language switching), iteratively rewrites each flagged kernel and re-profiles it.
+We use the tool only as a reproducible mechanism to \emph{apply} the root-cause-derived optimization patterns of \cref{sec:analysis}: the agent performs kernel generation and optimization, while the characterization (\cref{sec:evaluation}), the counter-grounded root-cause explanation (\cref{sec:analysis}), and the generalization and validation of the resulting patterns (\cref{sec:mitigation}) are ours.
+The performance gaps we characterize and their root causes are properties of idiomatic DSL code and its compilation, independent of whether a kernel is written by hand or generated; every pattern is human-legible and hand-applicable (the dominant fix replaces a manual reduction loop with the pre-existing \texttt{T.reduce} primitive).
+Each optimized kernel is validated provenance-agnostically---correctness against the same per-dtype tolerances (5/5 pass), plus Nsight Compute counters and the roofline anchor---so kernel quality does not rest on trusting the tool, and we report recovered performance as a lower bound on user-space-recoverable performance.
+
 
 \subsection{Metrics}
 \label{sec:meth:metrics}

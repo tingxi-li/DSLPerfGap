@@ -1,6 +1,7 @@
 This section answers RQ3: \emph{absent a comprehensive benchmark, can lightweight evaluation heuristics and a small set of recurring optimization patterns reliably flag performance-poor DSL kernels and guide their repair?}
 RQ1 (\cref{sec:evaluation}) showed that a comprehensive performance benchmark is infeasible and that correctness gates admit slow kernels; RQ2 (\cref{sec:analysis}) explained why the gaps arise.
-We now distill that evidence into developer-facing guidance: a two-part \emph{evaluation heuristic} for deciding whether a kernel is well written (\cref{sec:mitig:heuristics}), and the \emph{optimization patterns} that repair the gaps it flags (\cref{sec:mitig:norm} onward), validated by optimizing kernels across the suite on the A100-SXM4 and GH200.
+We now distill that evidence into developer-facing guidance: a two-part \emph{evaluation heuristic} for deciding whether a kernel is well written (\cref{sec:mitig:heuristics}), and the \emph{optimization patterns} that repair the gaps it flags (\cref{sec:mitig:norm} onward), validated by optimizing kernels across the suite.
+The optimization campaigns (\cref{sec:meth:optimization}) were run on a separate development GPU; the optimized kernels they produced are re-timed throughout this section on the A100-SXM4 and GH200 evaluation hardware.
 The central result is a clean dichotomy: most of the dramatic gaps are \emph{authoring artifacts} that one dominant pattern fully repairs, while a minority are \emph{genuine residuals} that survive best-effort optimization---and the heuristic tells the two apart without a ground-truth benchmark.
 We position the user-space fixes (RC0a, RC2a, the matmul L2-swizzle) as lower bounds on automatable recovery; RC0b and the broader RC2b search space require compiler support.
 
@@ -88,7 +89,7 @@ We present the two checks together because neither suffices alone, and they disa
 brings TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch throughput on the A100-SXM4---
 a $1347\times$ and $1157\times$ reduction over the unoptimized TileLang baseline (\cref{tab:norm}):
 (1) replacing \texttt{T.serial} reduction loops with the native \texttt{T.reduce} primitive
-(the dominant step; in the RTX 4000 Ada optimization campaign this change alone gave $208\times$);
+(the dominant step);
 (2) switching to native bfloat16/float16 I/O and eliminating intermediate \texttt{.float()} precision casts.
 These results confirm RC0 as the primary cause of TileLang's normalization deficit and as fully correctable in user space.}
 Here one iteration denotes a single kernel-source edit plus one benchmark run with a correctness check,
@@ -117,7 +118,7 @@ without any algorithmic change.
   \caption{Normalization kernel latency (ms, lower is better) before and after RC0 correction,
     re-timed on the A100-SXM4 (locked clocks). $E_\text{lib}$ = library efficiency after fix,
     relative to PyTorch. \emph{Before} is the unoptimized TileLang kernel (cf.\ \cref{tab:norm});
-    \emph{After} is the AKO4ALL-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph{Before} matches the unlocked profile in \cref{tab:norm} to within noise. Input shape: $8192 \times 8192$.}
+    \emph{After} is the agent-optimized kernel. The unoptimized kernels are memory-latency-bound (RC0) and hence clock-invariant, so \emph{Before} matches the unlocked profile in \cref{tab:norm} to within noise. Input shape: $8192 \times 8192$.}
   \label{tab:mitig:norm}
   \begin{tabular}{lrrrr}
     \toprule
@@ -140,10 +141,8 @@ without any algorithmic change.
 \paragraph{Finding: Restructuring Conv2d as an implicit GEMM with FP16 Tensor Core acceleration,
 input padding to 16-byte alignment (addressing RC1),
 and an expanded autotune configuration space (addressing RC2)
-yields a $2.57\times$ latency reduction ($32.1~\text{ms} \to 12.5~\text{ms}$) in the AKO4ALL optimization campaign.
-On the A100-SXM4, where cuDNN is substantially faster, the same implicit-GEMM restructuring
-holds 36--76\% of PyTorch/cuDNN efficiency across the $1\times1$--$7\times7$ filter family (all correct)---
-the gap is narrowed but not closed.}
+holds 36--76\% of PyTorch/cuDNN efficiency across the $1\times1$--$7\times7$ filter family on the A100-SXM4 (all correct),
+where cuDNN is substantially faster---the gap is narrowed but not closed.}
 
 The implicit GEMM restructuring unfolds the convolution input via on-the-fly tile formation
 (following the NHWC implicit GEMM approach~\cite{zhou2021implicit}),
@@ -195,8 +194,7 @@ and a \texttt{GROUP\_SIZE\_M} L2 cache swizzle (which reorders output tiles to i
 reduces latency from 1.08~ms to 0.79~ms ($1.37\times$, $E_\text{lib} = 77\%$)
 on a $4096\times4096$ matmul, re-timed on the A100-SXM4;
 the same expanded search recovers $E_\text{lib}$ from $32.5\%$ to $81.8\%$ ($2.52\times$) at the RQ1 $16384^2$ shape.
-The original AKO4ALL campaign reported $1.66\times$ / $108\%$ at $4096^2$ on the RTX 4000 Ada,
-where the matmul mitigation slightly exceeded cuBLAS; on the faster A100 cuBLAS the gap narrows but does not close.
+On the data-center A100, cuBLAS is fast enough that this gap narrows but does not close.
 Iterations 2--6 (persistent kernel, expanded configs, \texttt{max\_num\_imprecise\_acc}) converged without further gain,
 confirming that the expanded configuration set and L2 swizzle are the effective ceiling for this shape.
 This confirms RC2 as a contributor to the GEMM gap
@@ -208,7 +206,7 @@ the gain here is a property of the \emph{expanded} search space
 \textbf{Argmax (TileLang, FP16).}
 Replacing global-memory element accesses with tiled shared-memory bulk loads
 and native FP16 I/O reduces latency from 11.97~ms to 2.31~ms ($5.2\times$) on a $8192\times32768$
-reduction, re-timed on the A100-SXM4 (the original campaign reported $9.26\times$ on the RTX 4000 Ada).
+reduction, re-timed on the A100-SXM4.
 The optimized kernel reaches $E_\text{lib} = 27\%$: it removes most of the unoptimized-TileLang overhead,
 but the A100's native \texttt{torch.argmax} (0.62~ms) remains $3.7\times$ faster, so parity is not reached on this GPU.
 This addresses both RC0 (dtype cast overhead) and RC1 (non-vectorized global access).
@@ -218,7 +216,7 @@ The same RC0 fix---replacing \texttt{T.serial} reduction loops with native \text
 and streaming the reduction dimension in tiles (an online, max-rescaled pass for the softmax
 variants) rather than materializing the full row in a fragment---generalizes across the
 \emph{entire} TileLang reduction and normalization family on the A100-SXM4 (\cref{tab:mitigation}), not
-just the kernels of the original campaign. Every catastrophically slow kernel recovers to
+just a handful of kernels. Every catastrophically slow kernel recovers to
 PyTorch-comparable or better: \texttt{max\_reduction}, \texttt{mean\_reduction}, and
 \texttt{logsumexp} \emph{exceed} PyTorch ($132\%$, $99\%$, $582\%$), and \texttt{softmax} and
 \texttt{log\_softmax} reach $86\%$ and $71\%$---all numerically correct, with $4$--$29\times$
@@ -256,8 +254,7 @@ be re-validated per target. The remaining gaps are
 \emph{genuine residuals} that survive best-effort optimization: Conv2d ($42\%$), large square GEMM
 (Matmul $77\%$ vs cuBLAS), and index-returning Argmax ($27\%$)---here even the fully-optimized DSL
 kernel does not reach the A100's vendor library, because on the data-center A100 cuBLAS, cuDNN, and
-\texttt{torch.argmax} are themselves much faster than on the RTX 4000 Ada where the original campaign
-ran (where the matmul mitigation even reached $108\%$).
+\texttt{torch.argmax} are themselves much faster and well-tuned.
 Of the residual Conv2d gap, only $\approx$2--3\% is attributable to absent Winograd selection (RC4);
 the rest reflects general cuDNN implicit-GEMM tuning
 (kernel selection across data layouts, split-K, and shared-mem tile sizing) that the Triton kernel does not match.
@@ -318,7 +315,7 @@ The streaming variant---tiling the reduction over fixed $4$~KB blocks instead of
 
 \end{table}
 The normalization, reduction, and convolution mitigations in \cref{tab:mitigation} are re-timed on the
-A100-SXM4 (locked clocks); the matmul figure is the AKO4ALL-campaign value pending the \S7.3 reconciliation.
+A100-SXM4 (locked clocks); the matmul figure is the A100-SXM4 autotune value at $4096^2$, reconciled against the $16384^2$ result in \S7.3.
 The optimized kernels were revalidated against the same ViperBench tolerances as the unmitigated kernels (5/5 pass):
 the core mechanism (\texttt{T.serial}$\to$\texttt{T.reduce} plus native-dtype I/O) reproduces correctly,
 and the edge-case correctness suite (NaN/Inf/denormal/all-equal) shows 0 crashes.

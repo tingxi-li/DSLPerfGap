@@ -340,7 +340,7 @@ omits configurations needed at scale (RC2a: L2-swizzle and large-shape tiles abs
 
 \phantomsection\label{sec:analysis:regpressure}
 \paragraph{RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem).}
-Each streaming multiprocessor on the A100 exposes a 65{,}536 32-bit register file (a budget Ada's sm\_89 shares), so a block of 128 threads at 64 registers per thread occupies it fully, preventing a second resident block and eliminating pipeline interleaving.
+Each streaming multiprocessor on the A100 exposes a 65{,}536 32-bit register file, so a block of 128 threads at 64 registers per thread occupies it fully, preventing a second resident block and eliminating pipeline interleaving.
 Contrary to the submitted-PDF framing, NCU shows convolution does not hit this wall: Triton conv2d reports \texttt{n\_spills}\,=\,0 at every tested filter ($1\times1$ through $7\times7$), even though register usage rises with $K^2$ (up to 224 regs/thread at large shapes).
 The spill is instead TileLang-LayerNorm-specific: the large LayerNorm kernel uses 254 registers per thread, drops to 12.46\% achieved occupancy, and spills 206~GB of local-load plus 137~GB of local-store traffic.
 This register pressure---not any convolution effect---is what collapses occupancy below the level required for latency hiding.
@@ -380,8 +380,8 @@ most diagnostic for its detection.
     \midrule
     RC0a: \texttt{T.serial} instead of \texttt{T.reduce} & All TileLang reductions, norm & $1347\times$ (LayerNorm, A100) & \texttt{warp\_stall\_long\_scoreboard} (barrier ${\approx}0$) \\
     RC0b: Absent vectorized loads / dtype cast            & TileLang norm                 & ---                     & \texttt{l1tex} bytes/sector     \\
-    RC1: Strided access, scalar LD  & Conv2d ($K > 1$), Triton      & $2.57\times$ with RC2   & Load bytes/sector eff.\ (12.55\%) \\
-    RC2a: Auto-tuning mismatch      & Matmul, Conv2d, Depthwise     & $1.66\times$ (Matmul)   & TFLOPS vs.\ swept configs       \\
+    RC1: Strided access, scalar LD  & Conv2d ($K > 1$), Triton      & $2.2\times$ with RC2    & Load bytes/sector eff.\ (12.55\%) \\
+    RC2a: Auto-tuning mismatch      & Matmul, Conv2d, Depthwise     & $1.37\times$ (Matmul)   & TFLOPS vs.\ swept configs       \\
     RC2b: L2 cache residency        & Matmul $\geq 16384^2$         & ---                     & L2 hit rate, DRAM throughput    \\
     RC3: TileLang LayerNorm spill   & TileLang LayerNorm (large)    & ---                     & \texttt{local\_op} spill / occupancy (A100: 51.5\,GB ld, 254 regs, 12\% occ) \\
     RC4: No Winograd                & Conv2d $3\times3$             & ${\approx}2$--$3\%$     & SM utilization delta            \\
