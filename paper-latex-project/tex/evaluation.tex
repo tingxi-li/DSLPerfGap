@@ -82,7 +82,7 @@
 % avoiding the memory-allocation overhead in PyTorch's eager path;
 % Triton (52.0\%) does not achieve the same fusion benefit on this shape.
 
-% \paragraph{Attention.}
+% \paragraph{Attention}
 % Attention results cannot be reduced to a single library efficiency number because the implementations differ algorithmically.
 % Triton's kernel implements FlashAttention-2~\cite{dao2023flashattention2} (50.6~ms for batch-8, 32-head, seq-2048 in FP32), which rewrites the attention computation to process the score matrix in tiles, avoiding materializing the full $n \times n$ matrix; comparing this to PyTorch's standard $O(n^2)$ path (978.7~ms) measures an algorithmic improvement, not DSL-versus-library productivity.
 % TileLang's kernel (1419.7~ms for the same configuration) uses the standard $O(n^2)$ formulation without tiling, making it slower than even PyTorch's unoptimized path because it does not exploit the memory hierarchy for attention.
@@ -311,7 +311,7 @@ Per-shape GEMM latencies are in the artifact (\texttt{slow\_kernels.csv}); $1638
 FP32 TileLang GEMM is excluded as silent TF32 lowering in \texttt{T.gemm} rather than a logic error (\cref{sec:analysis:jit}).
 \Cref{tab:summary} reports the category medians: the $16384^2$ Triton slowdown to 32.8\% reflects an under-populated auto-tune search space (RC2), while TileLang reaches 80.0\% on that shape via an explicit schedule.
 
-\paragraph{Attention.}
+\paragraph{Attention}
 Attention has no single library-efficiency number because the implementations differ algorithmically: Triton's FlashAttention-2~\cite{dao2023flashattention2} (44.83~ms) tiles the score matrix, while TileLang's untiled $O(n^2)$ kernel (5458.97~ms) is slower than even PyTorch's $O(n^2)$ path (3045.0~ms). Neither is a valid DSL-versus-library measurement for the same computation, so both are excluded from \cref{tab:summary}.
 
 \phantomsection\label{sec:eval:conv}

@@ -1,8 +1,7 @@
 % Introduction — pivoted framing (the DSL kernel *evaluation* problem).
 % Canonical: ../PIVOT_FRAMING.md. Pre-pivot gap-study drafts are in git history.
-% TODO(revision): add references.bib entries for the \cite{kernelbench} key (KernelBench,
-% Ouyang et al., Stanford ScalingIntelligence) and, if used, an LLM-kernel-generation
-% reward-hacking example. \cite{kernelbench} is currently undefined (non-fatal build warning).
+% TODO(revision): if an LLM-kernel-generation reward-hacking example is cited, add its
+% references.bib entry. (The \cite{kernelbench} key is now defined in references.bib.)
 
 Deep learning systems are now widely deployed, and their efficiency depends heavily on a small number of GPU kernels that dominate execution time~\cite{acceleration_survey, optimization_survey}.
 Frameworks have historically delegated these kernels to vendor libraries such as cuBLAS and cuDNN~\cite{cublas2024, chetlur2014cudnn}, but modern architectures increasingly require fused operators, specialized kernels, and model-specific computations that fall outside the fixed functionality those libraries expose~\cite{kernelfusion}.
@@ -14,12 +13,12 @@ tell whether it is performant. A correct kernel may match the vendor library or 
 orders of magnitude slower, and nothing in the source reveals which. When a kernel is
 correct but slow, the developer must still localize the loss to the algorithm, the
 schedule, or the compiler, and existing toolchains offer little diagnostic support
-for that distinction [10]. This is a software-engineering problem as much as a
+for that distinction. This is a software-engineering problem as much as a
 compiler one: a high-level kernel language is useful only if its performance behavior
 can be evaluated and reasoned about.
 
 The benchmarks practitioners rely on do not close this gap. The prevailing DSL and
-LLM-generated-kernel benchmarks, KernelBench [9] and TritonBench [11], gate on
+LLM-generated-kernel benchmarks, KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}, gate on
 correctness and report performance as an outcome rather than enforcing it. They
 therefore admit performance-poor kernels: a naive but idiomatic TileLang kernel
 passes the KernelBench-style gate while running more than 300$\times$ slower than

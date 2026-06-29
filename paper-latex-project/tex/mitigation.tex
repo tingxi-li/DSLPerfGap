@@ -10,20 +10,20 @@ We position the user-space fixes (RC0a, RC2a, the matmul L2-swizzle) as lower bo
 
 We propose two complementary checks a developer can apply without a curated benchmark.
 
-\paragraph{A comparability screen (pragmatic, baseline-relative).}
+\paragraph{A comparability screen (pragmatic, baseline-relative)}
 A well-written DSL kernel should (i) come within a small factor of the vendor/PyTorch baseline on representative shapes, (ii) be at least at parity---ideally faster---at large input sizes where launch and framework overheads amortize, and (iii) show no catastrophic per-shape collapse.
 This screen is cheap and catches gross failures: the idiomatic TileLang LayerNorm that runs more than $300\times$ slower (\cref{sec:eval:passesslow}) fails it immediately.
 Its limitation is circularity---PyTorch is simultaneously the baseline and the de-facto definition of ``good,'' so the screen cannot certify a kernel that merely matches an already-slow baseline, and it can be fooled into crediting a kernel that beats an \emph{unfused} eager path for the wrong reason (the RMSNorm $851\%$ ``win'' in \cref{tab:summary} is a fusion artifact, not headroom).
 It is therefore a screen, not a certificate.
 
-\paragraph{A roofline anchor (baseline-independent).}
+\paragraph{A roofline anchor (baseline-independent)}
 To break that circularity we anchor quality to the hardware rather than to PyTorch: for a kernel whose essential work is $W$ (bytes moved if memory-bound, FLOPs if compute-bound) and whose optimized time is $t$, the achieved roofline fraction is $\rho = W / (t \cdot P)$, where $P$ is the relevant hardware peak~\cite{williams2009roofline}.
 TritonBench reports an analogous achieved-peak metric~\cite{li2025tritonbench}; we use it not as a leaderboard score but as a \emph{decision signal}---a kernel near the memory or compute roof is well written \emph{regardless} of what the library does.
 \Cref{tab:roofline} reports $\rho$ for the optimized kernels on the A100-SXM4 (primary) and the GH200, alongside their PyTorch-relative efficiency $E_\text{lib}$ and the \emph{cliff} (naive-to-optimized speedup) that measures how much authoring headroom each kernel hid; the two architectures agree on every authoring-artifact vs.\ structural-residual classification (the GH200 $\rho$ values cited below are matched within $\pm0.1$ on the A100).
 The anchor does two things the comparability screen cannot.
 First, it confirms the genuine residuals are genuinely far from the hardware: optimized Triton Conv2d reaches only $\rho=0.16$ and index-returning argmax only $\rho=0.10$, so their shortfall is real headroom, not merely a fast baseline.
 Second, it de-inflates baseline-relative outliers: the RMSNorm kernel that looks like a $13\times$ ``win'' over PyTorch sits at $\rho=0.69$---well written, but not $13\times$ beyond what the hardware allows.
-The recovered normalization and reduction family lands at $\rho=0.41$--$0.87$, while the residual convolution and argmax kernels sit at $\rho\le0.28$ even after best-effort optimization; the cliff column shows these are not the same axis---LayerNorm hid a $1541\times$ authoring artifact that the dominant pattern fully recovers, whereas Conv2d's $8.2\times$ cliff still leaves it at $\rho=0.28$, a structural ceiling the rewrite cannot lift.
+On the GH200, the recovered normalization and reduction family lands at $\rho=0.41$--$0.87$, while the residual convolution and argmax kernels sit at $\rho\le0.28$ even after best-effort optimization (the A100 mirrors the split---$\rho=0.42$--$0.89$ recovered, $\le0.34$ residual---so the classification is architecture-independent); the cliff column shows these are not the same axis---LayerNorm hid a $1541\times$ authoring artifact that the dominant pattern fully recovers, whereas Conv2d's $8.2\times$ cliff still leaves it at $\rho=0.28$, a structural ceiling the rewrite cannot lift.
 We present the two checks together because neither suffices alone, and they disagree exactly in a judgment band near $\rho\approx0.5$: Softmax and Matmul both achieve $\rho=0.47$, yet Softmax is at parity ($E_\text{lib}=0.87$) while Matmul trails cuBLAS ($E_\text{lib}=0.68$)---only the two checks together make the call.
 
 \begin{table}[t]
@@ -85,7 +85,8 @@ We present the two checks together because neither suffices alone, and they disa
 \subsection{Normalization Kernels: Correcting RC0}
 \label{sec:mitig:norm}
 
-\paragraph{Finding: Two user-space fixes---\texttt{T.serial}$\to$\texttt{T.reduce} (dominant) and native bf16/fp16 I/O without intermediate \texttt{.float()} casts---bring TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch on the A100-SXM4 ($1347\times$ and $1157\times$ over the unoptimized baseline), confirming RC0 as the primary, fully user-correctable cause of the normalization deficit.}
+\medskip\noindent\textbf{Finding: Two user-space fixes---\texttt{T.serial}$\to$\texttt{T.reduce} (dominant) and native bf16/fp16 I/O without intermediate \texttt{.float()} casts---bring TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch on the A100-SXM4 ($1347\times$ and $1157\times$ over the unoptimized baseline), confirming RC0 as the primary, fully user-correctable cause of the normalization deficit.}
+
 The dominant fix is Step~1: a single \texttt{T.reduce} replacing the manual \texttt{T.serial} loop (subsequent iterations confirmed the loop structure, not thread configuration, was the bottleneck).
 Step~2, native bfloat16 I/O removing intermediate \texttt{.float()} casts, then brings LayerNorm from 364~ms to 0.270~ms (124\% of PyTorch) and RMSNorm to 0.254~ms (990\%, exceeding 100\% because the fixed kernel fuses the scaling pass that PyTorch's eager two-pass path does not)---near the $\approx$0.18~ms memory-bandwidth floor for an $8192^2$ bfloat16 tensor at the A100's $\approx$1.5~TB/s.
 This is not a new technique (\texttt{T.reduce} already existed); the contribution is showing RC0 fully explains the anomaly and is mechanically correctable in user space without algorithmic change.
@@ -94,7 +95,7 @@ The full 18-iteration LayerNorm trajectory is in \texttt{ITERATIONS.md}.
 \subsection{Convolution: Partial Recovery via Implicit GEMM}
 \label{sec:mitig:conv}
 
-\paragraph{Finding: Restructuring Conv2d as an FP16 Tensor-Core implicit GEMM with 16-byte-aligned input padding (RC1) and an expanded autotune space (RC2) reaches 36--76\% of cuDNN across the $1\times1$--$7\times7$ filter family on the A100-SXM4 (all correct)---narrowing but not closing the gap.}
+\medskip\noindent\textbf{Finding: Restructuring Conv2d as an FP16 Tensor-Core implicit GEMM with 16-byte-aligned input padding (RC1) and an expanded autotune space (RC2) reaches 36--76\% of cuDNN across the $1\times1$--$7\times7$ filter family on the A100-SXM4 (all correct)---narrowing but not closing the gap.}
 
 The restructuring unfolds the convolution into an on-the-fly implicit GEMM~\cite{zhou2021implicit} that FP16 Tensor Cores accelerate, with 16-byte input padding enabling \texttt{LDG.128} loads (RC1) and an expanded autotune space (smaller \texttt{BLOCK\_K}, more pipeline stages) covering configurations absent from the default list (RC2).
 Of the residual $\approx$20\% gap, absent Winograd selection contributes only $\approx$2--3\% (a 0.06\% deterministic-vs-non-deterministic delta for $3\times3$ stride-1); the remainder reflects general cuDNN implicit-GEMM tuning---kernel selection, split-K, shared-memory tile sizing---that the single-lowering DSL kernel does not match (RC4).
@@ -177,7 +178,7 @@ Of the residual Conv2d gap, only $\approx$2--3\% is attributable to absent Winog
 the rest reflects general cuDNN implicit-GEMM tuning
 (kernel selection across data layouts, split-K, and shared-mem tile sizing) that the Triton kernel does not match.
 
-\paragraph{Cross-architecture portability is itself an authoring concern.}
+\paragraph{Cross-architecture portability is itself an authoring concern}
 Two kernels show that a \emph{correct, hand-optimized} DSL kernel can pass on one GPU yet collapse on another, so single-GPU or single-shape benchmarking cannot certify it.
 \texttt{logsumexp} is one direction---fast on the A100 but register-spilling on the GH200 (\cref{tab:mitigation}); the in-tree TileLang Softmax is the other, and its cause is purely an authoring choice.
 That kernel caches the entire row in shared memory, so its per-block footprint grows with the row width ($2N$ bytes at fp16); on the A100 this monotonically erodes occupancy---the kernel is $20\times$ slower than PyTorch at $N{=}8192$ (16~KB of shared memory) and $111\times$ slower at $N{=}32768$ (64~KB, past the $48$~KB static budget), while staying numerically correct at every size (\texttt{softmax\_authoring.csv}).
