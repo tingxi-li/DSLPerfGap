@@ -262,7 +262,7 @@ A kernel that ``passes'' therefore certifies correctness, not quality.
 \subsection{Passing Is Not Fast}
 \label{sec:eval:passesslow}
 
-To show that this gap is not hypothetical, we run idiomatic but unoptimized DSL kernels---the kind a developer or an LLM generator would plausibly produce---through the KernelBench-style correctness gate and then time them.
+To show that this gap is not hypothetical, we run idiomatic but unoptimized DSL kernels---the kind a developer or an LLM generator would plausibly produce---through KernelBench's correctness gate and then time them.
 On the GH200, the live shipped TileLang LayerNorm kernel passes the gate on all five correctness shapes yet runs $323\times$ slower than PyTorch at the large shape under locked clocks ($51.5$~ms vs.\ $0.16$~ms); shipped TileLang RMSNorm passes and is $117\times$ slower. A deliberately constructed worst-case LayerNorm variant---fp32 internal I/O and a zero-initialized output buffer---is slower still, reaching $1293\times$ ($176.4$~ms, unlocked); even a naive argmax passes and is $16.7\times$ slower.
 In every case the gate returns \texttt{correct=True} and the more-than-$10\times$ reward-hacking guard never triggers, because the kernels are slow, not fast.
 The shipped kernels are not adversarial constructions: they are the reduction kernels shipped as idiomatic TileLang, differing from a competent implementation only in the reduction primitive (\cref{sec:analysis:jit}).

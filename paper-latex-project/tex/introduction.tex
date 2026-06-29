@@ -14,7 +14,7 @@ The benchmarks practitioners rely on do not even surface the slowness, let alone
 LLM-generated-kernel benchmarks, KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}, gate on
 correctness and report performance as an outcome rather than enforcing it. They
 therefore admit performance-poor kernels: a naive but idiomatic TileLang kernel
-passes the KernelBench-style gate while running more than 300$\times$ slower than
+passes KernelBench's correctness gate while running more than 300$\times$ slower than
 PyTorch, and the gate's lone reward-hacking guard never fires because it watches only
 for suspiciously fast kernels. These benchmarks also cover a narrow slice of the
 space, often one DSL, data type, shape, and GPU per task, so passing certifies little

@@ -113,7 +113,7 @@ to interpret counter measurements; they are not tabulated separately.
 \subsection{Evaluation-Gap and Heuristic Measurement}
 \label{sec:meth:evalgap}
 
-To test whether existing benchmarks admit slow kernels (RQ1), we run each naive DSL kernel through a KernelBench-style evaluator (\texttt{eval\_kernel\_against\_ref}), which overrides the candidate's input generators with the reference's, checks output equivalence on randomized inputs, and warns only when a kernel exceeds $10\times$ the reference speed; we record the pass/fail verdict and the measured slowdown against the PyTorch baseline.
+To test whether existing benchmarks admit slow kernels (RQ1), we run each naive DSL kernel through KernelBench's evaluator (\texttt{eval\_kernel\_against\_ref}), which overrides the candidate's input generators with the reference's, checks output equivalence on randomized inputs, and warns only when a kernel exceeds $10\times$ the reference speed; we record the pass/fail verdict and the measured slowdown against the PyTorch baseline.
 To compute the roofline anchor (RQ3), we model each kernel's essential work---bytes moved for memory-bound kernels (input plus output tensors) or FLOPs for compute-bound kernels---and divide the achieved work-rate by the relevant hardware peak (HBM bandwidth or FP16 Tensor-Core throughput) for the measured GPU; the peak assumed for each kernel is recorded alongside its measurement.
 
 \subsection{Experimental Setup}
