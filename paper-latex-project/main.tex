@@ -131,4 +131,20 @@ The empirical results suggest that current GPU DSLs are not uniformly competitiv
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 
+%%% ------------------------------------------------------------------
+%%% Supplementary material: content condensed from the main text for
+%%% length; retained here as appendices after the references.
+%%% ------------------------------------------------------------------
+\appendices
+
+\section{Threats to Validity}
+\label{sec:threats}
+\input{tex/threats}
+
+\section{Cross-Architecture Generalization}
+\label{sec:xarch}
+The main-paper tables report results on the two primary architectures (A100-SXM4 and GH200).
+As a robustness check, we replay the kernel suite and the root-cause taxonomy along an A100-SXM4 / A100-PCIE / H100 axis: the A100-SXM4 serves as the anchor, the A100-PCIE-40GB is a same-architecture (sm\_80) form-factor control, and the H100-80GB-HBM3 is a cross-family (sm\_90) control. The GH200 primary results remain in the main-paper tables.
+\input{tex/cross_arch}
+
 \end{document}
