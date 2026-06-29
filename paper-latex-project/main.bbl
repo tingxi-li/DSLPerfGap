@@ -90,25 +90,6 @@ A.~Ouyang, S.~Guo, S.~Arora, A.~L. Zhang, W.~Hu, C.~R\'{e}, and A.~Mirhoseini,
   Available: \url{https://arxiv.org/abs/2502.10517}
 \BIBentrySTDinterwordspacing
 
-\bibitem{gpuenergy}
-\BIBentryALTinterwordspacing
-S.~Mittal and J.~S. Vetter, ``A survey of methods for analyzing and improving
-  gpu energy efficiency,'' \emph{ACM Comput. Surv.}, vol.~47, no.~2, Aug. 2014.
-  [Online]. Available: \url{https://doi.org/10.1145/2636342}
-\BIBentrySTDinterwordspacing
-
-\bibitem{li2025tritonbench}
-\BIBentryALTinterwordspacing
-J.~Li, S.~Li, Z.~Gao, Q.~Shi, Y.~Li, Z.~Wang, J.~Huang, H.~Wang, J.~Wang,
-  X.~Han, Z.~Liu, and M.~Sun, ``{T}riton{B}ench: Benchmarking large language
-  model capabilities for generating triton operators,'' in \emph{Findings of
-  the Association for Computational Linguistics: ACL 2025}, W.~Che, J.~Nabende,
-  E.~Shutova, and M.~T. Pilehvar, Eds.\hskip 1em plus 0.5em minus 0.4em\relax
-  Vienna, Austria: Association for Computational Linguistics, Jul. 2025, pp.
-  23\,053--23\,066. [Online]. Available:
-  \url{https://aclanthology.org/2025.findings-acl.1183/}
-\BIBentrySTDinterwordspacing
-
 \bibitem{wolfe1989more}
 \BIBentryALTinterwordspacing
 M.~Wolfe, ``More iteration space tiling,'' in \emph{Proceedings of the 1989
@@ -161,9 +142,26 @@ H.~Li, K.~Man, P.~Kanuparthy, H.~Chen, W.~Sun, S.~Tallam, C.~Zhu, K.~Zhu, and
   \url{https://arxiv.org/abs/2512.09196}
 \BIBentrySTDinterwordspacing
 
+\bibitem{li2025tritonbench}
+\BIBentryALTinterwordspacing
+J.~Li, S.~Li, Z.~Gao, Q.~Shi, Y.~Li, Z.~Wang, J.~Huang, H.~Wang, J.~Wang,
+  X.~Han, Z.~Liu, and M.~Sun, ``{T}riton{B}ench: Benchmarking large language
+  model capabilities for generating triton operators,'' in \emph{Findings of
+  the Association for Computational Linguistics: ACL 2025}, W.~Che, J.~Nabende,
+  E.~Shutova, and M.~T. Pilehvar, Eds.\hskip 1em plus 0.5em minus 0.4em\relax
+  Vienna, Austria: Association for Computational Linguistics, Jul. 2025, pp.
+  23\,053--23\,066. [Online]. Available:
+  \url{https://aclanthology.org/2025.findings-acl.1183/}
+\BIBentrySTDinterwordspacing
+
 \bibitem{nsightcompute2024}
 {NVIDIA Corporation}, ``{NVIDIA} nsight compute,''
   \url{https://developer.nvidia.com/nsight-compute}, 2024.
+
+\bibitem{ako2026}
+S.~Xie, S.~Xie, D.~Ran, W.~Yang, and T.~Xie, ``{AKO}: Agentic kernel
+  optimization,'' \url{https://tongminglaic.github.io/AKO}, 2026, technical
+  report.
 
 \bibitem{dao2023flashattention2}
 \BIBentryALTinterwordspacing

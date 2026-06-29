@@ -22,43 +22,43 @@ Warning--empty booktitle in ragan-kelley2013halide
 Done.
 You've used 28 entries,
             4087 wiz_defined-function locations,
-            990 strings with 16472 characters,
-and the built_in function-call counts, 24398 in all, are:
-= -- 1699
-> -- 1052
-< -- 82
-+ -- 536
-- -- 249
-* -- 1222
-:= -- 3415
+            990 strings with 16487 characters,
+and the built_in function-call counts, 24419 in all, are:
+= -- 1691
+> -- 1064
+< -- 80
++ -- 542
+- -- 252
+* -- 1216
+:= -- 3398
 add.period$ -- 64
 call.type$ -- 28
-change.case$ -- 31
+change.case$ -- 32
 chr.to.int$ -- 174
 cite$ -- 31
 duplicate$ -- 1777
-empty$ -- 2000
-format.name$ -- 265
-if$ -- 5707
+empty$ -- 2006
+format.name$ -- 268
+if$ -- 5717
 int.to.chr$ -- 0
 int.to.str$ -- 28
-missing$ -- 440
-newline$ -- 143
+missing$ -- 444
+newline$ -- 141
 num.names$ -- 30
-pop$ -- 1196
+pop$ -- 1216
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1817
+skip$ -- 1816
 stack$ -- 0
-substring$ -- 551
-swap$ -- 1382
-text.length$ -- 24
+substring$ -- 553
+swap$ -- 1378
+text.length$ -- 22
 text.prefix$ -- 0
 top$ -- 5
 type$ -- 28
 warning$ -- 3
 while$ -- 62
 width$ -- 30
-write$ -- 324
+write$ -- 320
 (There were 5 warnings)
