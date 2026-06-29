@@ -31,19 +31,10 @@
 % This is a larger engineering effort but would close the algorithmic gap (RC4)
 % for $3 \times 3$ convolution workloads.
 
-Our results point to three practical directions for improving current GPU DSL systems.
-
-\textbf{Improve vectorization for convolution accesses (requires compiler change).}
-RC1 (\cref{sec:analysis}) shows that convolution performance is limited in part by the failure to emit wide \texttt{LDG.128} loads for strided spatial accesses. A direct compiler remedy is to extend alias and layout analysis to recognize the convolution access pattern and emit vectorized loads when the contiguous dimension is aligned (e.g., multiples of 8 for FP16). This change targets code generation rather than the programming model, and therefore does not require changes to the user-facing API.
-
-\textbf{Make auto-tuning shape-aware (partly user-space fixable today; broader search requires compiler change).}
-RC2 (\cref{sec:analysis}) indicates that static tuning configurations transfer poorly from GEMM-like workloads to convolution. The RC2a portion is fixable in user space today: manually expanding the configuration list (e.g., \texttt{GROUP\_SIZE\_M}/\texttt{num\_warps}/\texttt{num\_stages}) recovers most of the GEMM gap, as shown in \cref{sec:mitigation}. Closing the residual RC2b gap calls for auto-tuning strategies that are more adaptive to operator shape and memory-access structure. Prior work such as Ansor~\cite{zheng2020ansor} shows that sketch-based search can discover effective schedules for irregular operators, including convolution, without relying on manually enumerated templates. A similar shape-aware search mechanism for Triton or TileLang would be a concrete step toward reducing this gap.
-Our own sweep illustrates both the hazard and its cost: tuning at a shape smaller than deployment can select a configuration \emph{slower than the untuned default}, and tuning at the deployment shape---the obvious remedy---is expensive, because each candidate must be timed on the full-size problem.
-Re-tuning a single slow kernel (attention) at its deployment shape took $211$\,s versus under a second at the small shape---a ${\sim}1000\times$ difference that compounds across kernels, dtypes, and shapes.
-Shape-representative tuning is therefore not free; this reinforces both that an exhaustively-tuned comprehensive benchmark is infeasible (\cref{sec:evaluation}) and that the lightweight comparability-plus-roofline heuristics of \cref{sec:mitigation} are the more practical screen.
-
-\textbf{Support algorithmic alternatives for convolution (requires compiler change).}
-RC4 highlights a limitation that cannot be addressed through local schedule tuning alone: current DSL implementations do not expose algorithmic choices comparable to those available in cuDNN. In particular, support for Winograd-style transformations would allow the compiler or runtime to choose among direct convolution, GEMM lowering, and Winograd-based execution depending on filter shape and problem size. Although this requires a larger system change than RC1 or RC2, and the wall-clock benefit attributable specifically to Winograd is small ($\approx$2--3\%), it contributes to closing the remaining gap on common $3\times3$ convolutions.
+Our results point to three compiler-side directions, each tagged by the root cause it addresses.
+\textbf{Vectorize convolution accesses (RC1):} extend Triton's alias/layout analysis to emit wide \texttt{LDG.128} loads for strided spatial patterns when the contiguous dimension is aligned---a code-generation fix, not a user-facing API change.
+\textbf{Make auto-tuning shape-aware (RC2):} RC2a is user-space-fixable today by expanding the configuration list (\cref{sec:mitigation}), but the residual RC2b calls for search adaptive to operator shape, as sketch-based methods like Ansor~\cite{zheng2020ansor} demonstrate for irregular operators. Tuning at the deployment shape is itself costly---re-tuning attention there took $211$\,s versus under a second at a small shape, a ${\sim}1000\times$ difference---reinforcing both that an exhaustively-tuned comprehensive benchmark is infeasible (\cref{sec:evaluation}) and that the lightweight heuristics of \cref{sec:mitigation} are the more practical screen.
+\textbf{Support algorithmic alternatives (RC4):} exposing Winograd as a schedulable primitive would let the compiler choose among direct, GEMM-lowered, and Winograd execution by filter shape, though the wall-clock benefit is small ($\approx$2--3\%).
 
 
 % \subsection{Implications for Practitioners}

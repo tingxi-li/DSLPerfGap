@@ -266,13 +266,13 @@ To show that this gap is not hypothetical, we run idiomatic but unoptimized DSL 
 On the GH200, the live shipped TileLang LayerNorm kernel passes the gate on all five correctness shapes yet runs $323\times$ slower than PyTorch at the large shape under locked clocks ($51.5$~ms vs.\ $0.16$~ms); shipped TileLang RMSNorm passes and is $117\times$ slower. A deliberately constructed worst-case LayerNorm variant---fp32 internal I/O and a zero-initialized output buffer---is slower still, reaching $1293\times$ ($176.4$~ms, unlocked); even a naive argmax passes and is $16.7\times$ slower.
 In every case the gate returns \texttt{correct=True} and the more-than-$10\times$ reward-hacking guard never triggers, because the kernels are slow, not fast.
 The shipped kernels are not adversarial constructions: they are the reduction kernels shipped as idiomatic TileLang, differing from a competent implementation only in the reduction primitive (\cref{sec:analysis:jit}).
-The same authoring idiom shows the same qualitative gap on the A100 suite below, where the live shipped TileLang LayerNorm is $1087\times$ slower (\cref{tab:norm}; A100-SXM4, unlocked profile), with the suite magnitude and root-cause analysis measured on the A100 and the evaluation-gap and roofline results on the GH200; we report per-architecture magnitudes throughout and note where they differ.
+The same authoring idiom shows the same qualitative gap on the A100 suite below, where the live shipped TileLang LayerNorm is $1087\times$ slower (A100-SXM4, unlocked profile), with the suite magnitude and root-cause analysis measured on the A100 and the evaluation-gap and roofline results on the GH200; we report per-architecture magnitudes throughout and note where they differ.
 
 \subsection{The Hidden Gap These Benchmarks Admit}
 \label{sec:eval:overview}
 
 \Cref{fig:overview} summarizes library efficiency (\%) for all kernels in the suite, broken down by DSL (Triton, TileLang) and kernel category.
-The key finding is that the performance gap is not uniform: Triton is broadly competitive for element-wise and normalization kernels (88.7\% of PyTorch throughput for LayerNorm and $\sim$95--116\% for element-wise kernels; the RMSNorm outlier at 851.8\% is due to kernel fusion; see \cref{tab:norm}) but trails substantially on convolution (19.3\%) and large square GEMM (32.8\%); TileLang achieves competitive throughput only on a narrow set of large shapes while exhibiting severe underperformance on reductions and normalizations (0.1\% of PyTorch throughput on layer normalization).
+The key finding is that the performance gap is not uniform: Triton is broadly competitive for element-wise and normalization kernels (88.7\% of PyTorch throughput for LayerNorm and $\sim$95--116\% for element-wise kernels; the RMSNorm outlier at 851.8\% is due to kernel fusion; see \cref{tab:summary}) but trails substantially on convolution (19.3\%) and large square GEMM (32.8\%); TileLang achieves competitive throughput only on a narrow set of large shapes while exhibiting severe underperformance on reductions and normalizations (0.1\% of PyTorch throughput on layer normalization).
 These figures are for the \emph{idiomatic} kernels shipped in each DSL's examples; we show in RQ3 (\cref{sec:mitigation}) that the reduction and normalization gaps are authoring artifacts---a competent \texttt{T.reduce} rewrite recovers the family to PyTorch-comparable or better (with one hardware-specific exception we diagnose in \cref{sec:mitig:summary})---whereas the convolution and large-GEMM gaps largely persist even after best-effort optimization, marking the genuine residual.
 
 \begin{figure}[t]
@@ -291,7 +291,7 @@ These figures are for the \emph{idiomatic} kernels shipped in each DSL's example
     Dashed line marks parity (100\%).
     The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt{rms\_norm}:
     the PyTorch eager baseline does not fuse its normalization passes, making this
-    an unfair comparison rather than a genuine DSL win; see \cref{tab:norm}.
+    an unfair comparison rather than a genuine DSL win; see \cref{tab:summary}.
     The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt{fused linear+activation},
     a valid DSL advantage through kernel fusion; see \cref{sec:eval:gemm}.
     Attention excluded; see \cref{sec:eval:gemm}.}
@@ -311,143 +311,29 @@ TileLang achieves 548.6\% on fused linear+activation by fusing two passes into o
 while Triton degrades to 32.8\% on the $16384^2$ square matmul
 where its auto-tune search space is under-populated.}
 
-\Cref{tab:gemm} reports latency (ms) and library efficiency
-for FP16 matrix multiplication across representative shapes.
-
-\begin{table}[t]
-  \centering
-  \caption{GEMM-family kernels (FP16) latency (ms, lower is better), per configuration
-    on the A100-SXM4 and GH200 (both unlocked tuned profile).
-    $E_\text{lib}$ = library efficiency relative to PyTorch/cuBLAS baseline.
-    \textbf{Bold} marks best DSL result per row.}
-  \label{tab:gemm}
-  \resizebox{\columnwidth}{!}{
-  \begin{tabular}{l@{\hskip -2pt}rrrr r}
-    \toprule
-    Configuration & PyTorch & Triton & $E_{\text{lib}}$ & TileLang & $E_\text{lib}$ \\
-    \midrule
-    \multicolumn{6}{l}{\textit{Square matmul} $16384^2$} \\[2pt]
-    \quad A100  & 34.24 & 104.34 & 32.8\% & \textbf{42.80} & \textbf{80.0\%} \\
-    \quad GH200 & 13.71 & 24.34 & 56.3\% & \textbf{22.96} & \textbf{59.7\%} \\
-    \midrule
-    \multicolumn{6}{l}{\textit{Batched matmul} $64\times128^2$} \\[2pt]
-    \quad A100  & 0.0787 & \textbf{0.0959} & \textbf{82.1\%} & 0.1338 & 58.8\% \\
-    \quad GH200 & 0.0670 & \textbf{0.0566} & \textbf{118.4\%} & 0.1059 & 63.3\% \\
-    \multicolumn{6}{l}{\textit{Batched matmul} $128\times2048^2$} \\[2pt]
-    \quad A100  & 0.811 & \textbf{0.873} & \textbf{92.9\%} & 11.55 & 7.0\% \\
-    \quad GH200 & 0.351 & 0.535 & 65.6\% & \textbf{0.318} & \textbf{110.4\%} \\
-    \midrule
-    \multicolumn{6}{l}{\textit{Fused linear+activation} $1\times2048\to16384$} \\[2pt]
-    \quad A100  & 36.03 & 49.71 & 72.5\% & \textbf{6.57} & \textbf{548.6\%} \\
-    \quad GH200 & 12.48 & 7.35 & \textbf{169.9\%} & 7.66 & 163.0\% \\
-    \bottomrule
-  \end{tabular}
-  }
-\end{table}
-
-{\footnotesize\noindent\textit{Notation:} $16384^2$ denotes a square $16384\times16384$ FP16 GEMM;
-$64\times128^2$ denotes a batched GEMM of batch 64 over $128\times128$ matrices.
-FP32 TileLang GEMM is excluded; the failure is diagnosed as silent TF32 lowering in
-\texttt{T.gemm} (the SM80 \texttt{F32TF32TF32F32} MMA atom truncates the mantissa to 10 bits;
-see \cref{sec:analysis:jit}), not a logic error.\par}
-
-The 32.8\% efficiency on the $16384^2$ matmul reflects the auto-tuning search space limitation (RC2, \cref{sec:analysis}):
-Triton's default configuration list for square GEMM does not cover optimal tile shapes at this scale,
-and register pressure from large tile configurations reduces SM occupancy.
-TileLang performs better on this shape (80.0\%) because its explicit schedule
-specifies pipeline stages independently of tile size.
-For batched GEMM, both DSLs are competitive at the small scale (Triton 82.1\%, TileLang 58.8\%) but diverge at the large scale (Triton 92.9\%, TileLang 7.0\%),
-with TileLang further degraded by per-launch JIT compilation overhead.
-The fused linear+activation result shows TileLang achieving 548.6\%---
-it fuses the two-pass computation into a single kernel,
-avoiding the memory-allocation overhead in PyTorch's eager path;
-Triton (72.5\%) does not achieve the same fusion benefit on this shape.
+Per-shape GEMM latencies are in the artifact (\texttt{slow\_kernels.csv}); $16384^2$ denotes a square $16384\times16384$ FP16 GEMM and $64\times128^2$ a batched GEMM of batch 64 over $128\times128$ matrices.
+FP32 TileLang GEMM is excluded as silent TF32 lowering in \texttt{T.gemm} rather than a logic error (\cref{sec:analysis:jit}).
+\Cref{tab:summary} reports the category medians: the $16384^2$ Triton slowdown to 32.8\% reflects an under-populated auto-tune search space (RC2), TileLang reaches 80.0\% on that shape via an explicit schedule, and TileLang's 548.6\% on fused linear+activation comes from fusing two passes into one kernel.
 
 \paragraph{Attention.}
-Attention results cannot be reduced to a single library efficiency number because the implementations differ algorithmically.
-Triton's kernel implements FlashAttention-2~\cite{dao2023flashattention2} (44.83~ms at the large configuration), which rewrites the attention computation to process the score matrix in tiles, avoiding materializing the full $n \times n$ matrix; comparing this to PyTorch's standard $O(n^2)$ path (3045.0~ms) measures an algorithmic improvement, not DSL-versus-library productivity.
-TileLang's kernel (5458.97~ms for the same configuration) uses the standard $O(n^2)$ formulation without tiling, making it slower than even PyTorch's unoptimized path because it does not exploit the memory hierarchy for attention.
-Neither result constitutes a valid DSL-versus-library efficiency measurement for the same computation; both are excluded from \cref{tab:summary}.
+Attention has no single library-efficiency number because the implementations differ algorithmically: Triton's FlashAttention-2~\cite{dao2023flashattention2} (44.83~ms) tiles the score matrix, while TileLang's untiled $O(n^2)$ kernel (5458.97~ms) is slower than even PyTorch's $O(n^2)$ path (3045.0~ms). Neither is a valid DSL-versus-library measurement for the same computation, so both are excluded from \cref{tab:summary}.
 
 \phantomsection\label{sec:eval:conv}
 
 \medskip\noindent\textbf{Finding: Triton-written Conv2d kernels achieve 9.8--28.7\% of PyTorch/cuDNN throughput across standard $1\times1$--$7\times7$ filters at the large shape (up to 46.3\% at the small shape); TileLang Conv2d achieves 7.1--12.6\%, a deficit compounded by both per-launch JIT compilation overhead and absent vectorization of strided spatial accesses. Both DSLs collapse to $\le$5.4\% on depthwise convolution, which they lower to $N$ per-group GEMM launches.}
 
-\Cref{tab:conv} reports library efficiency for representative Conv2d configurations across six filter shapes.
-Inputs follow the NCHW layout (PyTorch's default arrangement).
-
-\begin{table}[t]
-  \centering
-  \caption{Conv2d library efficiency ($E_\text{lib}$, \%) on the A100-SXM4 (small and large shapes)
-    and GH200 (large shape; unlocked tuned profile).
-    NCHW layout (PyTorch default), FP16, padding ``same''.
-    $E_\text{lib}$ relative to PyTorch/cuDNN baseline (higher is better).
-    \textbf{Bold} marks the best DSL per cell.}
-  \label{tab:conv}
-  \resizebox{\columnwidth}{!}{%
-  \begin{tabular}{lrrrrrr}
-    \toprule
-    & \multicolumn{2}{c}{A100 $8\times64\times56^2$} & \multicolumn{2}{c}{A100 $32\times256\times128^2$} & \multicolumn{2}{c}{GH200 $32\times256\times128^2$} \\
-    \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-    Filter & Triton & TileLang & Triton & TileLang & Triton & TileLang \\
-    \midrule
-    $1\times1$           & \textbf{44.09\%} & 5.28\% & \textbf{28.69\%} & 7.15\%  & 28.97\% & \textbf{32.89\%} \\
-    $3\times3$           & \textbf{44.87\%} & 4.12\% & \textbf{19.33\%} & 12.62\% & 12.14\% & \textbf{54.05\%} \\
-    $5\times5$           & \textbf{30.19\%} & 7.58\% & \textbf{13.67\%} & 11.16\% & 8.08\%  & \textbf{49.48\%} \\
-    $7\times7$           & \textbf{20.53\%} & 9.05\% & \textbf{9.79\%}  & ---\,(OOM) & 9.77\% & \textbf{71.70\%} \\
-    depthwise $3\times3$ & \textbf{5.40\%}  & 0.05\% & \textbf{1.16\%}  & 0.05\%  & \textbf{0.84\%} & 0.04\% \\
-    $3\times3$ stride 2  & \textbf{46.34\%} & 4.17\% & \textbf{17.17\%} & 16.77\% & \textbf{13.28\%} & 7.24\% \\
-    \bottomrule
-  \end{tabular}}\\[2pt]
-  {\footnotesize PyTorch/cuDNN A100 large-shape ($32\times256\times128\times128$) baseline latencies (ms):
-    $1\times1$ 0.518, $3\times3$ 3.445, $5\times5$ 7.716, $7\times7$ 13.846, depthwise 0.776, stride-2 1.261.
-    TileLang $7\times7$ OOMs on the A100 (40\,GB) but not on the GH200, where it reaches 71.7\%.}
-\end{table}
-
-At the large shape Triton efficiency on the standard $1\times1$--$7\times7$ filters falls monotonically from 28.7\% ($1\times1$) through 19.3\% ($3\times3$), 13.7\% ($5\times5$), to 9.8\% ($7\times7$); the gap widens precisely on the Winograd-ineligible larger filters (\cref{sec:analysis}).
-TileLang holds a narrow 7.1--12.6\% band over the same filters.
-Depthwise convolution, which both DSLs lower to $N$ per-group GEMM launches, collapses to $\le$5.4\% for Triton and to $\sim$0.05\% for TileLang.
+\Cref{tab:summary} reports the convolution category medians; per-filter efficiencies (six filter shapes over two A100 input sizes plus the GH200) are in the artifact (\texttt{conv\_filters\_small.csv}, \texttt{slow\_kernels.csv}), with Triton falling monotonically from 28.7\% ($1\times1$) to 9.8\% ($7\times7$) as the gap widens on the Winograd-ineligible larger filters (\cref{sec:analysis}).
 Nsight Compute shows the conv gap is occupancy- and coalescing-bound (RC1 + RC2), not a register-spill problem: \texttt{n\_spills = 0} at every filter size for both DSLs.
-On the GH200, Triton convolution stays comparably weak (12.1\% at $3\times3$, $\le$9.8\% at the larger filters), but TileLang convolution is far stronger than on the A100 (32.9--71.7\% across $1\times1$--$7\times7$; \cref{tab:conv}), so the TileLang convolution collapse is largely an Ampere-specific scheduling artifact rather than intrinsic to the DSL---the persistent residual is the \emph{Triton} convolution gap, which holds on both architectures.
+On the GH200, Triton convolution stays comparably weak (12.1\% at $3\times3$, $\le$9.8\% at the larger filters), but TileLang convolution is far stronger than on the A100 (32.9--71.7\% across $1\times1$--$7\times7$; \cref{tab:summary}), so the TileLang convolution collapse is largely an Ampere-specific scheduling artifact rather than intrinsic to the DSL---the persistent residual is the \emph{Triton} convolution gap, which holds on both architectures.
 The root causes of these gaps are analyzed in \cref{sec:analysis}.
 
 \phantomsection\label{sec:eval:norm}
 
 \medskip\noindent\textbf{Finding: Triton normalization kernels match or substantially outperform PyTorch's eager paths; TileLang normalization collapses to less than 1\% of PyTorch throughput at the tested size ($8192 \times 8192$), with LayerNorm 1087$\times$ slower.}
 
-\Cref{tab:norm} reports latency for layer normalization and RMS normalization.
-Triton's \texttt{layer\_norm} achieves 88.7\% of PyTorch throughput at the large shape ($8192\times8192$, BF16).
-Triton's \texttt{rms\_norm} achieves 851.8\% efficiency because PyTorch's eager
-\texttt{rms\_norm} path does not fuse the variance-reduction and normalization passes,
-whereas the Triton kernel issues a single fused pass.
-TileLang normalization is catastrophically slow:
-0.1\% for LayerNorm (364.09~ms vs.\ PyTorch's 0.335~ms, a 1087$\times$ slowdown)
-and 0.9\% for RMSNorm (294.27~ms vs.\ 2.516~ms).
-As analyzed in \cref{sec:analysis:jit}, this reflects a combination of
-per-launch JIT overhead, absent vectorized memory loads,
-and serialized memory-latency exposure under \texttt{T.serial} reduction loops (\texttt{warp\_stall\_long\_scoreboard} dominates; \texttt{warp\_stall\_barrier} $\approx$ 0).
-
-\begin{table}[t]
-  \centering
-  \caption{Normalization latency (lower is better).
-    $E_\text{lib}$ relative to PyTorch eager baseline.}
-  \label{tab:norm}
-  \resizebox{\columnwidth}{!}{%
-  \begin{tabular}{llrrrrr}
-    \toprule
-    Kernel & Shape & PyTorch(ms) & Triton(ms) & $E_\text{lib}$ & TileLang(ms) & $E_\text{lib}$ \\
-    \midrule
-    LayerNorm & $8192^2$ BF16, A100  & 0.335 & \textbf{0.378} & \textbf{88.7\%}  & 364.09 & 0.1\% \\
-    LayerNorm & $8192^2$ BF16, GH200 & 0.140 & \textbf{0.188} & \textbf{74.8\%}  & 46.13  & 0.3\% \\
-    RMSNorm   & $8192^2$ FP16, A100  & 2.516 & \textbf{0.295} & \textbf{851.8\%} & 294.27 & 0.9\% \\
-    RMSNorm   & $8192^2$ FP16, GH200 & 1.276 & \textbf{0.118} & \textbf{1081\%}  & 38.87  & 3.3\% \\
-    \bottomrule
-  \end{tabular}}\\[2pt]
-  {\footnotesize A100 rows are the unlocked tuned profile; locked-clock re-timing (graphics 1215\,MHz / memory 1215\,MHz)
-    over 100 runs shows run-to-run relative std-dev 0.0--0.9\% on near-parity kernels, so the gaps are statistically
-    significant. GH200 rows are the unlocked tuned profile; TileLang LayerNorm there is 0.3\% ($329\times$), matching
-    the locked-clock $323\times$ in \cref{sec:eval:passesslow} within run-to-run noise.}
-\end{table}
+\Cref{tab:summary} reports the normalization category medians; per-shape latencies for both architectures are in the artifact (\texttt{slow\_kernels.csv}).
+At $8192^2$ on the A100, Triton \texttt{layer\_norm} reaches 88.7\% of PyTorch (the \texttt{rms\_norm} 851.8\% is a fusion artifact, not a win), whereas TileLang LayerNorm runs 364~ms versus PyTorch's 0.335~ms; the collapse persists on the GH200 ($329\times$, matching the locked-clock $323\times$ in \cref{sec:eval:passesslow} within noise).
+\Cref{sec:analysis:jit} traces it to serialized memory-latency exposure under \texttt{T.serial} reduction loops (\texttt{warp\_stall\_long\_scoreboard} dominates; \texttt{warp\_stall\_barrier} $\approx$ 0).
 
 \phantomsection\label{sec:eval:tuning}
 
@@ -457,12 +343,7 @@ default and tuned configurations produce nearly identical latencies for all kern
 The convolution gap is essentially unchanged (19.3\%).
 TileLang shows no measurable benefit from tuning across any kernel.}
 
-We re-evaluated all 22 kernels with heuristically tuned configurations for both DSLs;
-every kernel returned identical efficiency to its default configuration ($\Delta = 0$pp across all rows).
-This indicates that either the default configurations are already optimal for this hardware,
-or the tuner's search space does not cover configurations that would improve performance on the NVIDIA A100-SXM4-40GB.
-The convolution gap (19.3\%) is unchanged by tuning,
-consistent with RC1--RC3 being structural compiler limitations rather than search-space coverage problems (\cref{sec:analysis}).
+Re-evaluating all 22 kernels with heuristically tuned configurations for both DSLs changed nothing ($\Delta = 0$pp on every row, convolution included), consistent with RC1--RC3 being structural compiler limitations rather than search-space coverage problems (\cref{sec:analysis}).
 
 The apparent tension between this $\Delta \approx 0$pp result and the matmul speedup reported in \cref{sec:mitig:other} is a search-space distinction, not a shape distinction.
 Here, ``heuristic tuning'' refers to the 12-config block-tile grid (varying only block-$M$/$N$/$K$);
@@ -507,42 +388,9 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
 \end{table}
 
 The most striking asymmetry is TileLang's normalization collapse:
-a $1087\times$ slowdown on large LayerNorm (\cref{sec:analysis:jit}) attributable to three compounding deficiencies (RC0), and it persists across architectures ($329\times$ on the GH200, \cref{tab:norm}).
-On the A100, Triton is broadly competitive with PyTorch for element-wise ($\sim$95--116\%) and normalization (88.7\%) kernels
-but exhibits a persistent gap on convolution (19.3\%) and large square GEMM (32.8\%).
-TileLang on the A100 shows competitive throughput only on fused linear+activation (548.6\%)
-and large square matmul (80.0\%);
-all other A100 TileLang results trail PyTorch substantially,
-with element-wise operations at $\sim$67--74\% and batched GEMM at 7.0\%.
+a $1087\times$ slowdown on large LayerNorm (\cref{sec:analysis:jit}) attributable to three compounding deficiencies (RC0), and it persists across architectures ($329\times$ on the GH200).
+On the A100 (\cref{tab:summary}), Triton is broadly competitive for element-wise and normalization kernels but trails on convolution and large square GEMM, while TileLang is competitive only on fused linear+activation and large square matmul.
 The GH200 reorders this strength profile (\cref{tab:summary}): TileLang is markedly more competitive there---batched GEMM $110\%$, convolution $54\%$, square matmul $60\%$, overall median $\sim$67\% versus $\sim$29\% on the A100---so the two gaps that survive on \emph{both} architectures are the TileLang normalization collapse and the Triton convolution residual ($\le$13\% at $3\times3$), not a fixed per-DSL ranking. This hardware-dependence is itself the point: a DSL kernel's competitiveness cannot be read off one GPU.
 
-\Cref{tab:ew} reports per-kernel library efficiency for the 15 element-wise and reduction kernels individually at the large input size.
-Entries above 100\% (marked $^\dagger$) reflect kernel fusion or an unfused/eager PyTorch baseline rather than genuine speedups over a vendor library, and should not be read as pure DSL wins.
-
-\begin{table}[t]
-  \centering
-  \caption{Per-kernel library efficiency ($E_\text{lib}$, \%) for the 15 element-wise and reduction kernels at the large input size, NVIDIA A100-SXM4-40GB.
-    $^\dagger$ marks entries $>$100\%, which reflect kernel fusion or an unfused/eager PyTorch baseline (not pure DSL speedups over a vendor library).}
-  \label{tab:ew}
-  \begin{tabular}{lrr}
-    \toprule
-    Kernel & Triton & TileLang \\
-    \midrule
-    \texttt{add}              & 89.5\%               & 74.5\%   \\
-    \texttt{mul}              & 69.7\%               & 67.6\%   \\
-    \texttt{relu}             & 95.4\%               & 68.3\%   \\
-    \texttt{leaky\_relu}      & 427.9\%$^\dagger$    & 1241.7\%$^\dagger$ \\
-    \texttt{swiglu}           & 267.1\%$^\dagger$    & 104.2\%$^\dagger$  \\
-    \texttt{softmax}          & 116.0\%$^\dagger$    & 19.0\%   \\
-    \texttt{log\_softmax}     & 44.9\%               & 17.0\%   \\
-    \texttt{logsumexp}        & 475.7\%$^\dagger$    & 57.6\%   \\
-    \texttt{argmax}           & 4.7\%                & 5.2\%    \\
-    \texttt{max\_reduction}   & 12.7\%               & 4.7\%    \\
-    \texttt{mean\_reduction}  & 72.5\%               & 7.2\%    \\
-    \texttt{cross\_entropy}   & 1132.2\%$^\dagger$   & 111.0\%$^\dagger$  \\
-    \texttt{embedding}        & 441.9\%$^\dagger$    & 70.1\%   \\
-    \texttt{index\_select}    & 60.5\%               & 55.2\%   \\
-    \texttt{matrix\_transpose} & 340.1\%$^\dagger$   & 107.4\%$^\dagger$  \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+Within the element-wise and reduction category, most kernels cluster near the per-DSL medians in \cref{tab:summary}; the notable Triton outliers are the index-returning reductions \texttt{argmax} (4.7\%) and \texttt{max\_reduction} (12.7\%), while fusion or unfused-eager-baseline cases (\texttt{leaky\_relu}, \texttt{cross\_entropy}, \texttt{linear+act}) exceed 100\% and are not vendor-library speedups.
+Per-kernel efficiencies for all 15 kernels are in the artifact (\texttt{slow\_kernels.csv}).

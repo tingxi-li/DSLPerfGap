@@ -227,8 +227,8 @@
 %   \end{tabular}
 % \end{table*}
 
-The kernels in \cref{sec:evaluation} pass existing correctness benchmarks (\cref{sec:eval:survey}) yet lag the vendor library by the margins reported there.
-This section identifies the causes of that hidden gap, separated by where the fix belongs: user-space \emph{authoring} (RC0a), compiler \emph{code generation} (RC0b, RC1, RC2a), and \emph{library maturity}---the tuning and algorithm selection a mature vendor library provides (RC2b, RC4).
+This section answers RQ2: for the kernels that pass existing correctness benchmarks (\cref{sec:eval:survey}) yet lag the vendor library by the margins in \cref{sec:evaluation}, what causes the hidden gap?
+We separate the causes by where the fix belongs: user-space \emph{authoring} (RC0a), compiler \emph{code generation} (RC0b, RC1, RC2a), and \emph{library maturity}---the tuning and algorithm selection a mature vendor library provides (RC2b, RC4).
 This separation is what makes the gap actionable: authoring causes a developer can fix today, code-generation causes require compiler work, and library-maturity causes bound what any DSL kernel can currently reach.
 
 \noindent\textit{The following root causes are motivated by latency measurements (\cref{sec:evaluation}) and community reports~\cite{triton2022conv591}.}
@@ -241,8 +241,7 @@ RC0a is a user-space kernel-authoring choice, while RC0b is a compiler-codegen d
 \paragraph{RC0a: TileLang Reduction Authoring (\texttt{T.serial} $\to$ \texttt{T.reduce}).}
 First, the original TileLang normalization kernels implement the reduction over the normalized dimension using \texttt{T.serial} loops---TileLang's sequential for-loop construct---iterating over each partial sum one at a time.
 For LayerNorm, which accumulates 8 bfloat16 partial statistics per thread (sum and sum-of-squares for the mean and variance passes), this means the reduction is computed in 8 sequential steps with no inter-thread parallelism.
-The native alternative, \texttt{T.reduce}, lowers to a parallel butterfly reduction via \texttt{tl::AllReduce}.
-A \emph{butterfly reduction} is a logarithmic communication pattern in which threads exchange partial results in $\log_2 N$ rounds (here $\log_2(256/32)$ rounds over 256 threads grouped into warps of 32).
+The native alternative, \texttt{T.reduce}, lowers to a parallel butterfly reduction (\texttt{tl::AllReduce}), exchanging partial results in $\log_2 N$ rounds.
 This algorithmic structure, however, is not where the cost lies: on the A100, the performance gain from \texttt{T.reduce} comes from better memory-latency hiding---\texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$---not from removing barriers, since \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both the \texttt{T.serial} and \texttt{T.reduce} kernels. The GH200 \texttt{ncu} counters confirm the same signature on \texttt{sm\_90}: \texttt{warp\_stall\_barrier}${=}0$ with \texttt{warp\_stall\_long\_scoreboard}${=}49.95$ dominating, alongside a $34$\,GB local-store register spill (RC3).
 Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: on the A100, LayerNorm drops from 364~ms to 0.270~ms ($1347\times$ improvement, \cref{sec:mitig:norm}).
 
@@ -258,14 +257,7 @@ On the A100, NCU confirms this scalar-granularity access for TileLang LayerNorm:
 Unlike RC0a, this deficiency cannot be addressed in user space and requires a compiler-codegen fix.
 
 \paragraph{TileLang float32 lowering to TF32.}
-A third deficiency surfaced as a correctness failure under float32 precision but is rooted in silent TF32 lowering rather than a logic error.
-On the A100, TileLang's \texttt{T.gemm} kernel fails an exact float32 check (atol $10^{-5}$) on 31.8\% of output elements, with a maximum absolute difference of 0.185 at the tested shape $4096 \times 2048 \times 1024$.
-This error is in the same magnitude class as cuBLAS's own TF32 path, and a manual FMA float32 kernel passes the same $10^{-5}$ check---isolating the fault to \texttt{T.gemm}.
-The mechanism is that TileLang exposes no user-space TF32 knob: float32 \texttt{T.gemm} lowers to the SM80 \texttt{F32TF32TF32F32} MMA atom, whose 10-bit input mantissa (vs.\ FP32's 23-bit) truncates precision.
-The behavior is reproducible across four isolation arms in \texttt{exp\_fp32\_gemm.py}.
-For this reason, all TileLang GEMM measurements in this paper use FP16;
-float32 TileLang GEMM results are excluded.
-This is a precision-lowering artifact, not a performance gap, but it has implications for training workloads that require true FP32 accumulation precision.
+Separately, TileLang's \texttt{T.gemm} silently lowers float32 to TF32 on SM80 (the \texttt{F32TF32TF32F32} MMA atom truncates the input mantissa to 10 bits), failing an exact $10^{-5}$ float32 check on 31.8\% of outputs while a manual FMA kernel passes the same check (reproducible across four arms in \texttt{exp\_fp32\_gemm.py})---a precision-lowering artifact, not a performance gap, so all TileLang GEMM here is measured in FP16.
 
 
 \textbf{Finding RC0: TileLang's compiled kernels exhibit two structural performance deficiencies:
@@ -283,25 +275,8 @@ aligned, contiguous access descriptors.
 For GEMM kernels, Triton's compiler successfully emits vectorized loads
 because the data layout is row-major and tile boundaries are aligned to 16-byte boundaries.
 
-Convolution complicates this in two ways.
-First, each output element requires gathering input values from a
-$(K_H \times K_W)$-window strided by \texttt{(stride\_h, stride\_w)} in the spatial dimensions.
-The resulting access pattern is a strided gather across the innermost dimension
-when the input is stored in NCHW layout (PyTorch's default, as benchmarked),
-breaking the alignment requirements for \texttt{LDG.128}.
-Second, for filter sizes $K_H \times K_W > 1$,
-the compiler must prove at compile time that successive iterations of the
-spatial reduction loop produce aligned addresses;
-this proof is not discharged by Triton's current alias analysis,
-so it conservatively emits scalar 32-bit loads.
-
-The consequence is a cascade noted in the community~\cite{triton2022conv591}:
-un-vectorized accesses prevent \texttt{cp.async} from firing,
-because CUDA's asynchronous copy instructions require the source address
-to produce a 128-bit aligned transfer.
-Without \texttt{cp.async}, the software pipeline cannot overlap data movement with computation,
-and the kernel stalls on global memory latency at every tile boundary.
-On the A100's HBM2e interface (${\approx}1.5$~TB/s peak), scalar 32-bit loads achieve only a small fraction of peak bandwidth; \texttt{LDG.128} vectorized loads are required to saturate the memory bus.
+Convolution breaks this in two ways: each output gathers a $(K_H\times K_W)$ window strided across the innermost NCHW dimension (PyTorch's default), breaking \texttt{LDG.128} alignment; and for $K_H\times K_W>1$ Triton's alias analysis cannot prove successive spatial-loop iterations are aligned, so it conservatively emits scalar 32-bit loads.
+The consequence is a cascade noted in the community~\cite{triton2022conv591}: un-vectorized loads prevent \texttt{cp.async} from firing (it requires 128-bit aligned transfers), so the software pipeline cannot overlap data movement with computation and the kernel stalls on global-memory latency at every tile boundary, reaching only a fraction of the A100's ${\approx}1.5$~TB/s.
 
 \textbf{Finding RC1: Triton-generated convolution code fails to issue vectorized (128-bit) load instructions,
 preventing asynchronous copy (\texttt{cp.async}) from being applied and collapsing the software pipeline.}
@@ -317,23 +292,14 @@ are optimal across most A100 problem shapes~\cite{tillet2019triton}.
 The reference Triton GEMM tutorial ships a configuration list that achieves
 near-cuBLAS performance for common shapes, but omits the L2-swizzle and large-shape configurations needed at scale.
 
-This is evidenced by the large-matmul result in \cref{sec:eval:gemm}:
-Triton achieves only 32.8\% of cuBLAS throughput on a $16384^2$ FP16 matrix multiplication
-(104.34~ms vs.\ PyTorch's 34.24~ms),
-a shape not covered by standard tutorial configuration lists,
-compared to 92.9\% on a $128\times2048^2$ batched GEMM
-where the auto-tuner has well-populated configurations.
-The convolution gap (19.3\% for the $32\times256\times128\times128$, $3\times3$ configuration)
-follows the same pattern at an even larger scale.
-Expanding the search beyond the default 12-config block-tile grid (sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, and \texttt{num\_stages}) recovers Triton from 32.5\% to 81.8\% of cuBLAS at $16384^2$ (a $2.52\times$ gain) and from 56.4\% to 76.5\% at $4096^2$, confirming that the missing configurations---not an exhausted search budget---bound default performance (\cref{sec:mitigation}).
+The $16384^2$ matmul (\cref{sec:eval:gemm}) is the clearest case: Triton reaches only 32.8\% of cuBLAS at a shape absent from standard tutorial configuration lists, versus 92.9\% on a well-populated batched GEMM.
+Expanding the search beyond the default 12-config grid (sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, \texttt{num\_stages}) recovers it from 32.5\% to 81.8\% at $16384^2$ ($2.52\times$), confirming the missing configurations---not an exhausted budget---bound default performance (\cref{sec:mitigation}).
 
 \paragraph{RC2b: L2 Cache Residency.}
 For the $16384^2$ matmul, the combined A, B, C footprint (${\approx}1.6$~GB) vastly exceeds the A100's 40~MB L2 cache; cuBLAS employs hardware-specific cache-blocking (via \texttt{cuBLASLt}'s plan selector) while Triton's generic \texttt{tl.dot} compilation lacks equivalent heuristics, producing the ${\approx}3\times$ latency penalty observed ($34.24$~ms vs.\ $104.34$~ms).
 On the A100, NCU confirms the residency divide: Triton's $16384^2$ matmul reaches only a 49.4\% L2 hit rate and is DRAM-bound at 85.9\% DRAM throughput, whereas cuBLAS holds an 80.5\% L2 hit rate at 28.8\% DRAM throughput.
 
-Convolution adds filter-size degrees of freedom: $1\times1$ convolutions behave like GEMM (large tiles preferred), while $3\times3$ require smaller $K$-dimension tiles to keep shared memory within 48~KB per SM.
-Default configuration lists do not cover $5\times5$ and $7\times7$ filters, leaving substantial performance on the table.
-TileLang additionally requires \texttt{num\_stages} to be declared ahead of time; for large filters the optimal value depends on register pressure from spatial accumulation---a dependency current scheduling heuristics do not model.
+Convolution adds filter-size degrees of freedom that default lists do not cover for $5\times5$/$7\times7$, and TileLang's ahead-of-time \texttt{num\_stages} cannot adapt to the register pressure large filters create.
 
 \textbf{Finding RC2: The static tile-configuration search space in Triton's \texttt{@triton.autotune}
 omits configurations needed at scale (RC2a: L2-swizzle and large-shape tiles absent from the default grid), and Triton's generic compilation lacks the L2 cache-blocking heuristics cuBLAS applies once the working set exceeds L2 (RC2b).}
@@ -350,15 +316,8 @@ This register pressure---not any convolution effect---is what collapses occupanc
 
 \phantomsection\label{sec:analysis:algo}
 \paragraph{RC4: Absence of Algorithm-Level Diversity.}
-cuDNN's runtime selector chooses Winograd for $3 \times 3$ filters
-when arithmetic reduction is the bottleneck.
-Winograd convolution reduces the multiply-accumulate count by a factor of
-approximately $2.25\times$ for $3 \times 3$ (Winograd $F(2,3)$) filters,
-at the cost of additional data transformation passes.
-Neither Triton nor TileLang expose the Winograd transformation
-as a schedulable primitive,
-so they cannot exploit this arithmetic reduction.
-Isolating this effect on the A100, however, bounds its size: a deterministic A/B comparison of cuDNN on $3\times3$ stride-1 convolution differs by only 0.06\% (a ratio of 0.9994), so absent Winograd selection accounts for at most ${\approx}2$--$3\%$ of the gap.
+cuDNN selects Winograd for $3\times3$ filters when arithmetic reduction dominates (Winograd $F(2,3)$ cuts multiply-accumulates ${\approx}2.25\times$), but neither Triton nor TileLang exposes the transformation as a schedulable primitive.
+Isolating this effect on the A100 bounds its size: a deterministic A/B comparison of cuDNN on $3\times3$ stride-1 convolution differs by only 0.06\% (a ratio of 0.9994), so absent Winograd selection accounts for at most ${\approx}2$--$3\%$ of the gap.
 Moreover, the measured Triton-vs-cuDNN gap \emph{widens} on Winograd-ineligible filters ($3\times3$ s1 19.25\%, $3\times3$ s2 16.94\%, $5\times5$ 13.5\%, $7\times7$ 9.81\%), indicating that the residual is general cuDNN implicit-GEMM tuning rather than algorithm selection.
 
 \textbf{Finding RC4: Absent Winograd selection accounts for at most ${\approx}2$--$3\%$ of the residual $3\times3$ convolution gap on the A100; the remainder reflects cuDNN's general implicit-GEMM tuning, and the gap widens on Winograd-ineligible filters.}
