@@ -29,9 +29,11 @@ the hidden gap and distill practical evaluation heuristics + optimization patter
 
 DSLs such as Triton and TileLang are promoted as delivering near-vendor-library performance with far
 lower effort, and are increasingly the lowering target for compilers (`torch.compile`) and LLM kernel
-generators. But a developer who writes a *functionally correct* DSL kernel has no dependable signal for
-whether it is *performant*: the kernel can pass existing benchmarks and still be 5–300× slower than the
-vendor library. Prevailing DSL/LLM-kernel benchmarks (KernelBench, TritonBench) gate on correctness (and
+generators. But a developer who writes a *functionally correct* DSL kernel can time it against the vendor library and
+see *whether* it is slow, yet has no dependable signal for *why* — whether a faster implementation exists,
+the kernel already sits at the achievable ceiling, or the loss lies in code generation or library
+maturity; and for fused, model-specific ops there is often no vendor baseline to compare against at all.
+The kernel can also pass existing benchmarks and still be 5–300× slower than the vendor library. Prevailing DSL/LLM-kernel benchmarks (KernelBench, TritonBench) gate on correctness (and
 at most a weak speedup-over-eager check) and therefore admit performance-poor kernels, while under-
 covering DSLs, dtypes, shapes, and hardware and only partially preventing reward hacking. A benchmark
 comprehensive enough to close this gap is combinatorially infeasible. As a pragmatic alternative we (a)

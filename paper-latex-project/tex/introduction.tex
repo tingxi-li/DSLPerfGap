@@ -8,16 +8,12 @@ Frameworks have historically delegated these kernels to vendor libraries such as
 Achieving high performance therefore now depends on the ability to generate efficient \emph{custom} kernels, and domain-specific languages (DSLs) such as Triton~\cite{openai2021triton} and TileLang~\cite{wang2025tilelang} have become the standard way to write them: they express kernels at the tile level while delegating memory movement, scheduling, and code generation to a compiler.
 Their reach extends well beyond hand-written code---Triton is the lowering target for \texttt{torch.compile}~\cite{li2023torchcompile}, and DSLs are increasingly the output of LLM-based kernel generators~\cite{kernelbench}---so the efficiency of DSL-generated kernels is now a first-order concern: whether a given DSL kernel actually delivers on the promise of vendor-comparable performance is what this paper sets out to evaluate.
 
-A developer, or a generator, who produces a functionally correct DSL kernel cannot
-tell whether it is performant. A correct kernel may match the vendor library or run
-orders of magnitude slower, and nothing in the source reveals which. When a kernel is
-correct but slow, the developer must still localize the loss to the algorithm, the
-schedule, or the compiler, and existing toolchains offer little diagnostic support
-for that distinction. This is a software-engineering problem as much as a
-compiler one: a high-level kernel language is useful only if its performance behavior
-can be evaluated and reasoned about.
+Comparing a kernel against the vendor library reveals whether it is slow, but not what to do about it.
+A correct DSL kernel may beat the vendor library, match it, or trail it by orders of magnitude, and the measurement alone does not say which of three explanations holds: the kernel is poorly authored and a faster implementation exists; it already sits near the achievable ceiling for the operator and the hardware, so further effort is wasted; or the loss originates in the compiler's code generation or the relative immaturity of the DSL's libraries, beyond what rewriting the kernel can fix.
+No systematic method separates these cases, so a developer learns that a kernel is slow without learning whether, or how, it can be made faster---and for the fused, model-specific operators that motivate DSLs in the first place, often no strong vendor baseline even exists to anchor the comparison.
+This is a software-engineering problem as much as a compiler one: a high-level kernel language is useful only if the performance of the kernels written in it can be attributed, not merely observed.
 
-The benchmarks practitioners rely on do not close this gap. The prevailing DSL and
+The benchmarks practitioners rely on do not even surface the slowness, let alone attribute it. The prevailing DSL and
 LLM-generated-kernel benchmarks, KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}, gate on
 correctness and report performance as an outcome rather than enforcing it. They
 therefore admit performance-poor kernels: a naive but idiomatic TileLang kernel
