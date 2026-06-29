@@ -241,4 +241,4 @@ The streaming variant---tiling the reduction over fixed $4$~KB blocks instead of
   unoptimized DSL kernel (Matmul: plain Triton; Conv2d: baseline vs.\ implicit-GEMM Triton at $3\times3$); Matmul at $4096^2$.}
 
 \end{table}
-The \cref{tab:mitigation} mitigations are re-timed on the A100-SXM4 (locked clocks; the matmul figure is the AKO4ALL-campaign value pending the \cref{sec:mitig:other} reconciliation), and the optimized kernels revalidate against the same ViperBench tolerances (5/5 pass, 0 edge-case crashes). RC2b-style search-space expansion is the higher-leverage of the two remaining convolution future-work directions.
+The \cref{tab:mitigation} mitigations are re-timed on the A100-SXM4 (locked clocks; the matmul figure is the $4096^2$ autotune value, reconciled in \cref{sec:mitig:other} against the $16384^2$ RQ1 shape), and the optimized kernels revalidate against the same per-dtype tolerances (5/5 pass, 0 edge-case crashes). RC2b-style search-space expansion is the higher-leverage of the two remaining convolution future-work directions.
