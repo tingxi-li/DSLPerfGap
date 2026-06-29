@@ -7,20 +7,7 @@
 Deep learning systems are now widely deployed, and their efficiency depends heavily on a small number of GPU kernels that dominate execution time~\cite{acceleration_survey, optimization_survey}.
 Frameworks have historically delegated these kernels to vendor libraries such as cuBLAS and cuDNN~\cite{cublas2024, chetlur2014cudnn}, but modern architectures increasingly require fused operators, specialized kernels, and model-specific computations that fall outside the fixed functionality those libraries expose~\cite{kernelfusion}.
 Achieving high performance therefore now depends on the ability to generate efficient \emph{custom} kernels, and domain-specific languages (DSLs) such as Triton~\cite{openai2021triton} and TileLang~\cite{wang2025tilelang} have become the standard way to write them: they express kernels at the tile level while delegating memory movement, scheduling, and code generation to a compiler.
-Their reach extends well beyond hand-written code---Triton is the lowering target for \texttt{torch.compile}~\cite{li2023torchcompile}, and DSLs are increasingly the output of LLM-based kernel generators~\cite{kernelbench}---so the efficiency of DSL-generated kernels is now a first-order concern.
-
-Deep learning efficiency depends on a small number of GPU kernels that dominate
-execution time [1], [2]. Frameworks historically delegated these kernels to vendor
-libraries such as cuBLAS and cuDNN [3], [4], but modern models increasingly need
-fused, specialized, and model-specific operators that fall outside the fixed
-functionality those libraries expose [5]. Writing efficient custom kernels is
-therefore now the bottleneck, and domain-specific languages (DSLs) such as Triton [6]
-and TileLang [7] have become the standard way to write them: the programmer expresses
-computation at the tile level and delegates memory movement, scheduling, and code
-generation to a compiler, in exchange for the promise of vendor-comparable
-performance at far lower effort. DSLs are increasingly the output of LLM-based kernel
-generators [9] rather than written by hand. Whether a given DSL kernel actually
-delivers on that promise is therefore a first-order concern.
+Their reach extends well beyond hand-written code---Triton is the lowering target for \texttt{torch.compile}~\cite{li2023torchcompile}, and DSLs are increasingly the output of LLM-based kernel generators~\cite{kernelbench}---so the efficiency of DSL-generated kernels is now a first-order concern: whether a given DSL kernel actually delivers on the promise of vendor-comparable performance is what this paper sets out to evaluate.
 
 A developer, or a generator, who produces a functionally correct DSL kernel cannot
 tell whether it is performant. A correct kernel may match the vendor library or run
@@ -41,11 +28,6 @@ for suspiciously fast kernels. These benchmarks also cover a narrow slice of the
 space, often one DSL, data type, shape, and GPU per task, so passing certifies little
 about quality. A benchmark comprehensive enough to span every operator, data type,
 shape, and architecture is combinatorially infeasible to build and maintain.
-
-Our findings are threefold.
-First, the evaluation gap is real and large: naive-but-correct kernels pass the gate while running hundreds of times slower---the shipped TileLang LayerNorm is $323\times$ slower under locked clocks---and the dominant benchmarks neither gate on performance nor cover enough of the space to catch it.
-Second, the hidden gap is highly structured: most is an \emph{authoring} artifact that a single reduction-primitive change (\texttt{T.serial}$\rightarrow$\texttt{T.reduce} with native-dtype I/O) repairs to library parity or better, while a residual convolution gap is structural (cuDNN's implicit-GEMM maturity; absent Winograd contributes only $\approx$2--3\%); we separate causes by \emph{where the fix belongs}---user-space authoring, code generation, and library maturity.
-Third, absent a comprehensive benchmark, lightweight heuristics suffice: a library-comparability check anchored by a baseline-independent roofline fraction cleanly separates well-written kernels from poor ones, and a small set of recurring optimization patterns guides the fixes.
 
 This paper makes the following contributions:
 \begin{itemize}

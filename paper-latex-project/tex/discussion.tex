@@ -57,13 +57,13 @@ Our results point to three compiler-side directions, each tagged by the root cau
 % then check register spill (RC3).
 % For $3 \times 3$ filters, evaluate whether Winograd overhead is justified (RC4).
 
-The results also have immediate consequences for users who adopt DSLs to replace library-backed kernels.
+The results also guide practitioners adopting DSLs to replace library-backed kernels.
 
 \textbf{Performance depends strongly on operator class.}
-DSL kernels should not be assumed to match library performance by default. In our study, Triton is near parity on element-wise and normalization workloads, and can therefore offer a favorable trade-off between programmability and performance in these cases. For GEMM, the observed cost relative to cuBLAS may be acceptable when customization or fusion is required. Convolution is different: both Triton and TileLang remain substantially behind cuDNN in the evaluated settings. For convolution-heavy models, DSL kernels should therefore be treated as an optimization target that must be validated against a library baseline, not as a drop-in replacement.
+DSL kernels should not be assumed to match library performance by default: Triton is near parity on element-wise and normalization workloads (a favorable programmability trade-off), GEMM carries a cost relative to cuBLAS that may be acceptable when fusion or customization is required, but both DSLs remain substantially behind cuDNN on convolution, which must be validated against a library baseline rather than treated as a drop-in replacement.
 
-\textbf{The root-cause analysis can guide debugging.}
-The mitigation results suggest a practical workflow for diagnosing underperforming DSL kernels. For TileLang reductions and normalization, developers should first replace serial \texttt{T.serial} accumulation with \texttt{T.reduce} (RC0a), since the dominant cost is exposed memory latency rather than thread synchronization; this is also where register pressure and spill should be inspected (RC3), which on our hardware appears in TileLang normalization rather than in convolution. For convolution, developers should check whether memory accesses are vectorized into wide \texttt{LDG.128} loads (RC1), then evaluate whether the tuning configuration space is too narrow for the target shape, distinguishing a config that is merely absent from the default grid (RC2a, fixable by expanding the search) from one that needs a broader search strategy (RC2b). For $3\times3$ filters, Winograd selection (RC4) is worth considering, but only as a small ($\approx$2--3\%) contributor. This sequence provides a compact checklist for performance debugging in Triton and TileLang.
+\textbf{The root-cause taxonomy guides debugging.}
+For TileLang reductions and normalization, replace \texttt{T.serial} with \texttt{T.reduce} (RC0a, the dominant cost---exposed memory latency, not synchronization) and inspect register spill (RC3, which on our hardware appears in normalization, not convolution); for convolution, check \texttt{LDG.128} vectorization (RC1) and whether the tuning space is merely under-populated (RC2a, fixable by expanding the search) or needs a broader strategy (RC2b), with Winograd (RC4) only a small ($\approx$2--3\%) contributor---a compact checklist mirroring \cref{sec:analysis,sec:mitigation}.
 
 
 \textbf{Benchmarks should gate on performance, not just correctness.}

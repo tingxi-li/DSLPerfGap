@@ -85,13 +85,7 @@ We present the two checks together because neither suffices alone, and they disa
 \subsection{Normalization Kernels: Correcting RC0}
 \label{sec:mitig:norm}
 
-\paragraph{Finding: Correcting RC0 with two optimizations (each necessary, neither sufficient alone)
-brings TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch throughput on the A100-SXM4---
-a $1347\times$ and $1157\times$ reduction over the unoptimized TileLang baseline:
-(1) replacing \texttt{T.serial} reduction loops with the native \texttt{T.reduce} primitive
-(the dominant step);
-(2) switching to native bfloat16/float16 I/O and eliminating intermediate \texttt{.float()} precision casts.
-These results confirm RC0 as the primary cause of TileLang's normalization deficit and as fully correctable in user space.}
+\paragraph{Finding: Two user-space fixes---\texttt{T.serial}$\to$\texttt{T.reduce} (dominant) and native bf16/fp16 I/O without intermediate \texttt{.float()} casts---bring TileLang LayerNorm to $124\%$ and RMSNorm to $990\%$ of PyTorch on the A100-SXM4 ($1347\times$ and $1157\times$ over the unoptimized baseline), confirming RC0 as the primary, fully user-correctable cause of the normalization deficit.}
 The dominant fix is Step~1: a single \texttt{T.reduce} replacing the manual \texttt{T.serial} loop (subsequent iterations confirmed the loop structure, not thread configuration, was the bottleneck).
 Step~2, native bfloat16 I/O removing intermediate \texttt{.float()} casts, then brings LayerNorm from 364~ms to 0.270~ms (124\% of PyTorch) and RMSNorm to 0.254~ms (990\%, exceeding 100\% because the fixed kernel fuses the scaling pass that PyTorch's eager two-pass path does not)---near the $\approx$0.18~ms memory-bandwidth floor for an $8192^2$ bfloat16 tensor at the A100's $\approx$1.5~TB/s.
 This is not a new technique (\texttt{T.reduce} already existed); the contribution is showing RC0 fully explains the anomaly and is mechanically correctable in user space without algorithmic change.
@@ -100,11 +94,7 @@ The full 18-iteration LayerNorm trajectory is in \texttt{ITERATIONS.md}.
 \subsection{Convolution: Partial Recovery via Implicit GEMM}
 \label{sec:mitig:conv}
 
-\paragraph{Finding: Restructuring Conv2d as an implicit GEMM with FP16 Tensor Core acceleration,
-input padding to 16-byte alignment (addressing RC1),
-and an expanded autotune configuration space (addressing RC2)
-holds 36--76\% of PyTorch/cuDNN efficiency across the $1\times1$--$7\times7$ filter family on the A100-SXM4 (all correct),
-where cuDNN is substantially faster---the gap is narrowed but not closed.}
+\paragraph{Finding: Restructuring Conv2d as an FP16 Tensor-Core implicit GEMM with 16-byte-aligned input padding (RC1) and an expanded autotune space (RC2) reaches 36--76\% of cuDNN across the $1\times1$--$7\times7$ filter family on the A100-SXM4 (all correct)---narrowing but not closing the gap.}
 
 The restructuring unfolds the convolution into an on-the-fly implicit GEMM~\cite{zhou2021implicit} that FP16 Tensor Cores accelerate, with 16-byte input padding enabling \texttt{LDG.128} loads (RC1) and an expanded autotune space (smaller \texttt{BLOCK\_K}, more pipeline stages) covering configurations absent from the default list (RC2).
 Of the residual $\approx$20\% gap, absent Winograd selection contributes only $\approx$2--3\% (a 0.06\% deterministic-vs-non-deterministic delta for $3\times3$ stride-1); the remainder reflects general cuDNN implicit-GEMM tuning---kernel selection, split-K, shared-memory tile sizing---that the single-lowering DSL kernel does not match (RC4).
@@ -241,4 +231,4 @@ The streaming variant---tiling the reduction over fixed $4$~KB blocks instead of
   unoptimized DSL kernel (Matmul: plain Triton; Conv2d: baseline vs.\ implicit-GEMM Triton at $3\times3$); Matmul at $4096^2$.}
 
 \end{table}
-The \cref{tab:mitigation} mitigations are re-timed on the A100-SXM4 (locked clocks; the matmul figure is the $4096^2$ autotune value, reconciled in \cref{sec:mitig:other} against the $16384^2$ RQ1 shape), and the optimized kernels revalidate against the same per-dtype tolerances (5/5 pass, 0 edge-case crashes). RC2b-style search-space expansion is the higher-leverage of the two remaining convolution future-work directions.
+The \cref{tab:mitigation} mitigations are re-timed on the A100-SXM4 (locked clocks; the matmul figure is the $4096^2$ autotune value, reconciled against the $16384^2$ result in \cref{sec:mitig:other}), and the optimized kernels revalidate against the same per-dtype tolerances (5/5 pass, 0 edge-case crashes). RC2b-style search-space expansion is the higher-leverage of the two remaining convolution future-work directions.
