@@ -39,7 +39,7 @@ P.~Hijma, S.~Heldens, A.~Sclocco, B.~van Werkhoven, and H.~E. Bal,
 {NVIDIA Corporation}, ``{cuBLAS}: Basic linear algebra on nvidia gpus,''
   \url{https://docs.nvidia.com/cuda/cublas/}, 2026.
 
-\bibitem{cudnn2024}
+\bibitem{chetlur2014cudnn}
 \BIBentryALTinterwordspacing
 S.~Chetlur, C.~Woolley, P.~Vandermersch, J.~Cohen, J.~Tran, B.~Catanzaro, and
   E.~Shelhamer, ``cudnn: Efficient primitives for deep learning,'' 2014.
@@ -147,13 +147,6 @@ C.~Lattner, M.~Amini, U.~Bondhugula, A.~Cohen, A.~Davis, J.~Pienaar, R.~Riddle,
 sebastienwood, ``Example conv2d in triton,'' GitHub Discussion \#591,
   \url{https://github.com/triton-lang/triton/discussions/591}, 2022, accessed:
   2026-03-25.
-
-\bibitem{chetlur2014cudnn}
-\BIBentryALTinterwordspacing
-S.~Chetlur, C.~Woolley, P.~Vandermersch, J.~Cohen, J.~Tran, B.~Catanzaro, and
-  E.~Shelhamer, ``cudnn: Efficient primitives for deep learning,'' 2014.
-  [Online]. Available: \url{https://arxiv.org/abs/1410.0759}
-\BIBentrySTDinterwordspacing
 
 \bibitem{cutlass2023}
 {NVIDIA Corporation}, ``{CUTLASS}: Cuda templates and python dsls for
