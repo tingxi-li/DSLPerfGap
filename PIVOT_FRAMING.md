@@ -8,7 +8,7 @@
 
 From **"An Empirical Study of GPU Kernel Performance Gaps in Modern DSLs"** (characterize → root-cause →
 mitigate a performance gap) to **the DSL kernel *evaluation* problem**: developers and LLM kernel
-generators have no reliable way to tell whether a DSL kernel is *well-written*, the benchmarks they
+generators have no reliable way to tell whether a DSL kernel is *efficient*, the benchmarks they
 rely on pass correct-but-slow kernels, and a comprehensive benchmark is infeasible — so we characterize
 the hidden gap and distill practical evaluation heuristics + optimization patterns to guide development.
 
@@ -45,7 +45,7 @@ DSL kernel development absent a ground-truth benchmark.
 ## New research questions (canonical wording — adjust here, then propagate)
 
 - **RQ1 — The evaluation gap.** Do existing DSL and LLM-generated-kernel benchmarks distinguish
-  well-written kernels from performance-poor ones, and along which dimensions (DSL coverage, dtype,
+  efficient kernels from performance-poor ones, and along which dimensions (DSL coverage, dtype,
   input shape, hardware, reward-hacking prevention) do they fall short?
 - **RQ2 — The hidden gap and its causes.** For kernels that pass existing correctness-style benchmarks,
   how large and structured is the performance gap to vendor libraries, and which authoring,
@@ -90,7 +90,7 @@ The title change is intentionally deferred so the body reframe lands first. Thes
   (iii) show no catastrophic per-shape collapse. *Limit:* PyTorch-relative is **circular** (PyTorch is
   both baseline and de-facto "good") — use only as a screen.
 - **Roofline anchor (baseline-independent):** achieved fraction of the memory/compute roofline; ≥ ~X% of
-  achievable roofline ⇒ "well-written" regardless of the library. This is the non-circular leg that makes
+  achievable roofline ⇒ "efficient" regardless of the library. This is the non-circular leg that makes
   the rules defensible. **Required, not optional.**
 - **Pattern checklist:** the recurring authoring fixes (reduction primitive, native-dtype I/O, allocation,
   autotune coverage) as a developer-facing debug checklist (drafted already in `discussion.tex`).

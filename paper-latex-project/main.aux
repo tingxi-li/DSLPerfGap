@@ -151,8 +151,8 @@
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref  {sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 and GH200 \texttt  {ncu\_summary.csv} files, which agree on the RC signatures.}}{8}{table.2}\protected@file@percent }
 \newlabel{tab:rootcauses}{{II}{8}{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref {sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 and GH200 \texttt {ncu\_summary.csv} files, which agree on the RC signatures}{table.2}{}}
 \newlabel{tab:rootcauses@cref}{{[table][2][]II}{[1][7][]8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Evaluation Heuristics: Is This Kernel Well Written?}{8}{subsection.6.1}\protected@file@percent }
-\newlabel{sec:mitig:heuristics}{{\mbox  {VI-A}}{8}{Evaluation Heuristics: Is This Kernel Well Written?}{subsection.6.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Evaluation Heuristics: Is This Kernel Efficient?}{8}{subsection.6.1}\protected@file@percent }
+\newlabel{sec:mitig:heuristics}{{\mbox  {VI-A}}{8}{Evaluation Heuristics: Is This Kernel Efficient?}{subsection.6.1}{}}
 \newlabel{sec:mitig:heuristics@cref}{{[subsection][1][6]\mbox  {VI-A}}{[1][8][]8}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-A}0a}A comparability screen (pragmatic, baseline-relative)}{8}{paragraph.6.1.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-A}0b}A roofline anchor (baseline-independent)}{8}{paragraph.6.1.0.2}\protected@file@percent }
@@ -169,23 +169,26 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}GEMM and Reduction Kernels}{9}{subsection.6.4}\protected@file@percent }
 \newlabel{sec:mitig:other}{{\mbox  {VI-D}}{9}{GEMM and Reduction Kernels}{subsection.6.4}{}}
 \newlabel{sec:mitig:other@cref}{{[subsection][4][6]\mbox  {VI-D}}{[1][9][]9}}
-\citation{zheng2020ansor}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Summary and Remaining Gap}{10}{subsection.6.5}\protected@file@percent }
 \newlabel{sec:mitig:summary}{{\mbox  {VI-E}}{10}{Summary and Remaining Gap}{subsection.6.5}{}}
 \newlabel{sec:mitig:summary@cref}{{[subsection][5][6]\mbox  {VI-E}}{[1][10][]10}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{10}{table.4}\protected@file@percent }
+\newlabel{tab:mitigation}{{IV}{10}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.4}{}}
+\newlabel{tab:mitigation@cref}{{[table][4][]IV}{[1][10][]10}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-E}0a}Cross-architecture portability is itself an authoring concern}{10}{paragraph.6.5.0.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion}{10}{section.7}\protected@file@percent }
-\newlabel{sec:discussion}{{VII}{10}{Discussion}{section.7}{}}
-\newlabel{sec:discussion@cref}{{[section][7][]VII}{[1][10][]10}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Implications for DSL Developers}{10}{subsection.7.1}\protected@file@percent }
-\newlabel{sec:disc:dsl}{{\mbox  {VII-A}}{10}{Implications for DSL Developers}{subsection.7.1}{}}
-\newlabel{sec:disc:dsl@cref}{{[subsection][1][7]\mbox  {VII-A}}{[1][10][]10}}
+\citation{zheng2020ansor}
 \citation{ragan-kelley2013halide}
 \citation{chen2018tvm}
 \citation{wang2025tilelang}
-\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{11}{table.4}\protected@file@percent }
-\newlabel{tab:mitigation}{{IV}{11}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.4}{}}
-\newlabel{tab:mitigation@cref}{{[table][4][]IV}{[1][10][]11}}
+\citation{tillet2019triton}
+\citation{li2023torchcompile}
+\citation{spector2024thunderkittens}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion}{11}{section.7}\protected@file@percent }
+\newlabel{sec:discussion}{{VII}{11}{Discussion}{section.7}{}}
+\newlabel{sec:discussion@cref}{{[section][7][]VII}{[1][11][]11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Implications for DSL Developers}{11}{subsection.7.1}\protected@file@percent }
+\newlabel{sec:disc:dsl}{{\mbox  {VII-A}}{11}{Implications for DSL Developers}{subsection.7.1}{}}
+\newlabel{sec:disc:dsl@cref}{{[subsection][1][7]\mbox  {VII-A}}{[1][11][]11}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Limitations}{11}{subsection.7.2}\protected@file@percent }
 \newlabel{sec:disc:limitations}{{\mbox  {VII-B}}{11}{Limitations}{subsection.7.2}{}}
 \newlabel{sec:disc:limitations@cref}{{[subsection][2][7]\mbox  {VII-B}}{[1][11][]11}}
@@ -195,9 +198,6 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}GPU Kernel DSLs}{11}{subsection.8.1}\protected@file@percent }
 \newlabel{sec:rel:dsls}{{\mbox  {VIII-A}}{11}{GPU Kernel DSLs}{subsection.8.1}{}}
 \newlabel{sec:rel:dsls@cref}{{[subsection][1][8]\mbox  {VIII-A}}{[1][11][]11}}
-\citation{tillet2019triton}
-\citation{li2023torchcompile}
-\citation{spector2024thunderkittens}
 \citation{chen2018tvm}
 \citation{zheng2020ansor}
 \citation{bik2022mlir,vasilache2022composable}
