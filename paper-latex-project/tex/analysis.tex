@@ -245,6 +245,25 @@ The native alternative, \texttt{T.reduce}, lowers to a parallel butterfly reduct
 This algorithmic structure, however, is not where the cost lies: on the A100, the performance gain from \texttt{T.reduce} comes from better memory-latency hiding---\texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$---not from removing barriers, since \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both the \texttt{T.serial} and \texttt{T.reduce} kernels. The GH200 \texttt{ncu} counters confirm the same signature on \texttt{sm\_90}: \texttt{warp\_stall\_barrier}${=}0$ with \texttt{warp\_stall\_long\_scoreboard}${=}49.95$ dominating, alongside a $34$\,GB local-store register spill (RC3).
 Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: on the A100, LayerNorm drops from 364~ms to 0.270~ms ($1347\times$ improvement, \cref{sec:mitig:norm}).
 
+\begin{figure}[t]
+\begin{lstlisting}
+# (a) T.serial: sequential accumulate -- idiomatic but slow
+mean_val[0] = T.float32(0)
+for j in T.serial(n):       # no inter-thread parallelism
+    mean_val[0] = mean_val[0] + row[j]
+mean_val[0] = mean_val[0] / T.float32(n)
+
+# (b) T.reduce: parallel butterfly -- one-line fix
+T.reduce(row, mean_val, "sum", dim=0, clear=True)
+mean_val[0] = mean_val[0] / T.float32(n)
+\end{lstlisting}
+\caption{RC0a in TileLang LayerNorm: swapping four lines of \texttt{T.serial}
+  accumulation (a) for a single \texttt{T.reduce} call (b) eliminates
+  \texttt{warp\_stall\_long\_scoreboard} stalls on the A100 and yields
+  a $1347\times$ latency improvement (\cref{sec:mitig:norm}).}
+\label{fig:serial-vs-reduce}
+\end{figure}
+
 \paragraph{RC0b: Absent Vectorized Loads (Compiler Codegen)}
 Second, TileLang's compiled normalization kernels do not issue 128-bit vectorized loads
 (\texttt{LDG.128}),
