@@ -263,7 +263,7 @@ Neither benchmark spans the full (DSL $\times$ data type $\times$ shape $\times$
 We pass idiomatic DSL kernels through the KernelBench correctness gate and time them.
 On the GH200, TileLang LayerNorm passes the correctness gate on all five shapes but runs $323\times$ slower than PyTorch at the large shape under locked clocks ($51.5$~ms vs.\ $0.16$~ms); TileLang RMSNorm passes and is $117\times$ slower. A deliberately constructed worst-case LayerNorm variant---fp32 internal I/O and a zero-initialized output buffer---reaches $1293\times$ ($176.4$~ms, unlocked); even a naive argmax passes and is $16.7\times$ slower.
 In every case the gate returns \texttt{correct=True} and the more-than-$10\times$ reward-hacking guard never triggers, because the kernels are slow, not fast.
-These are not adversarial constructions: they differ from a competent implementation in a single reduction primitive (\cref{sec:analysis:jit}); a minimal code example is shown in \cref{sec:analysis:jit}.
+These are not adversarial constructions: they differ from a competent implementation in a single reduction primitive (\cref{sec:analysis:jit}); \cref{fig:serial-vs-reduce} shows the two-line fix.
 The A100 suite exhibits the same pattern; per-architecture magnitudes are reported throughout and cross-referenced where they diverge (see \cref{app:passesslow}).
 
 \subsection{The Hidden Gap These Benchmarks Admit}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 17:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 17:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -196,9 +196,6 @@ File: listings.cfg 2023/02/27 1.9 listings configuration
 ))
 Package: listings 2023/02/27 1.9 (Carsten Heinz)
 
-(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2023/02/27 1.9 listings language file
-)
 (/usr/local/texlive/2023/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2022/04/08 v2.17n AMS math features
 \@mathmargin=\skip52
@@ -498,39 +495,39 @@ File: l3backend-pdftex.def 2023-01-16 L3 backend support: PDF output (pdfTeX)
 (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 66.
-LaTeX Font Info:    ... okay on input line 66.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 51.
+LaTeX Font Info:    ... okay on input line 51.
 
 -- Lines per column: 56 (exact).
-LaTeX Info: Redefining \microtypecontext on input line 66.
-Package microtype Info: Applying patch `item' on input line 66.
-Package microtype Info: Applying patch `toc' on input line 66.
-Package microtype Info: Applying patch `eqnum' on input line 66.
-Package microtype Info: Applying patch `footnote' on input line 66.
-Package microtype Info: Applying patch `verbatim' on input line 66.
+LaTeX Info: Redefining \microtypecontext on input line 51.
+Package microtype Info: Applying patch `item' on input line 51.
+Package microtype Info: Applying patch `toc' on input line 51.
+Package microtype Info: Applying patch `eqnum' on input line 51.
+Package microtype Info: Applying patch `footnote' on input line 51.
+Package microtype Info: Applying patch `verbatim' on input line 51.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 66.
+LaTeX Info: Redefining \showhyphens on input line 51.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -569,7 +566,7 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring OFF on input line 66.
+Package hyperref Info: Link coloring OFF on input line 51.
 
 (./main.out) (./main.out)
 \@outlinefile=\write3
@@ -635,13 +632,13 @@ Overfull \hbox (3.94815pt too wide) in paragraph at lines 354--375
  []
 
 )
-Underfull \hbox (badness 2426) in paragraph at lines 385--107
+Underfull \hbox (badness 2426) in paragraph at lines 385--92
 \OT1/ptm/m/n/10 (+20) ker-nels clus-ter near the per-DSL me-di-ans in ta-ble []
 I[];
  []
 
 
-Underfull \hbox (badness 2662) in paragraph at lines 385--107
+Underfull \hbox (badness 2662) in paragraph at lines 385--92
 \OT1/ptm/m/n/10 (+20) the no-table Tri-ton out-liers are the index-returning re
 -
  []
@@ -650,98 +647,108 @@ Underfull \hbox (badness 2662) in paragraph at lines 385--107
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 242.
 
-Underfull \hbox (badness 2326) in paragraph at lines 242--247
-\OT1/ptm/m/n/10 (+20) us-ing \OT1/pcr/m/n/10 T.serial \OT1/ptm/m/n/10 (+20) loo
-ps---TileLang's se-quen-tial for-loop
+(/usr/local/texlive/2023/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2023/02/27 1.9 listings language file
+)
+LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 250.
+
+Underfull \hbox (badness 10000) in paragraph at lines 252--253
+[][][][][][][][][][][][][][][][][]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 242--247
-\OT1/ptm/m/n/10 (+20) gain from \OT1/pcr/m/n/10 T.reduce \OT1/ptm/m/n/10 (+20) 
-comes from bet-ter memory-
+Overfull \hbox (7.20264pt too wide) in paragraph at lines 256--257
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
+][][][][][][][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 242--247
-\OT1/ptm/m/n/10 (+20) latency hiding---\OT1/pcr/m/n/10 warp_stall_long_scoreboa
-rd
+Overfull \hbox (12.60269pt too wide) in paragraph at lines 257--258
+[][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Underfull \hbox (badness 3386) in paragraph at lines 242--247
-\OT1/ptm/m/n/10 (+20) drops from 59.56 cy-cles to $[]\OT1/cmr/m/n/10 0$\OT1/ptm
-/m/n/10 (+20) ---not from re-mov-ing
+Underfull \hbox (badness 6510) in paragraph at lines 265--267
+[]\OT1/ptm/m/n/10 (+20) This al-go-rith-mic struc-ture, how-ever, is not where
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 242--247
-\OT1/ptm/m/n/10 (+20) bar-ri-ers, since \OT1/pcr/m/n/10 warp_stall_barrier \OT1
-/ptm/m/n/10 (+20) is al-ready
+Underfull \hbox (badness 6675) in paragraph at lines 265--267
+\OT1/ptm/m/n/10 (+20) the cost lies: on the A100, the per-for-mance gain
  []
 
 
-Underfull \hbox (badness 3792) in paragraph at lines 242--247
-[]\OT1/cmr/m/n/10 0$ \OT1/ptm/m/n/10 (+20) in both the \OT1/pcr/m/n/10 T.serial
- \OT1/ptm/m/n/10 (+20) and \OT1/pcr/m/n/10 T.reduce \OT1/ptm/m/n/10 (+20) ker-n
-els.
+Underfull \hbox (badness 7186) in paragraph at lines 265--267
+\OT1/ptm/m/n/10 (+20) from \OT1/pcr/m/n/10 T.reduce \OT1/ptm/m/n/10 (+20) comes
+ from bet-ter memory-latency
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 242--247
-\OT1/ptm/m/n/10 (+20) The GH200 \OT1/pcr/m/n/10 ncu \OT1/ptm/m/n/10 (+20) coun-
-ters con-firm the same
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
+\OT1/ptm/m/n/10 (+20) hiding---\OT1/pcr/m/n/10 warp_stall_long_scoreboard \OT1/
+ptm/m/n/10 (+20) drops
  []
 
 
-Underfull \hbox (badness 3000) in paragraph at lines 242--247
-\OT1/ptm/m/n/10 (+20) sig-na-ture on \OT1/pcr/m/n/10 sm_90\OT1/ptm/m/n/10 (+20)
- : \OT1/pcr/m/n/10 warp_stall_barrier$[]\OT1/cmr/m/n/10 0$ \OT1/ptm/m/n/10 (+20
-) with
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
+\OT1/ptm/m/n/10 (+20) since \OT1/pcr/m/n/10 warp_stall_barrier \OT1/ptm/m/n/10 
+(+20) is al-ready $[]\OT1/cmr/m/n/10 0$ \OT1/ptm/m/n/10 (+20) in
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 242--247
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
+\OT1/ptm/m/n/10 (+20) both the \OT1/pcr/m/n/10 T.serial \OT1/ptm/m/n/10 (+20) a
+nd \OT1/pcr/m/n/10 T.reduce \OT1/ptm/m/n/10 (+20) ker-nels. The
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
+\OT1/ptm/m/n/10 (+20) GH200 \OT1/pcr/m/n/10 ncu \OT1/ptm/m/n/10 (+20) coun-ters
+ con-firm the same sig-na-ture
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
+\OT1/ptm/m/n/10 (+20) on \OT1/pcr/m/n/10 sm_90\OT1/ptm/m/n/10 (+20) : \OT1/pcr/
+m/n/10 warp_stall_barrier$[]\OT1/cmr/m/n/10 0$ \OT1/ptm/m/n/10 (+20) with
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
 \OT1/pcr/m/n/10 warp_stall_long_scoreboard$[]\OT1/cmr/m/n/10 49\OML/cmm/m/it/10
  :\OT1/cmr/m/n/10 95$ \OT1/ptm/m/n/10 (+20) dom-i-nat-ing,
  []
 
 
-Underfull \hbox (badness 4316) in paragraph at lines 242--247
+Underfull \hbox (badness 4316) in paragraph at lines 265--267
 \OT1/ptm/m/n/10 (+20) re-moves the dom-i-nant la-tency source: on the A100,
  []
 
 
-Underfull \hbox (badness 2027) in paragraph at lines 242--247
+Underfull \hbox (badness 2027) in paragraph at lines 265--267
 \OT1/ptm/m/n/10 (+20) Lay-er-Norm drops from 364 ms to 0.270 ms ($\OT1/cmr/m/n/
 10 1347\OMS/cmsy/m/n/10 ^^B$
  []
 
-LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <7> not available
-(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 250.
-
-Underfull \hbox (badness 4608) in paragraph at lines 263--263
-\OT1/ptm/m/n/8 (+20) Fig. 2.  []RC0a in Tile-Lang Lay-er-Norm: swap-ping four l
-ines of
- []
-
 [5]
-Overfull \hbox (26.33327pt too wide) in paragraph at lines 297--303
+Overfull \hbox (26.33327pt too wide) in paragraph at lines 298--304
 \OMS/cmsy/m/n/10 f\OT1/cmr/m/n/10 ([]\OML/cmm/m/it/10 ; []; []; []; []\OT1/cmr/
 m/n/10 )\OMS/cmsy/m/n/10 g\OML/cmm/m/it/10 :[] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 341--341
+Underfull \hbox (badness 10000) in paragraph at lines 342--342
 []$\OT1/cmr/m/n/8 1347\OMS/cmsy/m/n/8 ^^B$
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 341--341
+Underfull \hbox (badness 10000) in paragraph at lines 342--342
 \OT1/ptm/m/n/8 (+20) (Lay-er-Norm,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 341--342
+Underfull \hbox (badness 10000) in paragraph at lines 342--343
 []\OT1/pcr/m/n/8 warp_stall_long_scoreboard
  []
 
@@ -754,10 +761,10 @@ File: omspcr.fd
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <8> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 31.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [7]
-Underfull \vbox (badness 3281) has occurred while \output is active []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 110--124
 []\OT1/ptm/b/n/10 (+20) Square mat-mul (Tri-ton, FP16). \OT1/ptm/m/n/10 (+20) A
 dding
@@ -781,8 +788,11 @@ Underfull \hbox (badness 4024) in paragraph at lines 133--158
 mexp \OT1/ptm/m/it/10 (+20) ex-ceed \OT1/ptm/m/n/10 (+20) Py-Torch
  []
 
-) (./tex/discussion.tex [9]) [10] (./tex/related_work.tex)
-(./tex/conclusion.tex
+) (./tex/discussion.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9])
+[10] (./tex/related_work.tex) (./tex/conclusion.tex
 Underfull \hbox (badness 4303) in paragraph at lines 47--48
 []\OT1/ptm/m/n/10 (+20) The hid-den gap is highly struc-tured. Most is an
  []
@@ -793,7 +803,9 @@ Underfull \hbox (badness 3343) in paragraph at lines 47--48
 a sin-gle Tile-Lang id-iom
  []
 
-) [11] (./main.bbl
+) [11] [12
+
+] (./main.bbl
 Underfull \hbox (badness 2512) in paragraph at lines 153--156
 []\OT1/ptm/m/n/8 (+20) sebastienwood, ``Ex-am-ple conv2d in tri-ton,'' GitHub D
 is-cus-sion
@@ -812,10 +824,10 @@ File: omsptm.fd
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <8> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 221.
-) [12
+) [13
 
 ]
-(./tex/appendix.tex [13
+(./tex/appendix.tex [14
 
 ]
 
@@ -827,7 +839,7 @@ Underfull \hbox (badness 4266) in paragraph at lines 223--226
 -mum is
  []
 
-[14]
+[15]
 Underfull \hbox (badness 1430) in paragraph at lines 241--243
  \OT1/ptm/m/it/10 (+20) d) Ker-nel-Bench eval-u-a-tor har-ness: [][] \OT1/ptm/m
 /n/10 (+20) For the passes-
@@ -857,7 +869,7 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[15] (./main.aux)
+[16] (./main.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -865,13 +877,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: C0444296876CAF2E03BDC710A74E11DC;7482.
  ) 
 Here is how much of TeX's memory you used:
- 17511 strings out of 476025
- 285888 string characters out of 5790018
- 1953388 words of memory out of 5000000
+ 17517 strings out of 476025
+ 285933 string characters out of 5790018
+ 1901388 words of memory out of 5000000
  37051 multiletter control sequences out of 15000+600000
- 583009 words of font info for 444 fonts, out of 8000000 for 9000
+ 583030 words of font info for 447 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,76p,1157b,1421s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,76p,1157b,1468s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></u
@@ -893,10 +905,10 @@ pe1/urw/courier/ucrro8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmbi8a.pf
 b></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/lo
 cal/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (15 pages, 425023 bytes).
+Output written on main.pdf (16 pages, 425291 bytes).
 PDF statistics:
- 708 PDF objects out of 1000 (max. 8388607)
- 624 compressed objects within 7 object streams
- 156 named destinations out of 1000 (max. 500000)
+ 712 PDF objects out of 1000 (max. 8388607)
+ 628 compressed objects within 7 object streams
+ 157 named destinations out of 1000 (max. 500000)
  77638 words of extra memory for PDF output out of 89155 (max. 10000000)
 

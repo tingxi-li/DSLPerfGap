@@ -240,29 +240,30 @@ RC0a is a user-space kernel-authoring choice, while RC0b is a compiler-codegen d
 
 \paragraph{RC0a: TileLang Reduction Authoring (\texttt{T.serial} $\to$ \texttt{T.reduce})}
 First, the original TileLang normalization kernels implement the reduction over the normalized dimension using \texttt{T.serial} loops---TileLang's sequential for-loop construct---iterating over each partial sum one at a time.
-For LayerNorm, which accumulates 8 bfloat16 partial statistics per thread (sum and sum-of-squares for the mean and variance passes), this means the reduction is computed in 8 sequential steps with no inter-thread parallelism.
+For LayerNorm, which accumulates bfloat16 partial statistics per thread (sum and sum-of-squares for the mean and variance passes), this means the reduction is serialized over all $n$ columns with no inter-thread parallelism.
+\Cref{fig:serial-vs-reduce} shows the two-line authoring change.
 The native alternative, \texttt{T.reduce}, lowers to a parallel butterfly reduction (\texttt{tl::AllReduce}), exchanging partial results in $\log_2 N$ rounds.
-This algorithmic structure, however, is not where the cost lies: on the A100, the performance gain from \texttt{T.reduce} comes from better memory-latency hiding---\texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$---not from removing barriers, since \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both the \texttt{T.serial} and \texttt{T.reduce} kernels. The GH200 \texttt{ncu} counters confirm the same signature on \texttt{sm\_90}: \texttt{warp\_stall\_barrier}${=}0$ with \texttt{warp\_stall\_long\_scoreboard}${=}49.95$ dominating, alongside a $34$\,GB local-store register spill (RC3).
-Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: on the A100, LayerNorm drops from 364~ms to 0.270~ms ($1347\times$ improvement, \cref{sec:mitig:norm}).
 
 \begin{figure}[t]
-\begin{lstlisting}
-# (a) T.serial: sequential accumulate -- idiomatic but slow
+\begin{lstlisting}[language=Python, basicstyle=\ttfamily\small,
+  commentstyle=\color{gray}\itshape]
+# Before: sequential accumulation (T.serial)
 mean_val[0] = T.float32(0)
-for j in T.serial(n):       # no inter-thread parallelism
+for j in T.serial(n):          # n iterations, no parallelism
     mean_val[0] = mean_val[0] + row[j]
 mean_val[0] = mean_val[0] / T.float32(n)
 
-# (b) T.reduce: parallel butterfly -- one-line fix
+# After: parallel butterfly AllReduce (T.reduce)
 T.reduce(row, mean_val, "sum", dim=0, clear=True)
 mean_val[0] = mean_val[0] / T.float32(n)
 \end{lstlisting}
-\caption{RC0a in TileLang LayerNorm: swapping four lines of \texttt{T.serial}
-  accumulation (a) for a single \texttt{T.reduce} call (b) eliminates
-  \texttt{warp\_stall\_long\_scoreboard} stalls on the A100 and yields
-  a $1347\times$ latency improvement (\cref{sec:mitig:norm}).}
+\caption{RC0a fix: replacing a \texttt{T.serial} accumulation loop with
+  \texttt{T.reduce} in TileLang LayerNorm (mean pass; variance pass is identical).
+  This two-line change recovers $1347\times$ latency on the A100.}
 \label{fig:serial-vs-reduce}
 \end{figure}
+This algorithmic structure, however, is not where the cost lies: on the A100, the performance gain from \texttt{T.reduce} comes from better memory-latency hiding---\texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$---not from removing barriers, since \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both the \texttt{T.serial} and \texttt{T.reduce} kernels. The GH200 \texttt{ncu} counters confirm the same signature on \texttt{sm\_90}: \texttt{warp\_stall\_barrier}${=}0$ with \texttt{warp\_stall\_long\_scoreboard}${=}49.95$ dominating, alongside a $34$\,GB local-store register spill (RC3).
+Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: on the A100, LayerNorm drops from 364~ms to 0.270~ms ($1347\times$ improvement, \cref{sec:mitig:norm}).
 
 \paragraph{RC0b: Absent Vectorized Loads (Compiler Codegen)}
 Second, TileLang's compiled normalization kernels do not issue 128-bit vectorized loads
