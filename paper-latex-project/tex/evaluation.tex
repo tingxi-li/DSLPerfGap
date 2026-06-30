@@ -253,11 +253,9 @@ We survey what the prevailing DSL and LLM-generated-kernel benchmarks measure (\
 \label{sec:eval:survey}
 
 The two benchmarks that dominate DSL and LLM-generated GPU-kernel evaluation are KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}, and both treat performance as a \emph{reported outcome} rather than an \emph{acceptance criterion}.
-KernelBench, the de-facto target for LLM kernel generation, accepts a candidate on \emph{correctness alone}: its evaluator runs the kernel against a randomized-input PyTorch reference and the task passes if the outputs match within tolerance, with measured speedup recorded but never gated.
-Its only guard against reward hacking is a heuristic warning when a kernel runs more than $10\times$ faster than the reference---so it fires only on suspiciously \emph{fast} kernels and is silent on the slow ones, which are the failure mode we study here.\footnote{We exercise this evaluator directly: the KernelBench-style harness in our artifact (\texttt{eval\_kernel\_against\_ref}) overrides the candidate's input generators with the reference's and warns on more-than-$10\times$ speedups, the same anti-cheat logic shipped upstream.}
-TritonBench is Triton-only and, to its credit, reports a roofline-anchored GPU-efficiency metric (achieved fraction of hardware peak)---a precedent we build on in \cref{sec:mitigation}---but it likewise reports rather than gates on that metric, applies no anti-cheat, and fixes one data type and shape per operator on a single GPU.
-Neither benchmark covers more than a narrow slice of the (DSL $\times$ data type $\times$ shape $\times$ architecture) space, and neither rejects a kernel for being slow.
-A kernel that ``passes'' therefore certifies correctness, not quality.
+KernelBench, the standard LLM kernel-generation target, accepts a candidate on \emph{correctness alone}: measured speedup is recorded but never gated.
+TritonBench reports a roofline-anchored efficiency metric---a precedent our \cref{sec:mitigation} builds on---but covers only Triton, fixes one data type and shape per operator, and evaluates on a single GPU architecture.
+Neither benchmark spans the full (DSL $\times$ data type $\times$ shape $\times$ architecture) evaluation space, and neither rejects a kernel for being slow: a passing kernel certifies correctness, not performance quality.
 
 \subsection{Passing Is Not Fast}
 \label{sec:eval:passesslow}
