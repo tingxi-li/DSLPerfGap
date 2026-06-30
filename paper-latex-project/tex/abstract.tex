@@ -2,8 +2,7 @@
 % Canonical framing: ../PIVOT_FRAMING.md. Pre-pivot gap-study drafts are in git history.
 Modern GPU domain-specific languages (DSLs) such as Triton and TileLang deliver competitive performance relative to vendor libraries for GPU kernel programming,
 making them a popular choice for human developers and an increasingly common target for automated kernel code generation agents.
-Yet a developer-written or agent-generated DSL kernel can be \emph{functionally correct} yet \emph{inefficient}, and timing it against the vendor library
-reveals that it is slow without revealing whether a faster implementation exists or it already sits at the achievable performance ceiling.
+Yet developer-written or agent-generated DSL kernels can be \emph{functionally correct} but \emph{inefficient}.
 We show that a kernel can pass the prevailing evaluation benchmarks and still run
 hundreds of times slower than the vendor-library baseline across 22 kernels in five
  categories.
