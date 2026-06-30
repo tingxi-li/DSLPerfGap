@@ -3,7 +3,7 @@
 
 Our benchmark suite covers five operator categories that capture the dominant computation patterns in modern deep learning: matrix multiplication, attention, convolution, normalization, and element-wise or reduction operators.
 In total, the suite contains 22 kernels: three \textbf{GEMM} workloads (dense matmul, batched matmul, fused linear+activation), one \textbf{attention} workload (scaled dot-product / FlashAttention variants), one \textbf{convolution} workload (Conv2d, $1\times1$--$7\times7$ filters including depthwise and strided), two \textbf{normalization} workloads (LayerNorm and RMSNorm), and fifteen \textbf{element-wise or reduction} workloads.
-Kernels are drawn from TritonBench~\cite{li2025tritonbench}, the TileLang example repository~\cite{wang2025tilelang}, and our own implementations for configurations absent from both sources; we retain only forward-pass kernels with stable library baselines and balanced five-category coverage, excluding sparse and dynamic-shape operators.
+Kernels are drawn from TritonBench~\cite{li2025tritonbench}, the TileLang example repository~\cite{wang2025tilelang}, and our own implementations for configurations absent from both sources.
 Per-kernel provenance and full selection criteria are in \cref{app:repro:kernels}.
 
 
