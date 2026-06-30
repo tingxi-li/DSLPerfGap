@@ -10,14 +10,8 @@ Per-kernel provenance and full selection criteria are in \cref{app:repro:kernels
 \subsection{Baseline Construction}
 \label{sec:meth:baselines}
 
-For each workload, we compare DSL implementations against the corresponding vendor-library path exposed through PyTorch.
-GEMM baselines use cuBLAS via \texttt{torch.matmul}.
-Convolution baselines use PyTorch \texttt{nn.Conv2d} with default NCHW memory layout under standard cuDNN algorithm selection.
-Normalization baselines use \texttt{F.layer\_norm} and \texttt{F.rms\_norm}.
-Element-wise and reduction baselines use standard PyTorch eager execution.
-
-For attention, we use PyTorch scaled dot-product attention with the FlashAttention backend enabled through \texttt{enable\_flash\_sdp(True)}.
-We report these results separately because the Triton and TileLang implementations are not algorithmically identical to the PyTorch baseline.
+For each workload, we compare DSL implementations against the strongest available vendor-library path through PyTorch; per-category baseline specifications are in \cref{app:repro:baselines}.
+For attention, we use PyTorch scaled dot-product attention with the FlashAttention backend; because the Triton and TileLang implementations are not algorithmically identical to this baseline, we report attention results separately.
 
 
 \subsection{Profiling Setup}
@@ -27,16 +21,13 @@ We measure both end-to-end latency and hardware performance counters.
 Latency drives all comparisons against library baselines; hardware counters support root-cause analysis (RQ2).
 
 \paragraph{End-to-end throughput}
-For each workload and input configuration, we measure host-synchronized GPU execution time using \texttt{time.perf\_counter()} bracketed by \texttt{torch.cuda.synchronize()} calls.
-Each measurement uses 10 warm-up iterations followed by 100 timed iterations; we report the median.
-Results reflect GPU-side execution only, excluding host-side dispatch overhead, and each workload runs in isolation.
-Clocks are pinned to a fixed frequency throughout; run-to-run relative standard deviation is $\leq 0.9\%$ (settings in \cref{app:repro:meas}).
+We measure host-synchronized GPU execution time; clocks are pinned to a fixed frequency throughout and run-to-run relative standard deviation is $\leq 0.9\%$ (measurement protocol in \cref{app:repro:meas}).
 
 \paragraph{Hardware performance counters}
 To support root-cause analysis, we collect Nsight Compute~\cite{nsightcompute2024} profiles grounded in seven counters (definitions in \cref{app:repro:meas}), each from a single execution with stability verified within 2\% across five runs.
 
 \paragraph{Correctness}
-Before any timing, we validate every DSL kernel against its library baseline at per-dtype tolerances (\texttt{fp32}~$10^{-5}$, \texttt{fp16}~$10^{-3}$, \texttt{bf16}~$10^{-2}$, relaxed $2\times$ for reductions) and an edge-case suite (NaN/Inf/denormal/all-equal) across all 22 kernels with 0 crashes; the RQ3-mitigated kernels revalidate 5/5.
+Before any timing, we validate every DSL kernel against its library baseline at per-dtype tolerances (\texttt{fp32}~$10^{-5}$, \texttt{fp16}~$10^{-3}$, \texttt{bf16}~$10^{-2}$, relaxed $2\times$ for reductions) and an edge-case suite (NaN/Inf/denormal/all-equal) across all 22 kernels with 0 crashes.
 FP32 GEMM is excluded as silent TF32 lowering rather than a defect (\cref{sec:analysis:jit}).
 
 
@@ -44,7 +35,7 @@ FP32 GEMM is excluded as silent TF32 lowering rather than a defect (\cref{sec:an
 \label{sec:meth:optimization}
 
 To produce the optimized kernels evaluated in \cref{sec:mitigation}, we apply an agentic AI kernel-generation tool~\cite{ako2026} under a fixed protocol (correctness-gated iterations, large-input shapes, no language switching) to instantiate the root-cause-derived optimization patterns of \cref{sec:analysis}.
-Every optimized kernel is validated provenance-agnostically against the same per-dtype tolerances (5/5 pass) and Nsight Compute counters, and recovered performance is reported as a lower bound on user-space-recoverable gain.
+Every optimized kernel is validated provenance-agnostically against the same per-dtype tolerances and Nsight Compute counters, and recovered performance is reported as a lower bound on user-space-recoverable gain.
 
 
 \subsection{Metrics}
@@ -56,8 +47,7 @@ E_{\mathrm{lib}} = \frac{t_{\mathrm{lib}}}{t_{\mathrm{DSL}}} \times 100\%,
 \]
 where $t_{\mathrm{lib}}$ denotes the latency of the cuBLAS or cuDNN baseline and $t_{\mathrm{DSL}}$ denotes the latency of the corresponding DSL implementation under the same hardware and input configuration.
 A value of 100\% indicates parity with the library baseline; lower values indicate that the DSL implementation is slower.
-
-Secondary metrics---throughput ($T = 2 \cdot \text{FLOPs}/t$), hardware efficiency ($E_\text{hw} = T/T_\text{peak}$), and memory bandwidth utilization ($B = \text{bytes}/({t \cdot B_\text{peak}})$)---are used qualitatively in root-cause analysis (RQ2) to interpret counter measurements; they are not tabulated separately.
+Secondary metrics (throughput, hardware efficiency, memory bandwidth utilization) are used qualitatively in root-cause analysis (RQ2) and are not tabulated separately.
 
 
 \subsection{Evaluation-Gap and Heuristic Measurement}
@@ -71,10 +61,8 @@ To anchor the RQ3 heuristic in a baseline-independent signal, we model each kern
 \label{sec:meth:setup}
 
 \paragraph{Hardware}
-We measure on two primary architectures.
-The first is an NVIDIA A100-SXM4-40GB (Ampere, \texttt{sm\_80}; 108 SMs, 40\,GB HBM2e, $\sim$1.5\,TB/s, 400\,W), on which we measure suite magnitude (\cref{sec:evaluation}) and root-cause counters (\cref{sec:analysis}).
-The second is an NVIDIA GH200 (Grace Hopper, \texttt{sm\_90}; 96\,GB HBM3, $\sim$4.0\,TB/s, $\sim$989.5\,TFLOP/s FP16 Tensor-Core), on which we run the evaluation-gap demonstration (\cref{sec:eval:passesslow}) and validate the roofline heuristic (\cref{tab:roofline}).
+We measure on two primary architectures: the A100-SXM4-40GB (Ampere, \texttt{sm\_80}), used for suite magnitude (\cref{sec:evaluation}) and root-cause counters (\cref{sec:analysis}), and the GH200 (Grace Hopper, \texttt{sm\_90}), used for the evaluation-gap demonstration (\cref{sec:eval:passesslow}) and roofline heuristic (\cref{tab:roofline}).
 Full hardware specifications and clock-lock settings are in \cref{app:repro:stack}.
 
 \paragraph{Software}
-We use PyTorch~2.8.0+cu128, Triton~3.4.0, TileLang~0.1.6.post1, bundled cuDNN, and Nsight Compute~2026.2.0, with all versions pinned in a reproducibility manifest distributed with the artifact; complete version list is in \cref{app:repro:stack}.
+We use PyTorch~2.8.0+cu128, Triton~3.4.0, TileLang~0.1.6.post1, bundled cuDNN, and Nsight Compute~2026.2.0; complete version list is in \cref{app:repro:stack}.

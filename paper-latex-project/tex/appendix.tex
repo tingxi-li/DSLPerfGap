@@ -152,7 +152,7 @@ We narrow the candidates from TritonBench~\cite{li2025tritonbench} and the TileL
 \Cref{tab:provenance} lists all 22 kernels.
 Triton implementations are drawn from TritonBench except \texttt{layer\_norm}, which follows the TorchInductor reference implementation.
 All TileLang implementations are our re-implementations of the same operators.
-PyTorch implementations are cuBLAS, cuDNN, or PyTorch-eager baselines as described in \cref{sec:meth:baselines}.
+PyTorch implementations are cuBLAS, cuDNN, or PyTorch-eager baselines as described in \cref{app:repro:baselines}.
 
 \begin{table}[h]
   \centering
@@ -201,8 +201,23 @@ PyTorch implementations are cuBLAS, cuDNN, or PyTorch-eager baselines as describ
 \end{table}
 
 
+\subsection{Baseline Specifications}
+\label{app:repro:baselines}
+
+GEMM baselines use cuBLAS via \texttt{torch.matmul}.
+Convolution baselines use PyTorch \texttt{nn.Conv2d} with default NCHW memory layout under standard cuDNN algorithm selection.
+Normalization baselines use \texttt{F.layer\_norm} and \texttt{F.rms\_norm}.
+Element-wise and reduction baselines use standard PyTorch eager execution.
+For attention, we use PyTorch scaled dot-product attention with the FlashAttention backend enabled through \texttt{enable\_flash\_sdp(True)}.
+
+
 \subsection{Measurement Protocol}
 \label{app:repro:meas}
+
+\paragraph{End-to-end timing}
+We measure host-synchronized GPU execution time using \texttt{time.perf\_counter()} bracketed by \texttt{torch.cuda.synchronize()} calls.
+Each measurement uses 10 warm-up iterations followed by 100 timed iterations; we report the median.
+Results reflect GPU-side execution only, excluding host-side dispatch overhead, and each workload runs in isolation.
 
 \paragraph{Clock-lock settings}
 On the A100-SXM4-40GB, we pin graphics and memory clocks to 1215\,MHz and 1215\,MHz respectively via \texttt{nvidia-smi --lock-gpu-clocks} and \texttt{--lock-memory-clocks}.

@@ -9,10 +9,9 @@ Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: references.bib
 Warning--entry type for "cublas2024" isn't style-file defined
---line 74 of file references.bib
+--line 81 of file references.bib
 Warning--entry type for "cutlass2023" isn't style-file defined
---line 393 of file references.bib
-Warning--I didn't find a database entry for "yang2020hierarchical"
+--line 400 of file references.bib
 -- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
@@ -21,45 +20,45 @@ Warning--empty booktitle in dao2023flashattention2
 Warning--empty booktitle in ragan-kelley2013halide
 
 Done.
-You've used 28 entries,
+You've used 29 entries,
             4087 wiz_defined-function locations,
-            991 strings with 16507 characters,
-and the built_in function-call counts, 24419 in all, are:
-= -- 1691
-> -- 1064
-< -- 80
-+ -- 542
-- -- 252
-* -- 1216
-:= -- 3398
-add.period$ -- 64
-call.type$ -- 28
-change.case$ -- 32
+            997 strings with 16739 characters,
+and the built_in function-call counts, 25092 in all, are:
+= -- 1757
+> -- 1077
+< -- 83
++ -- 548
+- -- 255
+* -- 1247
+:= -- 3507
+add.period$ -- 66
+call.type$ -- 29
+change.case$ -- 33
 chr.to.int$ -- 174
-cite$ -- 31
-duplicate$ -- 1777
-empty$ -- 2006
-format.name$ -- 268
-if$ -- 5717
+cite$ -- 32
+duplicate$ -- 1835
+empty$ -- 2054
+format.name$ -- 272
+if$ -- 5876
 int.to.chr$ -- 0
-int.to.str$ -- 28
-missing$ -- 444
-newline$ -- 141
-num.names$ -- 30
-pop$ -- 1216
+int.to.str$ -- 29
+missing$ -- 454
+newline$ -- 144
+num.names$ -- 31
+pop$ -- 1235
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 1816
+skip$ -- 1875
 stack$ -- 0
-substring$ -- 553
-swap$ -- 1378
-text.length$ -- 22
+substring$ -- 564
+swap$ -- 1424
+text.length$ -- 25
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 28
+type$ -- 29
 warning$ -- 3
-while$ -- 62
-width$ -- 30
-write$ -- 320
-(There were 6 warnings)
+while$ -- 64
+width$ -- 31
+write$ -- 331
+(There were 5 warnings)
