@@ -3,43 +3,20 @@
 % TODO(revision): if an LLM-kernel-generation reward-hacking example is cited, add its
 % references.bib entry. (The \cite{kernelbench} key is now defined in references.bib.)
 
-Deep learning systems depend on a small number of GPU kernels that dominate execution time~\cite{acceleration_survey, optimization_survey}. Frameworks have historically delegated these kernels to vendor libraries such as cuBLAS and cuDNN~\cite{cublas2024, chetlur2014cudnn}, but modern architectures increasingly require fused operators, specialized kernels, and model-specific computations that fall outside what those libraries expose~\cite{kernelfusion}. Domain-specific languages (DSLs) such as Triton~\cite{openai2021triton} and TileLang~\cite{wang2025tilelang} have emerged as the standard answer: they express kernels at the tile level and delegate memory movement, scheduling, and code generation to a compiler. Triton is already the lowering target for \texttt{torch.compile}~\cite{li2023torchcompile}, and DSLs are increasingly the output of large language model (LLM)-based kernel generators~\cite{kernelbench}. Whether DSL kernels can match or exceed vendor library performance is therefore the central concern in deploying DSLs for kernel development.
+Deep learning systems depend on GPU kernels that dominate execution time~\cite{acceleration_survey, optimization_survey}. Frameworks have historically delegated these kernels to vendor libraries such as cuBLAS and cuDNN~\cite{cublas2024, chetlur2014cudnn}, but modern architectures increasingly require fused operators, specialized kernels, and model-specific computations that fall outside what those libraries expose~\cite{kernelfusion}. Domain-specific languages (DSLs) such as Triton~\cite{openai2021triton} and TileLang~\cite{wang2025tilelang} have emerged as the standard answer: they express kernels at the tile level and delegate memory movement, scheduling, and code generation to a compiler. Triton is already the lowering target for \texttt{torch.compile}~\cite{li2023torchcompile}, and DSLs are increasingly the output of large language model (LLM)-based kernel generators~\cite{kernelbench}. Whether DSL kernels can match or exceed vendor library performance is therefore the central concern in deploying DSLs for kernel development.
 
-Comparing a kernel against the vendor library reveals whether it is slow, but not what to do about it.
-A correct DSL kernel may beat the vendor library, match it, or trail it by orders of magnitude.
-The measurement alone does not say which of three explanations holds: the kernel is poorly authored and a faster implementation exists; it already sits near the achievable ceiling for the operator and the hardware, so further effort is wasted; or the loss originates in the compiler's code generation or library immaturity, beyond what kernel rewrites can fix.
-No systematic method separates these cases, so a developer learns that a kernel is slow without learning whether or how it can be made faster.
-For the fused, model-specific operators that motivate DSLs, no strong vendor baseline exists to anchor the comparison.
-This is a software-engineering problem as much as a compiler one: a high-level kernel language is useful only if kernel performance can be attributed, not merely observed.
+A DSL kernel measured against the vendor library may be faster, comparable, or slower by orders of magnitude, yet the measurement alone does not reveal which of three explanations holds: the kernel is poorly authored and a faster implementation exists; it already sits near the achievable ceiling for the operator and the hardware, so further effort is wasted; or the loss originates in the compiler's code generation or library immaturity, beyond what kernel rewrites can fix.
+No systematic method separates these cases, and for the fused, model-specific operators that motivate DSLs in the first place, no strong vendor baseline exists to anchor the comparison at all. 
+Closing this gap requires attributing kernel performance to a specific cause, not just observing it.
 
-The benchmarks practitioners rely on do not even surface the slowness, let alone attribute it. The prevailing DSL and
-LLM-generated-kernel benchmarks, KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}, gate on
-correctness and report performance as an outcome rather than enforcing it. They
-therefore admit performance-poor kernels: a naive but idiomatic TileLang kernel
-passes KernelBench's correctness gate while running more than 300$\times$ slower than
-PyTorch, and the gate's lone reward-hacking guard never fires because it watches only
-for suspiciously fast kernels. These benchmarks also cover a narrow slice of the
-space, often one DSL, data type, shape, and GPU per task, so passing certifies little
-about quality. A benchmark comprehensive enough to span every operator, data type,
-shape, and architecture is combinatorially infeasible to build and maintain.
+Existing benchmarks do not surface kernel slowness, let alone attribute it. KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench}, the two prevailing benchmarks, report performance as an outcome, but gate only on correctness. As a result, both benchmarks admit performance-poor kernels. A naive but idiomatic TileLang kernel passes KernelBench's correctness gate while running more than 300$\times$ slower than PyTorch, and KernelBench's only reward-hacking guard never fires, since the guard watches only for suspiciously fast kernels. Both benchmarks also cover a narrow slice of the design space, typically one DSL, data type, shape, and GPU per task, so passing one certifies little about kernel quality. Building a benchmark that spans every operator, data type, shape, and architecture is not practical.
 
-This paper makes the following contributions:
+We address this gap in three steps. We first run KernelBench~\cite{kernelbench} and TritonBench~\cite{li2025tritonbench} end-to-end and show that both admit performance-poor kernels despite their coverage and reward-hacking guards. We then study 22 kernels across five operator classes on an NVIDIA GH200 and an A100-SXM4, using hardware counters to trace each performance gap to a specific cause: authoring, code generation, or library immaturity. The dominant TileLang normalization gap turns out to be an authoring artifact, removable with a single reduction-primitive change, while the convolution and large-GEMM gaps are structural. Building on these findings, we propose two lightweight heuristics, a library-comparability screen and a baseline-independent roofline anchor, along with a small set of recurring optimization patterns, that flag poor kernels and recover most of the gap without a comprehensive benchmark. This paper makes the following contributions:
+
 \begin{itemize}
-  \item \textbf{Evaluation gap (RQ1).} We show, end-to-end against the actual
-  evaluator, that prevailing DSL and LLM-generated-kernel benchmarks admit
-  performance-poor kernels, and we characterize their coverage and reward-hacking
-  gaps.
-  \item \textbf{Hidden gap and causes (RQ2).} Across 22 kernels and five operator
-  classes on two GPU architectures, we characterize the performance gap these
-  benchmarks miss and trace it with hardware counters to authoring, code-generation,
-  and library-maturity causes. The dominant TileLang normalization gap is an
-  authoring artifact that a single reduction-primitive change removes, whereas
-  convolution and large GEMM are structural residuals.
-  \item \textbf{Guidance without a benchmark (RQ3).} We propose and validate two
-  lightweight heuristics, a library-comparability screen and a baseline-independent
-  roofline anchor, together with a small set of recurring optimization patterns that
-  flag poor kernels and recover most of the gap.
-  \item \textbf{Artifact.} Our kernel suite, profiling infrastructure, and analysis are publicly available at
-\url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/}.
+  \item {Evaluation gap (RQ1).} Prevailing DSL kernel benchmarks admit performance-poor kernels.
+  \item {Hidden gap and causes (RQ2).} We trace the performance gap these benchmarks miss to specific authoring, code-generation, and library-maturity causes.
+  \item {Guidance without a benchmark (RQ3).} We give two lightweight heuristics and a set of optimization patterns that flag poor kernels without a comprehensive benchmark.
 
 \end{itemize}
+\noindent Artifacts  are available at \url{https://anonymous.4open.science/r/GPUKernelPerformance-6132/} to support reproducibility.
