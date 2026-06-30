@@ -2,7 +2,7 @@
 
 > *"An Empirical Study of GPU Kernel Performance Gaps in Modern Domain-Specific Languages"*
 
-This artifact supports all claims in the paper. It contains the benchmark suite (ViperBench), the
+This artifact supports all claims in the paper. It contains the benchmark suite, the
 iterative kernel-optimization loop (AKO4ALL), all rebuttal experiments, and the LaTeX paper source.
 
 **E_lib %** = library efficiency (PyTorch / cuBLAS / cuDNN = 100%; higher is better).
@@ -13,7 +13,7 @@ iterative kernel-optimization loop (AKO4ALL), all rebuttal experiments, and the 
 
 ```
 ASE-GPUDSL-ARTIFACT/
-├── ViperBench/                        # 22-kernel benchmark (PyTorch / Triton / TileLang)
+├── ViperBench/                        # benchmark suite — 22 kernels (PyTorch / Triton / TileLang)
 │   ├── <kernel>/                      # pytorch_impl.py · triton_impl.py · tilelang_impl.py · test.py
 │   ├── benchmark*.py                  # latency + peak-memory sweep
 │   ├── run_all.py                     # correctness runner
@@ -24,7 +24,7 @@ ASE-GPUDSL-ARTIFACT/
 │       ├── profile.H100-80GB-HBM3.csv
 │       └── slow_kernels.csv           # kernels where DSL < PyTorch at large shape
 ├── AKO4ALL/                           # Iterative kernel-optimization loop
-│   ├── prepare_kernel.py              # ViperBench → KernelBench format export
+│   ├── prepare_kernel.py              # benchmark suite → KernelBench format export
 │   ├── TASK.md                        # Protocol governing the optimization agent
 │   ├── HINTS.md                       # Constraints (no language switching, etc.)
 │   └── results/
@@ -48,7 +48,7 @@ ASE-GPUDSL-ARTIFACT/
 
 ## Kernel Suite Provenance
 
-The 22-kernel suite (ViperBench) covers five operator categories.
+The 22-kernel benchmark suite covers five operator categories.
 Triton implementations are drawn from TritonBench except `layer_norm` (TorchInductor reference).
 All TileLang implementations are custom re-implementations of the same operators.
 
