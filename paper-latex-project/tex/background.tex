@@ -1,26 +1,21 @@
 \subsection{Tile-Based GPU DSLs}
 \label{sec:bg:dsls}
-
-A GPU executes thousands of threads grouped into \emph{thread blocks}, each resident on a \emph{streaming multiprocessor} with fast programmer-managed scratchpad (\emph{shared memory}); high-performance kernels \emph{tile} data~\cite{wolfe1989more} to reuse that scratchpad and stay compute-bound under the roofline model~\cite{williams2009roofline}.
+A GPU executes thousands of threads grouped into \emph{thread blocks}, each resident on a \emph{streaming multiprocessor} with fast programmer-managed scratchpad memory (\emph{shared memory}). High-performance kernels \emph{tile} data~\cite{wolfe1989more} to reuse that scratchpad and stay compute-bound under the roofline model~\cite{williams2009roofline}.
 Two Python-embedded DSLs raise this tiling abstraction above hand-written CUDA, and our study targets both.
-
 Triton~\cite{tillet2019triton} makes the \emph{tile}---a statically shaped, multi-dimensional array operated on by all threads in a program instance---the unit of computation.
-Its MLIR-based compiler~\cite{lattner2021mlir} performs memory coalescing, shared-memory allocation, thread swizzling, and software pipelining automatically while targeting NVIDIA PTX, and programmers tune tile configurations through \texttt{@triton.autotune}.
-Triton is the default lowering target for \texttt{torch.compile} since PyTorch 2.0~\cite{li2023torchcompile}.
-Its convolution support is less mature: an im2col-style lowering exists but falls substantially short of cuDNN on common workloads~\cite{triton2022conv591}.
-
+The Triton compiler, built on MLIR~\cite{lattner2021mlir}, performs memory coalescing, shared-memory allocation, thread swizzling, and software pipelining automatically while targeting NVIDIA PTX, and programmers tune tile configurations through \texttt{@triton.autotune}.
+Triton has been the default lowering target for \texttt{torch.compile} since PyTorch 2.0~\cite{li2023torchcompile}.
+Triton's convolution support is less mature: an im2col-style lowering exists but falls substantially short of cuDNN on common workloads~\cite{triton2022conv591}.
 TileLang~\cite{wang2025tilelang} separates the \emph{algorithm} (what to compute) from the \emph{schedule} (how to map computation onto GPU resources) more explicitly than Triton, letting the programmer tune memory staging, thread layout, and pipeline depth without changing the functional description.
-It compiles through Apache TVM with explicit hardware-intrinsic support on NVIDIA and AMD architectures.
-Its convolution performance relative to cuDNN has not been systematically evaluated prior to this work.
-
-Throughout, we compare both DSLs against the vendor libraries they aim to displace: cuBLAS~\cite{cublas2024} for dense GEMM and cuDNN~\cite{chetlur2014cudnn} for convolution and the other deep-learning primitives, each of which dispatches the fastest implementation per problem shape via a runtime selector~\cite{cutlass2023}.
+TileLang compiles through Apache TVM with explicit hardware-intrinsic support on NVIDIA and AMD architectures.
+TileLang's convolution performance relative to cuDNN has not been systematically evaluated prior to this work.
+Throughout, we compare both DSLs against the vendor libraries they aim to displace: cuBLAS~\cite{cublas2024} for dense GEMM and cuDNN~\cite{chetlur2014cudnn} for convolution and other deep-learning primitives, each of which dispatches the fastest implementation for a given problem shape via a runtime selector~\cite{cutlass2023}.
 
 \subsection{Benchmarking DSL and LLM-Generated Kernels}
 \label{sec:bg:tritonbench}
-
-Custom GPU kernels are increasingly produced not by hand but by automated tools: \texttt{torch.compile} lowers operators to Triton~\cite{li2023torchcompile}, and a growing body of work uses LLMs to generate kernels directly~\cite{kernelbench,li2025tritonforge}.
-This has made kernel \emph{benchmarks} the de-facto arbiters of kernel quality, and two dominate the DSL and LLM-generated setting.
-
-TritonBench~\cite{li2025tritonbench} curates production-grade Triton kernels and reports correctness plus a roofline-anchored GPU-efficiency metric, but for Triton only, on a single GPU, and one data type and shape per operator; our kernel suite derives from its GitHub channel (184 kernels from 95 repositories), with TileLang re-implementations and added convolution configurations.
-KernelBench~\cite{kernelbench}, the de-facto LLM-kernel-generation benchmark, accepts a kernel that reproduces a PyTorch reference on randomized inputs but \emph{gates on correctness alone}, reporting speedup as an outcome and guarding only against implausibly \emph{fast} kernels.
-Neither rejects a kernel for being slow or spans more than a narrow slice of the (DSL $\times$ data type $\times$ shape $\times$ architecture) space---the evaluation gap we quantify in \cref{sec:evaluation} (\cref{sec:eval:survey} details the gate mechanism).
+Custom GPU kernels are increasingly produced not by hand but by automated tools: \texttt{torch.compile} lowers operators to Triton~\cite{li2023torchcompile}, and a growing body of research uses large language models (LLMs) to generate kernels directly~\cite{kernelbench,li2025tritonforge}.
+This has made kernel benchmarks the de facto arbiters of kernel quality, and two benchmarks dominate the DSL and LLM-generated setting.
+TritonBench~\cite{li2025tritonbench} curates production-grade Triton kernels and reports correctness plus a roofline-anchored GPU-efficiency metric, but only for Triton, only on a single GPU, and only for one data type and shape per operator. Our kernel suite derives from the TritonBench GitHub channel (184 kernels from 95 repositories), with TileLang re-implementations and added convolution configurations.
+KernelBench~\cite{kernelbench}, the de facto benchmark for LLM kernel generation, accepts a kernel that reproduces a PyTorch reference on randomized inputs but gates on correctness alone: it reports speedup as an outcome and guards only against implausibly fast kernels.
+Neither benchmark rejects a kernel for being slow, and neither spans more than a narrow slice of the (DSL $\times$ data type $\times$ shape $\times$ architecture) space. % LOGIC-CHECK: this sentence states the evaluation gap as a conclusion, but the supporting evidence (the gate mechanism, the coverage numbers) is deferred to Section~\ref{sec:evaluation}/\ref{sec:eval:survey}. Consider moving the forward-reference earlier or adding one concrete number here (e.g., how many DSL/shape/architecture combinations TritonBench actually covers) so the claim is not asserted on faith.
+We quantify this evaluation gap in \cref{sec:evaluation}, with the gate mechanism detailed in \cref{sec:eval:survey}.
