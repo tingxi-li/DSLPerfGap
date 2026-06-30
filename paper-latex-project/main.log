@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 14:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 14:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -605,7 +605,7 @@ r/local/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 ] (./tex/background.tex)
 (./tex/methodology.tex [2]) (./tex/evaluation.tex [3]
-<figures/overview_efficiency.pdf, id=286, 245.08862pt x 195.08533pt>
+<figures/overview_efficiency.pdf, id=287, 245.08862pt x 195.08533pt>
 File: figures/overview_efficiency.pdf Graphic file (type pdf)
 <use figures/overview_efficiency.pdf>
 Package pdftex.def Info: figures/overview_efficiency.pdf  used on input line 28
@@ -716,9 +716,6 @@ m/n/10 )\OMS/cmsy/m/n/10 g\OML/cmm/m/it/10 :[]
  []
 
 
-Underfull \vbox (badness 6893) has occurred while \output is active []
-
- [6]
 Underfull \hbox (badness 10000) in paragraph at lines 322--322
 []$\OT1/cmr/m/n/8 1347\OMS/cmsy/m/n/8 ^^B$
  []
@@ -733,7 +730,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 322--323
 []\OT1/pcr/m/n/8 warp_stall_long_scoreboard
  []
 
-) (./tex/mitigation.tex
+) [6] (./tex/mitigation.tex
 LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 3
 1.
 
@@ -742,6 +739,9 @@ File: omspcr.fd
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <8> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 31.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [7]
 Underfull \hbox (badness 10000) in paragraph at lines 110--124
 []\OT1/ptm/b/n/10 (+20) Square mat-mul (Tri-ton, FP16). \OT1/ptm/m/n/10 (+20) A
@@ -760,17 +760,17 @@ Underfull \hbox (badness 2932) in paragraph at lines 110--124
 ecise_acc\OT1/ptm/m/n/10 (+20) )
  []
 
-
+[8]
 Underfull \hbox (badness 4024) in paragraph at lines 133--158
 \OT1/pcr/m/n/10 mean_reduction\OT1/ptm/m/n/10 (+20) , and \OT1/pcr/m/n/10 logsu
 mexp \OT1/ptm/m/it/10 (+20) ex-ceed \OT1/ptm/m/n/10 (+20) Py-Torch
  []
 
-[8]
+) (./tex/discussion.tex
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-) [9]
-(./tex/discussion.tex [10]) (./tex/related_work.tex) (./tex/conclusion.tex
+ [9])
+[10] (./tex/related_work.tex) (./tex/conclusion.tex
 Underfull \hbox (badness 4303) in paragraph at lines 47--48
 []\OT1/ptm/m/n/10 (+20) The hid-den gap is highly struc-tured. Most is an
  []
@@ -781,7 +781,7 @@ Underfull \hbox (badness 3343) in paragraph at lines 47--48
 a sin-gle Tile-Lang id-iom
  []
 
-[11]) [12
+) [11] [12
 
 ] (./main.bbl
 Underfull \hbox (badness 2512) in paragraph at lines 153--156
@@ -880,7 +880,7 @@ pe1/urw/courier/ucrro8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmbi8a.pf
 b></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/lo
 cal/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (16 pages, 422199 bytes).
+Output written on main.pdf (16 pages, 421977 bytes).
 PDF statistics:
  699 PDF objects out of 1000 (max. 8388607)
  615 compressed objects within 7 object streams
