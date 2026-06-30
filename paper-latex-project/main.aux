@@ -20,6 +20,8 @@
 \citation{wang2025tilelang}
 \citation{li2023torchcompile}
 \citation{kernelbench}
+\citation{williams2009roofline,yang2020hierarchical}
+\citation{dao2023flashattention2}
 \citation{kernelbench}
 \citation{li2025tritonbench}
 \citation{kernelbench}
@@ -64,11 +66,11 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Profiling Setup}{2}{subsection.3.3}\protected@file@percent }
 \newlabel{sec:meth:profiling}{{\mbox  {III-C}}{2}{Profiling Setup}{subsection.3.3}{}}
 \newlabel{sec:meth:profiling@cref}{{[subsection][3][3]\mbox  {III-C}}{[1][2][]2}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0a}End-to-end throughput}{2}{paragraph.3.3.0.1}\protected@file@percent }
 \citation{nsightcompute2024}
 \citation{ako2026}
 \citation{kernelbench}
 \citation{li2025tritonbench}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0a}End-to-end throughput}{3}{paragraph.3.3.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0b}Hardware performance counters}{3}{paragraph.3.3.0.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}0c}Correctness}{3}{paragraph.3.3.0.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}RQ3 Optimization Methodology}{3}{subsection.3.4}\protected@file@percent }
@@ -94,7 +96,7 @@
 \citation{dao2023flashattention2}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Passing Is Not Fast}{4}{subsection.4.2}\protected@file@percent }
 \newlabel{sec:eval:passesslow}{{\mbox  {IV-B}}{4}{Passing Is Not Fast}{subsection.4.2}{}}
-\newlabel{sec:eval:passesslow@cref}{{[subsection][2][4]\mbox  {IV-B}}{[1][4][]4}}
+\newlabel{sec:eval:passesslow@cref}{{[subsection][2][4]\mbox  {IV-B}}{[1][3][]4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}The Hidden Gap These Benchmarks Admit}{4}{subsection.4.3}\protected@file@percent }
 \newlabel{sec:eval:overview}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{subsection.4.3}{}}
 \newlabel{sec:eval:overview@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
@@ -106,6 +108,7 @@
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0a}Attention}{4}{paragraph.4.3.0.1}\protected@file@percent }
 \newlabel{sec:eval:conv}{{\mbox  {IV-C}0a}{4}{Attention}{section*.2}{}}
 \newlabel{sec:eval:conv@cref}{{[paragraph][1][4,3,0]\mbox  {IV-C}0a}{[1][4][]4}}
+\citation{triton2022conv591}
 \newlabel{sec:eval:norm}{{\mbox  {IV-C}0a}{5}{Attention}{section*.3}{}}
 \newlabel{sec:eval:norm@cref}{{[paragraph][1][4,3,0]\mbox  {IV-C}0a}{[1][5][]5}}
 \newlabel{sec:eval:tuning}{{\mbox  {IV-C}0a}{5}{Attention}{section*.4}{}}
@@ -118,12 +121,11 @@
 \@writefile{toc}{\contentsline {section}{\numberline {V}Root Causes of the Hidden Gap (RQ2)}{5}{section.5}\protected@file@percent }
 \newlabel{sec:analysis}{{V}{5}{Root Causes of the Hidden Gap (RQ2)}{section.5}{}}
 \newlabel{sec:analysis@cref}{{[section][5][]V}{[1][5][]5}}
-\citation{triton2022conv591}
+\newlabel{sec:analysis:jit}{{V}{5}{Root Causes of the Hidden Gap (RQ2)}{section*.6}{}}
+\newlabel{sec:analysis:jit@cref}{{[section][5][]V}{[1][5][]5}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0a}RC0: TileLang Compiler-Level Deficiencies}{5}{paragraph.5.0.0.1}\protected@file@percent }
 \citation{triton2022conv591}
 \citation{tillet2019triton}
-\newlabel{sec:analysis:jit}{{V}{6}{Root Causes of the Hidden Gap (RQ2)}{section*.6}{}}
-\newlabel{sec:analysis:jit@cref}{{[section][5][]V}{[1][6][]6}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0a}RC0: TileLang Compiler-Level Deficiencies}{6}{paragraph.5.0.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0b}RC0a: TileLang Reduction Authoring (\texttt  {T.serial} $\to $ \texttt  {T.reduce})}{6}{paragraph.5.0.0.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0c}RC0b: Absent Vectorized Loads (Compiler Codegen)}{6}{paragraph.5.0.0.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0d}TileLang float32 lowering to TF32}{6}{paragraph.5.0.0.4}\protected@file@percent }
@@ -134,11 +136,11 @@
 \newlabel{sec:analysis:autotune@cref}{{[paragraph][5][5,0,0]\mbox  {V-}0e}{[1][6][]6}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0f}RC2a: Configurations Absent From the Default Grid}{6}{paragraph.5.0.0.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0g}RC2b: L2 Cache Residency}{6}{paragraph.5.0.0.7}\protected@file@percent }
+\newlabel{sec:analysis:regpressure}{{\mbox  {V-}0g}{6}{RC2b: L2 Cache Residency}{section*.9}{}}
+\newlabel{sec:analysis:regpressure@cref}{{[paragraph][7][5,0,0]\mbox  {V-}0g}{[1][6][]6}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0h}RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem)}{6}{paragraph.5.0.0.8}\protected@file@percent }
 \citation{williams2009roofline}
 \citation{li2025tritonbench}
-\newlabel{sec:analysis:regpressure}{{\mbox  {V-}0g}{7}{RC2b: L2 Cache Residency}{section*.9}{}}
-\newlabel{sec:analysis:regpressure@cref}{{[paragraph][7][5,0,0]\mbox  {V-}0g}{[1][6][]7}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0h}RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem)}{7}{paragraph.5.0.0.8}\protected@file@percent }
 \newlabel{sec:analysis:algo}{{\mbox  {V-}0h}{7}{RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem)}{section*.10}{}}
 \newlabel{sec:analysis:algo@cref}{{[paragraph][8][5,0,0]\mbox  {V-}0h}{[1][7][]7}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0i}RC4: Absence of Algorithm-Level Diversity}{7}{paragraph.5.0.0.9}\protected@file@percent }
@@ -168,11 +170,14 @@
 \newlabel{sec:mitig:other@cref}{{[subsection][4][6]\mbox  {VI-D}}{[1][8][]8}}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph  {mem}=HBM bandwidth, \emph  {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text  {lib}$, and the \emph  {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph  {authoring artifact}; a low $\rho $ that survives optimization marks a \emph  {structural residual}; the two architectures agree on every classification. Source: \texttt  {experiments/\allowbreak  results/\allowbreak  NVIDIA\_\{A100-SXM4-40GB,\allowbreak  GH200\_480GB\}/\allowbreak  cliff\_roofline.csv}.}}{9}{table.3}\protected@file@percent }
 \newlabel{tab:roofline}{{III}{9}{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph {mem}=HBM bandwidth, \emph {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text {lib}$, and the \emph {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph {authoring artifact}; a low $\rho $ that survives optimization marks a \emph {structural residual}; the two architectures agree on every classification. Source: \texttt {experiments/\allowbreak results/\allowbreak NVIDIA\_\{A100-SXM4-40GB,\allowbreak GH200\_480GB\}/\allowbreak cliff\_roofline.csv}}{table.3}{}}
-\newlabel{tab:roofline@cref}{{[table][3][]III}{[1][8][]9}}
+\newlabel{tab:roofline@cref}{{[table][3][]III}{[1][7][]9}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Summary and Remaining Gap}{9}{subsection.6.5}\protected@file@percent }
 \newlabel{sec:mitig:summary}{{\mbox  {VI-E}}{9}{Summary and Remaining Gap}{subsection.6.5}{}}
 \newlabel{sec:mitig:summary@cref}{{[subsection][5][6]\mbox  {VI-E}}{[1][9][]9}}
 \citation{zheng2020ansor}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{10}{table.4}\protected@file@percent }
+\newlabel{tab:mitigation}{{IV}{10}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.4}{}}
+\newlabel{tab:mitigation@cref}{{[table][4][]IV}{[1][10][]10}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-E}0a}Cross-architecture portability is itself an authoring concern}{10}{paragraph.6.5.0.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion}{10}{section.7}\protected@file@percent }
 \newlabel{sec:discussion}{{VII}{10}{Discussion}{section.7}{}}
@@ -180,9 +185,6 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Implications for DSL Developers}{10}{subsection.7.1}\protected@file@percent }
 \newlabel{sec:disc:dsl}{{\mbox  {VII-A}}{10}{Implications for DSL Developers}{subsection.7.1}{}}
 \newlabel{sec:disc:dsl@cref}{{[subsection][1][7]\mbox  {VII-A}}{[1][10][]10}}
-\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{10}{table.4}\protected@file@percent }
-\newlabel{tab:mitigation}{{IV}{10}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.4}{}}
-\newlabel{tab:mitigation@cref}{{[table][4][]IV}{[1][10][]10}}
 \citation{ragan-kelley2013halide}
 \citation{chen2018tvm}
 \citation{wang2025tilelang}
@@ -228,17 +230,17 @@
 \bibcite{wang2025tilelang}{7}
 \bibcite{li2023torchcompile}{8}
 \bibcite{kernelbench}{9}
-\bibcite{li2025tritonbench}{10}
-\bibcite{wolfe1989more}{11}
-\bibcite{williams2009roofline}{12}
-\bibcite{tillet2019triton}{13}
-\bibcite{lattner2021mlir}{14}
-\bibcite{triton2022conv591}{15}
-\bibcite{cutlass2023}{16}
-\bibcite{li2025tritonforge}{17}
-\bibcite{nsightcompute2024}{18}
-\bibcite{ako2026}{19}
-\bibcite{dao2023flashattention2}{20}
+\bibcite{williams2009roofline}{10}
+\bibcite{dao2023flashattention2}{11}
+\bibcite{li2025tritonbench}{12}
+\bibcite{wolfe1989more}{13}
+\bibcite{tillet2019triton}{14}
+\bibcite{lattner2021mlir}{15}
+\bibcite{triton2022conv591}{16}
+\bibcite{cutlass2023}{17}
+\bibcite{li2025tritonforge}{18}
+\bibcite{nsightcompute2024}{19}
+\bibcite{ako2026}{20}
 \bibcite{zhou2021implicit}{21}
 \bibcite{zheng2020ansor}{22}
 \bibcite{ragan-kelley2013halide}{23}

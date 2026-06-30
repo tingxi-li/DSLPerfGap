@@ -12,6 +12,7 @@ Warning--entry type for "cublas2024" isn't style-file defined
 --line 74 of file references.bib
 Warning--entry type for "cutlass2023" isn't style-file defined
 --line 393 of file references.bib
+Warning--I didn't find a database entry for "yang2020hierarchical"
 -- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
@@ -22,7 +23,7 @@ Warning--empty booktitle in ragan-kelley2013halide
 Done.
 You've used 28 entries,
             4087 wiz_defined-function locations,
-            990 strings with 16487 characters,
+            991 strings with 16507 characters,
 and the built_in function-call counts, 24419 in all, are:
 = -- 1691
 > -- 1064
@@ -61,4 +62,4 @@ warning$ -- 3
 while$ -- 62
 width$ -- 30
 write$ -- 320
-(There were 5 warnings)
+(There were 6 warnings)

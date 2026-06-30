@@ -90,6 +90,21 @@ A.~Ouyang, S.~Guo, S.~Arora, A.~L. Zhang, W.~Hu, C.~R\'{e}, and A.~Mirhoseini,
   Available: \url{https://arxiv.org/abs/2502.10517}
 \BIBentrySTDinterwordspacing
 
+\bibitem{williams2009roofline}
+\BIBentryALTinterwordspacing
+S.~Williams, A.~Waterman, and D.~Patterson, ``Roofline: an insightful visual
+  performance model for multicore architectures,'' \emph{Commun. ACM}, vol.~52,
+  no.~4, p. 65–76, Apr. 2009. [Online]. Available:
+  \url{https://doi.org/10.1145/1498765.1498785}
+\BIBentrySTDinterwordspacing
+
+\bibitem{dao2023flashattention2}
+\BIBentryALTinterwordspacing
+T.~Dao, ``Flashattention-2: Faster attention with better parallelism and work
+  partitioning,'' 2023. [Online]. Available:
+  \url{https://arxiv.org/abs/2307.08691}
+\BIBentrySTDinterwordspacing
+
 \bibitem{li2025tritonbench}
 \BIBentryALTinterwordspacing
 J.~Li, S.~Li, Z.~Gao, Q.~Shi, Y.~Li, Z.~Wang, J.~Huang, H.~Wang, J.~Wang,
@@ -109,14 +124,6 @@ M.~Wolfe, ``More iteration space tiling,'' in \emph{Proceedings of the 1989
   plus 0.5em minus 0.4em\relax New York, NY, USA: Association for Computing
   Machinery, 1989, p. 655–664. [Online]. Available:
   \url{https://doi.org/10.1145/76263.76337}
-\BIBentrySTDinterwordspacing
-
-\bibitem{williams2009roofline}
-\BIBentryALTinterwordspacing
-S.~Williams, A.~Waterman, and D.~Patterson, ``Roofline: an insightful visual
-  performance model for multicore architectures,'' \emph{Commun. ACM}, vol.~52,
-  no.~4, p. 65–76, Apr. 2009. [Online]. Available:
-  \url{https://doi.org/10.1145/1498765.1498785}
 \BIBentrySTDinterwordspacing
 
 \bibitem{tillet2019triton}
@@ -162,13 +169,6 @@ H.~Li, K.~Man, P.~Kanuparthy, H.~Chen, W.~Sun, S.~Tallam, C.~Zhu, K.~Zhu, and
 S.~Xie, S.~Xie, D.~Ran, W.~Yang, and T.~Xie, ``{AKO}: Agentic kernel
   optimization,'' \url{https://tongminglaic.github.io/AKO}, 2026, technical
   report.
-
-\bibitem{dao2023flashattention2}
-\BIBentryALTinterwordspacing
-T.~Dao, ``Flashattention-2: Faster attention with better parallelism and work
-  partitioning,'' 2023. [Online]. Available:
-  \url{https://arxiv.org/abs/2307.08691}
-\BIBentrySTDinterwordspacing
 
 \bibitem{zhou2021implicit}
 Y.~Zhou, M.~Yang, C.~Guo, J.~Leng, Y.~Liang, Q.~Chen, M.~Guo, and Y.~Zhu,
