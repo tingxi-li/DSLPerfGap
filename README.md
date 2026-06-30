@@ -220,14 +220,3 @@ bash experiments/ncu_counters.sh <kernel> <impl> <size>
 cd paper-latex-project && pdflatex main.tex && bibtex main && pdflatex main.tex && pdflatex main.tex
 ```
 
----
-
-## Paper and Reviews
-
-| File | Contents |
-|---|---|
-| `ase26-paper4134.pdf` | Submitted paper |
-| `reviews.txt` | Raw reviewer comments |
-| `REBUTTAL.md` | Author response (submitted under the old framing — kept for the record) |
-| `PIVOT_FRAMING.md` | Canonical framing for the revised paper (single source of truth) |
-| `REVISION_TODO.md` | Engineering checklist for the camera-ready revision |
