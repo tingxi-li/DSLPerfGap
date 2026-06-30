@@ -270,7 +270,7 @@ These are not adversarial constructions: they differ from a competent implementa
 
 \Cref{fig:overview} summarizes library efficiency (\%) for all kernels in the suite, broken down by DSL (Triton, TileLang) and kernel category.
 The key finding is that the performance gap is not uniform: Triton is broadly competitive for element-wise and normalization kernels (88.7\% of PyTorch throughput for LayerNorm and $\sim$95--116\% for element-wise kernels; the RMSNorm outlier at 851.8\% is due to kernel fusion; see \cref{tab:summary}) but trails substantially on convolution (19.3\%) and large square GEMM (32.8\%); TileLang achieves competitive throughput only on a narrow set of large shapes while exhibiting severe underperformance on reductions and normalizations (0.1\% of PyTorch throughput on layer normalization).
-These figures are for the \emph{idiomatic} kernels shipped in each DSL's examples; we show in RQ3 (\cref{sec:mitigation}) that the reduction and normalization gaps are authoring artifacts---a competent \texttt{T.reduce} rewrite recovers the family to PyTorch-comparable or better (with one hardware-specific exception we diagnose in \cref{sec:mitig:summary})---whereas the convolution and large-GEMM gaps largely persist even after best-effort optimization, marking the genuine residual.
+These figures are for the \emph{idiomatic} kernels shipped in each DSL's examples; RQ3 (\cref{sec:mitigation}) shows that reduction and normalization gaps are authoring artifacts, whereas the convolution and large-GEMM gaps persist as genuine residuals.
 
 \begin{figure}[t]
   \centering
