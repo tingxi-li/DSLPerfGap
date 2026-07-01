@@ -354,12 +354,11 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
     Normalization      & 88.7\%\rlap{$^\ddagger$} & 0.1--0.9\%\rlap{$^\ddagger$} & 74.8\% & 0.3--3.3\% \\
     Element-wise       & $\sim$95--116\% & $\sim$67--74\% & $\sim$66--98\% & $\sim$62--68\% \\
     \midrule
-    \textbf{Overall (excl.\ attn.)} & \textbf{$\sim$73\%}\rlap{$^\S$} & \textbf{$\sim$29\%}\rlap{$^\S$} & \textbf{$\sim$98\%} & \textbf{$\sim$67\%} \\
+    \textbf{Overall (excl.\ attn.)} & \textbf{$\sim$73\%} & \textbf{$\sim$29\%} & \textbf{$\sim$98\%} & \textbf{$\sim$67\%} \\
     \bottomrule
   \end{tabular}}%
   {\footnotesize
-    $^\ddagger$ LayerNorm 0.1\% is a serialization artifact (RC0; \Cref{sec:analysis:jit}), not a data error; RMSNorm 851.8\% is an unfair-baseline artifact (PyTorch eager does not fuse normalization passes) --- see body text.\par
-    $^\S$ Overall figures are medians excluding attention; the Triton geomean ($\sim$126\%) is inflated by fusion and unfused-eager-baseline outliers, so we report the median as the more representative summary.}
+    $^\ddagger$ Triton's cell reports \texttt{layer\_norm} only (88.7\%); \texttt{rms\_norm}'s 851.8\% is excluded as an unfused-baseline artifact (\Cref{sec:eval:norm}). TileLang's 0.1--0.9\% spans both norm kernels.}
 \end{table}
 \footnotetext[\getrefnumber{fn:attention}]{Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}
 

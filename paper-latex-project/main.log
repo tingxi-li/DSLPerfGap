@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 22:15
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 22:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -612,18 +612,18 @@ Package pdftex.def Info: figures/overview_efficiency.pdf  used on input line 28
 3.
 (pdftex.def)             Requested size: 252.0pt x 200.59183pt.
  [3]
-Overfull \hbox (3.94815pt too wide) in paragraph at lines 344--361
+Overfull \hbox (3.94815pt too wide) in paragraph at lines 344--362
  [][]$[]$ 
  []
 
 [4 <./figures/overview_efficiency.pdf>])
-Underfull \hbox (badness 1924) in paragraph at lines 371--92
+Underfull \hbox (badness 1924) in paragraph at lines 370--92
 \OT1/ptm/m/n/10 (+20) ker-nels clus-ter near the per-DSL me-di-ans in Ta-ble []
 I[];
  []
 
 
-Underfull \hbox (badness 2662) in paragraph at lines 371--92
+Underfull \hbox (badness 2662) in paragraph at lines 370--92
 \OT1/ptm/m/n/10 (+20) the no-table Tri-ton out-liers are the index-returning re
 -
  []
@@ -876,7 +876,7 @@ pe1/urw/courier/ucrro8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmbi8a.pf
 b></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/lo
 cal/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (16 pages, 476087 bytes).
+Output written on main.pdf (16 pages, 475882 bytes).
 PDF statistics:
  758 PDF objects out of 1000 (max. 8388607)
  660 compressed objects within 7 object streams
