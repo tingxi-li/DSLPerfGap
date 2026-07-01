@@ -316,9 +316,10 @@ The root causes of these gaps are analyzed in \Cref{sec:analysis}.
 
 \medskip\noindent\textbf{Finding: Triton normalization kernels match or substantially outperform PyTorch's eager paths; TileLang normalization collapses to less than 1\% of PyTorch throughput at the tested size ($8192 \times 8192$), with LayerNorm 1087$\times$ slower.}
 
-\Cref{tab:summary} reports the normalization category medians; per-shape latencies for both architectures are in the artifact (\texttt{slow\_kernels.csv}).
-At $8192^2$ on the A100, Triton \texttt{layer\_norm} reaches 88.7\% of PyTorch (the \texttt{rms\_norm} 851.8\% is a fusion artifact, not a win), whereas TileLang LayerNorm runs 364~ms versus PyTorch's 0.335~ms; the collapse persists on the GH200 ($329\times$, matching the locked-clock $323\times$ in \Cref{sec:eval:passesslow} within noise).
-\Cref{sec:analysis:jit} traces it to serialized memory-latency exposure under \texttt{T.serial} reduction loops (\texttt{warp\_stall\_long\_scoreboard} dominates; \texttt{warp\_stall\_barrier} $\approx$ 0).
+\Cref{tab:summary} reports normalization category medians.
+On the A100, Triton \texttt{layer\_norm} reaches 88.7\% of PyTorch throughput at $8192^2$; TileLang \texttt{layer\_norm} runs $1087\times$ slower ($364$~ms vs.\ $0.335$~ms).
+The TileLang collapse persists on the GH200 ($329\times$), confirmed within noise by clock-locked re-timing (\Cref{sec:eval:passesslow}).
+\Cref{sec:analysis:jit} attributes this collapse to serialized memory-latency stalls under \texttt{T.serial} reduction loops.
 
 \phantomsection\label{sec:eval:tuning}
 
