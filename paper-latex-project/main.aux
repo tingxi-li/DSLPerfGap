@@ -409,8 +409,8 @@
 \@LN{298}{2}
 \@LN{299}{2}
 \@LN@col{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt  {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \Cref  {tab:summary}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt  {fused linear+activation}, a valid DSL advantage through kernel fusion; see \Cref  {sec:eval:gemm}. Attention excluded; see \Cref  {sec:eval:gemm}.}}{4}{figure.1}\protected@file@percent }
-\newlabel{fig:overview}{{1}{4}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale). GEMM shows boxes (IQR; whiskers $1.5\times $ IQR); all other categories show individual kernel measurements as dots ($n=2$ per cell). Dashed line marks parity (100\%). The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt {rms\_norm}: the PyTorch eager baseline does not fuse its normalization passes, making this an unfair comparison rather than a genuine DSL win; see \Cref {tab:summary}. The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt {fused linear+activation}, a valid DSL advantage through kernel fusion; see \Cref {sec:eval:gemm}. Attention excluded; see \Cref {sec:eval:gemm}}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, by kernel category (log scale; dashed line = 100\% parity). GEMM shows IQR boxes (whiskers $1.5\times $ IQR); other categories show per-kernel dots ($n=2$). $\diamond $\nobreakspace  {}851.8\% (Triton, Norm.) marks \texttt  {rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref  {tab:summary}). Flier 548.6\% (TileLang, GEMM) marks \texttt  {fused\_linear\_activation}: genuine fusion advantage (\Cref  {sec:eval:gemm}). Attention excluded (\Cref  {sec:eval:gemm}).}}{4}{figure.1}\protected@file@percent }
+\newlabel{fig:overview}{{1}{4}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, by kernel category (log scale; dashed line = 100\% parity). GEMM shows IQR boxes (whiskers $1.5\times $ IQR); other categories show per-kernel dots ($n=2$). $\diamond $~851.8\% (Triton, Norm.) marks \texttt {rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref {tab:summary}). Flier 548.6\% (TileLang, GEMM) marks \texttt {fused\_linear\_activation}: genuine fusion advantage (\Cref {sec:eval:gemm}). Attention excluded (\Cref {sec:eval:gemm})}{figure.1}{}}
 \newlabel{fig:overview@cref}{{[figure][1][]1}{[1][3][]4}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {IV-C}0a}Attention}{4}{paragraph.4.3.0.1}\protected@file@percent }
 \@LN{300}{3}
@@ -443,12 +443,12 @@
 \@LN{325}{3}
 \@LN{326}{3}
 \@LN{327}{3}
-\@LN@col{2}
 \@LN{328}{3}
 \@LN{329}{3}
 \@LN{330}{3}
 \newlabel{sec:eval:norm}{{\mbox  {IV-C}0a}{4}{Attention}{section*.3}{}}
 \newlabel{sec:eval:norm@cref}{{[paragraph][1][4,3,0]\mbox  {IV-C}0a}{[1][4][]4}}
+\@LN@col{2}
 \@LN{331}{3}
 \@LN{332}{3}
 \@LN{333}{3}
@@ -505,14 +505,14 @@
 \@LN{380}{3}
 \@LN{381}{3}
 \@LN{382}{3}
+\@LN{383}{3}
+\@LN{384}{3}
+\@LN{385}{3}
 \citation{triton2022conv591}
 \@LN@col{1}
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200 (both unlocked tuned profile), computed over large-size benchmark configurations. Attention excluded from Overall; see text.}}{5}{table.1}\protected@file@percent }
 \newlabel{tab:summary}{{I}{5}{Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200 (both unlocked tuned profile), computed over large-size benchmark configurations. Attention excluded from Overall; see text}{table.1}{}}
 \newlabel{tab:summary@cref}{{[table][1][]I}{[1][4][]5}}
-\@LN{383}{4}
-\@LN{384}{4}
-\@LN{385}{4}
 \@LN{386}{4}
 \@LN{387}{4}
 \@LN{388}{4}
@@ -549,14 +549,14 @@
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0b}RC0a: TileLang Reduction Authoring (\texttt  {T.serial} $\to $ \texttt  {T.reduce})}{5}{paragraph.5.0.0.2}\protected@file@percent }
 \@LN{413}{4}
 \@LN{414}{4}
-\@LN@col{2}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces RC0a fix: replacing a \texttt  {T.serial} accumulation loop with \texttt  {T.reduce} in TileLang LayerNorm (mean pass; variance pass is identical). This two-line change recovers $1347\times $ latency on the A100.}}{5}{figure.2}\protected@file@percent }
-\newlabel{fig:serial-vs-reduce}{{2}{5}{RC0a fix: replacing a \texttt {T.serial} accumulation loop with \texttt {T.reduce} in TileLang LayerNorm (mean pass; variance pass is identical). This two-line change recovers $1347\times $ latency on the A100}{figure.2}{}}
-\newlabel{fig:serial-vs-reduce@cref}{{[figure][2][]2}{[1][5][]5}}
 \@LN{415}{4}
 \@LN{416}{4}
 \@LN{417}{4}
 \@LN{418}{4}
+\@LN@col{2}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces RC0a fix: replacing a \texttt  {T.serial} accumulation loop with \texttt  {T.reduce} in TileLang LayerNorm (mean pass; variance pass is identical). This two-line change recovers $1347\times $ latency on the A100.}}{5}{figure.2}\protected@file@percent }
+\newlabel{fig:serial-vs-reduce}{{2}{5}{RC0a fix: replacing a \texttt {T.serial} accumulation loop with \texttt {T.reduce} in TileLang LayerNorm (mean pass; variance pass is identical). This two-line change recovers $1347\times $ latency on the A100}{figure.2}{}}
+\newlabel{fig:serial-vs-reduce@cref}{{[figure][2][]2}{[1][5][]5}}
 \@LN{419}{4}
 \@LN{420}{4}
 \@LN{421}{4}
@@ -597,16 +597,16 @@
 \@LN{454}{4}
 \@LN{455}{4}
 \@LN{456}{4}
+\@LN{457}{4}
+\@LN{458}{4}
+\newlabel{sec:analysis:vec}{{\mbox  {V-}0d}{5}{TileLang float32 lowering to TF32}{section*.7}{}}
+\newlabel{sec:analysis:vec@cref}{{[paragraph][4][5,0,0]\mbox  {V-}0d}{[1][5][]5}}
+\@LN{459}{4}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0e}RC1: Absent Vectorization of Strided Memory Accesses}{5}{paragraph.5.0.0.5}\protected@file@percent }
+\@LN{460}{4}
 \citation{triton2022conv591}
 \citation{tillet2019triton}
 \@LN@col{1}
-\@LN{457}{5}
-\@LN{458}{5}
-\newlabel{sec:analysis:vec}{{\mbox  {V-}0d}{6}{TileLang float32 lowering to TF32}{section*.7}{}}
-\newlabel{sec:analysis:vec@cref}{{[paragraph][4][5,0,0]\mbox  {V-}0d}{[1][6][]6}}
-\@LN{459}{5}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0e}RC1: Absent Vectorization of Strided Memory Accesses}{6}{paragraph.5.0.0.5}\protected@file@percent }
-\@LN{460}{5}
 \@LN{461}{5}
 \@LN{462}{5}
 \@LN{463}{5}
@@ -660,11 +660,11 @@
 \@LN{507}{5}
 \@LN{508}{5}
 \@LN{509}{5}
-\@LN@col{2}
 \@LN{510}{5}
 \@LN{511}{5}
 \@LN{512}{5}
 \@LN{513}{5}
+\@LN@col{2}
 \@LN{514}{5}
 \@LN{515}{5}
 \newlabel{sec:analysis:regpressure}{{\mbox  {V-}0g}{6}{RC2b: L2 Cache Residency}{section*.9}{}}
@@ -727,16 +727,16 @@
 \@LN{561}{5}
 \@LN{562}{5}
 \@LN{563}{5}
+\@LN{564}{5}
+\@LN{565}{5}
+\@LN{566}{5}
+\@LN{567}{5}
 \citation{williams2009roofline}
 \citation{li2025tritonbench}
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref  {sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 and GH200 \texttt  {ncu\_summary.csv} files, which agree on the RC signatures.}}{7}{table.2}\protected@file@percent }
 \newlabel{tab:rootcauses}{{II}{7}{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref {sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values are consolidated in the A100 and GH200 \texttt {ncu\_summary.csv} files, which agree on the RC signatures}{table.2}{}}
 \newlabel{tab:rootcauses@cref}{{[table][2][]II}{[1][6][]7}}
 \@LN@col{1}
-\@LN{564}{6}
-\@LN{565}{6}
-\@LN{566}{6}
-\@LN{567}{6}
 \@LN{568}{6}
 \@LN{569}{6}
 \@LN{570}{6}
@@ -778,11 +778,11 @@
 \@LN{601}{6}
 \@LN{602}{6}
 \@LN{603}{6}
-\@LN@col{2}
 \@LN{604}{6}
 \@LN{605}{6}
 \@LN{606}{6}
 \@LN{607}{6}
+\@LN@col{2}
 \@LN{608}{6}
 \@LN{609}{6}
 \@LN{610}{6}
@@ -821,20 +821,19 @@
 \@LN{640}{6}
 \@LN{641}{6}
 \@LN{642}{6}
+\@LN{643}{6}
+\@LN{644}{6}
+\@LN{645}{6}
+\@LN{646}{6}
 \citation{zhou2021implicit}
 \@LN@col{1}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph  {mem}=HBM bandwidth, \emph  {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text  {lib}$, and the \emph  {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph  {authoring artifact}; a low $\rho $ that survives optimization marks a \emph  {structural residual}; the two architectures agree on every classification. Source: \texttt  {experiments/\allowbreak  results/\allowbreak  NVIDIA\_\{A100-SXM4-40GB,\allowbreak  GH200\_480GB\}/\allowbreak  cliff\_roofline.csv}.}}{8}{table.3}\protected@file@percent }
 \newlabel{tab:roofline}{{III}{8}{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph {mem}=HBM bandwidth, \emph {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text {lib}$, and the \emph {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph {authoring artifact}; a low $\rho $ that survives optimization marks a \emph {structural residual}; the two architectures agree on every classification. Source: \texttt {experiments/\allowbreak results/\allowbreak NVIDIA\_\{A100-SXM4-40GB,\allowbreak GH200\_480GB\}/\allowbreak cliff\_roofline.csv}}{table.3}{}}
 \newlabel{tab:roofline@cref}{{[table][3][]III}{[1][7][]8}}
-\@LN{643}{7}
-\@LN{644}{7}
-\@LN{645}{7}
-\@LN{646}{7}
 \@LN{647}{7}
 \@LN{648}{7}
 \@LN{649}{7}
 \@LN{650}{7}
-\@LN@col{2}
 \@LN{651}{7}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Convolution: Partial Recovery via Implicit GEMM}{8}{subsection.6.3}\protected@file@percent }
 \newlabel{sec:mitig:conv}{{\mbox  {VI-C}}{8}{Convolution: Partial Recovery via Implicit GEMM}{subsection.6.3}{}}
@@ -842,6 +841,7 @@
 \@LN{652}{7}
 \@LN{653}{7}
 \@LN{654}{7}
+\@LN@col{2}
 \@LN{655}{7}
 \@LN{656}{7}
 \@LN{657}{7}
@@ -894,14 +894,14 @@
 \@LN{701}{7}
 \@LN{702}{7}
 \@LN{703}{7}
+\@LN{704}{7}
+\@LN{705}{7}
+\@LN{706}{7}
+\@LN{707}{7}
+\@LN{708}{7}
+\@LN{709}{7}
 \citation{zheng2020ansor}
 \@LN@col{1}
-\@LN{704}{8}
-\@LN{705}{8}
-\@LN{706}{8}
-\@LN{707}{8}
-\@LN{708}{8}
-\@LN{709}{8}
 \@LN{710}{8}
 \@LN{711}{8}
 \@LN{712}{8}
@@ -954,13 +954,13 @@
 \@LN{756}{8}
 \@LN{757}{8}
 \@LN{758}{8}
-\@LN@col{2}
 \@LN{759}{8}
 \@LN{760}{8}
 \@LN{761}{8}
 \@LN{762}{8}
 \@LN{763}{8}
 \@LN{764}{8}
+\@LN@col{2}
 \@LN{765}{8}
 \@LN{766}{8}
 \@LN{767}{8}
@@ -1011,21 +1011,24 @@
 \@LN{808}{8}
 \@LN{809}{8}
 \@LN{810}{8}
+\@LN{811}{8}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Implications for DSL Developers}{9}{subsection.7.1}\protected@file@percent }
+\newlabel{sec:disc:dsl}{{\mbox  {VII-A}}{9}{Implications for DSL Developers}{subsection.7.1}{}}
+\newlabel{sec:disc:dsl@cref}{{[subsection][1][7]\mbox  {VII-A}}{[1][9][]9}}
+\@LN{812}{8}
+\@LN{813}{8}
+\@LN{814}{8}
+\@LN{815}{8}
+\@LN{816}{8}
+\@LN{817}{8}
+\@LN{818}{8}
+\citation{ragan-kelley2013halide}
+\citation{chen2018tvm}
+\citation{wang2025tilelang}
 \@LN@col{1}
 \@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{10}{table.4}\protected@file@percent }
 \newlabel{tab:mitigation}{{IV}{10}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.4}{}}
 \newlabel{tab:mitigation@cref}{{[table][4][]IV}{[1][9][]10}}
-\@LN{811}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Implications for DSL Developers}{10}{subsection.7.1}\protected@file@percent }
-\newlabel{sec:disc:dsl}{{\mbox  {VII-A}}{10}{Implications for DSL Developers}{subsection.7.1}{}}
-\newlabel{sec:disc:dsl@cref}{{[subsection][1][7]\mbox  {VII-A}}{[1][9][]10}}
-\@LN{812}{9}
-\@LN{813}{9}
-\@LN{814}{9}
-\@LN{815}{9}
-\@LN{816}{9}
-\@LN{817}{9}
-\@LN{818}{9}
 \@LN{819}{9}
 \@LN{820}{9}
 \@LN{821}{9}
@@ -1044,7 +1047,6 @@
 \@LN{834}{9}
 \@LN{835}{9}
 \@LN{836}{9}
-\@LN@col{2}
 \@LN{837}{9}
 \@LN{838}{9}
 \@LN{839}{9}
@@ -1053,6 +1055,7 @@
 \@LN{842}{9}
 \@LN{843}{9}
 \@LN{844}{9}
+\@LN@col{2}
 \@LN{845}{9}
 \@LN{846}{9}
 \@LN{847}{9}
@@ -1104,9 +1107,17 @@
 \@LN{887}{9}
 \@LN{888}{9}
 \@LN{889}{9}
-\citation{ragan-kelley2013halide}
-\citation{chen2018tvm}
-\citation{wang2025tilelang}
+\@LN{890}{9}
+\@LN{891}{9}
+\@LN{892}{9}
+\@LN{893}{9}
+\@LN{894}{9}
+\@LN{895}{9}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}GPU Kernel DSLs}{10}{subsection.8.1}\protected@file@percent }
+\newlabel{sec:rel:dsls}{{\mbox  {VIII-A}}{10}{GPU Kernel DSLs}{subsection.8.1}{}}
+\newlabel{sec:rel:dsls@cref}{{[subsection][1][8]\mbox  {VIII-A}}{[1][10][]10}}
+\@LN{896}{9}
+\@LN{897}{9}
 \citation{tillet2019triton}
 \citation{li2023torchcompile}
 \citation{spector2024thunderkittens}
@@ -1121,17 +1132,6 @@
 \citation{kernelbench}
 \citation{reddi2020mlperf}
 \@LN@col{1}
-\@LN{890}{10}
-\@LN{891}{10}
-\@LN{892}{10}
-\@LN{893}{10}
-\@LN{894}{10}
-\@LN{895}{10}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}GPU Kernel DSLs}{11}{subsection.8.1}\protected@file@percent }
-\newlabel{sec:rel:dsls}{{\mbox  {VIII-A}}{11}{GPU Kernel DSLs}{subsection.8.1}{}}
-\newlabel{sec:rel:dsls@cref}{{[subsection][1][8]\mbox  {VIII-A}}{[1][11][]11}}
-\@LN{896}{10}
-\@LN{897}{10}
 \@LN{898}{10}
 \@LN{899}{10}
 \@LN{900}{10}
@@ -1183,7 +1183,6 @@
 \@LN{940}{10}
 \@LN{941}{10}
 \@LN{942}{10}
-\@LN@col{2}
 \@LN{943}{10}
 \@LN{944}{10}
 \@LN{945}{10}
@@ -1193,6 +1192,7 @@
 \@LN{949}{10}
 \@LN{950}{10}
 \@LN{951}{10}
+\@LN@col{2}
 \@LN{952}{10}
 \@LN{953}{10}
 \@LN{954}{10}

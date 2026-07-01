@@ -282,16 +282,11 @@ RQ3 (\Cref{sec:mitigation}) shows that reduction and normalization gaps are auth
       Violin or box plot. To be generated from profiling data.]}}}%
   }
   \caption{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN
-    on the NVIDIA A100-SXM4-40GB, grouped by kernel category (log scale).
-    GEMM shows boxes (IQR; whiskers $1.5\times$ IQR); all other categories show individual
-    kernel measurements as dots ($n=2$ per cell).
-    Dashed line marks parity (100\%).
-    The hollow diamond at 851.8\% (Triton, Norm.)\ marks Triton \texttt{rms\_norm}:
-    the PyTorch eager baseline does not fuse its normalization passes, making this
-    an unfair comparison rather than a genuine DSL win; see \Cref{tab:summary}.
-    The boxplot flier at 548.6\% (TileLang, GEMM) marks \texttt{fused linear+activation},
-    a valid DSL advantage through kernel fusion; see \Cref{sec:eval:gemm}.
-    Attention excluded; see \Cref{sec:eval:gemm}.}
+    on the NVIDIA A100-SXM4-40GB, by kernel category (log scale; dashed line = 100\% parity).
+    GEMM shows IQR boxes (whiskers $1.5\times$ IQR); other categories show per-kernel dots ($n=2$).
+    $\diamond$~851.8\% (Triton, Norm.) marks \texttt{rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref{tab:summary}).
+    Flier 548.6\% (TileLang, GEMM) marks \texttt{fused\_linear\_activation}: genuine fusion advantage (\Cref{sec:eval:gemm}).
+    Attention excluded (\Cref{sec:eval:gemm}).}
   \label{fig:overview}
 \end{figure}
 
