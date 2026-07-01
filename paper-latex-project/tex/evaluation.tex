@@ -286,9 +286,10 @@ RQ3 (\Cref{sec:mitigation}) shows that reduction and normalization gaps are auth
     GEMM shows IQR boxes (whiskers $1.5\times$ IQR); other categories show per-kernel dots ($n=2$).
     $\diamond$~851.8\% (Triton, Norm.) marks \texttt{rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref{tab:summary}).
     Flier 548.6\% (TileLang, GEMM) marks \texttt{fused\_linear\_activation}: genuine fusion advantage (\Cref{sec:eval:gemm}).
-    Attention excluded (\Cref{sec:eval:gemm}).}
+    Attention excluded.\protect\footnotemark}
   \label{fig:overview}
 \end{figure}
+\footnotetext{\label{fn:attention}Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}
 
 % fig:overview data lives in figures/gen_overview.py with hard-coded arrays now
 % set to the A100-SXM4 per-kernel E_lib values; regenerate the PDF with
@@ -299,9 +300,6 @@ RQ3 (\Cref{sec:mitigation}) shows that reduction and normalization gaps are auth
 
 \medskip\noindent\textbf{Finding: On the A100-SXM4, Triton holds 32.8--92.9\% of cuBLAS on GEMM and TileLang 7.0--80.0\%, with complementary strength profiles that reorder on the GH200 (\Cref{tab:summary}); the $548.6\%$ TileLang fusion win and Triton's 32.8\% collapse at $16384^2$ mark the extremes (\Cref{fig:overview}).}
 
-
-\paragraph{Attention}
-Attention is excluded from \Cref{fig:overview} and \Cref{tab:summary} because Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.
 
 \phantomsection\label{sec:eval:conv}
 
@@ -341,7 +339,7 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
   \centering
   \caption{Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200
     (both unlocked tuned profile), computed over large-size benchmark configurations.
-    Attention excluded from Overall; see text.}
+    Attention excluded from Overall.\protect\footnotemark[\getrefnumber{fn:attention}]}
   \label{tab:summary}
   \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lcccc}
@@ -351,7 +349,7 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
     Kernel category    & Triton & TileLang & Triton & TileLang \\
     \midrule
     GEMM               & 32.8--92.9\% & 7.0--80.0\% & 56--170\% & 60--163\% \\
-    Attention          & \multicolumn{4}{c}{\textit{see text --- baselines non-equivalent}} \\
+    Attention          & \multicolumn{4}{c}{\textit{baselines non-equivalent}} \\
     Convolution        & 19.3\% & 12.6\% & 12.1\% & 54.1\% \\
     Normalization      & 88.7\%\rlap{$^\ddagger$} & 0.1--0.9\%\rlap{$^\ddagger$} & 74.8\% & 0.3--3.3\% \\
     Element-wise       & $\sim$95--116\% & $\sim$67--74\% & $\sim$66--98\% & $\sim$62--68\% \\
@@ -363,6 +361,7 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
     $^\ddagger$ LayerNorm 0.1\% is a serialization artifact (RC0; \Cref{sec:analysis:jit}), not a data error; RMSNorm 851.8\% is an unfair-baseline artifact (PyTorch eager does not fuse normalization passes) --- see body text.\par
     $^\S$ Overall figures are medians excluding attention; the Triton geomean ($\sim$126\%) is inflated by fusion and unfused-eager-baseline outliers, so we report the median as the more representative summary.}
 \end{table}
+\footnotetext[\getrefnumber{fn:attention}]{Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}
 
 The most striking asymmetry is TileLang's normalization collapse:
 a $1087\times$ slowdown on large LayerNorm (\Cref{sec:analysis:jit}) attributable to three compounding deficiencies (RC0), and it persists across architectures ($329\times$ on the GH200).
