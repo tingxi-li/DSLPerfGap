@@ -1,4 +1,4 @@
-# Hardware-counter findings — A100-SXM4-40GB (sm_80, Ampere) — ASE 2026 #4134
+# Hardware-counter findings — A100-SXM4-40GB (sm_80, Ampere)
 
 Canonical RC interpretation of the A100-SXM4 Nsight Compute sweep (`ncu_counters.sh` → `ncu/` →
 `consolidate_ncu.py` → `ncu_summary.csv`). Counters are the same arch-portable sets used on the
@@ -62,8 +62,7 @@ by the GH200 sweep — the A100 `tab:mitigation` LogSumExp number is real, not a
 - Feeds the **A100 column / caption** of `tab:rootcauses` (`tex/analysis.tex`): corrected RC0 (barrier=0,
   long_scoreboard dominates) and RC3 (TileLang-LN 51.5/34.4 GB spill, conv2d 0 spill) confirmed on the
   primary architecture, consistent with Ada and GH200.
-- **Resolves the `% TODO(verify)` on the A100 `tab:mitigation` LogSumExp 581.7%/582.5%** (`tex/mitigation.tex`,
-  paper-latex-project/CLAUDE.md "Out of Scope"): sm_80 confirmed **not** to spill (0 local traffic, 93 regs,
+- **Resolves the `% TODO(verify)` on the A100 `tab:mitigation` LogSumExp 581.7%/582.5%** (`tex/mitigation.tex`): sm_80 confirmed **not** to spill (0 local traffic, 93 regs,
   30.5% occ — `ncu_summary.csv`), so the number is genuine. The spill is sm_90-only — keep the dual-arch
   caveat ("every family kernel but `logsumexp` on the GH200"), now grounded by both sweeps.
 - `logsumexp:tilelang_opt:large` is a permanent ncu target on every arch; the A100 vs GH200 contrast

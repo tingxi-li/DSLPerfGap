@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # =============================================================================
-# run_all.sh  --  master runner for the ASE-2026 #4134 rebuttal experiment suite
+# run_all.sh  --  master runner for the experiment suite
 #
 # Runs the full suite SERIALIZED on ONE PINNED GPU so the timing experiments
 # never contend (contention would corrupt the median/std confidence intervals
-# the reviewers asked about, W8).  Default CUDA_VISIBLE_DEVICES=0; overridable.
+# addressed by significance re-timing).  Default CUDA_VISIBLE_DEVICES=0; overridable.
 #
 # Order:
 #   1. CORRECTNESS first (no timing sensitivity):
-#        exp_fp32_gemm.py          (Exp 2: FP32 / TF32 root cause; W1/W11)
+#        exp_fp32_gemm.py          (Exp 2: FP32 / TF32 root cause)
 #        exp_correctness_edge.py   (edge-case numerical correctness)
 #   2. TIMING (serialized, idle GPU):
-#        exp_conv_filters.py       (Exp 3: 1/3/5/7 conv regs+latency; RC3/W13/W6)
+#        exp_conv_filters.py       (Exp 3: 1/3/5/7 conv regs+latency; RC3)
 #        exp_fused_baselines.py    (fused-op baselines)
 #        exp_winograd_isolation.py (Exp 4: Winograd eligible-vs-ineligible; RC4)
 #        exp_autotune_matmul.py    (autotuned matmul sweep)
@@ -23,7 +23,7 @@
 # results/<gpu_slug>/run_all.log.
 #
 # Portable: nothing is sm_89-specific. The SAME script runs on A100/H100 and
-# auto-writes to a NEW results/<gpu_slug>/ dir (see A100_H100_RUNBOOK.md).
+# auto-writes to a NEW results/<gpu_slug>/ dir.
 #
 # Usage:
 #   bash experiments/run_all.sh                 # full suite, GPU 0
@@ -54,7 +54,7 @@ CORRECTNESS_EXPS=(
 #
 # Conv sweep covers four arms: {baseline, --mitigation} x {small, large}.
 # This produces conv_{filters,mitigation}_{small,large}.csv -- the four files
-# cited by paper REVISION notes (id=4134A-W6, mitigation.tex). On Ada the large
+# cited by the paper (mitigation.tex). On Ada the large
 # shape OOM-guards per row; on A100/H100 (80 GB) all rows populate.
 TIMING_EXPS=(
   "exp_conv_filters.py"
@@ -80,7 +80,7 @@ LOG="${RESULTS_DIR}/run_all.log"
 exec > >(tee "${LOG}") 2>&1
 
 echo "######################################################################"
-echo "#  ASE-2026 #4134 rebuttal suite -- run_all.sh"
+echo "#  experiment suite -- run_all.sh"
 echo "#  $(date -u +'%Y-%m-%dT%H:%M:%SZ')   CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
 echo "#  results -> ${RESULTS_DIR}"
 [[ ${#EXTRA_ARGS[@]} -gt 0 ]] && echo "#  passthrough args: ${EXTRA_ARGS[*]}"

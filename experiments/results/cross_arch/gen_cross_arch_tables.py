@@ -7,7 +7,7 @@ GPUS = [("A100-SXM4", SXM4, "profile.A100-SXM4-40GB.csv"),
         ("A100-PCIE", PCIE, "profile.A100-PCIE-40GB.csv"),
         ("H100",      H100, "profile.H100-80GB-HBM3.csv")]
 EXP = os.path.join(ROOT, "experiments/results")
-OUTtex = os.path.join(ROOT, "paper-latex-project/tex/cross_arch.tex")
+OUTtex = os.path.join(ROOT, "experiments/results/cross_arch/cross_arch.tex")
 OUTjson = os.path.join(EXP, "cross_arch/cross_arch_data.json")
 
 def rows(p): return list(csv.DictReader(open(p))) if os.path.exists(p) else []
@@ -84,7 +84,7 @@ W("% Cross-architecture comparison tables. PRIMARY = A100-SXM4-40GB (sm_80);")
 W("% generalization replay on A100-PCIE-40GB (sm_80, form factor) and H100-80GB-HBM3 (sm_90, Hopper).")
 W("% AUTO-GENERATED from experiments/results/<gpu>/*.csv and ViperBench/results/profile.*.csv")
 W("% by experiments/results/cross_arch/gen_cross_arch_tables.py -- numbers are NOT hand-typed.")
-W("% Answers R1-Q5 / R3-Q2 (do conclusions generalize across GPU form-factors and families?).")
+W("% Cross-architecture generalization (do conclusions generalize across GPU form-factors and families?).")
 W("")
 # Table 1: category summary across 3 GPUs x 2 DSLs
 W(r"\begin{table}[t]")

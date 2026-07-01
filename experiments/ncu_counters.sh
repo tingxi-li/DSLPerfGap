@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # =============================================================================
 # ncu_counters.sh  --  turnkey Nsight Compute counter collection
-# ASE-2026 #4134 rebuttal, Experiment 1 (the hardware-counter-grounded taxonomy)
+# Experiment 1 (the hardware-counter-grounded taxonomy)
 #
-# Substantiates the counter families R1-Q4 asked for, via the EXACT metric sets
-# from REBUTTAL_PROTOCOLS_CRITICAL.md Experiment 1:
+# Collects the counter families of interest, via the EXACT metric sets
+# Experiment 1:
 #   (A) vectorized / global-load efficiency   (conv vs GEMM vs LayerNorm)
-#   (B) registers + spill proxy + occupancy    (RC3 / W13)
+#   (B) registers + spill proxy + occupancy    (RC3)
 #   (C) warp-stall breakdown                    (--section WarpStateStats; RC0)
 #   (D) L2 / DRAM                               (RC2b; feeds Exp 5)
 #
@@ -24,7 +24,7 @@
 #
 # PORTABILITY: every metric ID below is arch-portable -- the SAME script runs on
 # A100/H100. Results auto-namespace under results/<gpu_slug>/ncu/ via the GPU
-# slug, so Ada / A100 / H100 never collide.  See experiments/A100_H100_RUNBOOK.md.
+# slug, so Ada / A100 / H100 never collide.
 # =============================================================================
 set -u  # (no -e: we want to keep going across kernels and report per-target rc)
 
@@ -158,11 +158,11 @@ resolve_outdir() {
 }
 
 # =============================================================================
-# The four metric sets -- EXACT strings from REBUTTAL_PROTOCOLS_CRITICAL.md,
+# The four metric sets:
 # copy-paste-correct for Nsight Compute on sm_89 (ncu 2024.3.2). No spaces.
 # =============================================================================
 
-# (A) Vectorized / global-load efficiency  (R1-Q4 #1; RC0b scalar-load test).
+# (A) Vectorized / global-load efficiency  (RC0b scalar-load test).
 #   smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct
 #     = vectorized-load fraction: 100% => full 32 B/sector (LDG.128-class);
 #       lower => scalar / uncoalesced 16-bit loads.
@@ -172,7 +172,7 @@ l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,\
 smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,\
 sm__sass_inst_executed_op_global_ld.sum"
 
-# (B) Register usage + spill proxy + occupancy  (R1-Q4 #2; RC3 / W13).
+# (B) Register usage + spill proxy + occupancy  (RC3).
 #   non-zero local_op_ld/st bytes => register spill to local memory;
 #   sm__warps_active...pct_of_peak_sustained_active => achieved occupancy.
 METRICS_B="\
@@ -182,7 +182,7 @@ l1tex__t_bytes_pipe_lsu_mem_local_op_ld.sum,\
 l1tex__t_bytes_pipe_lsu_mem_local_op_st.sum,\
 sm__warps_active.avg.pct_of_peak_sustained_active"
 
-# (C) Warp-stall breakdown  (R1-Q4 #3; RC0 sync-vs-latency).
+# (C) Warp-stall breakdown  (RC0 sync-vs-latency).
 #   collected together with --section WarpStateStats.
 #   RC0 predicts stalled_barrier dominates the T.serial TileLang kernels;
 #   if long_scoreboard dominates instead => memory-latency-bound, not sync-bound.
@@ -296,7 +296,7 @@ profile_one() {  # $1 kernel  $2 impl  $3 size  $4 set-letter
 # =============================================================================
 main() {
   echo "======================================================================"
-  echo " ncu_counters.sh -- ASE-2026 #4134 Exp 1 hardware-counter collection"
+  echo " ncu_counters.sh -- Exp 1 hardware-counter collection"
   echo "======================================================================"
   print_unblock
 
@@ -335,7 +335,7 @@ main() {
   echo "[ncu_counters] done: ${total} collections attempted, ${fail} failed."
   echo "[ncu_counters] CSVs in: ${OUTDIR}"
   echo "[ncu_counters] consolidate into the Exp-1 table (RC0/RC2b/RC3/ref) per"
-  echo "               REBUTTAL_PROTOCOLS_CRITICAL.md, then -> ncu_counters.csv."
+  echo "               then -> ncu_counters.csv."
   echo "======================================================================"
   [[ ${fail} -eq 0 ]] && return 0 || return 1
 }

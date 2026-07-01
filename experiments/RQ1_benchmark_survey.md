@@ -3,7 +3,7 @@
 > **Purpose (RQ1).** Characterize, precisely and fairly, what the two most-prevalent DSL / LLM-generated-kernel
 > benchmarks — **KernelBench** (Stanford Scaling Intelligence) and **TritonBench** — actually evaluate, and
 > where they fall short for judging whether a DSL kernel is *well-written* (i.e., near the vendor library) as
-> opposed to merely *correct*. Per `PIVOT_FRAMING.md` Guardrail 1, the critique must be accurate, not a
+> opposed to merely *correct*. The critique must be accurate, not a
 > strawman: each subsection states what the benchmark **does well** before what it misses, and every claim is
 > sourced (URL / paper / repo file:line). Unverifiable claims are tagged `[UNVERIFIED]`.
 
@@ -117,7 +117,7 @@ Strengths relevant to *performance* evaluation:
   Execution Accuracy (does it run / produce correct output), it reports **Speedup** (t_ref / t_gen) **and GPU
   Efficiency = measured performance ÷ the A100's theoretical peak**. That efficiency metric is effectively a
   **roofline anchor** — a *baseline-independent* notion of "well-written" — which is more than KernelBench's
-  PyTorch-relative `fast_p` offers. (This is precisely the non-circular signal `PIVOT_FRAMING.md` argues for in
+  PyTorch-relative `fast_p` offers. (This is precisely the non-circular signal we argue for in
   RQ3, so TritonBench is partial corroboration, not just a foil.)
 - **Realistic, difficulty-graded operator distribution** drawn from production Triton code, plus per-operator
   multi-branch correctness tests (avg ≈3.6 test branches/operator) to exercise code paths.
@@ -171,7 +171,7 @@ Strengths relevant to *performance* evaluation:
 ## 3. Comparison table
 
 Rows = the two surveyed benchmarks + **ViperBench** (this paper's *diagnostic probe*, included for contrast —
-**not** proposed as a comprehensive benchmark; see `PIVOT_FRAMING.md` Guardrail 3). "Performance gate" answers
+**not** proposed as a comprehensive benchmark). "Performance gate" answers
 the load-bearing RQ1 question: *does a functionally-correct but slow kernel pass?*
 
 | Dimension | **KernelBench** | **TritonBench** (acad., 2502.14752) | **ViperBench** (our probe) |
@@ -207,7 +207,7 @@ aimed at "too-good-to-be-true" results — the >10× excessive-speedup check —
 only emits a warning; it never fails a kernel. That loophole is not hypothetical: the Sakana "AI CUDA Engineer"
 episode produced widely-cited 10–150× "speedups" that were evaluation exploits (memory reuse, dropped
 computation) before being walked back — direct evidence that a correctness-gated, warn-only protocol "only
-partially prevents reward hacking" (`PIVOT_FRAMING.md`).
+partially prevents reward hacking".
 
 **TritonBench actually points at the right fix — but narrowly.** TritonBench is the more performance-serious of
 the two on one axis: it reports **GPU efficiency as a fraction of the A100's theoretical peak**, a

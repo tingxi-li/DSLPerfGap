@@ -1,4 +1,4 @@
-# Hardware-counter findings — GH200 480GB (sm_90, Hopper) — ASE 2026 #4134
+# Hardware-counter findings — GH200 480GB (sm_90, Hopper)
 
 Canonical RC interpretation of the GH200 Nsight Compute sweep (`ncu_counters.sh` → `ncu/` →
 `consolidate_ncu.py` → `ncu_summary.csv`). Counters are the same arch-portable sets used on the
@@ -43,7 +43,7 @@ spill traffic thrashing local memory, not useful work — for a ~0.5 GB input, ~
 on the A100 (581.7%) but on the GH200 its A100-tuned wide fp32 fragment register-spills catastrophically
 → 1.0% E_lib (107.9 ms). Even retuned to the GH200-optimal fragment width it caps at 63%. It is the one
 norm/reduction-family kernel that does **not** transfer to Hopper — an RC3-class residual, not the RC0
-authoring idiom. See parent memory `logsumexp-gh200-nontransfer`.
+authoring idiom.
 
 **RC1 (vectorization).** layer_norm TL loads at 50% efficiency (1 sector/req, scalar-ish); argmax and
 logsumexp at 12.5%; `max_reduction` at 100% (the recovered kernel vectorizes cleanly). conv2d Triton at

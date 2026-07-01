@@ -3,7 +3,7 @@
 Experiment — "Passes-but-slow" demonstration  (RQ1 headline evidence)
 =====================================================================
 
-THE CLAIM (PIVOT_FRAMING.md, "New evidence to collect" item (b)):
+THE CLAIM:
 
     A *naive but functionally-correct* DSL kernel PASSES a KernelBench-style
     correctness gate yet is many times SLOWER than the vendor/PyTorch library.

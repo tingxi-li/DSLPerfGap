@@ -7,8 +7,7 @@ the Ada/A100/H100 numbers, but aarch64 (GH200) needs different pins. Record per-
 stacks here so cross-architecture numbers can be reconciled, and follow the
 **pre-move checklist** before releasing any GPU so its evidence is not lost.
 
-> Companion docs: `A100_H100_RUNBOOK.md` (turnkey replay sequence) and
-> `../PIVOT_FRAMING.md` (the paper's current framing + the new experiments to build).
+> Companion: the `experiments/repro/` scripts (turnkey replay sequence).
 
 ## Per-GPU software stacks
 
@@ -36,7 +35,7 @@ can stall — budget for long compiles or skip that edge shape.
 When the source box is the GPU of interest (e.g. the GH200 right now), its evidence must
 be captured and committed or it is lost on the move. In order:
 
-1. **Capture results on this GPU.** Run the suite — see `A100_H100_RUNBOOK.md` §(0).
+1. **Capture results on this GPU.** Run the suite via the `experiments/repro/` scripts.
    The locked-clock pass (`repro/lock_clocks.sh`, `repro/run_pipeline.sh`) needs `sudo`.
    Override the (dead) default venv with `PYTHON=$(which python3)` if `dslperf-venv` is absent.
 2. **Tuning sweep (for headline `*_tuned` numbers).** `tuning_cache.json` has **no** key for

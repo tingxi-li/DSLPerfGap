@@ -86,7 +86,7 @@ session). Full 5-impl profile: `ViperBench/results/profile.H100-80GB-HBM3.tuned.
 512×1024 — see `_make_inputs`), but the single cached config is applied to **all** shapes,
 including large. Configs best at the tuning shape do not transfer to large: the worst
 cases (`swiglu`/`log_softmax`/`conv2d` TileLang at large) are genuine — the swept config
-is real, just wrong for the deployment shape. This is the §7.3 / W7 shape-sensitivity
+is real, just wrong for the deployment shape. This is the §7.3 shape-sensitivity
 effect, made visible only after the sweep was fixed.
 
 The large TileLang norm/reduction *wins* (`layer_norm` −74%, `rms_norm` −74%) mirror the
@@ -103,7 +103,7 @@ choices pay off massively.
   re-run the *fixed* sweep on Ada (RTX 4000 Ada) and re-derive the §5 number. The fix is
   arch-general (`sweep.py`), so the Ada cache will need regenerating too. Until then, treat
   the §5 Δ=0 claim as **unsupported**.
-- Relevant to **W7** (autotune reconciliation, §5 vs §7.3) — this *is* the reconciliation:
+- Autotune reconciliation (§5 vs §7.3) — this *is* the reconciliation:
   single-shape tuning helps at the tuned shape and can hurt at others.
 
 ## 5. Replay

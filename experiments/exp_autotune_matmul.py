@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Experiment 3 — Autotuned-matmul reconciliation  (answers W7 / R1-Q3 / R2-Q5)
+Experiment 3 — Autotuned-matmul reconciliation
 ============================================================================
 
 The paper reports two matmul numbers that *look* contradictory:
@@ -77,7 +77,7 @@ def _free(*ts):
 
 
 def run(shapes, warmup, reps):
-    info = banner("Experiment 3 — autotuned-matmul reconciliation (W7)")
+    info = banner("Experiment 3 — autotuned-matmul reconciliation")
 
     # Load the three matmul implementations once (modules cache their JIT).
     plain = load_impl("matmul", "triton")          # §5 heuristic-tuned single config

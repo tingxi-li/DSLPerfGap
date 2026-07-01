@@ -1,5 +1,5 @@
 # Clock-lock verification — 2026-05-26T20:16:59Z
-# Path A (rebuttal L72 / R1 reviews.txt:50). GPU 0 = RTX 4000 Ada (130 W cap).
+# GPU 0 = RTX 4000 Ada (130 W cap).
 # Target lock: graphics 1400 MHz (-> 1410 step), memory 9001 MHz.
 
 ## idle clocks (before load):

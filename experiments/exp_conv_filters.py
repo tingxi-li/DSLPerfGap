@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Experiment: Conv filter-size coverage sweep  (ASE-2026 #4134 rebuttal)
+Experiment: Conv filter-size coverage sweep
 ======================================================================
 
 WHAT THIS ANSWERS
 -----------------
-Reviewer R1-Q2 and R2-Q2 / weakness **W6**: the paper claims conv coverage of
+The paper claims conv coverage of
 1x1-7x7 + depthwise + strided convolutions, but the artifact only benchmarks the
 single 3x3 stride-1 case. This script sweeps the *full* advertised filter family
 on a fixed, realistic input shape and reports library-efficiency (E_lib =
@@ -13,13 +13,13 @@ t_library / t_DSL * 100) for both DSLs (Triton, TileLang) against the PyTorch
 (cuDNN) baseline -- turning an asserted coverage claim into measured data.
 
 It also feeds two further points:
-  * **RC3** (register pressure at larger filters, R1-Q4): the Triton conv kernel
+  * **RC3** (register pressure at larger filters): the Triton conv kernel
     loops `for h in range(kernel_height): for w in range(kernel_width)`
     (ViperBench/conv2d/triton_impl.py:54-55) so the fp32 `accum` register
     lifetime grows with k^2. We capture the *real* kernel's `n_regs` / `n_spills`
     per filter size via Triton 3.4.0's CompiledKernel handle (admin-free: no ncu,
     no profiling permission needed -- this is "Experiment 3 Path A").
-  * **W13** (Ada register numbers): the captured n_regs are the measured Ada
+  * Ada register numbers: the captured n_regs are the measured Ada
     (sm_89) register counts the reviewers asked for.
 
 PORTABILITY (mandatory)
@@ -453,7 +453,7 @@ def print_mitigation_summary(rows):
 # Main.
 # ---------------------------------------------------------------------------
 def main():
-    ap = argparse.ArgumentParser(description="Conv filter-size coverage sweep (W6/RC3).")
+    ap = argparse.ArgumentParser(description="Conv filter-size coverage sweep (RC3).")
     ap.add_argument("--shape", choices=["large", "small"], default="small",
                     help="input shape preset (default: small, Ada-safe). "
                          "large = paper Table-2 case (needs ~80 GB; OOM-guarded on Ada).")
@@ -491,7 +491,7 @@ def main():
     else:
         atol, rtol = 1e-4, 1e-4
 
-    info = banner("Conv filter-size coverage sweep (W6 / RC3 / R1-Q2 / R2-Q2)")
+    info = banner("Conv filter-size coverage sweep (RC3)")
     print(f"  Shape preset: {shape_key} = (N={N}, C={C}, H={H}, W={W})  "
           f"dtype={str(dtype).split('.')[-1]}")
     print(f"  Timing: warmup={warmup}, reps={reps}   "
@@ -510,7 +510,7 @@ def main():
         print("  + mitigation arm: AKO4ALL optimized conv2d_triton -- tests whether the")
         print("    RQ3 conv recovery generalizes across filters (R1:68); groups==1 only.\n")
     # Auto-suffix by shape so back-to-back small/large runs don't clobber each
-    # other (paper REVISION notes cite conv_{filters,mitigation}_{small,large}.csv).
+    # other (outputs: conv_{filters,mitigation}_{small,large}.csv).
     if shape_key in ("small", "large"):
         experiment = f"{experiment}_{shape_key}"
 

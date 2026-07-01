@@ -3,7 +3,7 @@ exp_significance.py — Path A: re-measure the near-parity comparisons with GPU
 clocks LOCKED, reporting median + std-dev + p95 and a significance verdict
 (does the efficiency delta exceed run-to-run noise?).
 
-Answers R1's load-bearing rigor critique (reviews.txt:50): a ~9% clock-variation
+Addresses a load-bearing rigor concern: a ~9% clock-variation
 noise floor means small efficiency gaps "(e.g., 94.6% vs. 97.8%)" may not be
 meaningful unless clocks are locked. profile.csv pins those two numbers to
 layer_norm (94.5%) and softmax (97.6%); this script re-times the full
@@ -27,8 +27,8 @@ lock below max (e.g. for thermal headroom).
   sudo nvidia-smi -i 0 -rgc -rmc                    # reset afterward
 
 The script self-checks the clocks are pinned and ABORTS otherwise, so no
-unlocked data is ever recorded. Numbers here are revision material — the
-rebuttal text stays qualitative.
+unlocked data is ever recorded. Numbers here are supplementary — the
+reported text stays qualitative.
 
 Reuses experiments/_harness.py (time_kernel, load_impl, write_csv, banner) and
 ViperBench/benchmark.py's get_test_cases() for the exact same input tensors.
@@ -189,7 +189,7 @@ def main():
         allow_unlocked = True
         experiment = "significance_smoke"
 
-    banner("Significance / clock-locked re-measurement (Path A, R1 reviews.txt:50)")
+    banner("Significance / clock-locked re-measurement")
     locked_gr, locked_mem = assert_clocks_locked(
         target_gr=args.lock_gr_mhz,
         target_mem=args.lock_mem_mhz,

@@ -2,7 +2,7 @@
 """
 Experiment — Correctness on edge-case inputs + mitigation-kernel revalidation.
 
-Answers R3 / W11. Two independent parts:
+Two independent parts:
 
   (a) EDGE-CASE harness: run a handful of kernels (matmul, layer_norm, softmax,
       add) on adversarial inputs — NaN, +/-Inf, large-magnitude (1e4), denormals,
@@ -373,7 +373,7 @@ def main():
         print("ERROR: CUDA not available; this experiment requires a GPU.")
         sys.exit(2)
 
-    banner("exp_correctness_edge  (edge-case behaviour + mitigation revalidation; R3/W11)")
+    banner("exp_correctness_edge  (edge-case behaviour + mitigation revalidation)")
     if TU is None:
         print("  WARNING: ViperBench test_utils not importable; using built-in tolerances.")
 

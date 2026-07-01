@@ -1,32 +1,22 @@
-# Cross-architecture comparison artifacts (Ada sm_89 vs A100 sm_80)
+# Cross-architecture comparison data
 
-Auto-generated from the per-GPU result CSVs — **numbers are not hand-typed**, so
-they cannot drift from the data (unlike the hand-entered tables elsewhere).
+Auto-generated from the per-GPU result CSVs under `experiments/results/<gpu>/` —
+**numbers are not hand-typed**, so they cannot drift from the underlying data.
 
 | File | What it is |
 |---|---|
-| `cross_arch_data.json` | machine-readable merged Ada/A100 numbers (source of truth for the figure) |
-| `../../../paper-latex-project/tex/cross_arch.tex` | 4 booktabs tables, ready to `\input` |
-| `../../../paper-latex-project/figures/gen_cross_arch.py` | figure generator (reads the JSON) |
-| `../../../paper-latex-project/figures/cross_arch_efficiency.pdf` | the figure (fig:xarch) |
+| `cross_arch_data.json` | machine-readable merged per-GPU numbers (source of truth) |
+| `gen_cross_arch_tables.py` | regenerates `cross_arch_data.json` + a LaTeX table dump (`cross_arch.tex`) from the per-GPU CSVs |
+| `tuned_comparison.csv` | tuned-vs-untuned library-efficiency comparison across GPUs |
 
-## Tables (labels)
-- `tab:xarch:summary`  — median E_lib per category, both DSLs, Ada vs A100 (generalization headline)
-- `tab:xarch:rootcause`— RC0/RC3/RC4/FP32 reproduce across both GPUs
-- `tab:xarch:autotune` — Triton matmul plain-vs-autotuned recovery, both GPUs
-- `tab:xarch:conv`     — conv filter sweep (1x1..7x7) E_lib + Triton n_spills, both GPUs
+The median-`E_lib`-per-category generalization summary derived from this data is
+reproduced in the top-level [`README.md`](../../../README.md) under
+"Cross-Architecture Generalization".
 
-## To include in the paper
-```latex
-\input{tex/cross_arch}                                  % the four tables
-\includegraphics[width=\linewidth]{figures/cross_arch_efficiency.pdf}  % fig:xarch
-```
+## Regenerate after new data
 
-## To regenerate after new data (e.g. tuned rows, or an H100 run)
 ```bash
-source /venv/main/bin/activate && source /workspace/.env
-python experiments/results/cross_arch/gen_cross_arch_tables.py   # rebuilds tex + json
-cd paper-latex-project/figures && python gen_cross_arch.py   # rebuilds the figure
+python experiments/results/cross_arch/gen_cross_arch_tables.py   # rebuilds the JSON + cross_arch.tex here
 ```
-`---` cells = genuine OOM-skips on the 40 GB A100 (5x5/7x7 TileLang conv); the
-RTX-4000 Ada counterpart CSVs are the cross-check baseline.
+
+`---` cells in the tables are genuine OOM-skips on the 40 GB A100 (5×5 / 7×7 TileLang conv).

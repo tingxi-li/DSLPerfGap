@@ -1,5 +1,5 @@
 # Clock-lock verification -- 2026-06-26 (A100-SXM4-40GB fresh re-baseline, this box).
-# Path A (rebuttal L72 / R1 reviews.txt:50). GPU 0 = NVIDIA A100-SXM4-40GB (sm_80, 400 W cap).
+# GPU 0 = NVIDIA A100-SXM4-40GB (sm_80, 400 W cap).
 # Driver 580.105.08, CUDA 12.6 (torch 2.8.0+cu126, triton 3.4.0, tilelang 0.1.6.post1).
 #
 # NOTE on target choice: this GPU's max graphics clock is 1410 MHz, but under a

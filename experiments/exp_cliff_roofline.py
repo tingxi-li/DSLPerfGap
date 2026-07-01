@@ -17,7 +17,7 @@ and emit ONE CSV row per kernel with:
     cliff       = t_naive / t_opt    (the headline naive->optimized speedup)
     roofline_frac_opt = achieved(opt) / GPU_peak   (baseline-INDEPENDENT anchor)
 
-WHY THIS EXPERIMENT (PIVOT_FRAMING.md, guardrail #2 + RQ3 heuristics)
+WHY THIS EXPERIMENT (RQ3 heuristics)
 ---------------------------------------------------------------------
 The comparability rules (within-epsilon-of / at-least-parity-with the library)
 are circular: PyTorch is both the baseline AND the de-facto "good" answer. The

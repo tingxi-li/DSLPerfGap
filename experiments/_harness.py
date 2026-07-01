@@ -1,5 +1,5 @@
 """
-Portable experiment harness for ASE-2026 #4134 rebuttal experiments.
+Portable experiment harness for the root-cause experiments.
 
 Design goals:
   * IDENTICAL code runs on RTX 4000 Ada (now) and A100/H100 (later).
@@ -8,7 +8,7 @@ Design goals:
     never collide:  experiments/results/<gpu_slug>/<experiment>.csv
   * Timing reports median AND mean+/-std over repeated reps (gives the
     confidence intervals reviewers asked about for "is 94.6% vs 97.8%
-    meaningful?", W8), measured on an idle GPU with CUDA events.
+    meaningful?"), measured on an idle GPU with CUDA events.
 
 Usage in an experiment script:
     from _harness import device_info, time_kernel, load_kernel, write_csv, banner

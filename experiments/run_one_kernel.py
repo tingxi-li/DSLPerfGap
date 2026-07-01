@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Single-launch profiling target for Nsight Compute (ASE-2026 #4134 rebuttal, Exp 1).
+Single-launch profiling target for Nsight Compute (Exp 1).
 
 `ncu` must profile EXACTLY ONE kernel invocation, or it serializes every launch
 and a run takes hours.  This harness:

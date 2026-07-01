@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Experiment 1 — Split baselines for "library efficiency"  (answers W2 / R2 / R3)
+Experiment 1 — Split baselines for "library efficiency"
 ==============================================================================
 
 The paper's single "library efficiency" metric mixes denominators: cuBLAS for
 GEMM, cuDNN for conv, but plain **eager PyTorch** for element-wise + RMSNorm.
-Reviewers (R2/R3, W2) want the eager-baseline kernels split out so the reader
+We split the eager-baseline kernels out so the reader
 can tell whether the DSL "gap" is a *real* kernel gap or merely a *fusion*
 artifact (eager PyTorch launches many tiny kernels; a fused kernel does not).
 
@@ -23,7 +23,7 @@ and reports latency (median + mean+/-std) plus two efficiencies:
   e_vs_fused = t_fused / t_impl * 100      (the fair, fusion-controlled denominator)
 
 If the DSL looks great vs eager but mediocre vs fused, the "gap" was a fusion
-artifact, not a DSL deficiency — exactly the honesty point W2 asks for.
+artifact, not a DSL deficiency.
 
 Kernels covered: rms_norm, swiglu, softmax, log_softmax, add, relu, leaky_relu.
 (add/relu/leaky_relu are the element-wise representatives; leaky_relu is a
@@ -361,7 +361,7 @@ def main():
         warmup = args.warmup if args.warmup is not None else 15
         reps = args.reps if args.reps is not None else 50
 
-    banner("Experiment 1 — split baselines (eager / fused / DSL)  (W2)")
+    banner("Experiment 1 — split baselines (eager / fused / DSL)")
     print(f"  torch.compile mode = {compile_mode}; sizes = {sizes}\n")
 
     kernels = args.kernels or KERNELS

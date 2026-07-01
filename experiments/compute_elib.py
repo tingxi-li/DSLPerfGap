@@ -8,7 +8,7 @@ where t_lib is the PyTorch (cuBLAS / cuDNN) baseline latency and t_DSL is the
 Triton or TileLang latency for the SAME (kernel, size). 100% == parity with the
 vendor library; below 100% == the DSL kernel is slower.
 
-REVISION_TODO item 4: paper section 3.4 defines E_lib but no committed script
+Paper section 3.4 defines E_lib but no committed script
 emitted it (table percentages were hand-derived). This script de-risks
 transcription errors by computing every cell from profile.csv directly.
 

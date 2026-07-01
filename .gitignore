@@ -6,3 +6,4 @@ __pycache__/
 trajectory/
 scripts/
 _bench_output.txt
+.DS_Store

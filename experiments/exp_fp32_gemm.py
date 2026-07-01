@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Experiment 2 (REBUTTAL_PROTOCOLS_CRITICAL.md) — FP32 GEMM correctness root-cause.
+Experiment 2 — FP32 GEMM correctness root-cause.
 
-Answers R1-Q1 / W1 / W11. Converts the *unattributed* FP32 TileLang GEMM failure
+Converts the *unattributed* FP32 TileLang GEMM failure
 (99.6% mismatch, ~2067x rel err @ M,K,N = 4096,2048,1024, copied as a bare GitHub
 issue in AKO4ALL/context/known_github_issues.md) into a *definitive, reproducible*
 root cause.
@@ -201,7 +201,7 @@ def main():
         print("ERROR: CUDA not available; this experiment requires a GPU.")
         sys.exit(2)
 
-    banner("exp_fp32_gemm  (FP32 GEMM TF32-truncation root-cause; W1/W11/R1-Q1)")
+    banner("exp_fp32_gemm  (FP32 GEMM TF32-truncation root-cause)")
 
     # Shapes. Full = the issue's exact shape; smoke = small & fast.
     if args.smoke:

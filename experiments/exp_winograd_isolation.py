@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Experiment 4 — Winograd isolation in the conv gap  (answers RC4 / R1)
+Experiment 4 — Winograd isolation in the conv gap  (RC4)
 =====================================================================
 
 cuDNN selects a Winograd algorithm for 3x3 stride-1 convolutions; the Triton and
