@@ -98,12 +98,6 @@ S.~Williams, A.~Waterman, and D.~Patterson, ``Roofline: an insightful visual
   \url{https://doi.org/10.1145/1498765.1498785}
 \BIBentrySTDinterwordspacing
 
-\bibitem{yang2020hierarchical}
-C.~Yang, T.~Kurth, and S.~Williams, ``Hierarchical roofline analysis for
-  {GPUs}: Accelerating performance optimization for the {NERSC-9} perlmutter
-  system,'' \emph{Concurrency and Computation: Practice and Experience},
-  vol.~32, no.~20, p. e5547, 2020.
-
 \bibitem{dao2023flashattention2}
 \BIBentryALTinterwordspacing
 T.~Dao, ``Flashattention-2: Faster attention with better parallelism and work
