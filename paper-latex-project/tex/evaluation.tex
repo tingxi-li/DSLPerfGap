@@ -301,7 +301,7 @@ RQ3 (\Cref{sec:mitigation}) shows that reduction and normalization gaps are auth
 
 
 \paragraph{Attention}
-Attention has no single library-efficiency number because the implementations differ algorithmically: Triton's FlashAttention-2~\cite{dao2023flashattention2} (44.83~ms) tiles the score matrix, while TileLang's untiled $O(n^2)$ kernel (5458.97~ms) is slower than even PyTorch's $O(n^2)$ path (3045.0~ms). Neither is a valid DSL-versus-library measurement for the same computation, so both are excluded from \Cref{tab:summary}.
+Attention is excluded from \Cref{fig:overview} and \Cref{tab:summary} because Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.
 
 \phantomsection\label{sec:eval:conv}
 
