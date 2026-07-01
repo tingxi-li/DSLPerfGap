@@ -210,6 +210,11 @@ Normalization baselines use \texttt{F.layer\_norm} and \texttt{F.rms\_norm}.
 Element-wise and reduction baselines use standard PyTorch eager execution.
 For attention, we use PyTorch scaled dot-product attention with the FlashAttention backend enabled through \texttt{enable\_flash\_sdp(True)}.
 
+\paragraph{GEMM notation and exclusions}
+Per-shape GEMM latencies are in the artifact (\texttt{slow\_kernels.csv}); $16384^2$ denotes a square $16384\times16384$ FP16 GEMM and $64\times128^2$ a batched GEMM of batch 64 over $128\times128$ matrices.
+FP32 TileLang GEMM is excluded: \texttt{T.gemm} silently lowers to TF32, making FP32 results a precision artifact rather than a logic error (\Cref{sec:analysis:jit}).
+\Cref{tab:summary} reports the category medians; the $16384^2$ Triton slowdown to 32.8\% reflects an under-populated auto-tune search space (RC2), while TileLang reaches 80.0\% on that shape via an explicit schedule.
+
 
 \subsection{Measurement Protocol}
 \label{app:repro:meas}

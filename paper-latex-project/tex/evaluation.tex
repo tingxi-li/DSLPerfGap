@@ -304,9 +304,6 @@ RQ3 (\Cref{sec:mitigation}) shows that reduction and normalization gaps are auth
 
 \medskip\noindent\textbf{Finding: On the A100-SXM4, Triton holds 32.8--92.9\% of cuBLAS on GEMM and TileLang 7.0--80.0\%, with complementary strength profiles that reorder on the GH200 (\Cref{tab:summary}); the $548.6\%$ TileLang fusion win and Triton's 32.8\% collapse at $16384^2$ mark the extremes (\Cref{fig:overview}).}
 
-Per-shape GEMM latencies are in the artifact (\texttt{slow\_kernels.csv}); $16384^2$ denotes a square $16384\times16384$ FP16 GEMM and $64\times128^2$ a batched GEMM of batch 64 over $128\times128$ matrices.
-FP32 TileLang GEMM is excluded as silent TF32 lowering in \texttt{T.gemm} rather than a logic error (\Cref{sec:analysis:jit}).
-\Cref{tab:summary} reports the category medians: the $16384^2$ Triton slowdown to 32.8\% reflects an under-populated auto-tune search space (RC2), while TileLang reaches 80.0\% on that shape via an explicit schedule.
 
 \paragraph{Attention}
 Attention has no single library-efficiency number because the implementations differ algorithmically: Triton's FlashAttention-2~\cite{dao2023flashattention2} (44.83~ms) tiles the score matrix, while TileLang's untiled $O(n^2)$ kernel (5458.97~ms) is slower than even PyTorch's $O(n^2)$ path (3045.0~ms). Neither is a valid DSL-versus-library measurement for the same computation, so both are excluded from \Cref{tab:summary}.
