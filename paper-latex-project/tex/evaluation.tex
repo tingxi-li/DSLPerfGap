@@ -299,10 +299,15 @@ RQ3 (\Cref{sec:mitigation}) shows that reduction and normalization gaps are auth
 
 \medskip\noindent\textbf{Finding: On the A100-SXM4, Triton holds 32.8--92.9\% of cuBLAS on GEMM and TileLang 7.0--80.0\%, with complementary strength profiles that reorder on the GH200 (\Cref{tab:summary}); the $548.6\%$ TileLang fusion win and Triton's 32.8\% collapse at $16384^2$ mark the extremes (\Cref{fig:overview}).}
 
-\Cref{tab:summary} reports the GEMM category range; the extremes are complementary by shape, not merely by DSL average---Triton is weakest on the $16384^2$ square matmul (32.8\%) and strongest on the $128\times2048^2$ batched shape (92.9\%), while TileLang inverts this exactly (80.0\% on the square matmul, 7.0\% on the same batched shape), before both are eclipsed by TileLang's $548.6\%$ fusion win on \texttt{fused\_linear\_activation}.
-\Cref{sec:analysis} attributes Triton's $16384^2$ collapse to two compounding, A100-specific gaps: the default \texttt{@triton.autotune} grid omits the L2-swizzle and large-shape configurations this shape needs (RC2a), and its generic \texttt{tl.dot} lowering lacks cuBLASLt's cache-blocking heuristics for the resulting ${\approx}1.6$~GB working set, leaving it DRAM-bound (85.9\% DRAM throughput, 49.4\% L2 hit rate) against cuBLAS's cache-resident profile (28.8\%/80.5\%) (RC2b).
-The fusion win is architectural rather than a compiler artifact---TileLang collapses the matmul-plus-activation pass into a single kernel launch, avoiding PyTorch's intermediate materialization---so it should not be read as evidence the gap closes on shapes without a fusible second op.
-On the GH200 the same GEMM shapes reorder in both DSLs' favor (Triton 56--170\%, TileLang 60--163\%, \Cref{tab:summary}), consistent with RC2a/RC2b being A100 tuning- and cache-blocking gaps rather than limitations intrinsic to either DSL.
+\Cref{tab:summary} reports the GEMM category range: the extremes are complementary by shape, not merely by DSL average.
+Triton is weakest on the $16384^2$ square matmul (32.8\%) and strongest on the $128\times2048^2$ batched shape (92.9\%); TileLang inverts this exactly (80.0\% on the square matmul, 7.0\% on the same batched shape).
+Both are eclipsed by TileLang's $548.6\%$ fusion win on \texttt{fused\_linear\_activation}.
+\Cref{sec:analysis} attributes Triton's $16384^2$ collapse to two compounding, A100-specific gaps.
+First, the default \texttt{@triton.autotune} grid omits the large-shape configurations this shape needs (RC2a).
+Second, \texttt{tl.dot}'s generic lowering lacks cuBLAS's cache-blocking heuristics for the resulting multi-gigabyte working set, leaving the kernel DRAM-bound rather than cache-resident (RC2b).
+The fusion win is architectural rather than a compiler artifact: TileLang collapses the matmul-plus-activation pass into a single kernel launch, avoiding PyTorch's intermediate materialization.
+This should not be read as evidence that the gap closes on shapes without a fusible second op.
+On the GH200, the same GEMM shapes reorder in both DSLs' favor (Triton 56--170\%, TileLang 60--163\%; \Cref{tab:summary}), consistent with RC2a/RC2b being A100-specific gaps in autotuning and cache-blocking rather than limitations intrinsic to either DSL.
 
 \phantomsection\label{sec:eval:conv}
 
