@@ -286,10 +286,9 @@ RQ3 (\Cref{sec:mitigation}) shows that reduction and normalization gaps are auth
     GEMM shows IQR boxes (whiskers $1.5\times$ IQR); other categories show per-kernel dots ($n=2$).
     $\diamond$~851.8\% (Triton, Norm.) marks \texttt{rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref{tab:summary}).
     Flier 548.6\% (TileLang, GEMM) marks \texttt{fused\_linear\_activation}: genuine fusion advantage (\Cref{sec:eval:gemm}).
-    Attention excluded.\protect\footnotemark}
+    Attention excluded: Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}
   \label{fig:overview}
 \end{figure}
-\footnotetext{\label{fn:attention}Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}
 
 % fig:overview data lives in figures/gen_overview.py with hard-coded arrays now
 % set to the A100-SXM4 per-kernel E_lib values; regenerate the PDF with
@@ -339,7 +338,7 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
   \centering
   \caption{Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200
     (both unlocked tuned profile), computed over large-size benchmark configurations.
-    Attention excluded from Overall.\protect\footnotemark[\getrefnumber{fn:attention}]}
+    Attention excluded from Overall (\Cref{fig:overview}).}
   \label{tab:summary}
   \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lcccc}
@@ -360,7 +359,6 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
   {\footnotesize
     $^\ddagger$ Triton's cell reports \texttt{layer\_norm} only (88.7\%); \texttt{rms\_norm}'s 851.8\% is excluded as an unfused-baseline artifact (\Cref{sec:eval:norm}). TileLang's 0.1--0.9\% spans both norm kernels.}
 \end{table}
-\footnotetext[\getrefnumber{fn:attention}]{Triton's tiled FlashAttention-2~\cite{dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}
 
 The most striking asymmetry is TileLang's normalization collapse:
 a $1087\times$ slowdown on large LayerNorm (\Cref{sec:analysis:jit}) attributable to three compounding deficiencies (RC0), and it persists across architectures ($329\times$ on the GH200).
