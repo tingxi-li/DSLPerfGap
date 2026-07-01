@@ -402,19 +402,19 @@
 \@LN{292}{2}
 \@LN{293}{2}
 \@LN{294}{2}
+\@LN{295}{2}
 \newlabel{sec:eval:gemm}{{\mbox  {IV-C}}{3}{The Hidden Gap These Benchmarks Admit}{section*.1}{}}
 \newlabel{sec:eval:gemm@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][3][]3}}
-\@LN{295}{2}
 \@LN{296}{2}
 \@LN{297}{2}
 \@LN{298}{2}
 \@LN{299}{2}
 \@LN{300}{2}
-\@LN{301}{2}
 \@LN@col{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, by kernel category (log scale; dashed line = 100\% parity). GEMM shows IQR boxes (whiskers $1.5\times $ IQR); other categories show per-kernel dots ($n=2$). $\diamond $\nobreakspace  {}851.8\% (Triton, Norm.) marks \texttt  {rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref  {tab:summary}). Flier 548.6\% (TileLang, GEMM) marks \texttt  {fused\_linear\_activation}: genuine fusion advantage (\Cref  {sec:eval:gemm}). Attention excluded: Triton's tiled FlashAttention-2\nobreakspace  {}\cite  {dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}}{4}{figure.1}\protected@file@percent }
-\newlabel{fig:overview}{{1}{4}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, by kernel category (log scale; dashed line = 100\% parity). GEMM shows IQR boxes (whiskers $1.5\times $ IQR); other categories show per-kernel dots ($n=2$). $\diamond $~851.8\% (Triton, Norm.) marks \texttt {rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref {tab:summary}). Flier 548.6\% (TileLang, GEMM) marks \texttt {fused\_linear\_activation}: genuine fusion advantage (\Cref {sec:eval:gemm}). Attention excluded: Triton's tiled FlashAttention-2~\cite {dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison}{figure.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, by kernel category (log scale; dashed line = 100\% parity). GEMM shows IQR boxes (whiskers $1.5\times $ IQR); other categories show per-kernel dots ($n=2$). $\diamond $\nobreakspace  {}873.0\% (Triton, Norm.) marks \texttt  {rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref  {tab:summary}). Flier 468.5\% (TileLang, GEMM) marks \texttt  {fused\_linear\_activation}: genuine fusion advantage (\Cref  {sec:eval:gemm}). Attention excluded: Triton's tiled FlashAttention-2\nobreakspace  {}\cite  {dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison.}}{4}{figure.1}\protected@file@percent }
+\newlabel{fig:overview}{{1}{4}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA A100-SXM4-40GB, by kernel category (log scale; dashed line = 100\% parity). GEMM shows IQR boxes (whiskers $1.5\times $ IQR); other categories show per-kernel dots ($n=2$). $\diamond $~873.0\% (Triton, Norm.) marks \texttt {rms\_norm}: unfair-baseline artifact, not a DSL win (\Cref {tab:summary}). Flier 468.5\% (TileLang, GEMM) marks \texttt {fused\_linear\_activation}: genuine fusion advantage (\Cref {sec:eval:gemm}). Attention excluded: Triton's tiled FlashAttention-2~\cite {dao2023flashattention2} and TileLang's untiled $O(n^2)$ kernel implement algorithmically different computations, so no single library-efficiency number is a valid DSL-versus-library comparison}{figure.1}{}}
 \newlabel{fig:overview@cref}{{[figure][1][]1}{[1][3][]4}}
+\@LN{301}{3}
 \@LN{302}{3}
 \@LN{303}{3}
 \@LN{304}{3}
@@ -435,17 +435,17 @@
 \@LN{319}{3}
 \@LN{320}{3}
 \@LN{321}{3}
-\newlabel{sec:eval:conv}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{section*.2}{}}
-\newlabel{sec:eval:conv@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
 \@LN{322}{3}
 \@LN{323}{3}
 \@LN{324}{3}
 \@LN{325}{3}
 \@LN{326}{3}
 \@LN{327}{3}
+\newlabel{sec:eval:conv}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{section*.2}{}}
+\newlabel{sec:eval:conv@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
 \@LN{328}{3}
-\@LN{329}{3}
 \@LN@col{2}
+\@LN{329}{3}
 \@LN{330}{3}
 \@LN{331}{3}
 \@LN{332}{3}
@@ -458,8 +458,6 @@
 \@LN{339}{3}
 \@LN{340}{3}
 \@LN{341}{3}
-\newlabel{sec:eval:norm}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{section*.3}{}}
-\newlabel{sec:eval:norm@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
 \@LN{342}{3}
 \@LN{343}{3}
 \@LN{344}{3}
@@ -468,12 +466,12 @@
 \@LN{347}{3}
 \@LN{348}{3}
 \@LN{349}{3}
+\newlabel{sec:eval:norm}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{section*.3}{}}
+\newlabel{sec:eval:norm@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
 \@LN{350}{3}
 \@LN{351}{3}
 \@LN{352}{3}
 \@LN{353}{3}
-\newlabel{sec:eval:tuning}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{section*.4}{}}
-\newlabel{sec:eval:tuning@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
 \@LN{354}{3}
 \@LN{355}{3}
 \@LN{356}{3}
@@ -484,6 +482,8 @@
 \@LN{361}{3}
 \@LN{362}{3}
 \@LN{363}{3}
+\newlabel{sec:eval:tuning}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{section*.4}{}}
+\newlabel{sec:eval:tuning@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
 \@LN{364}{3}
 \@LN{365}{3}
 \@LN{366}{3}
@@ -495,8 +495,6 @@
 \@LN{372}{3}
 \@LN{373}{3}
 \@LN{374}{3}
-\newlabel{sec:eval:summary}{{\mbox  {IV-C}}{4}{The Hidden Gap These Benchmarks Admit}{section*.5}{}}
-\newlabel{sec:eval:summary@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][4][]4}}
 \@LN{375}{3}
 \@LN{376}{3}
 \@LN{377}{3}
@@ -506,12 +504,12 @@
 \@LN{381}{3}
 \@LN{382}{3}
 \@LN{383}{3}
-\@LN{384}{3}
 \citation{triton2022conv591}
 \@LN@col{1}
 \@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200 (both unlocked tuned profile), computed over large-size benchmark configurations. Attention excluded from Overall (\Cref  {fig:overview}).}}{5}{table.1}\protected@file@percent }
 \newlabel{tab:summary}{{I}{5}{Median library efficiency (\%) per kernel category and DSL on the A100-SXM4 and GH200 (both unlocked tuned profile), computed over large-size benchmark configurations. Attention excluded from Overall (\Cref {fig:overview})}{table.1}{}}
-\newlabel{tab:summary@cref}{{[table][1][]I}{[1][4][]5}}
+\newlabel{tab:summary@cref}{{[table][1][]I}{[1][5][]5}}
+\@LN{384}{4}
 \@LN{385}{4}
 \@LN{386}{4}
 \@LN{387}{4}
@@ -519,6 +517,8 @@
 \@LN{389}{4}
 \@LN{390}{4}
 \@LN{391}{4}
+\newlabel{sec:eval:summary}{{\mbox  {IV-C}}{5}{The Hidden Gap These Benchmarks Admit}{section*.5}{}}
+\newlabel{sec:eval:summary@cref}{{[subsection][3][4]\mbox  {IV-C}}{[1][5][]5}}
 \@LN{392}{4}
 \@LN{393}{4}
 \@LN{394}{4}
@@ -529,9 +529,6 @@
 \@LN{399}{4}
 \@LN{400}{4}
 \@LN{401}{4}
-\@writefile{toc}{\contentsline {section}{\numberline {V}Root Causes of the Hidden Gap (RQ2)}{5}{section.5}\protected@file@percent }
-\newlabel{sec:analysis}{{V}{5}{Root Causes of the Hidden Gap (RQ2)}{section.5}{}}
-\newlabel{sec:analysis@cref}{{[section][5][]V}{[1][5][]5}}
 \@LN{402}{4}
 \@LN{403}{4}
 \@LN{404}{4}
@@ -545,23 +542,22 @@
 \@LN{412}{4}
 \@LN{413}{4}
 \@LN{414}{4}
-\newlabel{sec:analysis:jit}{{V}{5}{Root Causes of the Hidden Gap (RQ2)}{section*.6}{}}
-\newlabel{sec:analysis:jit@cref}{{[section][5][]V}{[1][5][]5}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0a}RC0: TileLang Compiler-Level Deficiencies}{5}{paragraph.5.0.0.1}\protected@file@percent }
 \@LN{415}{4}
 \@LN{416}{4}
 \@LN{417}{4}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Root Causes of the Hidden Gap (RQ2)}{5}{section.5}\protected@file@percent }
+\newlabel{sec:analysis}{{V}{5}{Root Causes of the Hidden Gap (RQ2)}{section.5}{}}
+\newlabel{sec:analysis@cref}{{[section][5][]V}{[1][5][]5}}
 \@LN{418}{4}
 \@LN{419}{4}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0b}RC0a: TileLang Reduction Authoring (\texttt  {T.serial} $\to $ \texttt  {T.reduce})}{5}{paragraph.5.0.0.2}\protected@file@percent }
 \@LN{420}{4}
 \@LN{421}{4}
 \@LN{422}{4}
-\@LN{423}{4}
 \@LN@col{2}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces RC0a fix: replacing a \texttt  {T.serial} accumulation loop with \texttt  {T.reduce} in TileLang LayerNorm (mean pass; variance pass is identical). This two-line change recovers $1347\times $ latency on the A100.}}{5}{figure.2}\protected@file@percent }
 \newlabel{fig:serial-vs-reduce}{{2}{5}{RC0a fix: replacing a \texttt {T.serial} accumulation loop with \texttt {T.reduce} in TileLang LayerNorm (mean pass; variance pass is identical). This two-line change recovers $1347\times $ latency on the A100}{figure.2}{}}
 \newlabel{fig:serial-vs-reduce@cref}{{[figure][2][]2}{[1][5][]5}}
+\@LN{423}{4}
 \@LN{424}{4}
 \@LN{425}{4}
 \@LN{426}{4}
@@ -569,11 +565,15 @@
 \@LN{428}{4}
 \@LN{429}{4}
 \@LN{430}{4}
+\newlabel{sec:analysis:jit}{{V}{5}{Root Causes of the Hidden Gap (RQ2)}{section*.6}{}}
+\newlabel{sec:analysis:jit@cref}{{[section][5][]V}{[1][5][]5}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0a}RC0: TileLang Compiler-Level Deficiencies}{5}{paragraph.5.0.0.1}\protected@file@percent }
 \@LN{431}{4}
 \@LN{432}{4}
 \@LN{433}{4}
 \@LN{434}{4}
 \@LN{435}{4}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0b}RC0a: TileLang Reduction Authoring (\texttt  {T.serial} $\to $ \texttt  {T.reduce})}{5}{paragraph.5.0.0.2}\protected@file@percent }
 \@LN{436}{4}
 \@LN{437}{4}
 \@LN{438}{4}
@@ -585,7 +585,6 @@
 \@LN{444}{4}
 \@LN{445}{4}
 \@LN{446}{4}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0c}RC0b: Absent Vectorized Loads (Compiler Codegen)}{5}{paragraph.5.0.0.3}\protected@file@percent }
 \@LN{447}{4}
 \@LN{448}{4}
 \@LN{449}{4}
@@ -597,22 +596,19 @@
 \@LN{455}{4}
 \@LN{456}{4}
 \@LN{457}{4}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0d}TileLang float32 lowering to TF32}{5}{paragraph.5.0.0.4}\protected@file@percent }
 \@LN{458}{4}
 \@LN{459}{4}
 \@LN{460}{4}
 \@LN{461}{4}
 \@LN{462}{4}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0c}RC0b: Absent Vectorized Loads (Compiler Codegen)}{5}{paragraph.5.0.0.3}\protected@file@percent }
 \@LN{463}{4}
 \@LN{464}{4}
-\@LN{465}{4}
-\newlabel{sec:analysis:vec}{{\mbox  {V-}0d}{5}{TileLang float32 lowering to TF32}{section*.7}{}}
-\newlabel{sec:analysis:vec@cref}{{[paragraph][4][5,0,0]\mbox  {V-}0d}{[1][5][]5}}
 \citation{triton2022conv591}
 \citation{tillet2019triton}
 \@LN@col{1}
+\@LN{465}{5}
 \@LN{466}{5}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0e}RC1: Absent Vectorization of Strided Memory Accesses}{6}{paragraph.5.0.0.5}\protected@file@percent }
 \@LN{467}{5}
 \@LN{468}{5}
 \@LN{469}{5}
@@ -620,6 +616,7 @@
 \@LN{471}{5}
 \@LN{472}{5}
 \@LN{473}{5}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0d}TileLang float32 lowering to TF32}{6}{paragraph.5.0.0.4}\protected@file@percent }
 \@LN{474}{5}
 \@LN{475}{5}
 \@LN{476}{5}
@@ -628,7 +625,10 @@
 \@LN{479}{5}
 \@LN{480}{5}
 \@LN{481}{5}
+\newlabel{sec:analysis:vec}{{\mbox  {V-}0d}{6}{TileLang float32 lowering to TF32}{section*.7}{}}
+\newlabel{sec:analysis:vec@cref}{{[paragraph][4][5,0,0]\mbox  {V-}0d}{[1][6][]6}}
 \@LN{482}{5}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0e}RC1: Absent Vectorization of Strided Memory Accesses}{6}{paragraph.5.0.0.5}\protected@file@percent }
 \@LN{483}{5}
 \@LN{484}{5}
 \@LN{485}{5}
@@ -637,9 +637,6 @@
 \@LN{488}{5}
 \@LN{489}{5}
 \@LN{490}{5}
-\newlabel{sec:analysis:autotune}{{\mbox  {V-}0e}{6}{RC1: Absent Vectorization of Strided Memory Accesses}{section*.8}{}}
-\newlabel{sec:analysis:autotune@cref}{{[paragraph][5][5,0,0]\mbox  {V-}0e}{[1][6][]6}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0f}RC2a: Configurations Absent From the Default Grid}{6}{paragraph.5.0.0.6}\protected@file@percent }
 \@LN{491}{5}
 \@LN{492}{5}
 \@LN{493}{5}
@@ -656,9 +653,11 @@
 \@LN{504}{5}
 \@LN{505}{5}
 \@LN{506}{5}
+\newlabel{sec:analysis:autotune}{{\mbox  {V-}0e}{6}{RC1: Absent Vectorization of Strided Memory Accesses}{section*.8}{}}
+\newlabel{sec:analysis:autotune@cref}{{[paragraph][5][5,0,0]\mbox  {V-}0e}{[1][6][]6}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0f}RC2a: Configurations Absent From the Default Grid}{6}{paragraph.5.0.0.6}\protected@file@percent }
 \@LN{507}{5}
 \@LN{508}{5}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0g}RC2b: L2 Cache Residency}{6}{paragraph.5.0.0.7}\protected@file@percent }
 \@LN{509}{5}
 \@LN{510}{5}
 \@LN{511}{5}
@@ -674,11 +673,11 @@
 \@LN{520}{5}
 \@LN{521}{5}
 \@LN{522}{5}
-\newlabel{sec:analysis:regpressure}{{\mbox  {V-}0g}{6}{RC2b: L2 Cache Residency}{section*.9}{}}
-\newlabel{sec:analysis:regpressure@cref}{{[paragraph][7][5,0,0]\mbox  {V-}0g}{[1][6][]6}}
 \@LN{523}{5}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0h}RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem)}{6}{paragraph.5.0.0.8}\protected@file@percent }
 \@LN{524}{5}
+\newlabel{sec:analysis:l2cache}{{\mbox  {V-}0f}{6}{RC2a: Configurations Absent From the Default Grid}{section*.9}{}}
+\newlabel{sec:analysis:l2cache@cref}{{[paragraph][6][5,0,0]\mbox  {V-}0f}{[1][6][]6}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0g}RC2b: L2 Cache Residency}{6}{paragraph.5.0.0.7}\protected@file@percent }
 \@LN{525}{5}
 \@LN{526}{5}
 \@LN{527}{5}
@@ -692,11 +691,11 @@
 \@LN{535}{5}
 \@LN{536}{5}
 \@LN{537}{5}
-\newlabel{sec:analysis:algo}{{\mbox  {V-}0h}{6}{RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem)}{section*.10}{}}
-\newlabel{sec:analysis:algo@cref}{{[paragraph][8][5,0,0]\mbox  {V-}0h}{[1][6][]6}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0i}RC4: Absence of Algorithm-Level Diversity}{6}{paragraph.5.0.0.9}\protected@file@percent }
 \@LN{538}{5}
+\newlabel{sec:analysis:regpressure}{{\mbox  {V-}0g}{6}{RC2b: L2 Cache Residency}{section*.10}{}}
+\newlabel{sec:analysis:regpressure@cref}{{[paragraph][7][5,0,0]\mbox  {V-}0g}{[1][6][]6}}
 \@LN{539}{5}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0h}RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem)}{6}{paragraph.5.0.0.8}\protected@file@percent }
 \@LN{540}{5}
 \@LN{541}{5}
 \@LN{542}{5}
@@ -709,18 +708,15 @@
 \@LN{549}{5}
 \@LN{550}{5}
 \@LN{551}{5}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Summary of Root Causes}{6}{subsection.5.1}\protected@file@percent }
-\newlabel{sec:analysis:summary}{{\mbox  {V-A}}{6}{Summary of Root Causes}{subsection.5.1}{}}
-\newlabel{sec:analysis:summary@cref}{{[subsection][1][5]\mbox  {V-A}}{[1][6][]6}}
 \@LN{552}{5}
 \@LN{553}{5}
+\newlabel{sec:analysis:algo}{{\mbox  {V-}0h}{6}{RC3: TileLang LayerNorm Register Spill (Not a Convolution Problem)}{section*.11}{}}
+\newlabel{sec:analysis:algo@cref}{{[paragraph][8][5,0,0]\mbox  {V-}0h}{[1][6][]6}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {V-}0i}RC4: Absence of Algorithm-Level Diversity}{6}{paragraph.5.0.0.9}\protected@file@percent }
 \@LN{554}{5}
 \@LN{555}{5}
 \@LN{556}{5}
 \@LN{557}{5}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Guidance Without a Comprehensive Benchmark (RQ3)}{6}{section.6}\protected@file@percent }
-\newlabel{sec:mitigation}{{VI}{6}{Guidance Without a Comprehensive Benchmark (RQ3)}{section.6}{}}
-\newlabel{sec:mitigation@cref}{{[section][6][]VI}{[1][6][]6}}
 \@LN{558}{5}
 \@LN{559}{5}
 \@LN{560}{5}
@@ -733,30 +729,32 @@
 \@LN{567}{5}
 \@LN{568}{5}
 \@LN{569}{5}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Summary of Root Causes}{6}{subsection.5.1}\protected@file@percent }
+\newlabel{sec:analysis:summary}{{\mbox  {V-A}}{6}{Summary of Root Causes}{subsection.5.1}{}}
+\newlabel{sec:analysis:summary@cref}{{[subsection][1][5]\mbox  {V-A}}{[1][6][]6}}
 \@LN{570}{5}
 \@LN{571}{5}
 \@LN{572}{5}
+\@LN{573}{5}
 \citation{williams2009roofline}
 \citation{li2025tritonbench}
 \@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref  {sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values agree across both architectures.}}{7}{table.2}\protected@file@percent }
 \newlabel{tab:rootcauses}{{II}{7}{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref {sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values agree across both architectures}{table.2}{}}
 \newlabel{tab:rootcauses@cref}{{[table][2][]II}{[1][6][]7}}
 \@LN@col{1}
-\@LN{573}{6}
 \@LN{574}{6}
 \@LN{575}{6}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Guidance Without a Comprehensive Benchmark (RQ3)}{7}{section.6}\protected@file@percent }
+\newlabel{sec:mitigation}{{VI}{7}{Guidance Without a Comprehensive Benchmark (RQ3)}{section.6}{}}
+\newlabel{sec:mitigation@cref}{{[section][6][]VI}{[1][7][]7}}
 \@LN{576}{6}
 \@LN{577}{6}
 \@LN{578}{6}
 \@LN{579}{6}
 \@LN{580}{6}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Evaluation Heuristics: Is This Kernel Efficient?}{7}{subsection.6.1}\protected@file@percent }
-\newlabel{sec:mitig:heuristics}{{\mbox  {VI-A}}{7}{Evaluation Heuristics: Is This Kernel Efficient?}{subsection.6.1}{}}
-\newlabel{sec:mitig:heuristics@cref}{{[subsection][1][6]\mbox  {VI-A}}{[1][7][]7}}
 \@LN{581}{6}
 \@LN{582}{6}
 \@LN{583}{6}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-A}0a}A comparability screen (pragmatic, baseline-relative)}{7}{paragraph.6.1.0.1}\protected@file@percent }
 \@LN{584}{6}
 \@LN{585}{6}
 \@LN{586}{6}
@@ -771,11 +769,14 @@
 \@LN{595}{6}
 \@LN{596}{6}
 \@LN{597}{6}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-A}0b}A roofline anchor (baseline-independent)}{7}{paragraph.6.1.0.2}\protected@file@percent }
 \@LN{598}{6}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-A}}Evaluation Heuristics: Is This Kernel Efficient?}{7}{subsection.6.1}\protected@file@percent }
+\newlabel{sec:mitig:heuristics}{{\mbox  {VI-A}}{7}{Evaluation Heuristics: Is This Kernel Efficient?}{subsection.6.1}{}}
+\newlabel{sec:mitig:heuristics@cref}{{[subsection][1][6]\mbox  {VI-A}}{[1][7][]7}}
 \@LN{599}{6}
 \@LN{600}{6}
 \@LN{601}{6}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-A}0a}A comparability screen (pragmatic, baseline-relative)}{7}{paragraph.6.1.0.1}\protected@file@percent }
 \@LN{602}{6}
 \@LN{603}{6}
 \@LN{604}{6}
@@ -787,10 +788,11 @@
 \@LN{610}{6}
 \@LN{611}{6}
 \@LN{612}{6}
-\@LN@col{2}
 \@LN{613}{6}
+\@LN@col{2}
 \@LN{614}{6}
 \@LN{615}{6}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-A}0b}A roofline anchor (baseline-independent)}{7}{paragraph.6.1.0.2}\protected@file@percent }
 \@LN{616}{6}
 \@LN{617}{6}
 \@LN{618}{6}
@@ -812,9 +814,6 @@
 \@LN{634}{6}
 \@LN{635}{6}
 \@LN{636}{6}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Normalization Kernels: Correcting RC0}{7}{subsection.6.2}\protected@file@percent }
-\newlabel{sec:mitig:norm}{{\mbox  {VI-B}}{7}{Normalization Kernels: Correcting RC0}{subsection.6.2}{}}
-\newlabel{sec:mitig:norm@cref}{{[subsection][2][6]\mbox  {VI-B}}{[1][7][]7}}
 \@LN{637}{6}
 \@LN{638}{6}
 \@LN{639}{6}
@@ -831,28 +830,28 @@
 \@LN{650}{6}
 \@LN{651}{6}
 \@LN{652}{6}
+\@LN{653}{6}
 \citation{zhou2021implicit}
 \@LN@col{1}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph  {mem}=HBM bandwidth, \emph  {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text  {lib}$, and the \emph  {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph  {authoring artifact}; a low $\rho $ that survives optimization marks a \emph  {structural residual}; the two architectures agree on every classification.}}{8}{table.3}\protected@file@percent }
 \newlabel{tab:roofline}{{III}{8}{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho $ (achieved/hardware peak; \emph {mem}=HBM bandwidth, \emph {comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text {lib}$, and the \emph {cliff} (naive/optimized speedup). A high recovered $\rho $ marks an \emph {authoring artifact}; a low $\rho $ that survives optimization marks a \emph {structural residual}; the two architectures agree on every classification}{table.3}{}}
 \newlabel{tab:roofline@cref}{{[table][3][]III}{[1][7][]8}}
-\@LN{653}{7}
 \@LN{654}{7}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-B}}Normalization Kernels: Correcting RC0}{8}{subsection.6.2}\protected@file@percent }
+\newlabel{sec:mitig:norm}{{\mbox  {VI-B}}{8}{Normalization Kernels: Correcting RC0}{subsection.6.2}{}}
+\newlabel{sec:mitig:norm@cref}{{[subsection][2][6]\mbox  {VI-B}}{[1][8][]8}}
 \@LN{655}{7}
 \@LN{656}{7}
 \@LN{657}{7}
 \@LN{658}{7}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Convolution: Partial Recovery via Implicit GEMM}{8}{subsection.6.3}\protected@file@percent }
-\newlabel{sec:mitig:conv}{{\mbox  {VI-C}}{8}{Convolution: Partial Recovery via Implicit GEMM}{subsection.6.3}{}}
-\newlabel{sec:mitig:conv@cref}{{[subsection][3][6]\mbox  {VI-C}}{[1][8][]8}}
 \@LN{659}{7}
 \@LN{660}{7}
 \@LN{661}{7}
 \@LN{662}{7}
 \@LN{663}{7}
-\@LN@col{2}
 \@LN{664}{7}
 \@LN{665}{7}
+\@LN@col{2}
 \@LN{666}{7}
 \@LN{667}{7}
 \@LN{668}{7}
@@ -864,11 +863,11 @@
 \@LN{674}{7}
 \@LN{675}{7}
 \@LN{676}{7}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-C}}Convolution: Partial Recovery via Implicit GEMM}{8}{subsection.6.3}\protected@file@percent }
+\newlabel{sec:mitig:conv}{{\mbox  {VI-C}}{8}{Convolution: Partial Recovery via Implicit GEMM}{subsection.6.3}{}}
+\newlabel{sec:mitig:conv@cref}{{[subsection][3][6]\mbox  {VI-C}}{[1][8][]8}}
 \@LN{677}{7}
 \@LN{678}{7}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}GEMM and Reduction Kernels}{8}{subsection.6.4}\protected@file@percent }
-\newlabel{sec:mitig:other}{{\mbox  {VI-D}}{8}{GEMM and Reduction Kernels}{subsection.6.4}{}}
-\newlabel{sec:mitig:other@cref}{{[subsection][4][6]\mbox  {VI-D}}{[1][8][]8}}
 \@LN{679}{7}
 \@LN{680}{7}
 \@LN{681}{7}
@@ -887,6 +886,9 @@
 \@LN{694}{7}
 \@LN{695}{7}
 \@LN{696}{7}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-D}}GEMM and Reduction Kernels}{8}{subsection.6.4}\protected@file@percent }
+\newlabel{sec:mitig:other}{{\mbox  {VI-D}}{8}{GEMM and Reduction Kernels}{subsection.6.4}{}}
+\newlabel{sec:mitig:other@cref}{{[subsection][4][6]\mbox  {VI-D}}{[1][8][]8}}
 \@LN{697}{7}
 \@LN{698}{7}
 \@LN{699}{7}
@@ -909,8 +911,8 @@
 \@LN{716}{7}
 \@LN{717}{7}
 \@LN{718}{7}
+\@LN{719}{7}
 \@LN@col{1}
-\@LN{719}{8}
 \@LN{720}{8}
 \@LN{721}{8}
 \@LN{722}{8}
@@ -939,9 +941,6 @@
 \@LN{745}{8}
 \@LN{746}{8}
 \@LN{747}{8}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Summary and Remaining Gap}{9}{subsection.6.5}\protected@file@percent }
-\newlabel{sec:mitig:summary}{{\mbox  {VI-E}}{9}{Summary and Remaining Gap}{subsection.6.5}{}}
-\newlabel{sec:mitig:summary@cref}{{[subsection][5][6]\mbox  {VI-E}}{[1][9][]9}}
 \@LN{748}{8}
 \@LN{749}{8}
 \@LN{750}{8}
@@ -960,6 +959,9 @@
 \@LN{763}{8}
 \@LN{764}{8}
 \@LN{765}{8}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VI-E}}Summary and Remaining Gap}{9}{subsection.6.5}\protected@file@percent }
+\newlabel{sec:mitig:summary}{{\mbox  {VI-E}}{9}{Summary and Remaining Gap}{subsection.6.5}{}}
+\newlabel{sec:mitig:summary@cref}{{[subsection][5][6]\mbox  {VI-E}}{[1][9][]9}}
 \@LN{766}{8}
 \@LN{767}{8}
 \@LN{768}{8}
@@ -967,14 +969,10 @@
 \@LN{770}{8}
 \@LN{771}{8}
 \@LN{772}{8}
-\@LN@col{2}
-\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{9}{table.4}\protected@file@percent }
-\newlabel{tab:mitigation}{{IV}{9}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.4}{}}
-\newlabel{tab:mitigation@cref}{{[table][4][]IV}{[1][9][]9}}
 \@LN{773}{8}
 \@LN{774}{8}
+\@LN@col{2}
 \@LN{775}{8}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-E}0a}Cross-architecture portability is itself an authoring concern}{9}{paragraph.6.5.0.1}\protected@file@percent }
 \@LN{776}{8}
 \@LN{777}{8}
 \@LN{778}{8}
@@ -993,55 +991,50 @@
 \@LN{791}{8}
 \@LN{792}{8}
 \@LN{793}{8}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {VI-E}0a}Cross-architecture portability is itself an authoring concern}{9}{paragraph.6.5.0.1}\protected@file@percent }
 \@LN{794}{8}
 \@LN{795}{8}
 \@LN{796}{8}
 \@LN{797}{8}
 \@LN{798}{8}
 \@LN{799}{8}
+\@LN{800}{8}
+\@LN{801}{8}
+\@LN{802}{8}
+\@LN{803}{8}
+\@LN{804}{8}
+\@LN{805}{8}
+\@LN{806}{8}
+\@LN{807}{8}
+\@LN{808}{8}
+\@LN{809}{8}
+\@LN{810}{8}
+\@LN{811}{8}
+\@LN{812}{8}
+\@LN{813}{8}
+\@LN{814}{8}
+\@LN{815}{8}
+\@LN{816}{8}
+\@LN{817}{8}
+\@LN{818}{8}
+\@LN{819}{8}
+\@LN{820}{8}
+\@LN{821}{8}
+\@LN{822}{8}
+\@LN{823}{8}
+\@LN{824}{8}
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion}{9}{section.7}\protected@file@percent }
+\newlabel{sec:discussion}{{VII}{9}{Discussion}{section.7}{}}
+\newlabel{sec:discussion@cref}{{[section][7][]VII}{[1][9][]9}}
+\@LN{825}{8}
+\@LN{826}{8}
+\@LN{827}{8}
+\@LN{828}{8}
 \citation{zheng2020ansor}
-\citation{ragan-kelley2013halide}
-\citation{chen2018tvm}
-\citation{wang2025tilelang}
-\citation{tillet2019triton}
-\citation{li2023torchcompile}
-\citation{spector2024thunderkittens}
 \@LN@col{1}
-\@LN{800}{9}
-\@LN{801}{9}
-\@LN{802}{9}
-\@LN{803}{9}
-\@LN{804}{9}
-\@LN{805}{9}
-\@LN{806}{9}
-\@writefile{toc}{\contentsline {section}{\numberline {VII}Discussion}{10}{section.7}\protected@file@percent }
-\newlabel{sec:discussion}{{VII}{10}{Discussion}{section.7}{}}
-\newlabel{sec:discussion@cref}{{[section][7][]VII}{[1][10][]10}}
-\@LN{807}{9}
-\@LN{808}{9}
-\@LN{809}{9}
-\@LN{810}{9}
-\@LN{811}{9}
-\@LN{812}{9}
-\@LN{813}{9}
-\@LN{814}{9}
-\@LN{815}{9}
-\@LN{816}{9}
-\@LN{817}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Implications for DSL Developers}{10}{subsection.7.1}\protected@file@percent }
-\newlabel{sec:disc:dsl}{{\mbox  {VII-A}}{10}{Implications for DSL Developers}{subsection.7.1}{}}
-\newlabel{sec:disc:dsl@cref}{{[subsection][1][7]\mbox  {VII-A}}{[1][10][]10}}
-\@LN{818}{9}
-\@LN{819}{9}
-\@LN{820}{9}
-\@LN{821}{9}
-\@LN{822}{9}
-\@LN{823}{9}
-\@LN{824}{9}
-\@LN{825}{9}
-\@LN{826}{9}
-\@LN{827}{9}
-\@LN{828}{9}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text  {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf  {Bold} = ${\geq }95\%$ library efficiency on that GPU.}}{10}{table.4}\protected@file@percent }
+\newlabel{tab:mitigation}{{IV}{10}{Summary of mitigation results. A100-SXM4 latencies in ms (lower is better); $E_\text {lib}$ = optimized-kernel efficiency relative to PyTorch/cuDNN on each GPU. \textbf {Bold} = ${\geq }95\%$ library efficiency on that GPU}{table.4}{}}
+\newlabel{tab:mitigation@cref}{{[table][4][]IV}{[1][9][]10}}
 \@LN{829}{9}
 \@LN{830}{9}
 \@LN{831}{9}
@@ -1049,6 +1042,9 @@
 \@LN{833}{9}
 \@LN{834}{9}
 \@LN{835}{9}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-A}}Implications for DSL Developers}{10}{subsection.7.1}\protected@file@percent }
+\newlabel{sec:disc:dsl}{{\mbox  {VII-A}}{10}{Implications for DSL Developers}{subsection.7.1}{}}
+\newlabel{sec:disc:dsl@cref}{{[subsection][1][7]\mbox  {VII-A}}{[1][10][]10}}
 \@LN{836}{9}
 \@LN{837}{9}
 \@LN{838}{9}
@@ -1066,10 +1062,10 @@
 \@LN{850}{9}
 \@LN{851}{9}
 \@LN{852}{9}
-\@LN@col{2}
 \@LN{853}{9}
 \@LN{854}{9}
 \@LN{855}{9}
+\@LN@col{2}
 \@LN{856}{9}
 \@LN{857}{9}
 \@LN{858}{9}
@@ -1083,9 +1079,6 @@
 \@LN{866}{9}
 \@LN{867}{9}
 \@LN{868}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Limitations}{10}{subsection.7.2}\protected@file@percent }
-\newlabel{sec:disc:limitations}{{\mbox  {VII-B}}{10}{Limitations}{subsection.7.2}{}}
-\newlabel{sec:disc:limitations@cref}{{[subsection][2][7]\mbox  {VII-B}}{[1][10][]10}}
 \@LN{869}{9}
 \@LN{870}{9}
 \@LN{871}{9}
@@ -1105,13 +1098,13 @@
 \@LN{885}{9}
 \@LN{886}{9}
 \@LN{887}{9}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VII-B}}Limitations}{10}{subsection.7.2}\protected@file@percent }
+\newlabel{sec:disc:limitations}{{\mbox  {VII-B}}{10}{Limitations}{subsection.7.2}{}}
+\newlabel{sec:disc:limitations@cref}{{[subsection][2][7]\mbox  {VII-B}}{[1][10][]10}}
 \@LN{888}{9}
 \@LN{889}{9}
 \@LN{890}{9}
 \@LN{891}{9}
-\@writefile{toc}{\contentsline {section}{\numberline {VIII}Related Work}{10}{section.8}\protected@file@percent }
-\newlabel{sec:related}{{VIII}{10}{Related Work}{section.8}{}}
-\newlabel{sec:related@cref}{{[section][8][]VIII}{[1][10][]10}}
 \@LN{892}{9}
 \@LN{893}{9}
 \@LN{894}{9}
@@ -1122,12 +1115,20 @@
 \@LN{899}{9}
 \@LN{900}{9}
 \@LN{901}{9}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}GPU Kernel DSLs}{10}{subsection.8.1}\protected@file@percent }
-\newlabel{sec:rel:dsls}{{\mbox  {VIII-A}}{10}{GPU Kernel DSLs}{subsection.8.1}{}}
-\newlabel{sec:rel:dsls@cref}{{[subsection][1][8]\mbox  {VIII-A}}{[1][10][]10}}
 \@LN{902}{9}
 \@LN{903}{9}
 \@LN{904}{9}
+\@LN{905}{9}
+\@LN{906}{9}
+\@LN{907}{9}
+\@LN{908}{9}
+\@LN{909}{9}
+\citation{ragan-kelley2013halide}
+\citation{chen2018tvm}
+\citation{wang2025tilelang}
+\citation{tillet2019triton}
+\citation{li2023torchcompile}
+\citation{spector2024thunderkittens}
 \citation{chen2018tvm}
 \citation{zheng2020ansor}
 \citation{bik2022mlir,vasilache2022composable}
@@ -1139,12 +1140,10 @@
 \citation{kernelbench}
 \citation{reddi2020mlperf}
 \@LN@col{1}
-\@LN{905}{10}
-\@LN{906}{10}
-\@LN{907}{10}
-\@LN{908}{10}
-\@LN{909}{10}
 \@LN{910}{10}
+\@writefile{toc}{\contentsline {section}{\numberline {VIII}Related Work}{11}{section.8}\protected@file@percent }
+\newlabel{sec:related}{{VIII}{11}{Related Work}{section.8}{}}
+\newlabel{sec:related@cref}{{[section][8][]VIII}{[1][10][]11}}
 \@LN{911}{10}
 \@LN{912}{10}
 \@LN{913}{10}
@@ -1155,6 +1154,9 @@
 \@LN{918}{10}
 \@LN{919}{10}
 \@LN{920}{10}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-A}}GPU Kernel DSLs}{11}{subsection.8.1}\protected@file@percent }
+\newlabel{sec:rel:dsls}{{\mbox  {VIII-A}}{11}{GPU Kernel DSLs}{subsection.8.1}{}}
+\newlabel{sec:rel:dsls@cref}{{[subsection][1][8]\mbox  {VIII-A}}{[1][11][]11}}
 \@LN{921}{10}
 \@LN{922}{10}
 \@LN{923}{10}
@@ -1162,9 +1164,6 @@
 \@LN{925}{10}
 \@LN{926}{10}
 \@LN{927}{10}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-B}}Performance Analysis and Profiling}{11}{subsection.8.2}\protected@file@percent }
-\newlabel{sec:rel:profiling}{{\mbox  {VIII-B}}{11}{Performance Analysis and Profiling}{subsection.8.2}{}}
-\newlabel{sec:rel:profiling@cref}{{[subsection][2][8]\mbox  {VIII-B}}{[1][11][]11}}
 \@LN{928}{10}
 \@LN{929}{10}
 \@LN{930}{10}
@@ -1179,14 +1178,14 @@
 \@LN{939}{10}
 \@LN{940}{10}
 \@LN{941}{10}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-C}}Benchmarking GPU Software}{11}{subsection.8.3}\protected@file@percent }
-\newlabel{sec:rel:bench}{{\mbox  {VIII-C}}{11}{Benchmarking GPU Software}{subsection.8.3}{}}
-\newlabel{sec:rel:bench@cref}{{[subsection][3][8]\mbox  {VIII-C}}{[1][11][]11}}
 \@LN{942}{10}
 \@LN{943}{10}
 \@LN{944}{10}
 \@LN{945}{10}
 \@LN{946}{10}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-B}}Performance Analysis and Profiling}{11}{subsection.8.2}\protected@file@percent }
+\newlabel{sec:rel:profiling}{{\mbox  {VIII-B}}{11}{Performance Analysis and Profiling}{subsection.8.2}{}}
+\newlabel{sec:rel:profiling@cref}{{[subsection][2][8]\mbox  {VIII-B}}{[1][11][]11}}
 \@LN{947}{10}
 \@LN{948}{10}
 \@LN{949}{10}
@@ -1198,17 +1197,17 @@
 \@LN{955}{10}
 \@LN{956}{10}
 \@LN{957}{10}
-\@LN@col{2}
 \@LN{958}{10}
 \@LN{959}{10}
 \@LN{960}{10}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {VIII-C}}Benchmarking GPU Software}{11}{subsection.8.3}\protected@file@percent }
+\newlabel{sec:rel:bench}{{\mbox  {VIII-C}}{11}{Benchmarking GPU Software}{subsection.8.3}{}}
+\newlabel{sec:rel:bench@cref}{{[subsection][3][8]\mbox  {VIII-C}}{[1][11][]11}}
 \@LN{961}{10}
 \@LN{962}{10}
+\@LN@col{2}
 \@LN{963}{10}
 \@LN{964}{10}
-\@writefile{toc}{\contentsline {section}{\numberline {IX}Conclusion}{11}{section.9}\protected@file@percent }
-\newlabel{sec:conclusion}{{IX}{11}{Conclusion}{section.9}{}}
-\newlabel{sec:conclusion@cref}{{[section][9][]IX}{[1][11][]11}}
 \@LN{965}{10}
 \@LN{966}{10}
 \@LN{967}{10}
@@ -1228,6 +1227,9 @@
 \@LN{981}{10}
 \@LN{982}{10}
 \@LN{983}{10}
+\@writefile{toc}{\contentsline {section}{\numberline {IX}Conclusion}{11}{section.9}\protected@file@percent }
+\newlabel{sec:conclusion}{{IX}{11}{Conclusion}{section.9}{}}
+\newlabel{sec:conclusion@cref}{{[section][9][]IX}{[1][11][]11}}
 \@LN{984}{10}
 \@LN{985}{10}
 \@LN{986}{10}
@@ -1241,6 +1243,25 @@
 \@LN{994}{10}
 \@LN{995}{10}
 \@LN{996}{10}
+\@LN{997}{10}
+\@LN{998}{10}
+\@LN{999}{10}
+\@LN{1000}{10}
+\@LN{1001}{10}
+\@LN{1002}{10}
+\@LN{1003}{10}
+\@LN{1004}{10}
+\@LN{1005}{10}
+\@LN{1006}{10}
+\@LN{1007}{10}
+\@LN{1008}{10}
+\@LN{1009}{10}
+\@LN{1010}{10}
+\@LN{1011}{10}
+\@LN{1012}{10}
+\@LN{1013}{10}
+\@LN{1014}{10}
+\@LN{1015}{10}
 \bibstyle{IEEEtran}
 \bibdata{references}
 \bibcite{acceleration_survey}{1}
@@ -1273,27 +1294,8 @@
 \bibcite{vasilache2022composable}{28}
 \bibcite{reddi2020mlperf}{29}
 \@LN@col{1}
-\@LN{997}{11}
-\@writefile{toc}{\contentsline {section}{References}{12}{section*.11}\protected@file@percent }
-\@LN{998}{11}
-\@LN{999}{11}
-\@LN{1000}{11}
-\@LN{1001}{11}
-\@LN{1002}{11}
-\@LN{1003}{11}
-\@LN{1004}{11}
-\@LN{1005}{11}
-\@LN{1006}{11}
-\@LN{1007}{11}
-\@LN{1008}{11}
-\@LN{1009}{11}
-\@LN{1010}{11}
-\@LN{1011}{11}
-\@LN{1012}{11}
-\@LN{1013}{11}
-\@LN{1014}{11}
-\@LN{1015}{11}
 \@LN{1016}{11}
+\@writefile{toc}{\contentsline {section}{References}{12}{section*.12}\protected@file@percent }
 \@LN{1017}{11}
 \@LN{1018}{11}
 \@LN{1019}{11}
@@ -1347,7 +1349,6 @@
 \@LN{1067}{11}
 \@LN{1068}{11}
 \@LN{1069}{11}
-\@LN@col{2}
 \@LN{1070}{11}
 \@LN{1071}{11}
 \@LN{1072}{11}
@@ -1367,6 +1368,7 @@
 \@LN{1086}{11}
 \@LN{1087}{11}
 \@LN{1088}{11}
+\@LN@col{2}
 \@LN{1089}{11}
 \@LN{1090}{11}
 \@LN{1091}{11}
@@ -1413,31 +1415,31 @@
 \@LN{1132}{11}
 \@LN{1133}{11}
 \@LN{1134}{11}
+\@LN{1135}{11}
+\@LN{1136}{11}
+\@LN{1137}{11}
+\@LN{1138}{11}
+\@LN{1139}{11}
+\@LN{1140}{11}
+\@LN{1141}{11}
+\@LN{1142}{11}
+\@LN{1143}{11}
+\@LN{1144}{11}
+\@LN{1145}{11}
+\@LN{1146}{11}
+\@LN{1147}{11}
+\@LN{1148}{11}
+\@LN{1149}{11}
+\@LN{1150}{11}
+\@LN{1151}{11}
+\@LN{1152}{11}
+\@LN{1153}{11}
 \@LN@col{1}
-\@LN{1135}{12}
-\@LN{1136}{12}
-\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  A: Threats to Validity}{13}{section*.12}\protected@file@percent }
-\newlabel{sec:threats}{{A}{13}{\appendixname \nobreakspace \thesectiondis \\* Threats to Validity}{section*.12}{}}
-\newlabel{sec:threats@cref}{{[section][1][]A}{[1][13][]13}}
-\@LN{1137}{12}
-\@LN{1138}{12}
-\@LN{1139}{12}
-\@LN{1140}{12}
-\@LN{1141}{12}
-\@LN{1142}{12}
-\@LN{1143}{12}
-\@LN{1144}{12}
-\@LN{1145}{12}
-\@LN{1146}{12}
-\@LN{1147}{12}
-\@LN{1148}{12}
-\@LN{1149}{12}
-\@LN{1150}{12}
-\@LN{1151}{12}
-\@LN{1152}{12}
-\@LN{1153}{12}
 \@LN{1154}{12}
 \@LN{1155}{12}
+\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  A: Threats to Validity}{13}{section*.13}\protected@file@percent }
+\newlabel{sec:threats}{{A}{13}{\appendixname \nobreakspace \thesectiondis \\* Threats to Validity}{section*.13}{}}
+\newlabel{sec:threats@cref}{{[section][1][]A}{[1][13][]13}}
 \@LN{1156}{12}
 \@LN{1157}{12}
 \@LN{1158}{12}
@@ -1472,7 +1474,6 @@
 \@LN{1187}{12}
 \@LN{1188}{12}
 \@LN{1189}{12}
-\@LN@col{2}
 \@LN{1190}{12}
 \@LN{1191}{12}
 \@LN{1192}{12}
@@ -1492,6 +1493,7 @@
 \@LN{1206}{12}
 \@LN{1207}{12}
 \@LN{1208}{12}
+\@LN@col{2}
 \@LN{1209}{12}
 \@LN{1210}{12}
 \@LN{1211}{12}
@@ -1512,9 +1514,6 @@
 \@LN{1226}{12}
 \@LN{1227}{12}
 \@LN{1228}{12}
-\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  B: Cross-Architecture Generalization}{13}{section*.13}\protected@file@percent }
-\newlabel{sec:xarch}{{B}{13}{\appendixname \nobreakspace \thesectiondis \\* Cross-Architecture Generalization}{section*.13}{}}
-\newlabel{sec:xarch@cref}{{[section][2][]B}{[1][13][]13}}
 \@LN{1229}{12}
 \@LN{1230}{12}
 \@LN{1231}{12}
@@ -1530,42 +1529,64 @@
 \@LN{1241}{12}
 \@LN{1242}{12}
 \@LN{1243}{12}
+\@LN{1244}{12}
+\@LN{1245}{12}
+\@LN{1246}{12}
+\@LN{1247}{12}
+\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  B: Cross-Architecture Generalization}{13}{section*.14}\protected@file@percent }
+\newlabel{sec:xarch}{{B}{13}{\appendixname \nobreakspace \thesectiondis \\* Cross-Architecture Generalization}{section*.14}{}}
+\newlabel{sec:xarch@cref}{{[section][2][]B}{[1][13][]13}}
+\@LN{1248}{12}
+\@LN{1249}{12}
+\@LN{1250}{12}
+\@LN{1251}{12}
+\@LN{1252}{12}
+\@LN{1253}{12}
+\@LN{1254}{12}
+\@LN{1255}{12}
+\@LN{1256}{12}
+\@LN{1257}{12}
+\@LN{1258}{12}
+\@LN{1259}{12}
+\@LN{1260}{12}
+\@LN{1261}{12}
+\@LN{1262}{12}
 \citation{li2025tritonbench}
 \citation{wang2025tilelang}
 \@LN@col{1}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA GH200-480GB, by kernel category (log scale; dashed line = 100\% parity). Same layout as \Cref  {fig:overview}: GEMM shows IQR boxes; other categories show per-kernel dots. $\diamond $\nobreakspace  {}1082\% (Triton, Norm.) marks \texttt  {rms\_norm}: unfair-baseline artifact, not a DSL win. TileLang Conv2d recovers relative to the A100 (59.9\% large vs.\ 12.6\%); TileLang Norm.\ remains collapsed (0.3\%). Attention excluded (\Cref  {sec:eval:gemm}).}}{14}{figure.3}\protected@file@percent }
-\newlabel{fig:overview:gh200}{{3}{14}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA GH200-480GB, by kernel category (log scale; dashed line = 100\% parity). Same layout as \Cref {fig:overview}: GEMM shows IQR boxes; other categories show per-kernel dots. $\diamond $~1082\% (Triton, Norm.) marks \texttt {rms\_norm}: unfair-baseline artifact, not a DSL win. TileLang Conv2d recovers relative to the A100 (59.9\% large vs.\ 12.6\%); TileLang Norm.\ remains collapsed (0.3\%). Attention excluded (\Cref {sec:eval:gemm})}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA GH200-480GB, by kernel category (log scale; dashed line = 100\% parity). Same layout as \Cref  {fig:overview}: GEMM shows IQR boxes; other categories show per-kernel dots. $\diamond $\nobreakspace  {}1082\% (Triton, Norm.) marks \texttt  {rms\_norm}: unfair-baseline artifact, not a DSL win. TileLang Conv2d is competitive on both (GH200 59.9\% large; A100 $\sim $59\%); TileLang Norm.\ remains collapsed (0.3\%). Attention excluded (\Cref  {sec:eval:gemm}).}}{14}{figure.3}\protected@file@percent }
+\newlabel{fig:overview:gh200}{{3}{14}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA GH200-480GB, by kernel category (log scale; dashed line = 100\% parity). Same layout as \Cref {fig:overview}: GEMM shows IQR boxes; other categories show per-kernel dots. $\diamond $~1082\% (Triton, Norm.) marks \texttt {rms\_norm}: unfair-baseline artifact, not a DSL win. TileLang Conv2d is competitive on both (GH200 59.9\% large; A100 $\sim $59\%); TileLang Norm.\ remains collapsed (0.3\%). Attention excluded (\Cref {sec:eval:gemm})}{figure.3}{}}
 \newlabel{fig:overview:gh200@cref}{{[figure][3][]3}{[1][14][]14}}
 \@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces \textbf  {Cross-architecture generalization.} Median library efficiency $E_\text  {lib}$ (\%) per kernel category for each DSL on the primary A100-SXM4 (sm\_80) and the cross-architecture replays A100-PCIE (sm\_80, form factor) and H100 (sm\_90, Hopper), untuned defaults. The qualitative profile is preserved across architectures: GEMM and element-wise competitive, convolution and TileLang normalization severely behind.}}{14}{table.5}\protected@file@percent }
 \newlabel{tab:xarch:summary}{{V}{14}{\textbf {Cross-architecture generalization.} Median library efficiency $E_\text {lib}$ (\%) per kernel category for each DSL on the primary A100-SXM4 (sm\_80) and the cross-architecture replays A100-PCIE (sm\_80, form factor) and H100 (sm\_90, Hopper), untuned defaults. The qualitative profile is preserved across architectures: GEMM and element-wise competitive, convolution and TileLang normalization severely behind}{table.5}{}}
 \newlabel{tab:xarch:summary@cref}{{[table][5][]V}{[1][14][]14}}
-\@LN{1244}{13}
-\@LN{1245}{13}
-\@LN{1246}{13}
-\@LN{1247}{13}
-\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  C: Per-Kernel Library Efficiency}{14}{section*.14}\protected@file@percent }
-\newlabel{app:perkernel}{{C}{14}{\appendixname \nobreakspace \thesectiondis \\* Per-Kernel Library Efficiency}{section*.14}{}}
+\@LN{1263}{13}
+\@LN{1264}{13}
+\@LN{1265}{13}
+\@LN{1266}{13}
+\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  C: Per-Kernel Library Efficiency}{14}{section*.15}\protected@file@percent }
+\newlabel{app:perkernel}{{C}{14}{\appendixname \nobreakspace \thesectiondis \\* Per-Kernel Library Efficiency}{section*.15}{}}
 \newlabel{app:perkernel@cref}{{[section][3][]C}{[1][14][]14}}
-\@LN{1248}{13}
-\@LN{1249}{13}
-\@LN{1250}{13}
-\@LN{1251}{13}
-\@LN{1252}{13}
-\@LN{1253}{13}
-\@LN{1254}{13}
-\@LN{1255}{13}
-\@LN{1256}{13}
-\@LN{1257}{13}
-\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  D: Reproducibility Details}{14}{section*.15}\protected@file@percent }
-\newlabel{app:repro}{{D}{14}{\appendixname \nobreakspace \thesectiondis \\* Reproducibility Details}{section*.15}{}}
+\@LN{1267}{13}
+\@LN{1268}{13}
+\@LN{1269}{13}
+\@LN{1270}{13}
+\@LN{1271}{13}
+\@LN{1272}{13}
+\@LN{1273}{13}
+\@LN{1274}{13}
+\@LN{1275}{13}
+\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  D: Reproducibility Details}{14}{section*.16}\protected@file@percent }
+\newlabel{app:repro}{{D}{14}{\appendixname \nobreakspace \thesectiondis \\* Reproducibility Details}{section*.16}{}}
 \newlabel{app:repro@cref}{{[section][4][]D}{[1][14][]14}}
-\@LN{1258}{13}
+\@LN{1276}{13}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {D-A}}Kernel Suite Provenance}{14}{subsection.Appendix.D.1}\protected@file@percent }
 \newlabel{app:repro:kernels}{{\mbox  {D-A}}{14}{Kernel Suite Provenance}{subsection.Appendix.D.1}{}}
 \newlabel{app:repro:kernels@cref}{{[subsection][1][4]\mbox  {D-A}}{[1][14][]14}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-A}0a}Selection criteria}{14}{paragraph.Appendix.D.1.0.1}\protected@file@percent }
-\@LN{1259}{13}
-\@LN{1260}{13}
+\@LN{1277}{13}
+\@LN{1278}{13}
+\@LN{1279}{13}
 \@LN@col{2}
 \@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces \textbf  {Root-cause taxonomy reproduces across architectures.} Each corrected root cause measured on all three GPUs with the identical portable harness. All reproduce, confirming they are properties of the DSL/compiler rather than of a single GPU (cf.\ \cref  {tab:xarch:summary}).}}{14}{table.6}\protected@file@percent }
 \newlabel{tab:xarch:rootcause}{{VI}{14}{\textbf {Root-cause taxonomy reproduces across architectures.} Each corrected root cause measured on all three GPUs with the identical portable harness. All reproduce, confirming they are properties of the DSL/compiler rather than of a single GPU (cf.\ \cref {tab:xarch:summary})}{table.6}{}}
@@ -1573,30 +1594,7 @@
 \@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces \textbf  {GEMM autotuning recovery generalizes (RC2).} Triton matmul $E_\text  {lib}$ before (plain, heuristic) and after (expanded autotune search) on all three GPUs. The \S  5-vs-\S  7.3 gap is a search-space artifact on every architecture, not shape- or hardware-specific.}}{14}{table.7}\protected@file@percent }
 \newlabel{tab:xarch:autotune}{{VII}{14}{\textbf {GEMM autotuning recovery generalizes (RC2).} Triton matmul $E_\text {lib}$ before (plain, heuristic) and after (expanded autotune search) on all three GPUs. The \S 5-vs-\S 7.3 gap is a search-space artifact on every architecture, not shape- or hardware-specific}{table.7}{}}
 \newlabel{tab:xarch:autotune@cref}{{[table][7][]VII}{[1][14][]14}}
-\@LN{1261}{13}
-\@LN{1262}{13}
-\@LN{1263}{13}
-\@LN{1264}{13}
-\@LN{1265}{13}
-\@LN{1266}{13}
-\@LN{1267}{13}
-\@LN{1268}{13}
-\@LN{1269}{13}
-\@LN{1270}{13}
-\@LN{1271}{13}
-\@LN{1272}{13}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-A}0b}Per-kernel provenance}{14}{paragraph.Appendix.D.1.0.2}\protected@file@percent }
-\@LN{1273}{13}
-\@LN{1274}{13}
-\@LN{1275}{13}
-\@LN{1276}{13}
-\@LN{1277}{13}
-\@LN{1278}{13}
-\@LN{1279}{13}
 \@LN{1280}{13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {D-B}}Baseline Specifications}{14}{subsection.Appendix.D.2}\protected@file@percent }
-\newlabel{app:repro:baselines}{{\mbox  {D-B}}{14}{Baseline Specifications}{subsection.Appendix.D.2}{}}
-\newlabel{app:repro:baselines@cref}{{[subsection][2][4]\mbox  {D-B}}{[1][14][]14}}
 \@LN{1281}{13}
 \@LN{1282}{13}
 \@LN{1283}{13}
@@ -1605,6 +1603,31 @@
 \@LN{1286}{13}
 \@LN{1287}{13}
 \@LN{1288}{13}
+\@LN{1289}{13}
+\@LN{1290}{13}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-A}0b}Per-kernel provenance}{14}{paragraph.Appendix.D.1.0.2}\protected@file@percent }
+\@LN{1291}{13}
+\@LN{1292}{13}
+\@LN{1293}{13}
+\@LN{1294}{13}
+\@LN{1295}{13}
+\@LN{1296}{13}
+\@LN{1297}{13}
+\@LN{1298}{13}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {D-B}}Baseline Specifications}{14}{subsection.Appendix.D.2}\protected@file@percent }
+\newlabel{app:repro:baselines}{{\mbox  {D-B}}{14}{Baseline Specifications}{subsection.Appendix.D.2}{}}
+\newlabel{app:repro:baselines@cref}{{[subsection][2][4]\mbox  {D-B}}{[1][14][]14}}
+\@LN{1299}{13}
+\@LN{1300}{13}
+\@LN{1301}{13}
+\@LN{1302}{13}
+\@LN{1303}{13}
+\@LN{1304}{13}
+\@LN{1305}{13}
+\@LN{1306}{13}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-B}0a}GEMM notation and exclusions}{14}{paragraph.Appendix.D.2.0.1}\protected@file@percent }
+\@LN{1307}{13}
+\@LN{1308}{13}
 \@LN@col{1}
 \@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces \textbf  {Convolution filter sweep across architectures} (large shape $32{\times }256{\times }128^2$, groups$=$1, stride$=$1). Triton $E_\text  {lib}$ vs cuDNN for each GPU, with the measured Triton register-spill count. The gap widening with filter size and the absence of register spilling both hold across architectures.}}{15}{table.8}\protected@file@percent }
 \newlabel{tab:xarch:conv}{{VIII}{15}{\textbf {Convolution filter sweep across architectures} (large shape $32{\times }256{\times }128^2$, groups$=$1, stride$=$1). Triton $E_\text {lib}$ vs cuDNN for each GPU, with the measured Triton register-spill count. The gap widening with filter size and the absence of register spilling both hold across architectures}{table.8}{}}
@@ -1612,36 +1635,6 @@
 \@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Per-kernel library efficiency $E_\text  {lib}$ (\%) at the large input shape (A100-SXM4, tuned). $E_\text  {lib} < 100\%$ = DSL slower than PyTorch. Annotated values above 100\% reflect baseline artifacts, not DSL speed advantages (see footnotes).}}{15}{table.9}\protected@file@percent }
 \newlabel{tab:perkernel}{{IX}{15}{Per-kernel library efficiency $E_\text {lib}$ (\%) at the large input shape (A100-SXM4, tuned). $E_\text {lib} < 100\%$ = DSL slower than PyTorch. Annotated values above 100\% reflect baseline artifacts, not DSL speed advantages (see footnotes)}{table.9}{}}
 \newlabel{tab:perkernel@cref}{{[table][9][]IX}{[1][14][]15}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-B}0a}GEMM notation and exclusions}{15}{paragraph.Appendix.D.2.0.1}\protected@file@percent }
-\@LN{1289}{14}
-\@LN{1290}{14}
-\@LN{1291}{14}
-\@LN{1292}{14}
-\@LN{1293}{14}
-\@LN{1294}{14}
-\@LN{1295}{14}
-\@LN{1296}{14}
-\@LN{1297}{14}
-\@LN{1298}{14}
-\@LN{1299}{14}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {D-C}}Measurement Protocol}{15}{subsection.Appendix.D.3}\protected@file@percent }
-\newlabel{app:repro:meas}{{\mbox  {D-C}}{15}{Measurement Protocol}{subsection.Appendix.D.3}{}}
-\newlabel{app:repro:meas@cref}{{[subsection][3][4]\mbox  {D-C}}{[1][15][]15}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-C}0a}End-to-end timing}{15}{paragraph.Appendix.D.3.0.1}\protected@file@percent }
-\@LN{1300}{14}
-\@LN{1301}{14}
-\@LN{1302}{14}
-\@LN@col{2}
-\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces Per-kernel provenance for the 22-kernel ViperBench suite.}}{15}{table.10}\protected@file@percent }
-\newlabel{tab:provenance}{{X}{15}{Per-kernel provenance for the 22-kernel ViperBench suite}{table.10}{}}
-\newlabel{tab:provenance@cref}{{[table][10][]X}{[1][14][]15}}
-\@LN{1303}{14}
-\@LN{1304}{14}
-\@LN{1305}{14}
-\@LN{1306}{14}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-C}0b}Clock-lock settings}{15}{paragraph.Appendix.D.3.0.2}\protected@file@percent }
-\@LN{1307}{14}
-\@LN{1308}{14}
 \@LN{1309}{14}
 \@LN{1310}{14}
 \@LN{1311}{14}
@@ -1649,16 +1642,24 @@
 \@LN{1313}{14}
 \@LN{1314}{14}
 \@LN{1315}{14}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-C}0c}Nsight Compute counter definitions}{15}{paragraph.Appendix.D.3.0.3}\protected@file@percent }
 \@LN{1316}{14}
 \@LN{1317}{14}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {D-C}}Measurement Protocol}{15}{subsection.Appendix.D.3}\protected@file@percent }
+\newlabel{app:repro:meas}{{\mbox  {D-C}}{15}{Measurement Protocol}{subsection.Appendix.D.3}{}}
+\newlabel{app:repro:meas@cref}{{[subsection][3][4]\mbox  {D-C}}{[1][15][]15}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-C}0a}End-to-end timing}{15}{paragraph.Appendix.D.3.0.1}\protected@file@percent }
 \@LN{1318}{14}
 \@LN{1319}{14}
 \@LN{1320}{14}
 \@LN{1321}{14}
 \@LN{1322}{14}
+\@LN@col{2}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces Per-kernel provenance for the 22-kernel ViperBench suite.}}{15}{table.10}\protected@file@percent }
+\newlabel{tab:provenance}{{X}{15}{Per-kernel provenance for the 22-kernel ViperBench suite}{table.10}{}}
+\newlabel{tab:provenance@cref}{{[table][10][]X}{[1][14][]15}}
 \@LN{1323}{14}
 \@LN{1324}{14}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-C}0b}Clock-lock settings}{15}{paragraph.Appendix.D.3.0.2}\protected@file@percent }
 \@LN{1325}{14}
 \@LN{1326}{14}
 \@LN{1327}{14}
@@ -1667,28 +1668,47 @@
 \@LN{1330}{14}
 \@LN{1331}{14}
 \@LN{1332}{14}
+\@LN{1333}{14}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-C}0c}Nsight Compute counter definitions}{15}{paragraph.Appendix.D.3.0.3}\protected@file@percent }
+\@LN{1334}{14}
+\@LN{1335}{14}
+\@LN{1336}{14}
+\@LN{1337}{14}
+\@LN{1338}{14}
+\@LN{1339}{14}
+\@LN{1340}{14}
+\@LN{1341}{14}
+\@LN{1342}{14}
+\@LN{1343}{14}
+\@LN{1344}{14}
+\@LN{1345}{14}
+\@LN{1346}{14}
+\@LN{1347}{14}
+\@LN{1348}{14}
+\@LN{1349}{14}
+\@LN{1350}{14}
+\@LN{1351}{14}
+\@LN{1352}{14}
 \@LN@col{1}
-\@LN{1333}{15}
-\@LN{1334}{15}
-\@LN{1335}{15}
-\@LN{1336}{15}
-\@LN{1337}{15}
-\@LN{1338}{15}
-\@LN{1339}{15}
+\@LN{1353}{15}
+\@LN{1354}{15}
+\@LN{1355}{15}
+\@LN{1356}{15}
+\@LN{1357}{15}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-C}0d}KernelBench evaluator harness}{16}{paragraph.Appendix.D.3.0.4}\protected@file@percent }
-\@LN{1340}{15}
-\@LN{1341}{15}
-\@LN{1342}{15}
-\@LN{1343}{15}
-\@LN{1344}{15}
-\@LN{1345}{15}
-\@LN{1346}{15}
-\@LN{1347}{15}
-\@LN{1348}{15}
-\@LN{1349}{15}
-\@LN{1350}{15}
-\@LN{1351}{15}
-\@LN{1352}{15}
+\@LN{1358}{15}
+\@LN{1359}{15}
+\@LN{1360}{15}
+\@LN{1361}{15}
+\@LN{1362}{15}
+\@LN{1363}{15}
+\@LN{1364}{15}
+\@LN{1365}{15}
+\@LN{1366}{15}
+\@LN{1367}{15}
+\@LN{1368}{15}
+\@LN{1369}{15}
+\@LN{1370}{15}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {D-D}}Full Hardware and Software Stack}{16}{subsection.Appendix.D.4}\protected@file@percent }
 \newlabel{app:repro:stack}{{\mbox  {D-D}}{16}{Full Hardware and Software Stack}{subsection.Appendix.D.4}{}}
 \newlabel{app:repro:stack@cref}{{[subsection][4][4]\mbox  {D-D}}{[1][16][]16}}
@@ -1696,15 +1716,15 @@
 \newlabel{tab:hw:specs}{{XI}{16}{GPU hardware specifications for the two primary architectures}{table.11}{}}
 \newlabel{tab:hw:specs@cref}{{[table][11][]XI}{[1][16][]16}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-D}0a}Hardware}{16}{table.11}\protected@file@percent }
-\@LN{1353}{15}
+\@LN{1371}{15}
 \@writefile{lot}{\contentsline {table}{\numberline {XII}{\ignorespaces Pinned software versions for all experiments.}}{16}{table.12}\protected@file@percent }
 \newlabel{tab:sw:stack}{{XII}{16}{Pinned software versions for all experiments}{table.12}{}}
 \newlabel{tab:sw:stack@cref}{{[table][12][]XII}{[1][16][]16}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {D-D}0b}Software stack}{16}{table.12}\protected@file@percent }
-\@LN{1354}{15}
-\@LN{1355}{15}
-\@LN{1356}{15}
-\@LN{1357}{15}
-\@LN{1358}{15}
+\@LN{1372}{15}
+\@LN{1373}{15}
+\@LN{1374}{15}
+\@LN{1375}{15}
+\@LN{1376}{15}
 \@LN@col{2}
 \gdef \@abspage@last{16}

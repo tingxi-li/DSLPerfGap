@@ -13,7 +13,7 @@ We propose two complementary checks a developer can apply without a curated benc
 \paragraph{A comparability screen (pragmatic, baseline-relative)}
 An efficient DSL kernel should (i) come within a small factor of the vendor/PyTorch baseline on representative shapes, (ii) be at least at parity---ideally faster---at large input sizes where launch and framework overheads amortize, and (iii) show no catastrophic per-shape collapse.
 This screen is cheap and catches gross failures: the idiomatic TileLang LayerNorm that runs more than $300\times$ slower (\cref{sec:eval:passesslow}) fails it immediately.
-Its limitation is circularity---PyTorch is simultaneously the baseline and the de-facto definition of ``good,'' so the screen cannot certify a kernel that merely matches an already-slow baseline, and it can be fooled into crediting a kernel that beats an \emph{unfused} eager path for the wrong reason (the RMSNorm $851\%$ ``win'' in \cref{tab:summary} is a fusion artifact, not headroom).
+Its limitation is circularity---PyTorch is simultaneously the baseline and the de-facto definition of ``good,'' so the screen cannot certify a kernel that merely matches an already-slow baseline, and it can be fooled into crediting a kernel that beats an \emph{unfused} eager path for the wrong reason (the RMSNorm $873\%$ ``win'' in \cref{tab:summary} is a fusion artifact, not headroom).
 It is therefore a screen, not a certificate.
 
 \paragraph{A roofline anchor (baseline-independent)}
@@ -95,11 +95,11 @@ The full 18-iteration LayerNorm trajectory is in \texttt{ITERATIONS.md}.
 \subsection{Convolution: Partial Recovery via Implicit GEMM}
 \label{sec:mitig:conv}
 
-\medskip\noindent\textbf{Finding: Restructuring Conv2d as an FP16 Tensor-Core implicit GEMM with 16-byte-aligned input padding (RC1) and an expanded autotune space (RC2) reaches 36--76\% of cuDNN across the $1\times1$--$7\times7$ filter family on the A100-SXM4 (all correct)---narrowing but not closing the gap.}
+\medskip\noindent\textbf{Finding: Restructuring Conv2d as an FP16 Tensor-Core implicit GEMM with 16-byte-aligned input padding (RC1) and an expanded autotune space (RC2) reaches 36--77\% of cuDNN across the $1\times1$--$7\times7$ filter family on the A100-SXM4 (all correct)---narrowing but not closing the gap.}
 
 The restructuring unfolds the convolution into an on-the-fly implicit GEMM~\cite{zhou2021implicit} that FP16 Tensor Cores accelerate, with 16-byte input padding enabling \texttt{LDG.128} loads (RC1) and an expanded autotune space (smaller \texttt{BLOCK\_K}, more pipeline stages) covering configurations absent from the default list (RC2).
-Of the residual $\approx$20\% gap, absent Winograd selection contributes only $\approx$2--3\% (a 0.06\% deterministic-vs-non-deterministic delta for $3\times3$ stride-1); the remainder reflects general cuDNN implicit-GEMM tuning---kernel selection, split-K, shared-memory tile sizing---that the single-lowering DSL kernel does not match (RC4).
-Per-filter optimized efficiencies range from 75.5\% at $1\times1$ to 36.1\% at $7\times7$ (all correct); closing this tuning gap and adding in-DSL Winograd support are future work.
+Of the residual $\approx$20\% gap, absent Winograd selection contributes only $\approx$2--3\% (a 0.03\% deterministic-vs-non-deterministic delta for $3\times3$ stride-1); the remainder reflects general cuDNN implicit-GEMM tuning---kernel selection, split-K, shared-memory tile sizing---that the single-lowering DSL kernel does not match (RC4).
+Per-filter optimized efficiencies range from 77.4\% at $1\times1$ to 36.1\% at $7\times7$ (all correct); closing this tuning gap and adding in-DSL Winograd support are future work.
 
 \subsection{GEMM and Reduction Kernels}
 \label{sec:mitig:other}
@@ -112,7 +112,7 @@ Adding \texttt{@triton.autotune} with an expanded set of tile configurations
 and a \texttt{GROUP\_SIZE\_M} L2 cache swizzle (which reorders output tiles to improve L2 data reuse across the $M$-dimension)
 reduces latency from 1.08~ms to 0.79~ms ($1.37\times$, $E_\text{lib} = 77\%$)
 on a $4096\times4096$ matmul, re-timed on the A100-SXM4;
-the same expanded search recovers $E_\text{lib}$ from $32.5\%$ to $81.8\%$ ($2.52\times$) at the RQ1 $16384^2$ shape.
+the same expanded search recovers $E_\text{lib}$ from $59.7\%$ to $81.9\%$ ($1.37\times$) at the RQ1 $16384^2$ shape.
 On the data-center A100, cuBLAS is fast enough that this gap narrows but does not close.
 Iterations 2--6 (persistent kernel, expanded configs, \texttt{max\_num\_imprecise\_acc}) converged without further gain,
 confirming that the expanded configuration set and L2 swizzle are the effective ceiling for this shape.

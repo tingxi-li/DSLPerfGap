@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 23:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  1 JUL 2026 01:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -611,24 +611,12 @@ File: figures/overview_efficiency.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/overview_efficiency.pdf  used on input line 28
 3.
 (pdftex.def)             Requested size: 252.0pt x 200.59183pt.
- [3]
-Overfull \hbox (3.94815pt too wide) in paragraph at lines 352--370
+ [3] [4 <./figures/overview_efficiency.pdf>]
+Overfull \hbox (3.94899pt too wide) in paragraph at lines 348--366
  [][]$[]$ 
  []
 
-[4 <./figures/overview_efficiency.pdf>])
-Underfull \hbox (badness 1924) in paragraph at lines 377--92
-\OT1/ptm/m/n/10 (+20) ker-nels clus-ter near the per-DSL me-di-ans in Ta-ble []
-I[];
- []
-
-
-Underfull \hbox (badness 2662) in paragraph at lines 377--92
-\OT1/ptm/m/n/10 (+20) the no-table Tri-ton out-liers are the index-returning re
--
- []
-
-(./tex/analysis.tex
+) (./tex/analysis.tex
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10> not available
 (Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 242.
 
@@ -723,21 +711,24 @@ m/n/10 )\OMS/cmsy/m/n/10 g\OML/cmm/m/it/10 :[]
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 342--342
+Underfull \hbox (badness 10000) in paragraph at lines 343--343
 []$\OT1/cmr/m/n/8 1347\OMS/cmsy/m/n/8 ^^B$
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 342--342
+Underfull \hbox (badness 10000) in paragraph at lines 343--343
 \OT1/ptm/m/n/8 (+20) (Lay-er-Norm,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 342--343
+Underfull \hbox (badness 10000) in paragraph at lines 343--344
 []\OT1/pcr/m/n/8 warp_stall_long_scoreboard
  []
 
-) (./tex/mitigation.tex [6] [7]
+) [6] (./tex/mitigation.tex
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [7]
 Underfull \hbox (badness 10000) in paragraph at lines 110--124
 []\OT1/ptm/b/n/10 (+20) Square mat-mul (Tri-ton, FP16). \OT1/ptm/m/n/10 (+20) A
 dding
@@ -755,13 +746,13 @@ Underfull \hbox (badness 2932) in paragraph at lines 110--124
 ecise_acc\OT1/ptm/m/n/10 (+20) )
  []
 
-
+[8]
 Underfull \hbox (badness 4024) in paragraph at lines 133--158
 \OT1/pcr/m/n/10 mean_reduction\OT1/ptm/m/n/10 (+20) , and \OT1/pcr/m/n/10 logsu
 mexp \OT1/ptm/m/it/10 (+20) ex-ceed \OT1/ptm/m/n/10 (+20) Py-Torch
  []
 
-[8]) [9] (./tex/discussion.tex) (./tex/related_work.tex [10])
+) (./tex/discussion.tex [9]) (./tex/related_work.tex [10])
 (./tex/conclusion.tex
 Underfull \hbox (badness 4303) in paragraph at lines 47--48
 []\OT1/ptm/m/n/10 (+20) The hid-den gap is highly struc-tured. Most is an
@@ -798,7 +789,7 @@ LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <8> not available
 (./tex/appendix.tex [13
 
 ]
-<figures/overview_efficiency_gh200.pdf, id=552, 245.08862pt x 195.08533pt>
+<figures/overview_efficiency_gh200.pdf, id=554, 245.08862pt x 195.08533pt>
 File: figures/overview_efficiency_gh200.pdf Graphic file (type pdf)
 <use figures/overview_efficiency_gh200.pdf>
 Package pdftex.def Info: figures/overview_efficiency_gh200.pdf  used on input l
@@ -845,14 +836,14 @@ Before submitting the final camera ready copy, remember to:
 
 ] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 7BB1E4AD4B0AF214964DCAED90F28172;7745.
+(rerunfilecheck)             Checksum: 472E9BED3022F747A8C09165472ED3D9;7745.
  ) 
 Here is how much of TeX's memory you used:
- 17533 strings out of 476025
- 286231 string characters out of 5790018
+ 17549 strings out of 476025
+ 286434 string characters out of 5790018
  1901388 words of memory out of 5000000
- 37050 multiletter control sequences out of 15000+600000
- 583691 words of font info for 457 fonts, out of 8000000 for 9000
+ 37054 multiletter control sequences out of 15000+600000
+ 584022 words of font info for 463 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,13n,76p,1157b,1468s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
@@ -876,10 +867,10 @@ pe1/urw/courier/ucrro8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmbi8a.pf
 b></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/lo
 cal/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (16 pages, 476990 bytes).
+Output written on main.pdf (16 pages, 478736 bytes).
 PDF statistics:
- 758 PDF objects out of 1000 (max. 8388607)
- 660 compressed objects within 7 object streams
- 162 named destinations out of 1000 (max. 500000)
- 77651 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 761 PDF objects out of 1000 (max. 8388607)
+ 663 compressed objects within 7 object streams
+ 163 named destinations out of 1000 (max. 500000)
+ 81747 words of extra memory for PDF output out of 89155 (max. 10000000)
 

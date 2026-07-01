@@ -44,11 +44,11 @@ As a robustness check, we replay the kernel suite and the root-cause taxonomy al
 
 \Cref{fig:overview:gh200} shows the per-category library-efficiency distribution on the GH200,
 parallel to \Cref{fig:overview} in the main paper.
-The qualitative profile shifts in two ways: TileLang convolution recovers substantially
-(small-shape 8.3\% and large-shape 59.9\% vs.\ A100's 4.1\% and 12.6\%),
-while TileLang normalization remains collapsed (LayerNorm 0.3\%), confirming that
-the normalization gap is an authoring artifact independent of architecture, whereas
-the convolution gap is partly Ampere-specific (\Cref{sec:analysis}).
+The GH200 profile is consistent with the A100: TileLang convolution is competitive on both
+(GH200 small-shape 8.3\% and large-shape 59.9\%; A100 7.2\% and 59.0\%),
+while TileLang normalization remains collapsed on both (LayerNorm 0.3\%). This confirms that
+the normalization gap is an authoring artifact independent of architecture, while
+the residual convolution gap is the Triton arm, which holds on both architectures (\Cref{sec:analysis}).
 
 \begin{figure}[t]
   \centering
@@ -63,7 +63,7 @@ the convolution gap is partly Ampere-specific (\Cref{sec:analysis}).
     on the NVIDIA GH200-480GB, by kernel category (log scale; dashed line = 100\% parity).
     Same layout as \Cref{fig:overview}: GEMM shows IQR boxes; other categories show per-kernel dots.
     $\diamond$~1082\% (Triton, Norm.) marks \texttt{rms\_norm}: unfair-baseline artifact, not a DSL win.
-    TileLang Conv2d recovers relative to the A100 (59.9\% large vs.\ 12.6\%);
+    TileLang Conv2d is competitive on both (GH200 59.9\% large; A100 $\sim$59\%);
     TileLang Norm.\ remains collapsed (0.3\%).
     Attention excluded (\Cref{sec:eval:gemm}).}
   \label{fig:overview:gh200}
@@ -167,7 +167,7 @@ the convolution gap is partly Ampere-specific (\Cref{sec:analysis}).
 
 \Cref{tab:perkernel} lists $E_\text{lib} = t_\text{PyTorch} / t_\text{DSL}$ for each kernel at the large input shape on the A100-SXM4, tuned configurations.
 Values below 100\% indicate the DSL is slower than the library baseline.
-Five near-parity element-wise kernels (\texttt{leaky\_relu}, \texttt{swiglu}, \texttt{logsumexp}, \texttt{cross\_entropy}, \texttt{matrix\_transpose}) exceeded 100\% on both DSLs at the large shape and are omitted from this table; their main-paper medians appear in \Cref{tab:summary}.
+Four near-parity element-wise kernels (\texttt{leaky\_relu}, \texttt{swiglu}, \texttt{logsumexp}, \texttt{cross\_entropy}) exceeded 100\% on both DSLs at the large shape and are omitted from this table; their main-paper medians appear in \Cref{tab:summary}.
 
 \begin{table}[h]
   \centering
@@ -181,31 +181,31 @@ Five near-parity element-wise kernels (\texttt{leaky\_relu}, \texttt{swiglu}, \t
     Kernel & Input shape & Triton & TileLang \\
     \midrule
     \multicolumn{4}{l}{\textit{GEMM}} \\
-    \texttt{matmul}              & $16384\!\times\!16384$ FP16          & 31.7\%  & 56.4\% \\
-    \texttt{batched\_matmul}     & $128\!\times\!2048\!\times\!2048$ FP16 & 58.2\%  & 10.7\% \\
-    \texttt{linear\_activation}  & $(1,2048,4096)$ FP16                 & 51.9\%  & \textbf{199.7\%}$^{\dagger}$ \\
+    \texttt{matmul}              & $16384\!\times\!16384$ FP16          & 59.7\%  & 78.1\% \\
+    \texttt{batched\_matmul}     & $128\!\times\!2048\!\times\!2048$ FP16 & 97.9\%  & 94.2\% \\
+    \texttt{linear\_activation}  & $(1,2048,4096)$ FP16                 & 185.5\%  & \textbf{468.5\%}$^{\dagger}$ \\
     \midrule
     \multicolumn{4}{l}{\textit{Attention (excluded from main comparison; see \Cref{sec:eval:gemm})}} \\
-    \texttt{attention}           & QKV $(8,32,2048,128)$ FP32           & \textbf{1918\%}$^{\ddagger}$ & 69.2\% \\
+    \texttt{attention}           & QKV $(8,32,2048,128)$ FP32           & \textbf{7691\%}$^{\ddagger}$ & 54.3\% \\
     \midrule
     \multicolumn{4}{l}{\textit{Convolution}} \\
-    \texttt{conv2d}              & $32\!\times\!256\!\times\!128^2$, $3\!\times\!3$ FP16 & 34.9\% & 9.5\% \\
+    \texttt{conv2d}              & $32\!\times\!256\!\times\!128^2$, $3\!\times\!3$ FP16 & 28.6\% & 59.0\% \\
     \midrule
     \multicolumn{4}{l}{\textit{Normalization}} \\
-    \texttt{layer\_norm}         & $8192\!\times\!8192$ BF16            & 94.5\%  & 0.3\%  \\
-    \texttt{rms\_norm}           & $8192\!\times\!8192$ FP16            & \textbf{1099\%}$^{\S}$ & 5.3\% \\
+    \texttt{layer\_norm}         & $8192\!\times\!8192$ BF16            & 90.2\%  & 0.3\%  \\
+    \texttt{rms\_norm}           & $8192\!\times\!8192$ FP16            & \textbf{873\%}$^{\S}$ & 3.2\% \\
     \midrule
     \multicolumn{4}{l}{\textit{Element-wise / Reduction}} \\
-    \texttt{add}                 & 64M FP16                             & 103.5\% & 77.3\% \\
-    \texttt{mul}                 & 64M FP16                             & 69.7\%  & 69.1\% \\
-    \texttt{relu}                & $16384\!\times\!16384$ FP16          & 103.4\% & 68.7\% \\
-    \texttt{softmax}             & $(4096,32768)$ FP16                  & 97.7\%  & 20.1\% \\
-    \texttt{log\_softmax}        & $(4096,32768)$ FP16                  & 76.2\%  & 16.9\% \\
-    \texttt{argmax}              & $(8192,32768)$ FP16                  & 71.4\%  & 6.4\%  \\
-    \texttt{max\_reduction}      & $(8192,32768)$ FP16                  & 12.8\%  & 5.7\%  \\
-    \texttt{mean\_reduction}     & $(8192,32768)$ FP32                  & 99.3\%  & 16.0\% \\
-    \texttt{embedding}           & $(131072,1024)$ idx FP16             & \textbf{405.8\%}$^{\P}$ & 57.9\% \\
-    \texttt{index\_select}       & $(65536,2048)$ idx FP16              & 85.2\%  & 97.2\% \\
+    \texttt{add}                 & 64M FP16                             & 90.8\% & 74.5\% \\
+    \texttt{mul}                 & 64M FP16                             & 69.5\%  & 67.1\% \\
+    \texttt{relu}                & $16384\!\times\!16384$ FP16          & 95.7\% & 68.1\% \\
+    \texttt{softmax}             & $(4096,32768)$ FP16                  & 117.2\%  & 0.9\% \\
+    \texttt{log\_softmax}        & $(4096,32768)$ FP16                  & 45.3\%  & 3.6\% \\
+    \texttt{argmax}              & $(8192,32768)$ FP16                  & 25.5\%  & 5.9\%  \\
+    \texttt{max\_reduction}      & $(8192,32768)$ FP16                  & 109.6\%  & 67.2\%  \\
+    \texttt{mean\_reduction}     & $(8192,32768)$ FP32                  & 92.7\%  & 97.4\% \\
+    \texttt{embedding}           & $(131072,1024)$ idx FP16             & \textbf{447.9\%}$^{\P}$ & 57.9\% \\
+    \texttt{index\_select}       & $(65536,2048)$ idx FP16              & 59.2\%  & 56.6\% \\
     \bottomrule
   \end{tabular}}
   \smallskip
@@ -298,7 +298,7 @@ For attention, we use PyTorch scaled dot-product attention with the FlashAttenti
 \paragraph{GEMM notation and exclusions}
 Per-shape GEMM latencies appear in \Cref{tab:perkernel}; $16384^2$ denotes a square $16384\times16384$ FP16 GEMM and $64\times128^2$ a batched GEMM of batch 64 over $128\times128$ matrices.
 FP32 TileLang GEMM is excluded: \texttt{T.gemm} silently lowers to TF32, making FP32 results a precision artifact rather than a logic error (\Cref{sec:analysis:jit}).
-\Cref{tab:summary} reports the category medians; the $16384^2$ Triton slowdown to 32.8\% reflects an under-populated auto-tune search space (RC2), while TileLang reaches 80.0\% on that shape via an explicit schedule.
+\Cref{tab:summary} reports the category medians; the $16384^2$ Triton gap to 59.7\% reflects an under-populated auto-tune search space (RC2), while TileLang reaches 78.1\% on that shape via an explicit schedule.
 
 
 \subsection{Measurement Protocol}

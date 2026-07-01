@@ -302,11 +302,12 @@ are optimal across most A100 problem shapes~\cite{tillet2019triton}.
 The reference Triton GEMM tutorial ships a configuration list that achieves
 near-cuBLAS performance for common shapes, but omits the L2-swizzle and large-shape configurations needed at scale.
 
-The $16384^2$ matmul (\cref{sec:eval:gemm}) is the clearest case: Triton reaches only 32.8\% of cuBLAS at a shape absent from standard tutorial configuration lists, versus 92.9\% on a well-populated batched GEMM.
-Expanding the search beyond the default 12-config grid (sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, \texttt{num\_stages}) recovers it from 32.5\% to 81.8\% at $16384^2$ ($2.52\times$), confirming the missing configurations---not an exhausted budget---bound default performance (\cref{sec:mitigation}).
+The $16384^2$ matmul (\cref{sec:eval:gemm}) is the clearest case: Triton reaches only 59.7\% of cuBLAS at a shape absent from standard tutorial configuration lists, versus 97.9\% on a well-populated batched GEMM.
+Expanding the search beyond the default 12-config grid (sweeping \texttt{GROUP\_SIZE\_M}, \texttt{num\_warps}, \texttt{num\_stages}) recovers it from 59.7\% to 81.9\% at $16384^2$ ($1.37\times$), confirming the missing configurations---not an exhausted budget---bound default performance (\cref{sec:mitigation}).
 
+\phantomsection\label{sec:analysis:l2cache}
 \paragraph{RC2b: L2 Cache Residency}
-For the $16384^2$ matmul, the combined A, B, C footprint (${\approx}1.6$~GB) vastly exceeds the A100's 40~MB L2 cache; cuBLAS employs hardware-specific cache-blocking (via \texttt{cuBLASLt}'s plan selector) while Triton's generic \texttt{tl.dot} compilation lacks equivalent heuristics, producing the ${\approx}3\times$ latency penalty observed ($34.24$~ms vs.\ $104.34$~ms).
+For the $16384^2$ matmul, the combined A, B, C footprint (${\approx}1.6$~GB) vastly exceeds the A100's 40~MB L2 cache; cuBLAS employs hardware-specific cache-blocking (via \texttt{cuBLASLt}'s plan selector) while Triton's generic \texttt{tl.dot} compilation lacks equivalent heuristics, producing the ${\approx}1.7\times$ latency penalty observed ($33.5$~ms vs.\ $56.1$~ms).
 On the A100, NCU confirms the residency divide: Triton's $16384^2$ matmul reaches only a 49.4\% L2 hit rate and is DRAM-bound at 85.9\% DRAM throughput, whereas cuBLAS holds an 80.5\% L2 hit rate at 28.8\% DRAM throughput.
 
 Convolution adds filter-size degrees of freedom that default lists do not cover for $5\times5$/$7\times7$, and TileLang's ahead-of-time \texttt{num\_stages} cannot adapt to the register pressure large filters create.
@@ -321,8 +322,8 @@ This register pressure---not any convolution effect---is what collapses occupanc
 \phantomsection\label{sec:analysis:algo}
 \paragraph{RC4: Absence of Algorithm-Level Diversity}
 cuDNN selects Winograd for $3\times3$ filters when arithmetic reduction dominates (Winograd $F(2,3)$ cuts multiply-accumulates ${\approx}2.25\times$), but neither Triton nor TileLang exposes the transformation as a schedulable primitive.
-Isolating this effect on the A100 bounds its size: a deterministic A/B comparison of cuDNN on $3\times3$ stride-1 convolution differs by only 0.06\% (a ratio of 0.9994), so absent Winograd selection accounts for at most ${\approx}2$--$3\%$ of the gap.
-Moreover, the measured Triton-vs-cuDNN gap \emph{widens} on Winograd-ineligible filters ($3\times3$ s1 19.25\%, $3\times3$ s2 16.94\%, $5\times5$ 13.5\%, $7\times7$ 9.81\%), indicating that the residual is general cuDNN implicit-GEMM tuning rather than algorithm selection.
+Isolating this effect on the A100 bounds its size: a deterministic A/B comparison of cuDNN on $3\times3$ stride-1 convolution differs by only 0.03\% (a ratio of 0.9997), so absent Winograd selection accounts for at most ${\approx}2$--$3\%$ of the gap.
+Moreover, the measured Triton-vs-cuDNN gap does not track Winograd eligibility: the Winograd-eligible $3\times3$ stride-1 filter (28.5\%) is no better than the ineligible $3\times3$ stride-2 case (32.1\%), and the deepest gaps fall on the larger $5\times5$ (17.8\%) and $7\times7$ (13.1\%) filters, indicating that the residual is general cuDNN implicit-GEMM tuning rather than algorithm selection.
 
 \subsection{Summary of Root Causes}
 \label{sec:analysis:summary}
