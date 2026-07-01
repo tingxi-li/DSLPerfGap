@@ -28,7 +28,7 @@ For root-cause analysis, we collect Nsight Compute~\cite{nsightcompute2024} prof
 
 \paragraph{Correctness}
 Before any timing, we validate every DSL kernel against its library baseline at per-dtype tolerances (\texttt{fp32}~$10^{-5}$, \texttt{fp16}~$10^{-3}$, \texttt{bf16}~$10^{-2}$, relaxed $2\times$ for reductions) and an edge-case suite (NaN/Inf/denormal/all-equal) across all 22 kernels with 0 crashes.
-FP32 GEMM is excluded as silent TF32 lowering rather than a defect (\cref{sec:analysis:jit}).
+FP32 TileLang GEMM is excluded from timing: \texttt{T.gemm} silently lowers float32 to TF32 on SM80 (the \texttt{F32TF32TF32F32} MMA atom truncates the input mantissa to 10 bits), failing an exact $10^{-5}$ float32 check on 31.8\% of outputs while a manual FMA kernel passes the same check (reproducible across four arms in \texttt{exp\_fp32\_gemm.py})---a precision-lowering artifact rather than a defect, so all TileLang GEMM is measured in FP16.
 
 
 \subsection{RQ3 Optimization Methodology}

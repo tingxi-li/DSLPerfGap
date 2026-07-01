@@ -227,7 +227,7 @@
 %   \end{tabular}
 % \end{table*}
 
-This section answers RQ2: for the kernels that pass existing correctness benchmarks (\cref{sec:eval:survey}) yet lag the vendor library by the margins in \cref{sec:evaluation}, what causes the hidden gap?
+This section answers RQ2: \emph{for the kernels that pass existing correctness benchmarks (\cref{sec:eval:survey}) yet lag the vendor library by the margins in \cref{sec:evaluation}, what causes the hidden gap?}
 We separate the causes by where the fix belongs: user-space \emph{authoring} (RC0a), compiler \emph{code generation} (RC0b, RC1, RC2a), and \emph{library maturity}---the tuning and algorithm selection a mature vendor library provides (RC2b, RC4).
 This separation is what makes the gap actionable: authoring causes a developer can fix today, code-generation causes require compiler work, and library-maturity causes bound what any DSL kernel can currently reach.
 
@@ -239,10 +239,7 @@ Two mechanisms contribute to RC0, which we separate by where the fix lives:
 RC0a is a user-space kernel-authoring choice, while RC0b is a compiler-codegen deficiency.
 
 \paragraph{RC0a: TileLang Reduction Authoring (\texttt{T.serial} $\to$ \texttt{T.reduce})}
-First, the original TileLang normalization kernels implement the reduction over the normalized dimension using \texttt{T.serial} loops---TileLang's sequential for-loop construct---iterating over each partial sum one at a time.
-For LayerNorm, which accumulates bfloat16 partial statistics per thread (sum and sum-of-squares for the mean and variance passes), this means the reduction is serialized over all $n$ columns with no inter-thread parallelism.
-\Cref{fig:serial-vs-reduce} shows the two-line authoring change.
-The native alternative, \texttt{T.reduce}, lowers to a parallel butterfly reduction (\texttt{tl::AllReduce}), exchanging partial results in $\log_2 N$ rounds.
+The original TileLang normalization kernels reduce over the normalized dimension with \texttt{T.serial} loops, serializing the accumulation with no inter-thread parallelism; the parallel alternative is \texttt{T.reduce} (\Cref{fig:serial-vs-reduce}).
 
 \begin{figure}[t]
 \begin{lstlisting}[language=Python, basicstyle=\ttfamily\small,
@@ -262,11 +259,11 @@ mean_val[0] = mean_val[0] / T.float32(n)
   This two-line change recovers $1347\times$ latency on the A100.}
 \label{fig:serial-vs-reduce}
 \end{figure}
-This algorithmic structure, however, is not where the cost lies: on the A100, the performance gain from \texttt{T.reduce} comes from better memory-latency hiding---\texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$---not from removing barriers, since \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both the \texttt{T.serial} and \texttt{T.reduce} kernels. The GH200 \texttt{ncu} counters confirm the same signature on \texttt{sm\_90}: \texttt{warp\_stall\_barrier}${=}0$ with \texttt{warp\_stall\_long\_scoreboard}${=}49.95$ dominating, alongside a $34$\,GB local-store register spill (RC3).
-Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: on the A100, LayerNorm drops from 364~ms to 0.270~ms ($1347\times$ improvement, \cref{sec:mitig:norm}).
+The serial structure, however, is not where the cost lies: on the A100 the gain comes from hiding memory latency, not from removing barriers. \texttt{warp\_stall\_long\_scoreboard} drops from 59.56 cycles to ${\approx}0$, while \texttt{warp\_stall\_barrier} is already ${\approx}0$ in both kernels; the GH200 shows the same \texttt{sm\_90} signature (barrier ${=}0$, long-scoreboard ${=}49.95$ dominating, with a $34$\,GB local-store register spill, RC3).
+Replacing the \texttt{T.serial} loop with a single \texttt{T.reduce} call thus removes the dominant latency source: LayerNorm drops from 364~ms to 0.270~ms ($1347\times$, \cref{sec:mitig:norm}).
 
 \paragraph{RC0b: Absent Vectorized Loads (Compiler Codegen)}
-Second, TileLang's compiled normalization kernels do not issue 128-bit vectorized loads
+TileLang's compiled normalization kernels also do not issue 128-bit vectorized loads
 (\texttt{LDG.128}),
 instead fetching 16-bit bfloat16 elements individually.
 For a tensor of shape $8192 \times 8192$,
@@ -275,9 +272,6 @@ that bottlenecks the memory controller
 and prevents the L2 cache from streaming coalesced data to the SMs.
 On the A100, NCU confirms this scalar-granularity access for TileLang LayerNorm: a load efficiency of 50\% bytes/sector at one sector per request, leaving DRAM throughput at 59.2\%.
 Unlike RC0a, this deficiency cannot be addressed in user space and requires a compiler-codegen fix.
-
-\paragraph{TileLang float32 lowering to TF32}
-Separately, TileLang's \texttt{T.gemm} silently lowers float32 to TF32 on SM80 (the \texttt{F32TF32TF32F32} MMA atom truncates the input mantissa to 10 bits), failing an exact $10^{-5}$ float32 check on 31.8\% of outputs while a manual FMA kernel passes the same check (reproducible across four arms in \texttt{exp\_fp32\_gemm.py})---a precision-lowering artifact, not a performance gap, so all TileLang GEMM here is measured in FP16.
 
 \phantomsection\label{sec:analysis:vec}
 \paragraph{RC1: Absent Vectorization of Strided Memory Accesses}
@@ -296,7 +290,7 @@ NCU confirms the absent vectorization on the A100: Triton conv2d achieves a load
 \phantomsection\label{sec:analysis:autotune}
 \paragraph{RC2a: Configurations Absent From the Default Grid}
 Triton's auto-tuner sweeps a programmer-specified list of configurations
-$\\ \{(\texttt{BLOCK\_M}, \texttt{BLOCK\_N}, \texttt{BLOCK\_K}, \texttt{num\_stages}, \texttt{num\_warps})\}.\\ $ For GEMM, this 5-dimensional space is well-understood:
+\{(\texttt{BLOCK\_M}, \texttt{BLOCK\_N}, \texttt{BLOCK\_K}, \texttt{num\_stages}, \texttt{num\_warps})\}. For GEMM, this 5-dimensional space is well-understood:
 large square tiles ($128 \times 128$) with 4--8 pipeline stages
 are optimal across most A100 problem shapes~\cite{tillet2019triton}.
 The reference Triton GEMM tutorial ships a configuration list that achieves
@@ -325,10 +319,10 @@ cuDNN selects Winograd for $3\times3$ filters when arithmetic reduction dominate
 Isolating this effect on the A100 bounds its size: a deterministic A/B comparison of cuDNN on $3\times3$ stride-1 convolution differs by only 0.03\% (a ratio of 0.9997), so absent Winograd selection accounts for at most ${\approx}2$--$3\%$ of the gap.
 Moreover, the measured Triton-vs-cuDNN gap does not track Winograd eligibility: the Winograd-eligible $3\times3$ stride-1 filter (28.5\%) is no better than the ineligible $3\times3$ stride-2 case (32.1\%), and the deepest gaps fall on the larger $5\times5$ (17.8\%) and $7\times7$ (13.1\%) filters, indicating that the residual is general cuDNN implicit-GEMM tuning rather than algorithm selection.
 
-\subsection{Summary of Root Causes}
+% \subsection{Summary of Root Causes}
 \label{sec:analysis:summary}
 
-\Cref{tab:rootcauses} maps each root cause to the kernel category it primarily affects,
+\Cref{tab:rootcauses} maps each root cause to the kernel category it affects,
 its estimated contribution to the throughput gap, and the Nsight Compute counter
 most diagnostic for its detection.
 

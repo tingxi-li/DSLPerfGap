@@ -1,31 +1,3 @@
-% Abstract — pivoted framing (the DSL kernel *evaluation* problem).
-% Canonical framing: ../PIVOT_FRAMING.md. Pre-pivot gap-study drafts are in git history.
-Modern GPU domain-specific languages (DSLs) such as Triton and TileLang deliver competitive performance relative to vendor libraries for GPU kernel programming,
-making them a popular choice for human developers and an increasingly common target for automated kernel code generation agents.
-Yet developer-written or agent-generated DSL kernels can be \emph{functionally correct} but \emph{inefficient}.
-We show that a kernel can pass the prevailing evaluation benchmarks and still run
-hundreds of times slower than the vendor-library baseline across 22 kernels in five
- categories.
-% naive-but-idiomatic DSL kernels that pass correctness
-% gating range from competitive to more than two orders of magnitude slower than
-% cuBLAS/cuDNN.
+Modern GPU domain-specific languages (DSLs), such as Triton and TileLang, are increasingly used to implement specialized deep-learning kernels and as target languages for automated kernel-generation systems. Existing DSL-kernel evaluations commonly establish correctness through reference-based numerical validation. While this criterion is necessary, it does not characterize replacement quality, since a functionally valid kernel may still fall far below the latency and throughput of the optimized library operator it is intended to replace. 
 
-The benchmarks practitioners rely on do not surface this.
-Prevailing benchmarks (e.g., KernelBench)
-gate primarily on correctness and therefore
-admit performance-poor kernels, while under-covering DSLs, data types, shapes, and
-hardware and only partially preventing reward hacking.
-A benchmark comprehensive enough to close this gap is combinatorially infeasible.
-
-As a pragmatic alternative, we (i)~characterize how large and structured the hidden
-performance gap is and why it arises, separating user-space \emph{authoring} causes
-from \emph{code-generation} and
-\emph{library-maturity} causes; and (ii)~distill the result into
-lightweight, partly baseline-independent evaluation heuristics and a small set of
-recurring optimization patterns that guide DSL kernel development when no ground-truth
-benchmark exists.
-We find that authoring idiom dominates the gap: a single reduction-primitive change 
-recovers the normalization and reduction family to library parity or better 
-(with one hardware-specific exception we diagnose), while a residual structural gap 
-persists on convolution. We further show that a roofline-anchored comparability check 
-flags poor kernels that correctness-only benchmarks pass.
+We study this correctness–performance gap as an evaluation problem for GPU DSL kernels. Using 22 Triton and TileLang kernels from five operator categories on NVIDIA A100 and GH200 GPUs, we ask whether current correctness-based evaluation identifies kernels that are unsuitable as library replacements, why such failures occur, and how they can be detected without exhaustive benchmark coverage. The study yields three results. {First}, correctness-based evaluation can admit severe slowdowns: an idiomatic TileLang LayerNorm kernel passes KernelBench’s correctness check while running more than 300× slower than the PyTorch baseline. {Second}, the causes differ by kernel family. TileLang normalization and reduction slowdowns are mainly repairable authoring defects, such as sequential reductions and unnecessary dtype conversions, whereas convolution and large GEMM retain residual gaps after optimization due to code generation, autotuning coverage, and vendor-library algorithm selection. {Third}, library-relative efficiency and roofline utilization provide complementary screening criteria for identifying functionally valid but inefficient DSL kernels.

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  1 JUL 2026 01:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  1 JUL 2026 03:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -573,8 +573,8 @@ Package hyperref Info: Link coloring OFF on input line 51.
 \openout3 = `main.out'.
 
  (./tex/abstract.tex
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 1
-2.
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 2
+.
 
 (/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
@@ -583,7 +583,12 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `phv' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-)
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 3
+.
+
+(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+))
 (./tex/introduction.tex
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 6
 .
@@ -599,19 +604,22 @@ Package microtype Info: Loading generic protrusion settings for font family
 (/usr/local/texlive/2023/texmf-dist/tex/latex/microtype/mt-cmr.cfg
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
-)) [1{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/us
-r/local/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}
+))
+Underfull \vbox (badness 1968) has occurred while \output is active []
+
+ [1{/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/
+local/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 
 ] (./tex/background.tex)
-(./tex/methodology.tex [2]) (./tex/evaluation.tex
-<figures/overview_efficiency.pdf, id=280, 245.08862pt x 195.08533pt>
+(./tex/methodology.tex [2]) (./tex/evaluation.tex [3]
+<figures/overview_efficiency.pdf, id=291, 245.08862pt x 195.08533pt>
 File: figures/overview_efficiency.pdf Graphic file (type pdf)
 <use figures/overview_efficiency.pdf>
 Package pdftex.def Info: figures/overview_efficiency.pdf  used on input line 28
 3.
 (pdftex.def)             Requested size: 252.0pt x 200.59183pt.
- [3] [4 <./figures/overview_efficiency.pdf>]
+ [4 <./figures/overview_efficiency.pdf>]
 Overfull \hbox (3.94899pt too wide) in paragraph at lines 348--366
  [][]$[]$ 
  []
@@ -624,111 +632,83 @@ LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10> not available
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 )
 LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <9> not available
-(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 250.
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 247.
 
-Underfull \hbox (badness 10000) in paragraph at lines 252--253
+Underfull \hbox (badness 10000) in paragraph at lines 249--250
 [][][][][][][][][][][][][][][][][]
  []
 
 
-Overfull \hbox (7.20264pt too wide) in paragraph at lines 256--257
+Overfull \hbox (7.20264pt too wide) in paragraph at lines 253--254
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][] 
  []
 
 
-Overfull \hbox (12.60269pt too wide) in paragraph at lines 257--258
+Overfull \hbox (12.60269pt too wide) in paragraph at lines 254--255
 [][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
 
-Underfull \hbox (badness 6510) in paragraph at lines 265--267
-[]\OT1/ptm/m/n/10 (+20) This al-go-rith-mic struc-ture, how-ever, is not where
+Underfull \hbox (badness 10000) in paragraph at lines 262--264
+[]\OT1/ptm/m/n/10 (+20) The se-rial struc-ture, how-ever, is not where
  []
 
 
-Underfull \hbox (badness 6675) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) the cost lies: on the A100, the per-for-mance gain
+Underfull \hbox (badness 6173) in paragraph at lines 262--264
+\OT1/ptm/m/n/10 (+20) the cost lies: on the A100 the gain comes from
  []
 
 
-Underfull \hbox (badness 7186) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) from \OT1/pcr/m/n/10 T.reduce \OT1/ptm/m/n/10 (+20) comes
- from bet-ter memory-latency
+Underfull \hbox (badness 6364) in paragraph at lines 262--264
+\OT1/ptm/m/n/10 (+20) hid-ing mem-ory la-tency, not from re-mov-ing bar-ri-ers.
+
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) hiding---\OT1/pcr/m/n/10 warp_stall_long_scoreboard \OT1/
-ptm/m/n/10 (+20) drops
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) since \OT1/pcr/m/n/10 warp_stall_barrier \OT1/ptm/m/n/10 
-(+20) is al-ready $[]\OT1/cmr/m/n/10 0$ \OT1/ptm/m/n/10 (+20) in
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) both the \OT1/pcr/m/n/10 T.serial \OT1/ptm/m/n/10 (+20) a
-nd \OT1/pcr/m/n/10 T.reduce \OT1/ptm/m/n/10 (+20) ker-nels. The
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) GH200 \OT1/pcr/m/n/10 ncu \OT1/ptm/m/n/10 (+20) coun-ters
- con-firm the same sig-na-ture
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) on \OT1/pcr/m/n/10 sm_90\OT1/ptm/m/n/10 (+20) : \OT1/pcr/
-m/n/10 warp_stall_barrier$[]\OT1/cmr/m/n/10 0$ \OT1/ptm/m/n/10 (+20) with
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 265--267
-\OT1/pcr/m/n/10 warp_stall_long_scoreboard$[]\OT1/cmr/m/n/10 49\OML/cmm/m/it/10
- :\OT1/cmr/m/n/10 95$ \OT1/ptm/m/n/10 (+20) dom-i-nat-ing,
- []
-
-
-Underfull \hbox (badness 4316) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) re-moves the dom-i-nant la-tency source: on the A100,
- []
-
-
-Underfull \hbox (badness 2027) in paragraph at lines 265--267
-\OT1/ptm/m/n/10 (+20) Lay-er-Norm drops from 364 ms to 0.270 ms ($\OT1/cmr/m/n/
-10 1347\OMS/cmsy/m/n/10 ^^B$
+Underfull \hbox (badness 10000) in paragraph at lines 262--264
+\OT1/pcr/m/n/10 warp_stall_long_scoreboard \OT1/ptm/m/n/10 (+20) drops from 59.
+56
  []
 
 [5]
-Overfull \hbox (26.33327pt too wide) in paragraph at lines 298--304
-\OMS/cmsy/m/n/10 f\OT1/cmr/m/n/10 ([]\OML/cmm/m/it/10 ; []; []; []; []\OT1/cmr/
-m/n/10 )\OMS/cmsy/m/n/10 g\OML/cmm/m/it/10 :[] 
+LaTeX Font Info:    Trying to load font information for OMS+ptm on input line 2
+93.
+ (/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 293.
+
+Underfull \hbox (badness 2318) in paragraph at lines 292--298
+ \OT1/ptm/m/it/10 (+20) e) RC2a: Con-fig-u-ra-tions Ab-sent From the De-fault
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 343--343
+Underfull \hbox (badness 10000) in paragraph at lines 292--298
+\OT1/pcr/m/n/10 num_stages\OT1/ptm/m/n/10 (+20) , \OT1/pcr/m/n/10 num_warps\OT1
+/ptm/m/n/10 (+20) )\OMS/cmsy/m/n/10 g\OT1/ptm/m/n/10 (+20) . For GEMM, this 5-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 337--337
 []$\OT1/cmr/m/n/8 1347\OMS/cmsy/m/n/8 ^^B$
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 343--343
+Underfull \hbox (badness 10000) in paragraph at lines 337--337
 \OT1/ptm/m/n/8 (+20) (Lay-er-Norm,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 343--344
+Underfull \hbox (badness 10000) in paragraph at lines 337--338
 []\OT1/pcr/m/n/8 warp_stall_long_scoreboard
  []
 
-) [6] (./tex/mitigation.tex
+) (./tex/mitigation.tex [6] [7]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [7]
+
 Underfull \hbox (badness 10000) in paragraph at lines 110--124
 []\OT1/ptm/b/n/10 (+20) Square mat-mul (Tri-ton, FP16). \OT1/ptm/m/n/10 (+20) A
 dding
@@ -746,13 +726,13 @@ Underfull \hbox (badness 2932) in paragraph at lines 110--124
 ecise_acc\OT1/ptm/m/n/10 (+20) )
  []
 
-[8]
+
 Underfull \hbox (badness 4024) in paragraph at lines 133--158
 \OT1/pcr/m/n/10 mean_reduction\OT1/ptm/m/n/10 (+20) , and \OT1/pcr/m/n/10 logsu
 mexp \OT1/ptm/m/it/10 (+20) ex-ceed \OT1/ptm/m/n/10 (+20) Py-Torch
  []
 
-) (./tex/discussion.tex [9]) (./tex/related_work.tex [10])
+[8]) (./tex/discussion.tex [9]) (./tex/related_work.tex [10])
 (./tex/conclusion.tex
 Underfull \hbox (badness 4303) in paragraph at lines 47--48
 []\OT1/ptm/m/n/10 (+20) The hid-den gap is highly struc-tured. Most is an
@@ -770,26 +750,14 @@ Underfull \hbox (badness 2512) in paragraph at lines 153--156
 is-cus-sion
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 2
-21.
-(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
-LaTeX Font Info:    Trying to load font information for OMS+ptm on input line 2
-21.
-
-(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omsptm.fd
-File: omsptm.fd 
-)
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <8> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 221.
 ) [12
 
-]
-(./tex/appendix.tex [13
+] (./tex/appendix.tex [13
 
 ]
-<figures/overview_efficiency_gh200.pdf, id=554, 245.08862pt x 195.08533pt>
+<figures/overview_efficiency_gh200.pdf, id=555, 245.08862pt x 195.08533pt>
 File: figures/overview_efficiency_gh200.pdf Graphic file (type pdf)
 <use figures/overview_efficiency_gh200.pdf>
 Package pdftex.def Info: figures/overview_efficiency_gh200.pdf  used on input l
@@ -832,20 +800,18 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[16
-
-] (./main.aux)
+[16] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 472E9BED3022F747A8C09165472ED3D9;7745.
+(rerunfilecheck)             Checksum: FB94D56D25E5380B3B04CF806ED85899;7861.
  ) 
 Here is how much of TeX's memory you used:
- 17549 strings out of 476025
- 286434 string characters out of 5790018
+ 17569 strings out of 476025
+ 286702 string characters out of 5790018
  1901388 words of memory out of 5000000
- 37054 multiletter control sequences out of 15000+600000
- 584022 words of font info for 463 fonts, out of 8000000 for 9000
+ 37062 multiletter control sequences out of 15000+600000
+ 584458 words of font info for 470 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,13n,76p,1157b,1468s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,13n,76p,1273b,1468s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><
 /usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></u
@@ -867,10 +833,10 @@ pe1/urw/courier/ucrro8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmbi8a.pf
 b></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/lo
 cal/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (16 pages, 478736 bytes).
+Output written on main.pdf (16 pages, 479067 bytes).
 PDF statistics:
- 761 PDF objects out of 1000 (max. 8388607)
- 663 compressed objects within 7 object streams
+ 769 PDF objects out of 1000 (max. 8388607)
+ 671 compressed objects within 7 object streams
  163 named destinations out of 1000 (max. 500000)
- 81747 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 83283 words of extra memory for PDF output out of 89155 (max. 10000000)
 
