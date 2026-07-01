@@ -33,6 +33,41 @@ Our 22-kernel suite is deliberately not offered as a comprehensive performance b
 \textbf{Heuristic assumptions.}
 The roofline anchor depends on an essential-work model (bytes moved or FLOPs) and an assumed hardware peak for each kernel; mis-estimating either shifts the achieved fraction $\rho$, and the two checks disagree in a judgment band near $\rho\approx0.5$ (\cref{sec:mitig:heuristics}). We therefore use $\rho$ as a decision signal alongside the comparability screen rather than as a precise efficiency figure, and we record the peak assumptions with each measurement (\cref{tab:roofline}). The suite magnitude is measured on the A100 and the evaluation-gap and roofline results on the GH200---two primary architectures carrying complementary evidence---with per-architecture magnitudes reported where they differ.
 
+% ---- Relocated from main text (was in Mitigation/RQ3, §VI-A heuristics) ----
+\begin{table*}[t]
+  \centering
+  \caption{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}; the two architectures agree on every classification.}
+  \label{tab:roofline}
+  \setlength{\tabcolsep}{4pt}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{@{}llrrrrrr@{\hspace{2.5em}}llrrrrrr@{}}
+    \toprule
+    & & \multicolumn{3}{c}{A100-SXM4 (sm\_80)} & \multicolumn{3}{c}{GH200 (sm\_90)}
+    & & & \multicolumn{3}{c}{A100-SXM4 (sm\_80)} & \multicolumn{3}{c}{GH200 (sm\_90)} \\
+    \cmidrule(lr){3-5}\cmidrule(lr){6-8}\cmidrule(lr){11-13}\cmidrule(lr){14-16}
+    Kernel (DSL) & Bound & $\rho$ & $E_\text{lib}$ & Cliff & $\rho$ & $E_\text{lib}$ & Cliff
+    & Kernel (DSL) & Bound & $\rho$ & $E_\text{lib}$ & Cliff & $\rho$ & $E_\text{lib}$ & Cliff \\
+    \midrule
+    \multicolumn{8}{@{}l}{\textit{Recovered family (authoring artifacts)}}
+    & \multicolumn{8}{l}{\textit{Structural residuals (survive best-effort optimization)}} \\
+    LayerNorm (TL)     & mem & 0.67 & 1.25 & $380\times$  & 0.59 & 1.20 & $1541\times$ & Matmul (Tr) & comp & 0.56 & 0.78 & $1.1\times$ & 0.47 & 0.68 & $1.3\times$ \\
+    RMSNorm (TL)       & mem & 0.70 & 10.2 & $325\times$  & 0.69 & 13.0 & $1520\times$ & Conv2d (TL) & comp & 0.34 & 0.60 & $6.4\times$ & 0.28 & 0.63 & $8.2\times$ \\
+    MeanReduction (TL) & mem & 0.89 & 1.04 & $13.7\times$ & 0.87 & 0.97 & $13.9\times$ & Conv2d (Tr) & comp & 0.24 & 0.42 & $1.5\times$ & 0.16 & 0.34 & $2.5\times$ \\
+    BatchedMatmul (TL) & mem & 0.82 & 0.94 & $23.9\times$ & 0.86 & 1.11 & $20.2\times$ & Argmax (TL) & mem  & 0.15 & 0.27 & $4.5\times$ & 0.10 & 0.22 & $3.8\times$ \\
+    MaxReduction (Tr)  & mem & 0.69 & 1.13 & $8.8\times$  & 0.59 & 1.20 & $6.4\times$  & & & & & & & & \\
+    MaxReduction (TL)  & mem & 0.42 & 0.68 & $12.8\times$ & 0.41 & 0.84 & $16.2\times$ & & & & & & & & \\
+    LogSoftmax (TL)    & mem & 0.55$^\S$ & 0.71$^\S$ & ---$^\S$ & 0.58 & 0.90 & $5.2\times$ & & & & & & & & \\
+    Softmax (TL)       & mem & 0.55$^\S$ & 0.86$^\S$ & ---$^\S$ & 0.47 & 0.87 & $4.0\times^\ddagger$ & & & & & & & & \\
+    \bottomrule
+  \end{tabular}%
+  }
+
+  \vspace{0.3em}
+  \parbox{\textwidth}{\footnotesize TL\,=\,TileLang, Tr\,=\,Triton.
+  $^\ddagger$ The naive Softmax falls back to \texttt{torch.softmax} at this large shape, so its cliff is not a pure TileLang authoring comparison; the optimized $\rho$ and $E_\text{lib}$ are unaffected.
+  $^\S$ A100 Softmax/LogSoftmax report the streaming variant (\cref{sec:mitig:summary}); the in-tree full-row-cache variant collapses occupancy ($\rho{=}0.006$/$0.028$), so its cliff is omitted as it does not transfer.
+  \texttt{logsumexp} (omitted here) register-spills on \texttt{sm\_90} but \emph{not} \texttt{sm\_80} (A100: $0$ spill, $93$~regs, $E_\text{lib}{=}582\%$)---an sm\_90-specific RC3 residual; see \cref{sec:mitig:other,tab:mitigation}.}
+\end{table*}
 
 % ---------------------------------------------------------------------------
 \section{Cross-Architecture Generalization}
@@ -93,6 +128,26 @@ the residual convolution gap is the Triton arm, which holds on both architecture
     \bottomrule
   \end{tabular}}
 \end{table}
+
+% ---- Relocated from main text (was the RQ2 root-cause summary, Sec. V) ----
+\begin{table*}[t]
+  \centering
+  \caption{Root-cause summary. Measured contribution is the latency speedup recovered by the corresponding mitigation (\cref{sec:mitigation}); ``---'' indicates no direct mitigation experiment conducted. RC0a, RC0b, and RC3 are TileLang-specific; RC1, RC2, and RC4 affect both DSLs. Per-RC counter values agree across both architectures.}
+  \label{tab:rootcauses}
+  \begin{tabular}{p{5cm}p{3.5cm}p{2.2cm}p{4.5cm}}
+    \toprule
+    Root cause                     & Affected kernels              & Contribution & Diagnostic counter              \\
+    \midrule
+    RC0a: \texttt{T.serial} instead of \texttt{T.reduce} & All TileLang reductions, norm & $1347\times$ (LayerNorm, A100) & \texttt{warp\_stall\_long\_scoreboard} (barrier ${\approx}0$) \\
+    RC0b: Absent vectorized loads / dtype cast            & TileLang norm                 & ---                     & \texttt{l1tex} bytes/sector     \\
+    RC1: Strided access, scalar LD  & Conv2d ($K > 1$), Triton      & $2.2\times$ with RC2    & Load bytes/sector eff.\ (12.55\%) \\
+    RC2a: Auto-tuning mismatch      & Matmul, Conv2d, Depthwise     & $1.37\times$ (Matmul)   & TFLOPS vs.\ swept configs       \\
+    RC2b: L2 cache residency        & Matmul $\geq 16384^2$         & ---                     & L2 hit rate, DRAM throughput    \\
+    RC3: TileLang LayerNorm spill   & TileLang LayerNorm (large)    & ---                     & \texttt{local\_op} spill / occupancy (A100: 51.5\,GB ld, 254 regs, 12\% occ) \\
+    RC4: No Winograd                & Conv2d $3\times3$             & ${\approx}2$--$3\%$     & SM utilization delta            \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
 
 \begin{table}[t]
   \centering
@@ -158,7 +213,6 @@ the residual convolution gap is the Triton arm, which holds on both architecture
     \bottomrule
   \end{tabular}
 \end{table}
-
 
 % ---------------------------------------------------------------------------
 \section{Per-Kernel Library Efficiency}
@@ -285,7 +339,6 @@ PyTorch implementations are cuBLAS, cuDNN, or PyTorch-eager baselines as describ
   \end{minipage}
 \end{table}
 
-
 \subsection{Baseline Specifications}
 \label{app:repro:baselines}
 
@@ -299,7 +352,6 @@ For attention, we use PyTorch scaled dot-product attention with the FlashAttenti
 Per-shape GEMM latencies appear in \Cref{tab:perkernel}; $16384^2$ denotes a square $16384\times16384$ FP16 GEMM and $64\times128^2$ a batched GEMM of batch 64 over $128\times128$ matrices.
 FP32 TileLang GEMM is excluded: \texttt{T.gemm} silently lowers to TF32, making FP32 results a precision artifact rather than a logic error (\Cref{sec:meth:profiling}).
 \Cref{tab:summary} reports the category medians; the $16384^2$ Triton gap to 59.7\% reflects an under-populated auto-tune search space (RC2), while TileLang reaches 78.1\% on that shape via an explicit schedule.
-
 
 \subsection{Measurement Protocol}
 \label{app:repro:meas}
@@ -330,7 +382,6 @@ We collect the following seven counters per kernel; each is gathered from a sing
 \paragraph{KernelBench evaluator harness}
 For the passes-but-slow demonstration (\cref{sec:eval:passesslow}), we invoke KernelBench's \texttt{eval\_kernel\_against\_ref} function, which (i) overrides the candidate kernel's \texttt{get\_inputs} and \texttt{get\_init\_inputs} with those of the reference implementation so input shapes cannot be altered by the candidate, (ii) checks output equivalence on randomized inputs at the same per-dtype tolerances as our correctness suite (\cref{sec:meth:profiling}), and (iii) emits a warning only if the candidate's throughput exceeds $10\times$ the reference---a speedup-only guard that admits any slowdown.
 We record pass/fail and measure slowdown separately using our clock-locked timing harness.
-
 
 \subsection{Full Hardware and Software Stack}
 \label{app:repro:stack}
@@ -381,7 +432,6 @@ We record pass/fail and measure slowdown separately using our clock-locked timin
 
 All experiments use default cuDNN algorithm selection flags and pre-warm the Triton auto-tuner before measurement.
 A complete \texttt{requirements.txt} and \texttt{environment.yaml} pinning all transitive dependencies are distributed with the artifact.
-
 
 \subsection{Optimization Trajectory: TileLang LayerNorm}
 \label{app:repro:trajectory}
