@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 20:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.5.4)  30 JUN 2026 20:53
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -605,25 +605,25 @@ r/local/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}
 
 ] (./tex/background.tex)
 (./tex/methodology.tex [2]) (./tex/evaluation.tex
-<figures/overview_efficiency.pdf, id=276, 245.08862pt x 195.08533pt>
+<figures/overview_efficiency.pdf, id=280, 245.08862pt x 195.08533pt>
 File: figures/overview_efficiency.pdf Graphic file (type pdf)
 <use figures/overview_efficiency.pdf>
 Package pdftex.def Info: figures/overview_efficiency.pdf  used on input line 28
 3.
 (pdftex.def)             Requested size: 252.0pt x 200.59183pt.
  [3]
-Overfull \hbox (3.94815pt too wide) in paragraph at lines 346--367
+Overfull \hbox (3.94815pt too wide) in paragraph at lines 346--363
  [][]$[]$ 
  []
 
 [4 <./figures/overview_efficiency.pdf>])
-Underfull \hbox (badness 1924) in paragraph at lines 377--92
+Underfull \hbox (badness 1924) in paragraph at lines 372--92
 \OT1/ptm/m/n/10 (+20) ker-nels clus-ter near the per-DSL me-di-ans in Ta-ble []
 I[];
  []
 
 
-Underfull \hbox (badness 2662) in paragraph at lines 377--92
+Underfull \hbox (badness 2662) in paragraph at lines 372--92
 \OT1/ptm/m/n/10 (+20) the no-table Tri-ton out-liers are the index-returning re
 -
  []
@@ -737,17 +737,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 342--343
 []\OT1/pcr/m/n/8 warp_stall_long_scoreboard
  []
 
-) (./tex/mitigation.tex [6]
-LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 3
-1.
-
-(/usr/local/texlive/2023/texmf-dist/tex/latex/psnfss/omspcr.fd
-File: omspcr.fd 
-)
-LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 31.
- [7]
-Underfull \vbox (badness 3281) has occurred while \output is active []
+) (./tex/mitigation.tex [6] [7]
+Underfull \vbox (badness 3536) has occurred while \output is active []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 110--124
@@ -773,11 +764,8 @@ Underfull \hbox (badness 4024) in paragraph at lines 133--158
 mexp \OT1/ptm/m/it/10 (+20) ex-ceed \OT1/ptm/m/n/10 (+20) Py-Torch
  []
 
-[8])
-Underfull \vbox (badness 1789) has occurred while \output is active []
-
- [9]
-(./tex/discussion.tex) (./tex/related_work.tex [10]) (./tex/conclusion.tex
+[8]) (./tex/discussion.tex [9]) (./tex/related_work.tex [10])
+(./tex/conclusion.tex
 Underfull \hbox (badness 4303) in paragraph at lines 47--48
 []\OT1/ptm/m/n/10 (+20) The hid-den gap is highly struc-tured. Most is an
  []
@@ -813,7 +801,7 @@ LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <8> not available
 (./tex/appendix.tex [13
 
 ]
-<figures/overview_efficiency_gh200.pdf, id=545, 245.08862pt x 195.08533pt>
+<figures/overview_efficiency_gh200.pdf, id=551, 245.08862pt x 195.08533pt>
 File: figures/overview_efficiency_gh200.pdf Graphic file (type pdf)
 <use figures/overview_efficiency_gh200.pdf>
 Package pdftex.def Info: figures/overview_efficiency_gh200.pdf  used on input l
@@ -823,26 +811,26 @@ ine 61.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
 [14 <./figures/overview_efficiency_gh200.pdf>]
-Underfull \hbox (badness 4266) in paragraph at lines 255--258
+Underfull \hbox (badness 4266) in paragraph at lines 313--316
 \OT1/pcr/m/n/10 --lock-memory-clocks\OT1/ptm/m/n/10 (+20) . The nom-i-nal max-i
 -mum is
  []
 
-
-Underfull \hbox (badness 1430) in paragraph at lines 273--275
+[15]
+Underfull \hbox (badness 1430) in paragraph at lines 331--333
  \OT1/ptm/m/it/10 (+20) d) Ker-nel-Bench eval-u-a-tor har-ness: [][] \OT1/ptm/m
 /n/10 (+20) For the passes-
  []
 
 
-Underfull \hbox (badness 2285) in paragraph at lines 273--275
+Underfull \hbox (badness 2285) in paragraph at lines 331--333
 \OT1/ptm/m/n/10 (+20) (i) over-rides the can-di-date ker-nel's \OT1/pcr/m/n/10 
 get_inputs \OT1/ptm/m/n/10 (+20) and
  []
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
 
 )
 
@@ -856,18 +844,18 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[15] [16
+[16
 
 ] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: C0444296876CAF2E03BDC710A74E11DC;7482.
+(rerunfilecheck)             Checksum: 7BB1E4AD4B0AF214964DCAED90F28172;7745.
  ) 
 Here is how much of TeX's memory you used:
- 17530 strings out of 476025
- 286328 string characters out of 5790018
+ 17534 strings out of 476025
+ 286245 string characters out of 5790018
  1901388 words of memory out of 5000000
- 37057 multiletter control sequences out of 15000+600000
- 583149 words of font info for 449 fonts, out of 8000000 for 9000
+ 37050 multiletter control sequences out of 15000+600000
+ 583688 words of font info for 457 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,13n,76p,1157b,1468s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
@@ -891,10 +879,10 @@ pe1/urw/courier/ucrro8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmbi8a.pf
 b></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/lo
 cal/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (16 pages, 474662 bytes).
+Output written on main.pdf (16 pages, 476092 bytes).
 PDF statistics:
- 744 PDF objects out of 1000 (max. 8388607)
- 646 compressed objects within 7 object streams
- 160 named destinations out of 1000 (max. 500000)
- 77643 words of extra memory for PDF output out of 89155 (max. 10000000)
+ 758 PDF objects out of 1000 (max. 8388607)
+ 660 compressed objects within 7 object streams
+ 163 named destinations out of 1000 (max. 500000)
+ 77651 words of extra memory for PDF output out of 89155 (max. 10000000)
 

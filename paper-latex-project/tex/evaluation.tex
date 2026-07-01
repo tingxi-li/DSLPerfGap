@@ -360,13 +360,8 @@ the optimal configuration is simply absent from the default block-tile grid (RC2
     \bottomrule
   \end{tabular}}%
   {\footnotesize
-    $^\ddagger$ TileLang LayerNorm (large shape) is 0.1\% (1087$\times$ slower than PyTorch)
-    due to serialized memory-latency exposure under \texttt{T.serial}
-    (\texttt{warp\_stall\_long\_scoreboard} dominates) and absent vectorized loads;
-    see \Cref{sec:analysis:jit}.
-    RMSNorm Triton efficiency is 851.8\% because the PyTorch eager path does not fuse normalization passes.\par
-    $^\S$ Overall figures are medians excluding attention; the Triton geomean ($\sim$126\%) is inflated by fusion and eager-baseline outliers (\texttt{rms\_norm}, \texttt{leaky\_relu}, \texttt{cross\_entropy}, \texttt{linear+act}), so we report the more representative median.
-    Splitting the baseline into vendor cuBLAS/cuDNN, \texttt{torch.compile(max-autotune)} fused, and eager PyTorch (\texttt{fused\_baselines}) confirms the convolution gap persists after fusion.}
+    $^\ddagger$ LayerNorm 0.1\% is a serialization artifact (RC0; \Cref{sec:analysis:jit}), not a data error; RMSNorm 851.8\% is an unfair-baseline artifact (PyTorch eager does not fuse normalization passes) --- see body text.\par
+    $^\S$ Overall figures are medians excluding attention; the Triton geomean ($\sim$126\%) is inflated by fusion and unfused-eager-baseline outliers, so we report the median as the more representative summary.}
 \end{table}
 
 The most striking asymmetry is TileLang's normalization collapse:
@@ -375,3 +370,4 @@ On the A100 (\Cref{tab:summary}), Triton is broadly competitive for element-wise
 The GH200 reorders this strength profile (\Cref{tab:summary}): TileLang is markedly more competitive there---batched GEMM $110\%$, convolution $54\%$, square matmul $60\%$, overall median $\sim$67\% versus $\sim$29\% on the A100---so the two gaps that survive on \emph{both} architectures are the TileLang normalization collapse and the Triton convolution residual ($\le$13\% at $3\times3$), not a fixed per-DSL ranking. This hardware-dependence is itself the point: a DSL kernel's competitiveness cannot be read off one GPU.
 
 Within the element-wise and reduction category, most kernels cluster near the per-DSL medians in \Cref{tab:summary}; the notable Triton outliers are the index-returning reductions \texttt{argmax} (4.7\%) and \texttt{max\_reduction} (12.7\%), while fusion or unfused-eager-baseline cases (\texttt{leaky\_relu}, \texttt{cross\_entropy}, \texttt{linear+act}) exceed 100\% and are not vendor-library speedups.
+Per-kernel efficiencies for all benchmarked kernels appear in \Cref{tab:perkernel}.

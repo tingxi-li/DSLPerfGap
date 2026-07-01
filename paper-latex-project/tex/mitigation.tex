@@ -28,7 +28,7 @@ We present the two checks together because neither suffices alone, and they disa
 
 \begin{table}[t]
   \centering
-  \caption{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}; the two architectures agree on every classification. Source: \texttt{experiments/\allowbreak results/\allowbreak NVIDIA\_\{A100-SXM4-40GB,\allowbreak GH200\_480GB\}/\allowbreak cliff\_roofline.csv}.}
+  \caption{Evaluation heuristics on the A100-SXM4 (sm\_80, primary) and GH200 (sm\_90): optimized-kernel roofline fraction $\rho$ (achieved/hardware peak; \emph{mem}=HBM bandwidth, \emph{comp}=FP16 Tensor-Core), PyTorch-relative efficiency $E_\text{lib}$, and the \emph{cliff} (naive/optimized speedup). A high recovered $\rho$ marks an \emph{authoring artifact}; a low $\rho$ that survives optimization marks a \emph{structural residual}; the two architectures agree on every classification.}
   \label{tab:roofline}
   \footnotesize
   \setlength{\tabcolsep}{4pt}
@@ -78,8 +78,8 @@ We present the two checks together because neither suffices alone, and they disa
   \vspace{0.3em}
   {\footnotesize TL\,=\,TileLang, Tr\,=\,Triton.
   $^\ddagger$ The naive Softmax falls back to \texttt{torch.softmax} at this large shape, so its cliff is not a pure TileLang authoring comparison; the optimized $\rho$ and $E_\text{lib}$ are unaffected.
-  $^\S$ On the A100 stack (TileLang 0.1.6.post1) the in-tree TileLang Softmax/LogSoftmax variant's 64\,KB full-row shared-memory cache collapses occupancy ($\rho{=}0.006$/$0.028$ in \texttt{cliff\_roofline.csv}); we report the \texttt{opt\_kernels} streaming variant, which reaches parity on both architectures ($\rho{=}W/(t\,P)$ from its measured time, $E_\text{lib}$ from \texttt{mitigation\_retime.csv}); its cliff is omitted as the in-tree comparison does not transfer.
-  \texttt{logsumexp} is omitted from the recovered family: its optimized kernel register-spills on \texttt{sm\_90} (GH200; $\rho<0.02$, $E_\text{lib}=1.0\%$) but \emph{not} on \texttt{sm\_80} (A100: $0$ spill, $93$ regs, $E_\text{lib}=582\%$, \texttt{ncu\_summary.csv})---an architecture-specific RC3-class residual discussed in \cref{sec:mitig:summary} and \cref{tab:mitigation}.}
+  $^\S$ On the A100 stack (TileLang 0.1.6.post1) the in-tree TileLang Softmax/LogSoftmax variant's 64\,KB full-row shared-memory cache collapses occupancy ($\rho{=}0.006$/$0.028$); we report the \texttt{opt\_kernels} streaming variant, which reaches parity on both architectures; its cliff is omitted as the in-tree comparison does not transfer.
+  \texttt{logsumexp} is omitted from the recovered family: its optimized kernel register-spills on \texttt{sm\_90} (GH200; $\rho<0.02$, $E_\text{lib}=1.0\%$) but \emph{not} on \texttt{sm\_80} (A100: $0$ spill, $93$ regs, $E_\text{lib}=582\%$)---an architecture-specific RC3-class residual discussed in \cref{sec:mitig:summary} and \cref{tab:mitigation}.}
 \end{table}
 
 \subsection{Normalization Kernels: Correcting RC0}
@@ -99,7 +99,7 @@ The full 18-iteration LayerNorm trajectory is in \texttt{ITERATIONS.md}.
 
 The restructuring unfolds the convolution into an on-the-fly implicit GEMM~\cite{zhou2021implicit} that FP16 Tensor Cores accelerate, with 16-byte input padding enabling \texttt{LDG.128} loads (RC1) and an expanded autotune space (smaller \texttt{BLOCK\_K}, more pipeline stages) covering configurations absent from the default list (RC2).
 Of the residual $\approx$20\% gap, absent Winograd selection contributes only $\approx$2--3\% (a 0.06\% deterministic-vs-non-deterministic delta for $3\times3$ stride-1); the remainder reflects general cuDNN implicit-GEMM tuning---kernel selection, split-K, shared-memory tile sizing---that the single-lowering DSL kernel does not match (RC4).
-Per-filter optimized efficiencies (75.5\% at $1\times1$ down to 36.1\% at $7\times7$, all correct) are in the artifact (\texttt{conv\_mitigation*.csv}); closing this tuning gap and adding in-DSL Winograd support are future work.
+Per-filter optimized efficiencies range from 75.5\% at $1\times1$ to 36.1\% at $7\times7$ (all correct); closing this tuning gap and adding in-DSL Winograd support are future work.
 
 \subsection{GEMM and Reduction Kernels}
 \label{sec:mitig:other}
@@ -150,7 +150,7 @@ Re-timing the same optimized kernels on the GH200 confirms the pattern transfers
 RMSNorm $1303\%$, MeanReduction $97\%$, MaxReduction $84\%$, Softmax $87\%$, LogSoftmax $90\%$
 (\cref{tab:mitigation,tab:roofline})---with one instructive exception: \texttt{logsumexp}, whose
 A100-tuned wide fp32 fragment register-spills on \texttt{sm\_90} (255~registers, ${\sim}280$~GB of
-local-memory spill traffic, $12\%$ occupancy by Nsight Compute, \texttt{ncu\_summary.csv}), collapsing to $1.0\%$. The spill is an RC3-class effect, not
+local-memory spill traffic, $12\%$ occupancy by Nsight Compute), collapsing to $1.0\%$. The spill is an RC3-class effect, not
 the RC0 reduction idiom: retuning the fragment width recovers it only to $63\%$, so on the GH200
 \texttt{logsumexp} is a genuine residual. That an ``optimized'' kernel validated on one GPU can be
 $100\times$ off on another, with no correctness signal, is precisely the evaluation gap this paper
@@ -181,7 +181,7 @@ the rest reflects general cuDNN implicit-GEMM tuning
 \paragraph{Cross-architecture portability is itself an authoring concern}
 Two kernels show that a \emph{correct, hand-optimized} DSL kernel can pass on one GPU yet collapse on another, so single-GPU or single-shape benchmarking cannot certify it.
 \texttt{logsumexp} is one direction---fast on the A100 but register-spilling on the GH200 (\cref{tab:mitigation}); the in-tree TileLang Softmax is the other, and its cause is purely an authoring choice.
-That kernel caches the entire row in shared memory, so its per-block footprint grows with the row width ($2N$ bytes at fp16); on the A100 this monotonically erodes occupancy---the kernel is $20\times$ slower than PyTorch at $N{=}8192$ (16~KB of shared memory) and $111\times$ slower at $N{=}32768$ (64~KB, past the $48$~KB static budget), while staying numerically correct at every size (\texttt{softmax\_authoring.csv}).
+That kernel caches the entire row in shared memory, so its per-block footprint grows with the row width ($2N$ bytes at fp16); on the A100 this monotonically erodes occupancy---the kernel is $20\times$ slower than PyTorch at $N{=}8192$ (16~KB of shared memory) and $111\times$ slower at $N{=}32768$ (64~KB, past the $48$~KB static budget), while staying numerically correct at every size.
 The identical kernel runs at PyTorch parity on the GH200, whose larger shared-memory budget absorbs the allocation, so the defect is invisible to a GH200 or small-$N$ benchmark even though the kernel is two orders of magnitude slow on the A100 at scale.
 The streaming variant---tiling the reduction over fixed $4$~KB blocks instead of caching the whole row---holds parity across the sweep ($\rho{=}0.55$, \cref{tab:roofline}).
 ``Stream the reduction; do not cache the full row'' is thus a portable authoring pattern, and the collapse is a concrete instance of the evaluation gap whose root cause is authoring rather than the language or the hardware.
@@ -222,10 +222,10 @@ The streaming variant---tiling the reduction over fixed $4$~KB blocks instead of
   {\small $^\dagger$ RMSNorm $E_\text{lib} > 100\%$ because the fixed kernel fuses the scaling pass PyTorch's eager path leaves unfused.
   $^\ddagger$ LogSumExp is the one family kernel whose optimized config does \emph{not} transfer to the GH200:
   its A100-tuned wide fp32 fragment register-spills on sm\_90 (255~regs, ${\sim}280$~GB local-memory spill
-  traffic, $12\%$ occupancy; GH200 \texttt{ncu\_summary.csv}) $\to$ $1.0\%$; even retuned to the GH200-optimal
+  traffic, $12\%$ occupancy) $\to$ $1.0\%$; even retuned to the GH200-optimal
   fragment width it caps at $63\%$, an RC3-class residual rather than an authoring artifact.
   On the A100 (sm\_80) the same kernel does \emph{not} spill ($0$ local-memory traffic, $93$~regs, $30.5\%$
-  occupancy; A100 \texttt{ncu\_summary.csv}), confirming the $581.7\%$ is genuine and the spill is sm\_90-specific.
+  occupancy), confirming the $581.7\%$ is genuine and the spill is sm\_90-specific.
   A100 \emph{ms} columns are re-timed on the A100-SXM4 (locked clocks); the memory-latency-bound norm/reduction
   \emph{Before} kernels are clock-invariant and match the unlocked profile. GH200 $E_\text{lib}$ is the
   optimized-kernel efficiency from \cref{tab:roofline} (unlocked). \emph{Before} is the
