@@ -78,7 +78,7 @@ We present the two checks together because neither suffices alone, and they disa
   \vspace{0.3em}
   {\footnotesize TL\,=\,TileLang, Tr\,=\,Triton.
   $^\ddagger$ The naive Softmax falls back to \texttt{torch.softmax} at this large shape, so its cliff is not a pure TileLang authoring comparison; the optimized $\rho$ and $E_\text{lib}$ are unaffected.
-  $^\S$ On the A100 stack (TileLang 0.1.6.post1) the in-tree TileLang Softmax/LogSoftmax variant's 64\,KB full-row shared-memory cache collapses occupancy ($\rho{=}0.006$/$0.028$); we report the \texttt{opt\_kernels} streaming variant, which reaches parity on both architectures; its cliff is omitted as the in-tree comparison does not transfer.
+  $^\S$ On the A100 stack (TileLang 0.1.6.post1) the in-tree TileLang Softmax/LogSoftmax variant's 64\,KB full-row shared-memory cache collapses occupancy ($\rho{=}0.006$/$0.028$); we report the streaming variant (\cref{sec:mitig:summary}), which reaches parity on both architectures; its cliff is omitted as the in-tree comparison does not transfer.
   \texttt{logsumexp} is omitted from the recovered family: its optimized kernel register-spills on \texttt{sm\_90} (GH200; $\rho<0.02$, $E_\text{lib}=1.0\%$) but \emph{not} on \texttt{sm\_80} (A100: $0$ spill, $93$ regs, $E_\text{lib}=582\%$)---an architecture-specific RC3-class residual discussed in \cref{sec:mitig:summary} and \cref{tab:mitigation}.}
 \end{table}
 
@@ -90,7 +90,7 @@ We present the two checks together because neither suffices alone, and they disa
 The dominant fix is Step~1: a single \texttt{T.reduce} replacing the manual \texttt{T.serial} loop (subsequent iterations confirmed the loop structure, not thread configuration, was the bottleneck).
 Step~2, native bfloat16 I/O removing intermediate \texttt{.float()} casts, then brings LayerNorm from 364~ms to 0.270~ms (124\% of PyTorch) and RMSNorm to 0.254~ms (990\%, exceeding 100\% because the fixed kernel fuses the scaling pass that PyTorch's eager two-pass path does not)---near the $\approx$0.18~ms memory-bandwidth floor for an $8192^2$ bfloat16 tensor at the A100's $\approx$1.5~TB/s.
 This is not a new technique (\texttt{T.reduce} already existed); the contribution is showing RC0 fully explains the anomaly and is mechanically correctable in user space without algorithmic change.
-The full 18-iteration LayerNorm trajectory is in \texttt{ITERATIONS.md}.
+The full 18-iteration LayerNorm search trajectory is given in \cref{tab:layernorm:trajectory}.
 
 \subsection{Convolution: Partial Recovery via Implicit GEMM}
 \label{sec:mitig:conv}

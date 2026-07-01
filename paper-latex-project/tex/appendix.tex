@@ -297,7 +297,7 @@ For attention, we use PyTorch scaled dot-product attention with the FlashAttenti
 
 \paragraph{GEMM notation and exclusions}
 Per-shape GEMM latencies appear in \Cref{tab:perkernel}; $16384^2$ denotes a square $16384\times16384$ FP16 GEMM and $64\times128^2$ a batched GEMM of batch 64 over $128\times128$ matrices.
-FP32 TileLang GEMM is excluded: \texttt{T.gemm} silently lowers to TF32, making FP32 results a precision artifact rather than a logic error (\Cref{sec:analysis:jit}).
+FP32 TileLang GEMM is excluded: \texttt{T.gemm} silently lowers to TF32, making FP32 results a precision artifact rather than a logic error (\Cref{sec:meth:profiling}).
 \Cref{tab:summary} reports the category medians; the $16384^2$ Triton gap to 59.7\% reflects an under-populated auto-tune search space (RC2), while TileLang reaches 78.1\% on that shape via an explicit schedule.
 
 
@@ -381,3 +381,49 @@ We record pass/fail and measure slowdown separately using our clock-locked timin
 
 All experiments use default cuDNN algorithm selection flags and pre-warm the Triton auto-tuner before measurement.
 A complete \texttt{requirements.txt} and \texttt{environment.yaml} pinning all transitive dependencies are distributed with the artifact.
+
+
+\subsection{Optimization Trajectory: TileLang LayerNorm}
+\label{app:repro:trajectory}
+
+To illustrate the correctness-gated iterative protocol of \cref{sec:meth:optimization}, \cref{tab:layernorm:trajectory} lists the full 18-iteration search for the TileLang LayerNorm kernel of \cref{sec:mitig:norm}.
+Two edits dominate: iteration~1 replaces the manual \texttt{T.serial} reduction with a single \texttt{T.reduce} (RC0), and iteration~14 switches to native bfloat16 I/O, removing the intermediate \texttt{.float()} casts.
+The intervening iterations confirm that thread count, tiling, and reduction algebra are second-order once the kernel is bandwidth-bound, and two configurations fail to compile---evidence that the search is genuine rather than a curated path.
+Runtimes are on the separate development GPU (\cref{sec:mitigation}); the selected final kernel is re-timed on the A100-SXM4 in \cref{tab:mitigation}.
+
+\begin{table}[t]
+  \centering
+  \caption{\textbf{TileLang LayerNorm optimization trajectory (development GPU).}
+    Full 18-iteration correctness-gated search for the bfloat16 LayerNorm kernel of \cref{sec:mitig:norm}; every listed configuration is numerically correct except the two compile failures (iter 3, 7, shown ``---'').
+    $E_\text{lib}$ is the latency ratio to PyTorch \texttt{F.layer\_norm} on the same GPU.
+    \textbf{Bold} marks the two dominant edits: \texttt{T.serial}$\to$\texttt{T.reduce} (iter 1) and native bfloat16 I/O (iter 14).
+    $^\dagger$ selected final configuration; re-timed on the A100-SXM4 as $0.270$~ms / $124\%$ in \cref{tab:mitigation}.}
+  \label{tab:layernorm:trajectory}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}clrr@{}}
+    \toprule
+    Iter & Change & Runtime (ms) & $E_\text{lib}$ \\
+    \midrule
+    base & \texttt{T.serial} reduction & 1090 & 0.08\% \\
+    \textbf{1} & \textbf{Replace \texttt{T.serial} with \texttt{T.reduce}} & \textbf{5.24} & \textbf{17.1\%} \\
+    2 & Register copy, 256 threads & 5.22 & 17.2\% \\
+    3 & 2D \texttt{block\_M}${=}4$, \texttt{reduce\_sum} dim 1 & --- & --- \\
+    4 & 2D \texttt{T.copy} fix, \texttt{reduce\_sum} dim 1 & 5.22 & 17.2\% \\
+    5 & 512 threads & 5.22 & 17.2\% \\
+    6 & fp16 I/O, fp32 accumulate & 3.02 & 29.5\% \\
+    7 & 2D merged $E[x^2]{-}E[x]^2$ & --- & --- \\
+    8 & 1024 threads, fp16 I/O & 3.02 & 29.6\% \\
+    9 & Tiled reduction \texttt{block\_N}${=}1024$ & 2.99 & 29.9\% \\
+    10 & Two-pass tiled (sum${+}$sq in pass 1) & 3.00 & 29.8\% \\
+    11 & $E[x^2]{-}E[x]^2$, single load & 3.02 & 29.6\% \\
+    12 & Disable warp-specialized \texttt{pass\_configs} & 3.02 & 29.6\% \\
+    13 & Store $x{-}\mu$ in fp16 to save registers & 3.02 & 29.6\% \\
+    \textbf{14} & \textbf{Native bfloat16 I/O, no cast} & \textbf{0.893} & \textbf{99.8\%} \\
+    15$^\dagger$ & \texttt{out\_idx} output allocation & 0.891 & 100.0\% \\
+    16 & Full fp32 \texttt{row\_copy} (more regs) & 0.905 & 98.5\% \\
+    17 & Restore iter-15 configuration & 0.893 & 99.8\% \\
+    18 & 128 threads & 0.895 & 99.6\% \\
+    \bottomrule
+  \end{tabular}
+\end{table}
