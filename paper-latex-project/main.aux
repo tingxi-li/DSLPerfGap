@@ -1407,8 +1407,6 @@
 \@LN{1126}{11}
 \@LN{1127}{11}
 \@LN{1128}{11}
-\citation{li2025tritonbench}
-\citation{wang2025tilelang}
 \@LN@col{1}
 \@LN{1129}{12}
 \@LN{1130}{12}
@@ -1521,36 +1519,37 @@
 \@LN{1230}{12}
 \@LN{1231}{12}
 \@LN{1232}{12}
-\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  C: Reproducibility Details}{13}{section*.14}\protected@file@percent }
-\newlabel{app:repro}{{C}{13}{\appendixname \nobreakspace \thesectiondis \\* Reproducibility Details}{section*.14}{}}
-\newlabel{app:repro@cref}{{[section][3][]C}{[1][13][]13}}
 \@LN{1233}{12}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {C-A}}Kernel Suite Provenance}{13}{subsection.Appendix.C.1}\protected@file@percent }
-\newlabel{app:repro:kernels}{{\mbox  {C-A}}{13}{Kernel Suite Provenance}{subsection.Appendix.C.1}{}}
-\newlabel{app:repro:kernels@cref}{{[subsection][1][3]\mbox  {C-A}}{[1][13][]13}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-A}0a}Selection criteria}{13}{paragraph.Appendix.C.1.0.1}\protected@file@percent }
 \@LN{1234}{12}
 \@LN{1235}{12}
 \@LN{1236}{12}
 \@LN{1237}{12}
+\citation{li2025tritonbench}
+\citation{wang2025tilelang}
 \@LN@col{1}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA GH200-480GB, by kernel category (log scale; dashed line = 100\% parity). Same layout as \Cref  {fig:overview}: GEMM shows IQR boxes; other categories show per-kernel dots. $\diamond $\nobreakspace  {}1082\% (Triton, Norm.) marks \texttt  {rms\_norm}: unfair-baseline artifact, not a DSL win. TileLang Conv2d recovers relative to the A100 (59.9\% large vs.\ 12.6\%); TileLang Norm.\ remains collapsed (0.3\%). Attention excluded (\Cref  {sec:eval:gemm}).}}{14}{figure.3}\protected@file@percent }
+\newlabel{fig:overview:gh200}{{3}{14}{Library efficiency (\%) of Triton and TileLang kernels relative to cuBLAS/cuDNN on the NVIDIA GH200-480GB, by kernel category (log scale; dashed line = 100\% parity). Same layout as \Cref {fig:overview}: GEMM shows IQR boxes; other categories show per-kernel dots. $\diamond $~1082\% (Triton, Norm.) marks \texttt {rms\_norm}: unfair-baseline artifact, not a DSL win. TileLang Conv2d recovers relative to the A100 (59.9\% large vs.\ 12.6\%); TileLang Norm.\ remains collapsed (0.3\%). Attention excluded (\Cref {sec:eval:gemm})}{figure.3}{}}
+\newlabel{fig:overview:gh200@cref}{{[figure][3][]3}{[1][14][]14}}
 \@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces \textbf  {Cross-architecture generalization.} Median library efficiency $E_\text  {lib}$ (\%) per kernel category for each DSL on the primary A100-SXM4 (sm\_80) and the cross-architecture replays A100-PCIE (sm\_80, form factor) and H100 (sm\_90, Hopper), untuned defaults. The qualitative profile is preserved across architectures: GEMM and element-wise competitive, convolution and TileLang normalization severely behind.}}{14}{table.5}\protected@file@percent }
 \newlabel{tab:xarch:summary}{{V}{14}{\textbf {Cross-architecture generalization.} Median library efficiency $E_\text {lib}$ (\%) per kernel category for each DSL on the primary A100-SXM4 (sm\_80) and the cross-architecture replays A100-PCIE (sm\_80, form factor) and H100 (sm\_90, Hopper), untuned defaults. The qualitative profile is preserved across architectures: GEMM and element-wise competitive, convolution and TileLang normalization severely behind}{table.5}{}}
-\newlabel{tab:xarch:summary@cref}{{[table][5][]V}{[1][13][]14}}
-\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces \textbf  {Root-cause taxonomy reproduces across architectures.} Each corrected root cause measured on all three GPUs with the identical portable harness. All reproduce, confirming they are properties of the DSL/compiler rather than of a single GPU (cf.\ \cref  {tab:xarch:summary}).}}{14}{table.6}\protected@file@percent }
-\newlabel{tab:xarch:rootcause}{{VI}{14}{\textbf {Root-cause taxonomy reproduces across architectures.} Each corrected root cause measured on all three GPUs with the identical portable harness. All reproduce, confirming they are properties of the DSL/compiler rather than of a single GPU (cf.\ \cref {tab:xarch:summary})}{table.6}{}}
-\newlabel{tab:xarch:rootcause@cref}{{[table][6][]VI}{[1][13][]14}}
+\newlabel{tab:xarch:summary@cref}{{[table][5][]V}{[1][14][]14}}
 \@LN{1238}{13}
 \@LN{1239}{13}
 \@LN{1240}{13}
 \@LN{1241}{13}
+\@writefile{toc}{\contentsline {section}{Appendix\nobreakspace  C: Reproducibility Details}{14}{section*.14}\protected@file@percent }
+\newlabel{app:repro}{{C}{14}{\appendixname \nobreakspace \thesectiondis \\* Reproducibility Details}{section*.14}{}}
+\newlabel{app:repro@cref}{{[section][3][]C}{[1][14][]14}}
 \@LN{1242}{13}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {C-A}}Kernel Suite Provenance}{14}{subsection.Appendix.C.1}\protected@file@percent }
+\newlabel{app:repro:kernels}{{\mbox  {C-A}}{14}{Kernel Suite Provenance}{subsection.Appendix.C.1}{}}
+\newlabel{app:repro:kernels@cref}{{[subsection][1][3]\mbox  {C-A}}{[1][14][]14}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-A}0a}Selection criteria}{14}{paragraph.Appendix.C.1.0.1}\protected@file@percent }
 \@LN{1243}{13}
 \@LN{1244}{13}
 \@LN{1245}{13}
 \@LN{1246}{13}
 \@LN{1247}{13}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-A}0b}Per-kernel provenance}{14}{paragraph.Appendix.C.1.0.2}\protected@file@percent }
 \@LN{1248}{13}
 \@LN{1249}{13}
 \@LN{1250}{13}
@@ -1558,11 +1557,16 @@
 \@LN{1252}{13}
 \@LN{1253}{13}
 \@LN{1254}{13}
+\@LN@col{2}
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces \textbf  {Root-cause taxonomy reproduces across architectures.} Each corrected root cause measured on all three GPUs with the identical portable harness. All reproduce, confirming they are properties of the DSL/compiler rather than of a single GPU (cf.\ \cref  {tab:xarch:summary}).}}{14}{table.6}\protected@file@percent }
+\newlabel{tab:xarch:rootcause}{{VI}{14}{\textbf {Root-cause taxonomy reproduces across architectures.} Each corrected root cause measured on all three GPUs with the identical portable harness. All reproduce, confirming they are properties of the DSL/compiler rather than of a single GPU (cf.\ \cref {tab:xarch:summary})}{table.6}{}}
+\newlabel{tab:xarch:rootcause@cref}{{[table][6][]VI}{[1][14][]14}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces \textbf  {GEMM autotuning recovery generalizes (RC2).} Triton matmul $E_\text  {lib}$ before (plain, heuristic) and after (expanded autotune search) on all three GPUs. The \S  5-vs-\S  7.3 gap is a search-space artifact on every architecture, not shape- or hardware-specific.}}{14}{table.7}\protected@file@percent }
+\newlabel{tab:xarch:autotune}{{VII}{14}{\textbf {GEMM autotuning recovery generalizes (RC2).} Triton matmul $E_\text {lib}$ before (plain, heuristic) and after (expanded autotune search) on all three GPUs. The \S 5-vs-\S 7.3 gap is a search-space artifact on every architecture, not shape- or hardware-specific}{table.7}{}}
+\newlabel{tab:xarch:autotune@cref}{{[table][7][]VII}{[1][14][]14}}
 \@LN{1255}{13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {C-B}}Baseline Specifications}{14}{subsection.Appendix.C.2}\protected@file@percent }
-\newlabel{app:repro:baselines}{{\mbox  {C-B}}{14}{Baseline Specifications}{subsection.Appendix.C.2}{}}
-\newlabel{app:repro:baselines@cref}{{[subsection][2][3]\mbox  {C-B}}{[1][14][]14}}
 \@LN{1256}{13}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-A}0b}Per-kernel provenance}{14}{paragraph.Appendix.C.1.0.2}\protected@file@percent }
 \@LN{1257}{13}
 \@LN{1258}{13}
 \@LN{1259}{13}
@@ -1570,29 +1574,21 @@
 \@LN{1261}{13}
 \@LN{1262}{13}
 \@LN{1263}{13}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-B}0a}GEMM notation and exclusions}{14}{paragraph.Appendix.C.2.0.1}\protected@file@percent }
 \@LN{1264}{13}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {C-B}}Baseline Specifications}{14}{subsection.Appendix.C.2}\protected@file@percent }
+\newlabel{app:repro:baselines}{{\mbox  {C-B}}{14}{Baseline Specifications}{subsection.Appendix.C.2}{}}
+\newlabel{app:repro:baselines@cref}{{[subsection][2][3]\mbox  {C-B}}{[1][14][]14}}
 \@LN{1265}{13}
 \@LN{1266}{13}
 \@LN{1267}{13}
-\@LN@col{2}
-\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces \textbf  {GEMM autotuning recovery generalizes (RC2).} Triton matmul $E_\text  {lib}$ before (plain, heuristic) and after (expanded autotune search) on all three GPUs. The \S  5-vs-\S  7.3 gap is a search-space artifact on every architecture, not shape- or hardware-specific.}}{14}{table.7}\protected@file@percent }
-\newlabel{tab:xarch:autotune}{{VII}{14}{\textbf {GEMM autotuning recovery generalizes (RC2).} Triton matmul $E_\text {lib}$ before (plain, heuristic) and after (expanded autotune search) on all three GPUs. The \S 5-vs-\S 7.3 gap is a search-space artifact on every architecture, not shape- or hardware-specific}{table.7}{}}
-\newlabel{tab:xarch:autotune@cref}{{[table][7][]VII}{[1][13][]14}}
-\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces \textbf  {Convolution filter sweep across architectures} (large shape $32{\times }256{\times }128^2$, groups$=$1, stride$=$1). Triton $E_\text  {lib}$ vs cuDNN for each GPU, with the measured Triton register-spill count. The gap widening with filter size and the absence of register spilling both hold across architectures.}}{14}{table.8}\protected@file@percent }
-\newlabel{tab:xarch:conv}{{VIII}{14}{\textbf {Convolution filter sweep across architectures} (large shape $32{\times }256{\times }128^2$, groups$=$1, stride$=$1). Triton $E_\text {lib}$ vs cuDNN for each GPU, with the measured Triton register-spill count. The gap widening with filter size and the absence of register spilling both hold across architectures}{table.8}{}}
-\newlabel{tab:xarch:conv@cref}{{[table][8][]VIII}{[1][13][]14}}
 \@LN{1268}{13}
 \@LN{1269}{13}
 \@LN{1270}{13}
 \@LN{1271}{13}
 \@LN{1272}{13}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-B}0a}GEMM notation and exclusions}{14}{paragraph.Appendix.C.2.0.1}\protected@file@percent }
 \@LN{1273}{13}
 \@LN{1274}{13}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {C-C}}Measurement Protocol}{14}{subsection.Appendix.C.3}\protected@file@percent }
-\newlabel{app:repro:meas}{{\mbox  {C-C}}{14}{Measurement Protocol}{subsection.Appendix.C.3}{}}
-\newlabel{app:repro:meas@cref}{{[subsection][3][3]\mbox  {C-C}}{[1][14][]14}}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0a}End-to-end timing}{14}{paragraph.Appendix.C.3.0.1}\protected@file@percent }
 \@LN{1275}{13}
 \@LN{1276}{13}
 \@LN{1277}{13}
@@ -1600,32 +1596,40 @@
 \@LN{1279}{13}
 \@LN{1280}{13}
 \@LN{1281}{13}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0b}Clock-lock settings}{14}{paragraph.Appendix.C.3.0.2}\protected@file@percent }
 \@LN{1282}{13}
-\@LN{1283}{13}
-\@LN{1284}{13}
-\@LN{1285}{13}
-\@LN{1286}{13}
-\@LN{1287}{13}
-\@LN{1288}{13}
-\@LN{1289}{13}
-\@LN{1290}{13}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0c}Nsight Compute counter definitions}{14}{paragraph.Appendix.C.3.0.3}\protected@file@percent }
-\@LN{1291}{13}
-\@LN{1292}{13}
-\@LN{1293}{13}
-\@LN{1294}{13}
 \@LN@col{1}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces \textbf  {Convolution filter sweep across architectures} (large shape $32{\times }256{\times }128^2$, groups$=$1, stride$=$1). Triton $E_\text  {lib}$ vs cuDNN for each GPU, with the measured Triton register-spill count. The gap widening with filter size and the absence of register spilling both hold across architectures.}}{15}{table.8}\protected@file@percent }
+\newlabel{tab:xarch:conv}{{VIII}{15}{\textbf {Convolution filter sweep across architectures} (large shape $32{\times }256{\times }128^2$, groups$=$1, stride$=$1). Triton $E_\text {lib}$ vs cuDNN for each GPU, with the measured Triton register-spill count. The gap widening with filter size and the absence of register spilling both hold across architectures}{table.8}{}}
+\newlabel{tab:xarch:conv@cref}{{[table][8][]VIII}{[1][14][]15}}
 \@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Per-kernel provenance for the 22-kernel ViperBench suite.}}{15}{table.9}\protected@file@percent }
 \newlabel{tab:provenance}{{IX}{15}{Per-kernel provenance for the 22-kernel ViperBench suite}{table.9}{}}
 \newlabel{tab:provenance@cref}{{[table][9][]IX}{[1][14][]15}}
+\@LN{1283}{14}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {C-C}}Measurement Protocol}{15}{subsection.Appendix.C.3}\protected@file@percent }
+\newlabel{app:repro:meas}{{\mbox  {C-C}}{15}{Measurement Protocol}{subsection.Appendix.C.3}{}}
+\newlabel{app:repro:meas@cref}{{[subsection][3][3]\mbox  {C-C}}{[1][14][]15}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0a}End-to-end timing}{15}{paragraph.Appendix.C.3.0.1}\protected@file@percent }
+\@LN{1284}{14}
+\@LN{1285}{14}
+\@LN{1286}{14}
+\@LN{1287}{14}
+\@LN{1288}{14}
+\@LN{1289}{14}
+\@LN{1290}{14}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0b}Clock-lock settings}{15}{paragraph.Appendix.C.3.0.2}\protected@file@percent }
+\@LN{1291}{14}
+\@LN{1292}{14}
+\@LN{1293}{14}
+\@LN{1294}{14}
 \@LN{1295}{14}
 \@LN{1296}{14}
 \@LN{1297}{14}
 \@LN{1298}{14}
 \@LN{1299}{14}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0c}Nsight Compute counter definitions}{15}{paragraph.Appendix.C.3.0.3}\protected@file@percent }
 \@LN{1300}{14}
 \@LN{1301}{14}
+\@LN@col{2}
 \@LN{1302}{14}
 \@LN{1303}{14}
 \@LN{1304}{14}
@@ -1639,7 +1643,6 @@
 \@LN{1312}{14}
 \@LN{1313}{14}
 \@LN{1314}{14}
-\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0d}KernelBench evaluator harness}{15}{paragraph.Appendix.C.3.0.4}\protected@file@percent }
 \@LN{1315}{14}
 \@LN{1316}{14}
 \@LN{1317}{14}
@@ -1649,11 +1652,20 @@
 \@LN{1321}{14}
 \@LN{1322}{14}
 \@LN{1323}{14}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-C}0d}KernelBench evaluator harness}{15}{paragraph.Appendix.C.3.0.4}\protected@file@percent }
 \@LN{1324}{14}
-\@LN@col{2}
 \@LN{1325}{14}
 \@LN{1326}{14}
 \@LN{1327}{14}
+\@LN{1328}{14}
+\@LN{1329}{14}
+\@LN{1330}{14}
+\@LN{1331}{14}
+\@LN{1332}{14}
+\@LN{1333}{14}
+\@LN{1334}{14}
+\@LN{1335}{14}
+\@LN{1336}{14}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {C-D}}Full Hardware and Software Stack}{15}{subsection.Appendix.C.4}\protected@file@percent }
 \newlabel{app:repro:stack}{{\mbox  {C-D}}{15}{Full Hardware and Software Stack}{subsection.Appendix.C.4}{}}
 \newlabel{app:repro:stack@cref}{{[subsection][4][3]\mbox  {C-D}}{[1][15][]15}}
@@ -1661,14 +1673,15 @@
 \newlabel{tab:hw:specs}{{X}{15}{GPU hardware specifications for the two primary architectures}{table.10}{}}
 \newlabel{tab:hw:specs@cref}{{[table][10][]X}{[1][15][]15}}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-D}0a}Hardware}{15}{table.10}\protected@file@percent }
-\@LN{1328}{14}
-\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces Pinned software versions for all experiments.}}{15}{table.11}\protected@file@percent }
-\newlabel{tab:sw:stack}{{XI}{15}{Pinned software versions for all experiments}{table.11}{}}
-\newlabel{tab:sw:stack@cref}{{[table][11][]XI}{[1][15][]15}}
+\@LN{1337}{14}
 \@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {C-D}0b}Software stack}{15}{table.11}\protected@file@percent }
-\@LN{1329}{14}
-\@LN{1330}{14}
-\@LN{1331}{14}
-\@LN{1332}{14}
-\@LN{1333}{14}
-\gdef \@abspage@last{15}
+\@LN{1338}{14}
+\@LN{1339}{14}
+\@LN{1340}{14}
+\@LN{1341}{14}
+\@LN{1342}{14}
+\@writefile{lot}{\contentsline {table}{\numberline {XI}{\ignorespaces Pinned software versions for all experiments.}}{16}{table.11}\protected@file@percent }
+\newlabel{tab:sw:stack}{{XI}{16}{Pinned software versions for all experiments}{table.11}{}}
+\newlabel{tab:sw:stack@cref}{{[table][11][]XI}{[1][15][]16}}
+\@LN@col{2}
+\gdef \@abspage@last{16}
