@@ -9,7 +9,11 @@
 
 This repository is the supporting artifact for the paper. It reproduces every table and headline
 number, and contains the benchmark suite, the agentic kernel-optimization loop, and all root-cause
-and heuristic experiments. (The paper PDF is provided separately through the review system.)
+and heuristic experiments. The paper's appendices — threats to validity, the cross-architecture
+generalization study, the per-kernel efficiency table, and full reproducibility details — ship here
+as [`supplementary-material.pdf`](supplementary-material.pdf); every "see the supplementary
+material" pointer in the main text resolves to that document. (The paper PDF itself is provided
+separately through the review system.)
 
 *Prepared for double-blind review.*
 
@@ -87,7 +91,8 @@ anchor, = `tab:roofline`) + the five optimization campaigns in
 ## Repository structure
 
 ```
-ASE-GPUDSL-ARTIFACT/
+<repo-root>/
+├── supplementary-material.pdf        # The paper's appendices (threats, cross-arch, per-kernel E_lib, repro details)
 ├── ViperBench/                       # (1) Benchmark suite — 22 kernels × {PyTorch, Triton, TileLang}
 │   ├── <kernel>/                     #     pytorch_impl.py · triton_impl.py · tilelang_impl.py · test.py
 │   ├── run_all.py                    #     correctness runner (all 22 kernels)
