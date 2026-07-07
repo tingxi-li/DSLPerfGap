@@ -1,4 +1,4 @@
-# ICSE Research Track #1787 artifact — pinned dependencies
+# Correct but Slow — artifact — pinned dependencies
 # Pinned versions for all measurements (A100 / GH200 primary; A100-PCIE / H100 controls).
 #
 # Reproducible install (works on Ada / A100 / H100):

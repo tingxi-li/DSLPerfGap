@@ -1,4 +1,6 @@
-# ICSE Research Track #1787 — Artifact
+# Correct but Slow — Artifact
+
+*Supporting artifact for the paper "Correct but Slow: An Empirical Study of the GPU Kernel Evaluation Gap in Modern Domain-Specific Languages."*
 
 > **How do you know a DSL GPU kernel is fast?** A Triton or TileLang kernel that is
 > *functionally correct* can still run 5–1300× slower than the vendor library it is meant to
@@ -10,18 +12,15 @@
 This repository is the supporting artifact for the paper. It reproduces every table and headline
 number, and contains the benchmark suite, the agentic kernel-optimization loop, and all root-cause
 and heuristic experiments. The paper's appendices — threats to validity, the cross-architecture
-generalization study, the per-kernel efficiency table, and full reproducibility details — ship here
-as [`supplementary-material.pdf`](supplementary-material.pdf); every "see the supplementary
-material" pointer in the main text resolves to that document. (The paper PDF itself is provided
-separately through the review system.)
-
-*Prepared for double-blind review.*
+generalization study, the per-kernel efficiency table, and full reproducibility details — are
+included inline in the paper itself (see its appendix); every "see the supplementary material"
+pointer in the main text resolves there.
 
 ---
 
-## Start here — three paths for reviewers
+## Start here — three paths
 
-This artifact is organized so you can walk it in whichever order suits your review. Pick a path:
+This artifact is organized so you can walk it in whichever order suits you. Pick a path:
 
 | # | Goal | Where to go | Time |
 |---|------|-------------|------|
@@ -92,7 +91,6 @@ anchor, = `tab:roofline`) + the five optimization campaigns in
 
 ```
 <repo-root>/
-├── supplementary-material.pdf        # The paper's appendices (threats, cross-arch, per-kernel E_lib, repro details)
 ├── ViperBench/                       # (1) Benchmark suite — 22 kernels × {PyTorch, Triton, TileLang}
 │   ├── <kernel>/                     #     pytorch_impl.py · triton_impl.py · tilelang_impl.py · test.py
 │   ├── run_all.py                    #     correctness runner (all 22 kernels)
